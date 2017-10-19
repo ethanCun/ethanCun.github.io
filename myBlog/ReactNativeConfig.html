@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mac下配置React native开发环境</title>
+    <link rel="stylesheet" href="ContentsCss.css">
+</head>
+<body>
+<p class="title">mac下配置React native开发环境</p>
+
+<p class="contentsLeftPadding" style="font-size: x-large">一、需要的东西：</p>
+<ol>
+    <li>Note.js</li>
+    <li>React Native Command Line Tools</li>
+    <li>XCode/AndroidStudio</li>
+</ol>
+
+<p class="contentsLeftPadding" style="font-size: x-large">二、安装软件包管理器：Homebrew</p>
+<p>安装命令：</p>
+<div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+    <p>/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"</p>
+</div>
+<p>查看版本：</p>
+<div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+    brew --version
+</div>
+
+<p class="contentsLeftPadding" style="font-size: x-large">三、安装最新版git：</p>
+<p>安装命令：</p>
+<div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+    brew install git
+</div>
+<p>查看版本：</p>
+<div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+    git --version
+</div>
+
+<p class="contentsLeftPadding" style="font-size: x-large">四、安装 Node:</p>
+<p>安装命令：</p>
+<div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash<br><br>
+    //安装指定版本：<br>
+    nvm install vx.x.x 如v6.11.0<br>
+</div>
+<p>查看版本：</p>
+<div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+    nvm ls-remote<br>
+</div>
+
+<p class="contentsLeftPadding" style="font-size: x-large">五、npm 的简介与升级:</p>
+<div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+    # 安装 react 模块<br>
+    npm install react<br><br>
+
+    # 全局安装 react-native-cli 模块<br>
+    npm install -g react-native-cli<br><br>
+
+    # 升级<br>
+    npm install -g npm<br>
+</div>
+
+<p class="contentsLeftPadding" style="font-size: x-large">六、React Native 命令行工具 (react-native-cli)</p>
+<div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+    npm install -g react-native-cli<br>
+</div>
+
+<p class="contentsLeftPadding" style="font-size: x-large">七、安装Facebook 提供的监视文件变化的工具：Watchman</p>
+<div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+    brew install watchman<br>
+</div>
+
+<p class="contentsLeftPadding" style="font-size: x-large">八、安装静态的JS类型检查工具：flow</p>
+<div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+    brew install flow<br>
+</div>
+
+<p class="contentsLeftPadding" style="font-size: x-large">九、 创建项目</p>
+<div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+    react-native init HelloWorld<br>
+    cd cd /Users/youMacName/FirstApp<br>
+    react-native run-ios<br>
+</div>
+
+<p class="contentsLeftPadding" style="font-size: x-large">十、注意事项</p>
+<p>React-Native服务在编写过程中要一直开着，如果不小心把它关了，没关系，可以在终端输入：</p>
+<div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+    npm start
+</div>
+<p>来重新开启服务。</p>
+
+</body>
+</html>
