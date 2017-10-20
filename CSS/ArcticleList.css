@@ -1,0 +1,50 @@
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form,
+fieldset, input, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+}
+
+
+.bgImage{
+    position: absolute;
+    opacity: 0.8;
+    width: 100%;
+}
+
+.listDiv{
+
+    position: absolute;
+    width: 100%;
+}
+
+ul{
+}
+
+.title{
+
+    text-align: center;
+    width: 100%;
+    color: darkgoldenrod;
+    font-weight: bolder;
+    font-size: xx-large;
+    padding-top: 20px;
+}
+
+li{
+    /*去掉点*/
+    list-style: none;
+}
+
+a{
+    /*去掉下划线*/
+    text-decoration: none;
+}
+
+
+p{
+    color: sienna;
+    font-size: x-large;
+    padding-left: 150px;
+    padding-top: 50px;
+}

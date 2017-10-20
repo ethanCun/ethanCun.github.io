@@ -1,0 +1,108 @@
+
+html {
+    color: #000;
+    background: #FFF;
+    font-family: arial,sans-serif;
+}
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form,
+fieldset, input, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+}
+
+.contents {
+
+    /*个人介绍*/
+    position: absolute;
+    top: 100px;
+    align-content: center;
+}
+
+.detail {
+
+    /*ethan的个人学习记录*/
+    position: relative;
+    text-align: center;
+    font-family: Futura;
+    font-size: xx-large;
+    font-weight: bolder;
+}
+
+.hello {
+
+    text-align: center;
+    font-weight: lighter;
+    font-size: larger;
+}
+
+.introduce {
+
+    text-align: center;
+    font-weight: lighter;
+}
+
+.buttonAero {
+
+    /*按钮区域*/
+    position: absolute;
+    top: 350px;
+    width: 100%;
+    /*overflow: hidden;*/
+}
+
+* {
+    /*border-box*/
+    box-sizing: border-box;
+}
+
+.btnDiv {
+
+    background-color: transparent;
+    opacity: 0.8;
+    float: left;
+    height: 300px;
+    width: 25%;
+    border: 10px solid transparent;
+
+    /*内容水平居中*/
+    text-align: center;
+    /*内容垂直居中*/
+    vertical-align: middle;
+}
+
+.btnImg {
+
+    float: none;
+    width: 180px;
+    height: 180px;
+    margin: 20px auto;
+}
+
+.categoryTitle {
+
+    font-size: x-large;
+    font-family: "Adobe Fan Heiti Std";
+    color: darkgreen;
+}
+
+.contactMe {
+
+    position: absolute;
+    top: 700px;
+    text-align: right;
+    padding-right: 100px;
+    width: 100%;
+    font-size: large;
+    padding-bottom: 0px;
+    float: left;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+
+    color: red;
+}

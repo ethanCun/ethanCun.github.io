@@ -2,161 +2,71 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ethan的博客</title>
-
-    <!--通用css-->
-    <link rel="stylesheet" href="./CSS/mainCSS.css">
-    <!--网页缩略图-->
-    <link rel="shortcut icon" href="https://avatars2.githubusercontent.com/u/22904494?s=400&u=8ce7e998748f95cf9f5f27629e842b0db3d8aa3c&v=4">
-    <!--文章标题css-->
-    <link rel="stylesheet" href="./CSS/ContentsCss.css">
+    <title>ethanCun的博客</title>
+    <link rel="icon" href="./Source/icon-img.jpeg">
+    <link rel="stylesheet" type="text/css" href="./CSS/main/main.css">
 </head>
-
-<style>
-
-    body{
-        background-color: aliceblue;
-    }
-
-    /*总div*/
-    #totalDiv{
-
-        margin: 0 auto;
-        width: 100%;
-        overflow: hidden;
-    }
-
-    /*左边栏*/
-    #leftBar{
-
-        float: left;
-        width: 15%;
-    }
-
-    /*右边内容区*/
-    .rightContent{
-
-        float: right;
-        width: 84%;
-        margin-top: 10px;
-    }
-
-    /*左边栏*/
-    .functionList{
-
-    }
-
-    /*所有li标签*/
-    ul li{
-
-        list-style-type: none;
-        margin-bottom: 20px;
-        margin-left: 20px;
-        font-size: small;
-        text-align: center;
-    }
-
-    /*悬浮颜色*/
-    ul li a:hover{
-
-        background-color: red;
-    }
-
-    img{
-        width: 100%;
-        margin-top: 10px;
-    }
-
-</style>
 
 <body>
 
+<div style="opacity: 0.8">
+    <img src="./Source/bgImg1.jpg" style="width: 100%; height: 100%; background-color: black; opacity: 0.5">
+    <div class="contents" style="width: 100%;">
+        <p class="detail">ethan的个人知识记录</p><br>
+        <p class="hello">大家好!</p>
+        <p class="introduce">我是一名iOS开发者, 平时还玩玩web和ReactNative.</p></p>
+    </div>
+</div>
 
-<div id="totalDiv">
+<div class="buttonAero">
 
-    <!--左边的选择区域-->
-    <div id="leftBar">
-        <ul class="functionList">
-            <li id="avator">
-                <img style="border-radius: 50%" src="http://upload.jianshu.io/users/upload_avatars/3251504/ff2da7b5-d63c-4cfa-a106-7f2d8d4fca49.jpeg?imageMogr2/auto-orient/strip|imageView2/1/w/240/h/240">
-            </li>
-            <li id="mainPage">
-                <a>我的主页</a>
-            </li>
-            <li id="note">
-                <a>笔记记录</a>
-            </li>
-            <li id="objc">
-                <a>objc</a>
-            </li>
-            <li id="swift">
-                <a>swift</a>
-            </li>
-            <li id="RN">
-                <a>RN</a>
-            </li>
-            <li id="php">
-                <a>php</a>
-            </li>
-            <li id="other">
-                <a>杂记</a>
-            </li>
-        </ul>
+    <!--iOS-->
+    <div class="btnDiv">
+
+        <a href="./html/iOS/iOSArticleList.html">
+            <img class="btnImg" src="./Source/category-img/xcode.jpg">
+            <br>
+            <p class="categoryTitle">iOS</p>
+        </a>
     </div>
 
-    <!--有关Nav和Tab属性和方法的一些细节记录-->
-    <div class="rightContent" style="background-color: antiquewhite">
-        <p class="title">有关Nav和Tab属性和方法的一些细节记录</p>
-        <p class="contentsLeftPadding" style="color: black; font-size: x-large">状态栏的设置</p>
-        <p class="contentsLeftPadding">
-            情形：设置欢迎页影藏，首页显示：<br>
-            在info.plist里增加 Status bar is initially hidden，设置为yes<br>
-            然后在首页或者父类控制器里设置<br>
-        </p>
-        <div class="contentsLeftPadding" style="border-width: 1px;border-color: cyan">
-            // MARK: - 状态栏<br>
-            override var prefersStatusBarHidden: Bool{<br>
-            return false<br>
-            }<br>
+    <!--web-->
+    <a href="./html/HTML5/Html5ArticleList.html">
+        <div class="btnDiv">
+            <img class="btnImg" src="./Source/category-img/h5.jpg">
+            <br>
+            <p class="categoryTitle">web</p>
         </div>
-        <div class="contentsLeftPadding" style="background-color: aliceblue; border-width: 1px;border-color: cyan">
-            <a href="./navAndTabBarDetails/NavAndTabBar.html" style="text-align: center;float: right; width: 100%">查看更多</a>
-        </div>
-    </div>
+    </a>
 
-    <!--购物车-->
-    <div class="rightContent" style="background-color: antiquewhite">
-        <p class="title">购物车</p>
-        <div class="contentsLeftPadding" style="border-width: 1px;border-color: cyan">
-            仿淘宝购物订单逻辑<br>
-            设计模式MVC 控制器450行代码 cell 280行代码 实现类似淘宝购物车的选择，编辑，删除等功能<br>
-            使用YYModel管理数据结构<br>
-            要有效果图：<br>
+    <!--ReactNative-->
+    <a href="./html/ReactNative/ReactNativeArticleList.html">
+        <div class="btnDiv">
+            <img class="btnImg" src="./Source/category-img/reactnative.jpg">
+            <br>
+            <p class="categoryTitle">ReactNative</p>
         </div>
-        <div class="contentsLeftPadding" style="background-color: aliceblue; border-width: 1px;border-color: cyan">
-            <a href="./shoppinCar/ShoppingCar.html" style="text-align: center;float: right; width: 100%">查看更多</a>
-        </div>
-    </div>
+    </a>
 
-    <!--mac下配置React native开发环境-->
-    <div class="rightContent" style="background-color: antiquewhite">
-        <p class="title">mac下配置React native开发环境</p>
-
-        <p class="contentsLeftPadding" style="font-size: x-large">一、需要的东西：</p>
-        <ol style="margin-left: 40px; list-style-type: circle">
-            <li>Note.js</li>
-            <li>React Native Command Line Tools</li>
-            <li>XCode/AndroidStudio</li>
-        </ol>
-        <div class="contentsLeftPadding" style="background-color: aliceblue; border-width: 1px;border-color: cyan">
-            <a href="./React%20Native/ReactNativeConfig.html" style="text-align: center;float: right; width: 100%">查看更多</a>
+    <!--杂谈-->
+    <a href="./html/Other/OtherArticleList.html">
+        <div class="btnDiv">
+            <img class="btnImg" src="./Source/category-img/other.jpg">
+            <br>
+            <p class="categoryTitle">杂谈</p>
         </div>
-    </div>
+    </a>
+
 
 </div>
 
+<div class="contactMe">
 
+    <h5><a href="https://github.com/ethanCun">Github</a></h5><br>
+    <h5><a href="http://www.jianshu.com/">简书</a></h5><br>
+    <h5><a>email:zz511627807@163.com</a></h5><br>
 
+</div>
 
 </body>
 </html>

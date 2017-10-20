@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>有关Nav和Tab属性和方法的一些细节记录</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <style>
+
+        /*文章标题*/
+        p.title{
+
+            font-size: xx-large;
+            color: red;
+            text-align: center;
+            margin: 10px auto;
+        }
+
+        /*内容边距*/
+        .contentsLeftPadding{
+
+            margin-left: 20px;
+            margin-top: 20px;
+        }
+
+
+        img.effect {
+
+            width: 200px;
+            margin: 10px 20px;
+        }
+
+        p{
+            padding: 10px;
+        }
+
+        a{
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<style>
+    body{
+
+        margin-bottom: 40px;
+    }
+</style>
+
+<body>
+<!--文章-->
+<div id="rightContent">
+    <p class="title">有关Nav和Tab属性和方法的一些细节记录</p>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">状态栏的设置</p>
+    <p class="contentsLeftPadding">
+        情形：设置欢迎页影藏，首页显示：<br>
+        在info.plist里增加 Status bar is initially hidden，设置为yes<br>
+        然后在首页或者父类控制器里设置<br>
+    </p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        // MARK: - 状态栏<br>
+        override var prefersStatusBarHidden: Bool{<br>
+        return false<br>
+        }<br>
+    </div>
+    <p class="contentsLeftPadding">
+        这里需要注意第二个方法：<br>
+        1、如果ViewController不是UINavigationController的子类，调用 preferredStatusBarStyle 是可以改变状态栏文字的颜色，相反则不能；<br><br>
+
+        因为 UINavigationController 有自己的状态栏，需要自己管理所以它的子类是不会走 preferredStatusBarStyle 方法；如果想要某个VC 改变，可以使用 UINavigationBar.barStyle属性<br>
+    </p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        self.navigationController?.navigationBar.barStyle = .black<br>
+    </div>
+    <p class="contentsLeftPadding">或者 //隐藏导航栏后 系统会调用 preferredStatusBarStyle 方法</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        self.navigationController.navigationBarHidden=YES;<br>
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">标题</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        //tab和nav的title会全部更改:<br>
+        self.title = @"首页";<br>
+        //nav会更改 tab不会更改：<br>
+        self.navigationItem.title = @"首页";<br>
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">导航栏颜色</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        //修改导航栏的颜色<br>
+        self.navigationController.navigationBar.barTintColor = [UIColor orangeColor];<br>
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">导航栏下个界面返回按钮</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        //修改导航栏下个界面返回按钮的文字 注意 修改的是下一个界面的返回按钮:<br>
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"返回" style:UIBarButtonItemStylePlain target:nil action:nil];<br>
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">导航栏返回按钮图片</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        // 修改导航栏返回按钮的图片 返回按钮图片大小为42*42 这里不能直接按照下面的方式设置，不然当界面上有弹框UIAlertController时，图片会向下偏移：<br>
+        let leftBBi = UIBarButtonItem(title: "", style: .plain, target: self, action: #selector(personalSettingBack))<br>
+        leftBBi.image = UIImage(named: "nav_back")<br>
+        leftBBi.tintColor = HHGK_WHITE_COLOR<br>
+        self.navigationItem.leftBarButtonItem = leftBBi<br><br>
+
+        // 正确的做法应该是自定义一个按钮， 然后设置为leftBarButtonItem：<br>
+        let backBtn = UIButton(type: .custom)<br>
+        backBtn.setImage(UIImage.init(named: "nav_back"), for: .normal)<br>
+        backBtn.tintColor = HHGK_WHITE_COLOR<br>
+        backBtn.frame = CGRect(x: 0, y: 0, width: 42, height: 42)<br>
+        backBtn.addTarget(self, action: #selector(personalSettingBack), for: .touchUpInside)<br><br>
+
+        let backBBi = UIBarButtonItem.init(customView: backBtn)<br><br>
+
+        self.navigationItem.leftBarButtonItem = backBBi<br>
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">导航栏文字样式</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        //修改导航栏中间文字的样式:<br>
+        [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor],NSFontAttributeName:[UIFont systemFontOfSize:16]}];<br>
+        swift:<br>
+        self.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName:UIColor.white]<br>
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">工具栏的颜色</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        //修改工具栏的颜色:<br>
+        self.tabBarController.tabBar.barTintColor = [UIColor grayColor];<br>
+        //修改工具栏下面文字的颜色:<br>
+        self.tabBarController.tabBar.tintColor = [UIColor blackColor];<br>
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">透明</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        //把顶部这个navigationbar设置为透明呢，能够让下面的图片显示出来，但是返回按钮不透明:<br>
+        [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];<br>
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">线条</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        //去掉导航栏下面的线条:<br>
+        self.navigationController.navigationBar.shadowImage = [UIImage new];<br>
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">未选中与选中时的图片</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        //设置UITabBarItem未选中与选中时的图片:<br>
+        [_hotTabItem setFinishedSelectedImage:[UIImage imageNamed:@"1_selected"] withFinishedUnselectedImage:[UIImage imageNamed:@"1"]];<br>
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">badgeValue</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        //设置UITabBarItem的badgeValue:<br>
+        //指定界面<br>
+        [self.tabBarController.tabBar.items objectAtIndex:2].badgeValue = [NSString stringWithFormat:@"%ld", ++ goodsCount];<br>
+        //当前界面<br>
+        _mine.navigationController.tabBarItem.badgeValue = [NSString stringWithFormat:@"%ld", count];<br>
+        //为0时清除<br>
+        _mine.navigationController.tabBarItem.badgeValue = nil;<br>
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">tabBar样式</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        //设置tabBar样式<br><br>
+
+        [[UITabBarItemappearance]setTitleTextAttributes:@{NSForegroundColorAttributeName:[selfmyThemeColor]}forState:UIControlStateSelected];<br><br>
+
+        [[UITabBarItemappearance]setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColorredColor]}forState:UIControlStateNormal];<br><br>
+
+        //选中的颜色（图片+图片下面文字的颜色，iOS8.0以后被废弃了）<br><br>
+
+        self.tabBarController.tabBar.selectedImageTintColor= [selfmyThemeColor];<br><br>
+
+        //未选中的颜色（图片+图片下面文字的颜色，没被废弃）<br><br>
+
+        self.tabBarController.tabBar.unselectedItemTintColor= [UIColorgreenColor];<br><br>
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">dismiss回到目标控制器</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+
+        // dismiss方式回到目标控制器：<br>
+        /*<br>
+        (1) presentedViewController：The view controller that is presented by this view controlller(read-only)，被本视图控制器present出来的的视图控制器（只读）<br>
+        (2) presentingViewController：The view controller that presented this view controller. (read-only)，present出来本视图控制器的视图控制器（只读）<br>
+        */<br>
+        UIViewController *vc = self.presentingViewController;<br>
+        while (![vc isKindOfClass:[TFTravelllerLoginViewController class]]) {<br><br>
+
+        vc = vc.presentingViewController;<br>
+        }<br><br>
+
+        [vc dismissViewControllerAnimated:YES completion:nil];<br>
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">push到下个界面隐藏tabBar pop回去显示tabBar</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        <br>
+        // 注意是设置目标控制器的hidesBottomBarWhenPushed属性<br>
+        EaseMessageViewController *messageVc = [[EaseMessageViewController alloc] initWithConversationChatter:contactName conversationType:EMConversationTypeChat];<br>
+        messageVc.hidesBottomBarWhenPushed = YES;<br>
+        [self.navigationController pushViewController:messageVc animated:YES];<br>
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">pop回到目标控制器</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        //pop方式回到目标控制器：<br>
+        for (UIViewController *disVc in self.navigationController.viewControllers) {<br>
+        <br>
+        if ([disVc isKindOfClass:[TFTravelllerLoginViewController class]]) {<br>
+        [self.navigationController popToViewController:disVc animated:YES];<br>
+            }<br>
+        }<br>
+
+    </div>
+    <p class="contentsLeftPadding" style="color: black; font-size: x-large">UISearchBar自定义</p>
+    <div class="contentsLeftPadding" style="background-color: darkgray; border-width: 1px;border-color: cyan">
+        searchBar.backgroundImage = [CzyTools imageWithColor:[UIColor colorWithHexString:@"#F5F5F5"]];<br>
+        searchBar.backgroundColor = [UIColor clearColor];<br>
+        [searchBar setSearchFieldBackgroundImage:[CzyTools imageWithColor:[UIColor colorWithHexString:@"#F5F5F5"]] forState:UIControlStateNormal];<br>
+    </div>
+
+</div>
+
+</body>
+</html>

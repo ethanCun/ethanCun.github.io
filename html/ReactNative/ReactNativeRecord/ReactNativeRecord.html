@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ReactNative开发记录</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <style>
+
+        h3{
+            width: 100%;
+            text-align: center;
+            font-size: xx-large;
+            font-weight: bolder;
+            color: red;
+        }
+
+        p{
+            padding-left: 20px;
+        }
+
+        .box{
+
+            border: 1px solid rebeccapurple;
+            width: 90%;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        img{
+
+            padding-left: 20px;
+            padding-top: 10px;
+        }
+
+        p.desc{
+
+            font-size: small;
+            color: cadetblue;
+        }
+
+        .largeTitle{
+
+            font-size: large;
+            color: rebeccapurple;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<h3>ReactNative开发记录</h3>
+
+<a href="http://reactnative.cn/docs/0.31/network.html#content"><p>1.React-Native学习资料中文版</p></a>
+<a href="https://race604.com/react-native-component-lifecycle/"><p>2.react-native组件生命周期</p></a>
+<a href="http://bbs.reactnative.cn/topic/15/react-react-native-%E7%9A%84es5-es6%E5%86%99%E6%B3%95%E5%AF%B9%E7%85%A7%E8%A1%A8"><p>3.es5-es6写法对照表</p></a>
+
+<p>一.</p>
+<div class="box">
+
+    <p>
+        Failed to install the requested application
+        An application bundle was not found at the provided path.
+        Provide a valid path to the desired application bundle.
+        Print: Entry, ":CFBundleIdentifier", Does Not Exist
+
+        Command failed: /usr/libexec/PlistBuddy -c Print:CFBundleIdentifier build/Build/Products/Debug-iphonesimulator/ReactNativexx.app/Info.plist
+        Print: Entry, ":CFBundleIdentifier", Does Not Exist
+    </p>
+
+</div>
+
+<p>示意图(点击放大)</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-e0ce598dd443350d.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-e0ce598dd443350d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+
+<p>
+    解决：
+    用--version参数创建指定版本的项目。例如react-native init DemoApp --version 0.44.3注意版本号必须精确到两个小数点。
+    项目创建好之后：执行：react-native run-ios
+
+    如果是下载的项目，则需要npm install（安装node_modules文件夹）， 然后修改package.json里面的react-native和react如下：
+</p>
+
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-e9cc4893240f83c5.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-e9cc4893240f83c5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">修改react-native和react到指定版本</p>
+
+<p>二.</p>
+<div class="box">
+
+    <p>
+        No bundle URL present
+
+        Make sure you’re running a packager server or have included a .jsbundle file in your application bundle
+        (工程里面main.jsbunddle不存在|红色的)
+    </p>
+</div>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-c9e2756751875f4f.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-c9e2756751875f4f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">错误图</p>
+<p>
+    解决：网上找的办法：
+    1.重启模拟器
+    2.设置网络为自动代理
+    3.重启电脑
+    4.模拟器正常运行的时候：npm install 然后react-native run-ios
+
+    都没用!!!
+
+    折腾了好久，终于找到解决方案：
+</p>
+
+<div class="box">
+
+    <p>
+        cd /Users/macofethan/Desktop/DemoApp/ios
+        npm start
+        //(curl http://localhost:8081/index.ios.bundle -o main.jsbundle)(忽略这个)
+    </p>
+</div>
+
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-2fff2ae1ee9a45aa.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-2fff2ae1ee9a45aa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">示意图</p>
+
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-3190a7a85c0fff44.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-3190a7a85c0fff44.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">示意图</p>
+<p>然后在模拟器中点击reload JS</p>
+
+<p class="largeTitle">三、can't find simulator ...</p>
+<p>原因：连接了未解锁的真机 或者模拟器未启动 从xcode启动就可以了</p>
+
+<p class="largeTitle">四、如图：</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-f1b0a246eb2f40ef.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-f1b0a246eb2f40ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">示意图</p>
+
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-f788aa736d721935.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-f788aa736d721935.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">示意图</p>
+
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-166918018da491e9.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-166918018da491e9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">示意图</p>
+
+<p>
+    原因：导入一个.js文件就报这个错，路径检查了也是对的，还不知道是什么原因： 最后发现是导入的文件有问题
+</p>
+
+<p class="largeTitle">五、如图</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-3d480f41149d0d21.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-3d480f41149d0d21.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">示意图</p>
+<p>
+    原因：没有父视图
+</p>
+
+<p class="largeTitle">六、如图：</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-dd2f49a180d7bcd7.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-dd2f49a180d7bcd7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">示意图</p>
+<p>原因：style语法错误</p>
+
+<p class="largeTitle">七、如图：</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-b88372c691c03298.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-b88372c691c03298.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p>原因：图上已经写明了 退出 重进</p>
+
+
+<p class="largeTitle">八、如图：</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-c6f0e429db794cb5.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-c6f0e429db794cb5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">示意图</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-91595f4c37463783.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-91595f4c37463783.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">示意图</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-12a40287604565c9.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-12a40287604565c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">示意图</p>
+<p>原因：导入Prop'Types AppRegistry出错</p>
+
+
+<p class="largeTitle">九、如图，npm start未执行</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-7771ed3927a970fe.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-7771ed3927a970fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">示意图</p>
+
+<p class="largeTitle">十、</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-b93302afb9d435ab.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-b93302afb9d435ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">示意图</p>
+
+<p>
+    这是因为版本升级到0.43以上的话，Navigator不能直接从react-native里面获取了
+
+    解决：
+</p>
+
+<div class="box">
+
+    <p>
+        npm install react-native-deprecated-custom-components --save
+
+        //然后在引用的地方导入：
+        import {Navigator} from 'react-native-deprecated-custom-components';
+
+        或者使用NavigatorIOS
+    </p>
+</div>
+
+<p class="largeTitle">十一、</p>
+<p>导出组件的方式：</p>
+<div class="box">
+    <p>
+        1. export default class..
+        2. module.exports = CzyScene;
+    </p>
+</div>
+
+<p class="largeTitle">十二、</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-f941c721e6dfacff.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-f941c721e6dfacff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">示意图</p>
+
+<p>
+    原因：使用了ES5写状态机
+</p>
+
+<div class="box">
+
+    <p>
+        getInitialState(){
+
+        return{
+
+        selectedTabItem:0
+        }
+        }
+    </p>
+</div>
+
+<p>
+    解决办法：使用ES6的写法:
+</p>
+
+<div class="box">
+
+    constructor(props) {
+    super(props);
+    this.state = {
+    selectedTabItem: 'contacts'
+    };
+    }
+</div>
+
+<p class="largeTitle">十三、</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-008e7734225e4d0f.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-008e7734225e4d0f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">fetch的时候 body:fromData: can't find variable....</p>
+
+
+<p class="largeTitle">十四、</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-1cc230ba1c955f86.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-1cc230ba1c955f86.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/160"></a>
+<p class="desc">自定义组件或者系统组件首字母小写了</p>
+
+
+</body>
+</html>
