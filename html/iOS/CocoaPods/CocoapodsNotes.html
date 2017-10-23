@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CocoaPods记录</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/iOS/CocoaPods/CocoapodsNotes.css">
+    <style>
+        p.dialog{
+
+            text-indent: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>CocoaPods记录</h2>
+
+<p class="dialog">
+    CocoaPods是ios开发平台一个非常流行的第三方库管理工具。在开发过程中，根据项目复杂程度，通常我们会需要外链很多的第三方库。而添加这些第三方库的过程有时候会变成一场灾难。因此使用CocoaPods来代替我们管理这些库，将可以大幅缩短我们的开发时间。
+</p>
+<p class="dialog">
+    在使用CocoaPods的时候我们并不需要关注它的原理，简单来讲它相当于将github上的第三方库checkout到你的项目工程目录中，再直接将这些库的链接添加到你的工程中。并且之后你也可以通过简单的命令对这些库进行更新。
+</p><br>
+
+<div>
+    <p><b>一、环境配置：</b></p>
+</div>
+<p>
+    笔者使用的开发环境是Mac OS X 10.11，XCode 7.3。CocoaPods的安装和使用需要有Ruby环境（Mac系统默认安装了Ruby环境，如果系统没有Ruby环境的可以去百度，有很多相关的文档）。不确定自己系统中是否有Ruby的，可以在终端中输入命令行：ruby -v查看当前ruby版本。
+</p>
+
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-ca9e85deb02c4852.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-ca9e85deb02c4852.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p>
+    如果确认系统中已经有Ruby环境的，就可以继续下面的安装步骤了。
+</p><br>
+
+<div>
+    <p><b>二：安装</b></p>
+</div>
+<p class="dialog">
+    CocoaPods的安装是非常简单的，但是前提是你的网速够快并且能绕过GFW（这就是为什么程序员必须要有vpn）。
+</p>
+<p>
+    确保网速够快（能绕过GFW）的，可以直接执行下面命令：
+</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-0b27ae01ca4cbf09.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-0b27ae01ca4cbf09.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p class="dialog">如果执行了这句命令以后，终端很长时间都没有反应，那么就可以确定你没有绕过GFW了。这样的话你就需要按照以下步骤进行安装了：</p>
+<p>首先，检查你的ruby源：</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-7ef2a219f965fa9c.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-7ef2a219f965fa9c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p>默认情况下，终端应该返回如下信息：</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-5865da6477dfd051.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-5865da6477dfd051.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+
+<p>
+    当然这个源在墙内是访问不到的。因此我们需要寻找一个可以在国内访问到的镜像。目前笔者找到的是http://rubygems-china.oss.aliyuncs.com这个阿里云的镜像，当然随着时间的推移，未来这个镜像也有可能无法访问了，到时候就只能重新寻找了。<br>
+</p>
+<p>
+    确认镜像可用后，现在就要开始修改ruby源了。首先执行以下命令删除原来的ruby源：
+</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-c59e569ff1c96ff1.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-c59e569ff1c96ff1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p>
+    执行命令后可在终端看见以下信息：
+</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-6a0fed1e7877ff03.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-6a0fed1e7877ff03.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p>
+    然后下一步添加你找到的可用的镜像源：
+</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-a0874c7611e34f78.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-a0874c7611e34f78.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p>
+    此时如果你再执行gem sources -l命令，就能看到当前镜像源里只有阿里云这一个了。此时你就可以重新执行这一段开头的那句命令了：
+</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-cd3b40eb66c0883f.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-cd3b40eb66c0883f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p>
+    如果一切正常，你应该能看到一段安装进度，以及最后有一条信息：
+</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-582f650e9c5eebd2.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-582f650e9c5eebd2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p>
+    确认看见这条信息，就说明你的安装已经成功了，接下去就可以开始准备在你的项目中使用CocoaPods了。
+</p><br>
+
+<div>
+    <p><b>三、使用</b></p>
+</div><br>
+<div>
+    <p>
+        CocoaPods的使用我们以一个ios上非常通用的AFNetworking为例。首先，你需要检查你要添加的第三方库是否支持CocoaPods。在终端中执行以下命令：
+    </p>
+</div><br>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-342e0f1c2cc2c0ba.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-342e0f1c2cc2c0ba.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a><br>
+<p>
+    执行以后你应该能看到类似如下的一些关于AFNetworking库的信息：
+</p><br>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-775bf70b2319b02f.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-775bf70b2319b02f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a><br><br>
+<div>
+    <p>确认AFNetworking库支持CocoaPods后，接下去我们就可以开始做添加操作了。</p>
+</div>
+<br>
+<div>
+    <p>首先在XCode中新建一个project，笔者在这里命名为CocoaPodsTest。然后，在终端中cd到你的project所在的目录：</p>
+</div>
+<br>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-66c1dabc5c7b694b.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-66c1dabc5c7b694b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<br>
+<div>
+    <p>然后，执行命令：</p>
+</div>
+<br>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-94f0e870e950c7b9.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-94f0e870e950c7b9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<br><br>
+<div>
+    <p>添加一个Podfile文件。然后按i进入插入模式，进行编辑，在文件中输入以下内容：</p>
+</div>
+<br>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-1eec116921ddd76d.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-1eec116921ddd76d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<br>
+
+<p>
+    输入完成后按ESC退出编辑模式，最后输入:wq保存并退出文件。此时可以发现在项目目录下多了一个Podfile的文件，请注意这个文件必须与.xcodeproj在同一目录下。
+</p>
+<br>
+<p>
+    （眼尖的朋友可能已经发现了，笔者这里使用的AFNetworking是2.0版本，而search出来的最新版本是3.1.0。这是为了下面执行update方便而进行的设置，这里可以直接填3.1.0）
+</p>
+<br>
+<p>
+    不要改变终端中的当前目录，执行以下命令：
+</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-b2a558f86a081ae9.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-b2a558f86a081ae9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p>就可以在当前项目中添加CocoaPods支持。安装完成后可以看到如下信息：</p>
+
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-934329a1d313e986.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-934329a1d313e986.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p>该信息表示CocoaPods已成功添加到当前项目中。同时“1 dependency from the Podfile”的意思就是Podfile文件中的AFNetworking库也添加完毕。同时在项目目录下你能发现多了Pods目录以及一个.xcworkspace文件。上面[!]后面提示的信息表示你需要在XCode中关闭现在这个CocoaPodsTest.xcodeproj，并且以后使用CocoaPodsTest.xcworkspace文件打开工程。</p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-d840fb19ef97981f.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-d840fb19ef97981f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+
+<p>
+    这样，我们就完成了CocoaPods从安装到添加到工程的整个流程。而对于已经使用了CocoaPods的工程，可以通过CocoaPods的update功能直接更新包含的第三方库。
+</p>
+
+<div>
+    <p><b>3.更新</b></p>
+</div>
+<br>
+<div>
+    <p>
+        CocoaPods本地太久不更新会报错：<br><br>
+
+        如：<br><br>
+
+        ```<br><br>
+
+        [!] Unable to satisfy the following requirements:<br><br>
+
+        - `Hyphenate` required by `Podfile`<br><br>
+
+        - `Hyphenate (= 3.2.1)` required by `Podfile.lock`<br><br>
+
+        - `Hyphenate (~> 3.3.2)` required by `EaseUI (3.3.2)`<br><br>
+
+        ```<br>
+    </p>
+</div>
+<br>
+<div>
+    <p>
+        CocoaPods可以非常简单的使用update语句直接更新所有第三方库，以下仍然使用AFNetworking为例。
+    </p>
+</div>
+<br>
+
+<div>
+    <p>
+        首先，我们可以看到前面笔者使用的AFNetworking库，是使用的2.0版本。然而pod search AFNetworking命令执行的时候，能看到AFNetworking目前最新的版本是3.1.0。接下去我们就来看要如何将目前的第三方库版本更新到最新的版本。
+    </p>
+</div>
+<br><br>
+
+<div>
+    <p>
+        同样先cd到项目目录下，并且开始编辑Podfile文件：
+    </p>
+</div>
+<br><br>
+
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-9a8ecea545b99c34.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-9a8ecea545b99c34.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p>
+    将Podfile文件中AFNetworking这一行的2.0改成3.1.0：
+</p><br>
+
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-d1dd448ca7ba8839.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-d1dd448ca7ba8839.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p>
+    修改完成后，按ESC退出编辑模式，最后输入:wq保存并退出文件。<br>
+</p>
+<p>
+    然后回到终端，执行以下命令就可以开始更新了：<br>
+</p><br>
+
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-8782b9543839a0c1.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-8782b9543839a0c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p>
+    可以看到在返回的信息中有一行绿色的信息：<br>
+</p><br>
+
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-e2938dce1dbb936c.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-e2938dce1dbb936c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p>
+    这就表示项目中的AFNetworking库已经更新到3.1.0版本了。
+</p><br>
+
+<div>
+    <p><b>四、小结</b></p>
+</div>
+<br>
+<div>
+    CocoaPods的功能非常强大，更高级的使用需求可以访问CocoaPods的官网https://cocoapods.org/ 查找更多功能。另外在https://github.com/CocoaPods/CocoaPods/wiki 也可以获得更多信息。<br>
+    本文参考了<br><br>
+
+    http://cnbin.github.io/blog/2015/05/25/cocoapods-an-zhuang-he-shi-yong/<br><br>
+
+    http://code4app.com/article/cocoapods-install-usage<br><br>
+
+    两位分享的内容，在这里致以诚挚的谢意。<br>
+</div><br><br>
+
+<div>
+    <p><b>五、我遇到的一些问题：</b></p>
+</div>
+<br>
+<div>
+    <p>
+        1.代理出现了问题以及解决办法：<br><br>
+
+        Cloning into 'master'...<br><br>
+
+        fatal: unable to access 'https://github.com/CocoaPods/Specs.git/': Failed to connect to proxy.com port 1234: Operation timed out<br><br>
+
+        很明显啊，应为不好，这歌意思是：代理出现了问题，导致clone不下来，研究了好长时间，于是有一下两种办法：<br><br>
+
+        1》修改代理如：git config --global http.proxy192.168.1.1:8081（这个代理时瞎写的）<br><br>
+
+        2》wgit config--global http.proxy 查询到当前设置了代理，所以取消这个设置：<br><br>
+
+        git config --global --unset http.proxy<br><br>
+
+        再查询，已经没有了代理，后成功安装。<br>
+    </p>
+</div>
+<br>
+<div>
+
+    <p>
+        2.The dependency ``isnotusedinany concrete target<br><br>
+
+        The dependency `AFNetworking`isnotusedinany concrete target<br><br>
+
+        解决办法：<br>
+    </p>
+</div>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-ef1c657b87bd73d6.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-ef1c657b87bd73d6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+<p><b>推荐使用这种方法 更加妥当</b></p>
+<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-8c8a6fe5b8ea940b.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-8c8a6fe5b8ea940b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+
+</body>
+</html>

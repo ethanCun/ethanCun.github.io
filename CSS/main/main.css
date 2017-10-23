@@ -15,10 +15,19 @@ fieldset, input, textarea, p, blockquote, th, td {
 
     /*个人介绍*/
     position: absolute;
-    top: 100px;
+    top: 50px;
     align-content: center;
+    width: 100%;
 }
 
+.icon{
+
+    width: 80px;
+    margin: 10px 47%;
+    border-radius: 40px;
+    height: 80px;
+    text-align: center";
+}
 .detail {
 
     /*ethan的个人学习记录*/
@@ -74,8 +83,8 @@ fieldset, input, textarea, p, blockquote, th, td {
 .btnImg {
 
     float: none;
-    width: 180px;
-    height: 180px;
+    width: 160px;
+    height: 160px;
     margin: 20px auto;
 }
 
@@ -90,11 +99,11 @@ fieldset, input, textarea, p, blockquote, th, td {
 
     position: absolute;
     top: 700px;
-    text-align: right;
-    padding-right: 100px;
-    width: 100%;
+    /*text-align: right;*/
+    /*padding-right: 100px;*/
+    /*width: 100%;*/
     font-size: large;
-    padding-bottom: 0px;
+    /*padding-bottom: 0px;*/
     float: left;
 }
 
@@ -102,7 +111,8 @@ a {
     text-decoration: none;
 }
 
-a:hover {
+/*底部*/
+.bottomIcon{
 
-    color: red;
+    float:left;
 }

@@ -5,16 +5,58 @@
     <title>ethanCun的博客</title>
     <link rel="icon" href="./Source/icon-img.jpeg">
     <link rel="stylesheet" type="text/css" href="./CSS/main/main.css">
+    <link rel="stylesheet" href="./font-awesome-4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="js/jquery-3.2.1.js"></script>
+    <script>
+//            $(function() {
+//                //当屏幕大小发生变化时执行
+//                $(window).resize(function () {
+//                    Resize();
+//                });
+//                //根据屏幕大小改变div的高度
+//                function Resize() {
+//                    $("body").height($(window).height());
+//                    console.log($('body').height());
+//                }
+//
+//                Resize();
+//            })
+    </script>
+
+    <style>
+
+        body{
+
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        ul{
+
+            width: 100%;
+            background-color: red;
+        }
+
+        li{
+            float: left;
+            list-style: none;
+            background-color: red;
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-<div style="opacity: 0.8">
+<div style="opacity: 0.8;">
     <img src="./Source/bgImg1.jpg" style="width: 100%; height: 100%; background-color: black; opacity: 0.5">
-    <div class="contents" style="width: 100%;">
-        <p class="detail">ethan的个人知识记录</p><br>
-        <p class="hello">大家好!</p>
-        <p class="introduce">我是一名iOS开发者, 平时还玩玩web和ReactNative.</p></p>
+    <div class="contents">
+        <img class="icon" src="./Source/icon-img.jpeg">
+        <p class="detail">ethan</p><br>
+        <p class="hello">我是一名iOS开发者</p>
+        <p class="introduce">平时还玩玩web和ReactNative</p>
     </div>
 </div>
 
@@ -51,22 +93,35 @@
     <!--杂谈-->
     <a href="./html/Other/OtherArticleList.html">
         <div class="btnDiv">
-            <img class="btnImg" src="./Source/category-img/other.jpg">
+            <!--<img class="btnImg" src="./Source/category-img/other.jpg">-->
+            <i class="fa fa-glide-g" style="font-size: 150px; margin-top: 30px; margin-bottom: 20px"></i>
             <br>
             <p class="categoryTitle">杂谈</p>
         </div>
     </a>
 
+</div>
+
+<div style="float: left;width: 100%;margin: 0 auto; bottom: 20px; position: absolute;">
+
+    <div class="bottomIcon" style="width: 45%; text-align: right">
+
+        <a href="https://github.com/ethanCun"><i style="font-size: 30px; color: darkblue" class="fa fa-github"></i></a></h5><br>
+    </div>
+    <div class="bottomIcon" style="width: 10%; text-align: center">
+
+        <a href="http://www.jianshu.com/u/1d52648daace"><h2 style="color: darkblue">简</h2></a></h5><br>
+    </div>
+    <div class="bottomIcon" style="width: 45%; text-align: left">
+
+        <a href="http://www.linkedin.com/in/%E6%AD%A3%E8%8B%B1-%E9%99%88-441061127/"><i style="font-size: 30px; color: darkblue" class="fa fa-linkedin"></i></a></><br>
+    </div>
+
 
 </div>
 
-<div class="contactMe">
 
-    <h5><a href="https://github.com/ethanCun">Github</a></h5><br>
-    <h5><a href="http://www.jianshu.com/">简书</a></h5><br>
-    <h5><a>email:zz511627807@163.com</a></h5><br>
 
-</div>
 
 </body>
 </html>

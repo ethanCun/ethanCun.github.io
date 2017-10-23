@@ -6,6 +6,29 @@
     <link rel="icon" href="../../Source/icon-img.jpeg">
     <link rel="stylesheet" type="text/css" href="../../CSS/ArcticleList.css">
     <script type="text/javascript" src="../../js/jquery-3.2.1.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('.prevPage').click(function () {
+
+               $('.ul1').show();
+                $('.ul2').hide();
+
+                $('.prevPage').hide();
+                $('.nextPage').show();
+
+            });
+
+            $('.nextPage').click(function () {
+
+                $('.ul1').hide();
+                $('.ul2').show();
+
+                $('.prevPage').show();
+                $('.nextPage').hide();
+            })
+        })
+    </script>
     <style>
 
         .bgImage{
@@ -30,7 +53,7 @@
             color: darkgoldenrod;
             font-weight: bolder;
             font-size: xx-large;
-            padding-top: 20px;
+            padding-top: 45px;
         }
 
         li{
@@ -45,7 +68,7 @@
 
 
         p{
-            color: sienna;
+            color: red;
             font-size: x-large;
             padding-left: 150px;
             padding-top: 50px;
@@ -56,13 +79,13 @@
 </head>
 <body>
 
-<img class="bgImage" src="../../Source/bgImge6.jpg">
+<img class="bgImage" src="../../Source/bgImg3.jpg">
 
 <div class="listDiv">
 
     <h3 class="title">iOS文章集</h3>
 
-    <ul>
+    <ul class="ul1">
         <li>
             <a href="./shoppinCar/ShoppingCar.html"><p>一. 购物车</p></a>
         </li>
@@ -74,9 +97,44 @@
         <li>
             <a href="./GCDAndNSOperationQueue/GCDAndNSOperationQueue.html"><p>三. GCD/NSOperation/NSThread扩展</p></a>
         </li>
+
+        <li>
+            <a href="./SwiftEasyToForgot/SwiftEasyToForgot.html"><p>四. Swift那些搞过却又容易忘记的东东</p></a>
+        </li>
+
+        <li>
+            <a href="./DetailiOSNotes/DetailiOSNotes.html"><p>五. 值得注意的小细节整理</p></a>
+        </li>
+
+        <li>
+            <a href="./CacheHanddle/CacheHanddle.html"><p>六. iOS之缓存清理的实现</p></a>
+        </li>
+
+        <li>
+            <a href="./CocoaPods/CocoapodsNotes.html"><p>七. CocoaPods记录</p></a>
+        </li>
+
     </ul>
 
+    <ul class="ul2" style="display: none">
+
+        <li>
+            <a href="./WexinDetailNotes/WeixinDetailNotes.html"><p>八. iOS 微信支付宝等第三方集成细节记录</p></a>
+        </li>
+
+        <li>
+            <a href="./encrypt/encrypt.html"><p>九. 关于加密</p></a>
+        </li>
+    </ul>
+
+    <div style=" margin-top: 100px;text-align: center">
+        <button class="prevPage" style="display: none">上一页</button>
+        <button class="nextPage">下一页</button>
+    </div>
 </div>
+
+
+
 
 
 </body>
