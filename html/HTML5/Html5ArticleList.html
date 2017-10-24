@@ -4,8 +4,104 @@
     <meta charset="UTF-8">
     <title>HTML5文章集</title>
     <link rel="icon" href="../../Source/icon-img.jpeg">
+    <link rel="icon" href="../../Source/icon-img.jpeg">
+    <link rel="stylesheet" type="text/css" href="../../CSS/ArcticleList.css">
+    <script type="text/javascript" src="../../js/jquery-3.2.1.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('.prevPage').click(function () {
+
+                $('.ul1').show();
+                $('.ul2').hide();
+
+                $('.prevPage').hide();
+                $('.nextPage').show();
+
+            });
+
+            $('.nextPage').click(function () {
+
+                $('.ul1').hide();
+                $('.ul2').show();
+
+                $('.prevPage').show();
+                $('.nextPage').hide();
+            })
+        })
+    </script>
+    <style>
+
+        .bgImage{
+            position: absolute;
+            opacity: 0.8;
+            width: 100%;
+        }
+
+        .listDiv{
+
+            position: absolute;
+            width: 100%;
+        }
+
+        ul{
+        }
+
+        .title{
+
+            text-align: center;
+            width: 100%;
+            color: darkgoldenrod;
+            font-weight: bolder;
+            font-size: xx-large;
+            padding-top: 45px;
+        }
+
+        li{
+            /*去掉点*/
+            list-style: none;
+        }
+
+        a{
+            /*去掉下划线*/
+            text-decoration: none;
+        }
+
+
+        p{
+            color: red;
+            font-size: x-large;
+            padding-left: 150px;
+            padding-top: 50px;
+        }
+
+    </style>
 </head>
 <body>
+
+<img class="bgImage" src="../../Source/bgImg3.jpg">
+
+<div class="listDiv">
+
+    <h3 class="title">HTML5文章集</h3>
+
+    <ul class="ul1">
+        <li>
+            <a href="./Font-awesome/Font-owesome.html"><p>一. Font Awesome:一套绝佳的图标字体库和CSS框架</p></a>
+        </li>
+
+    </ul>
+
+    <ul class="ul2" style="display: none">
+
+
+    </ul>
+
+    <!--<div style=" margin-top: 100px;text-align: center">-->
+        <!--<button class="prevPage" style="display: none">上一页</button>-->
+        <!--<button class="nextPage">下一页</button>-->
+    <!--</div>-->
+</div>
 
 </body>
 </html>
