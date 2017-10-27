@@ -9,72 +9,20 @@
     <script>
         $(document).ready(function () {
 
-            $('.prevPage').click(function () {
+            $('.first').click(function () {
 
                $('.ul1').show();
                 $('.ul2').hide();
 
-                $('.prevPage').hide();
-                $('.nextPage').show();
-
             });
 
-            $('.nextPage').click(function () {
+            $('.second').click(function () {
 
                 $('.ul1').hide();
                 $('.ul2').show();
-
-                $('.prevPage').show();
-                $('.nextPage').hide();
             })
         })
     </script>
-    <style>
-
-        .bgImage{
-            position: absolute;
-            opacity: 0.8;
-            width: 100%;
-        }
-
-        .listDiv{
-
-            position: absolute;
-            width: 100%;
-        }
-
-        ul{
-        }
-
-        .title{
-
-            text-align: center;
-            width: 100%;
-            color: darkgoldenrod;
-            font-weight: bolder;
-            font-size: xx-large;
-            padding-top: 45px;
-        }
-
-        li{
-            /*去掉点*/
-            list-style: none;
-        }
-
-        a{
-            /*去掉下划线*/
-            text-decoration: none;
-        }
-
-
-        p{
-            color: red;
-            font-size: x-large;
-            padding-left: 150px;
-            padding-top: 50px;
-        }
-
-    </style>
 
 </head>
 <body>
@@ -114,13 +62,13 @@
             <a href="./CocoaPods/CocoapodsNotes.html"><p>七. CocoaPods记录</p></a>
         </li>
 
-    </ul>
-
-    <ul class="ul2" style="display: none">
-
         <li>
             <a href="./WexinDetailNotes/WeixinDetailNotes.html"><p>八. iOS 微信支付宝等第三方集成细节记录</p></a>
         </li>
+
+    </ul>
+
+    <ul class="ul2" style="display: none">
 
         <li>
             <a href="./encrypt/encrypt.html"><p>九. 关于加密</p></a>
@@ -130,15 +78,31 @@
             <a href="./AppCheckNotes/AppCheckNotes.html"><p>十. 那些年app审核遇到的坑</p></a>
         </li>
 
+        <li>
+            <a href="./RACSummarise/RACSummarise.html"><p>十一. RAC核方法总结(一)</p></a>
+        </li>
+
+        <li>
+            <a href="./RACSummarise/RACSummariseTwo.html"><p>十二. RAC核方法总结(二)</p></a>
+        </li>
+
+        <li>
+            <a href="./RACSummarise/RACNormalUse.html"><p>十三. RAC核方法总结(三)</p></a>
+        </li>
+
+
+        <li>
+            <a href="./Clang/UseOfClang.html"><p>十四. 使用clang diagnostic忽略Xcode警告</p></a>
+        </li>
     </ul>
 
-    <div style=" margin-bottom: 10px;text-align: center">
-        <button class="prevPage" style="display: none">上一页</button>
-        <button class="nextPage">下一页</button>
-    </div>
 </div>
 
 
+<div class="bottomDiv">
+    <button class="first">1</button>
+    <button class="second">2</button>
+</div>
 
 
 

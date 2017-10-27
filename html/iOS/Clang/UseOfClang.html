@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>clang diagnostic的使用</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/iOS/Clang/UseOfClang.css">
+</head>
+<body>
+
+<h2><b>使用clang diagnostic忽略Xcode警告</b></h2>
+
+<p><b>基本格式</b></p>
+<div>
+    <p>
+        #pragma clang diagnostic push<br>
+        #pragma clang diagnostic ignored "-相关命令"<br><br>
+        //需要操作的代码<br><br>
+        #pragma clang diagnostic pop<br>
+    </p>
+</div>
+<br>
+
+<p><b>一. 忽略弃用的警告⚠️</b></p>
+<div>
+    <p>
+        #pragma clang diagnostic push<br>
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"<br><br>
+
+            //启用的代码 如UIAlertView<br><br>
+
+        #pragma clang diagnostic pop<br>
+    </p>
+</div>
+<br>
+
+<p><b>二. 忽略不兼容指针类型⚠️</b></p>
+<div>
+    <p>
+        #pragma clang diagnostic push<br>
+        #pragma clang diagnostic ignored "-Wincompatible-pointer-types"<br><br>
+        //<br><br>
+        #pragma clang diagnostic pop<br>
+    </p>
+</div>
+<br>
+
+
+<p><b>三. 循环引用️⚠️</b></p>
+<div>
+    <p>
+        #pragma clang diagnostic push<br>
+        #pragma clang diagnostic ignored "-Warc-retain-cycles"<br><br>
+        //    self.block = ^ {<br>
+        //        self...<br>
+        //    };<br><br>
+        #pragma clang diagnostic pop<br>
+    </p>
+</div>
+<br>
+
+
+<p><b>四. 未使用变量 ⚠️️</b></p>
+<div>
+    <p>
+        #pragma clang diagnostic push<br>
+        #pragma clang diagnostic ignored "-Wunused-variable"<br><br>
+        int a;<br><br>
+        #pragma clang diagnostic po<br>
+    </p>
+</div>
+<br>
+
+<p><b>五. 未使用default⚠️️</b></p>
+<div>
+    <p>
+        #pragma clang diagnostic push<br>
+        #pragma clang diagnostic ignored "-Wcovered-switch-default"<br><br>
+        //    switch (style) {<br>
+        //        case UITableViewCellStyleDefault:<br>
+        //        case UITableViewCellStyleValue1:<br>
+        //        case UITableViewCellStyleValue2:<br>
+        //        case UITableViewCellStyleSubtitle:<br>
+        //            // ...<br>
+        //        default:<br>
+        //            return;<br>
+        //    }<br><br>
+        #pragma clang diagnostic pop
+    </p>
+</div>
+<br>
+
+</body>
+</html>
