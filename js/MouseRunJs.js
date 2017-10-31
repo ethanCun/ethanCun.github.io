@@ -17,13 +17,5 @@ $(document).ready(function () {
 
     }, 50)
 
-    $(window).scroll(function () {
-
-        if($(this).scrollTop()>100) {
-            $('.banner').css('backgroundColor', '#4ecdc4')
-        }else {
-            $('.banner').css('backgroundColor', 'transparent')
-        }
-    })
 })
 
