@@ -2,133 +2,146 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ethanCun的博客</title>
-    <link rel="icon" href="./Source/icon-img.jpeg">
-    <link rel="stylesheet" type="text/css" href="./CSS/main/main.css">
-    <link rel="stylesheet" href="./font-awesome-4.7.0/css/font-awesome.min.css">
-    <script type="text/javascript" src="js/jquery-3.2.1.js"></script>
+    <title>ethan</title>
+    <link rel="stylesheet" href="./CSS/iOS/newMain/newMain.css">
+    <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.css">
+    <script type="text/javascript" src="./js/jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="./js/MouseRunJs.js"></script>
     <script>
-//            $(function() {
-//                //当屏幕大小发生变化时执行
-//                $(window).resize(function () {
-//                    Resize();
-//                });
-//                //根据屏幕大小改变div的高度
-//                function Resize() {
-//                    $("body").height($(window).height());
-//                    console.log($('body').height());
-//                }
-//
-//                Resize();
-//            })
+
+        $(window).scroll(function () {
+
+            if($(this).scrollTop()>100) {
+                $('.banner').css('backgroundColor', '#4ecdc4')
+            }else {
+                $('.banner').css('backgroundColor', 'transparent')
+            }
+        })
+
     </script>
-
-    <style>
-
-        body{
-
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-
-        ul{
-
-            width: 100%;
-            background-color: red;
-        }
-
-        li{
-            float: left;
-            list-style: none;
-            background-color: red;
-        }
-
-    </style>
-
 </head>
-
 <body>
 
-<div style="opacity: 0.8;">
-    <img src="./Source/bgImg1.jpg" style="width: 100%; height: 100%; background-color: black; opacity: 0.5">
-    <div class="contents">
-        <img class="icon" src="./Source/icon-img.jpeg">
-        <p class="detail">ethan</p><br>
-        <p class="hello">我是一名iOS开发者</p>
-        <p class="introduce">平时还玩玩web和ReactNative</p>
-    </div>
-</div>
+<!--背景1-->
+<div class="backgroundDiv">
 
-<div class="buttonAero">
+    <!--banner-->
+    <div class="banner">
 
-    <!--iOS-->
-    <div class="btnDiv">
-
-        <a href="./html/iOS/iOSArticleList.html">
-            <i class="fa fa-apple" style="color: black; font-size: 150px; margin-top: 30px; margin-bottom: 20px"></i>
-            <br>
-            <p class="categoryTitle" style="color: black">iOS</p>
+        <!--avator name-->
+        <a target="_blank" href="" class="avator_a">
+            <img class="avator" src="http://www.chenzhengying.com/Source/icon-img.jpeg" alt="">
+            <h3 class="name">ethan</h3>
         </a>
+
+        <!--list-->
+        <div class="categories">
+
+            <ul class="categories_ul">
+                <a href="">
+                    <li class="li_home"><h3 class="h3_home">Home</h3></li>
+                </a>
+                <a href="./html/iOS/iOSArticleList.html">
+                    <li class="li_iOS"><h3 class="h3_iOS">iOS</h3></li>
+                </a>
+                <a href="./html/HTML5/Html5ArticleList.html">
+                    <li class="li_HTML5"><h3 class="h3_HTML5">HTML5</h3></li>
+                </a>
+                <a href="./html/ReactNative/ReactNativeArticleList.html">
+                    <li class="li_ReavtNative"><h3 class="ReactNative">React Native</h3></li>
+                </a>
+                <a href="./html/Other/OtherArticleList.html">
+                    <li class="li_other"><h3 class="Other">Other</h3></li>
+                </a>
+            </ul>
+        </div>
+
+        <!--email-->
+        <div class="email_div">
+
+            <h3 class="email_h3">Email: zz511627807@163.com</h3>
+        </div>
+
     </div>
 
-    <!--web-->
-    <a href="./html/HTML5/Html5ArticleList.html">
-        <div class="btnDiv">
-            <i class="fa fa-html5" style="color: darkred; font-size: 150px; margin-top: 30px; margin-bottom: 20px"></i>
-            <br>
-            <p class="categoryTitle" style="color: darkred">HTML5</p>
-        </div>
-    </a>
+    <!--welcome-->
+    <div class="welcome">
 
-    <!--ReactNative-->
-    <a href="./html/ReactNative/ReactNativeArticleList.html">
-        <div class="btnDiv">
-            <i class="fa fa-joomla" style="color: green; font-size: 150px; margin-top: 30px; margin-bottom: 20px"></i>
-            <br>
-            <p class="categoryTitle" style="color: green">ReactNative</p>
+        <h3 class="welcome_p">welcome!</h3>
+        <h3 class="introduce">A iOS developer, and also HTML5/ReactNative</h3>
+        <div class="knowMore_div">
+            <a href="./html/iOS/iOSArticleList.html">
+                <h3 class="knowMore">Know me More</h3>
+            </a>
         </div>
-    </a>
+    </div>
 
-    <!--杂谈-->
-    <a href="./html/Other/OtherArticleList.html">
-        <div class="btnDiv">
-            <i class="fa fa-edit" style="color: darkslategray; font-size: 150px; margin-top: 30px; margin-bottom: 20px"></i>
-            <br>
-            <p class="categoryTitle" style="color: darkslategray; padding-right: 15px">其他</p>
-        </div>
-    </a>
+    <!--滚动的鼠标-->
+    <div class="mouse-icon">
+        <div class="wheel"></div>
+    </div>
+</div>
+
+<!--内容模块-->
+<div class="contents1_div">
+
+    <ul>
+        <li class="iOS_content_li">
+            <a  class="iOS_a" href="./html/iOS/iOSArticleList.html">
+                <div class="iOS_content_div">
+
+                    <i class="fa fa-apple iOS"></i>
+                    <br>
+                    <h3 class="categoryTitle">iOS</h3>
+
+                </div>
+            </a>
+        </li>
+        <li class="HTML5_content_li">
+            <a  class="HTML5_a" href="./html/HTML5/Html5ArticleList.html">
+                <div class="HTML5_content_div">
+                    <i class="fa fa-html5 HTML5"></i>
+                    <br>
+                    <h3 class="categoryTitle">HTML5</h3>
+                </div>
+            </a>
+        </li>
+        <li class="RN_content_li">
+            <a class="RN_a" href="./html/ReactNative/ReactNativeArticleList.html">
+                <div class="RN_content_div">
+                    <i class="fa fa-joomla RN"></i>
+                    <br>
+                    <h3 class="categoryTitle">ReactNative</h3>
+                </div>
+            </a>
+        </li>
+    </ul>
 
 </div>
 
-<div style="float: left;width: 100%;margin: 0 auto; bottom: 40px; position: absolute;">
 
-    <div class="bottomIcon" style="width: 42.5%; padding-right: 15px; text-align: right">
+<!--外部链接-->
+<div class="links_div">
 
-        <a href="https://github.com/ethanCun"><i style="font-size: 30px; color: darkblue" class="fa fa-github"></i></a></h5><br>
-    </div>
-    <div class="bottomIcon" style="width: 5%; text-align: center">
-
-        <a href="http://www.jianshu.com/u/1d52648daace"><h2 style="color: darkblue">简</h2></a></h5><br>
-    </div>
-    <div class="bottomIcon" style="width: 5%; text-align: center">
-
-        <a href="http://weibo.com/p/1005056318522732/home?pids=&profile_ftype=1&is_all=1#_0"><i style="font-size: 30px; color: darkblue" class="fa fa-weibo"></i></a></><br>
-    </div>
-    <div class="bottomIcon" style="width: 5%;  text-align: center">
-
-        <a href="http://www.linkedin.com/in/%E6%AD%A3%E8%8B%B1-%E9%99%88-441061127/"><i style="font-size: 30px; color: darkblue" class="fa fa-linkedin"></i></a></><br>
-    </div>
-    <div class="bottomIcon" style="width: 42.5%;  padding-left: 15px; text-align: left">
-
-        <a href=""><i style="font-size: 30px; color: darkblue" class="fa fa-calendar-minus-o"></i></a></><br>
-    </div>
-
+    <ul class="links">
+        <li>
+            <a href="https://github.com/ethanCun"><i class="fa fa-github"></i></a></h5><br>
+        </li>
+        <li>
+            <a href="http://www.jianshu.com/u/1d52648daace"><h2 style="color: #4ecdc4">简</h2></a></h5><br>
+        </li>
+        <li>
+            <a href="http://weibo.com/p/1005056318522732/home?pids=&profile_ftype=1&is_all=1#_0"><i class="fa fa-weibo"></i></a><br>
+        </li>
+        <li>
+            <a href="http://www.linkedin.com/in/%E6%AD%A3%E8%8B%B1-%E9%99%88-441061127/"><i class="fa fa-linkedin"></i></a><br>
+        </li>
+        <li>
+            <a href=""><i class="fa fa-calendar-minus-o"></i></a><br>
+        </li>
+    </ul>
 
 </div>
-
-
-
 
 </body>
 </html>

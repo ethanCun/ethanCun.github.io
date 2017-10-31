@@ -1,0 +1,274 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+.backgroundDiv{
+
+    width:100%;
+    height: 600px;
+    justify-content: center;
+    background-image: url("../../../Source/hero-img9.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/*整个导航条*/
+.banner{
+
+    width: 1800px;
+    height: 100px;
+    background-color: rgba(36, 36, 42, 0.1);
+
+    position: fixed;
+    transition: all linear 0.5s;
+}
+
+/*a标签*/
+.avator_a{
+    text-decoration: none;
+    display: inline-block;
+    height: 100px;
+    justify-items: center;
+    float: left;
+}
+
+/*头像*/
+.avator{
+
+    width: 60px;
+    height: 60px;
+    padding: 20px 20px;
+    border-radius: 50%;
+
+    float: left;
+}
+
+/*姓名*/
+.name{
+    color: white;
+    width: 80px;
+    height: 80px;
+    padding: 10px 5px;
+    display: block;
+    line-height: 70px;
+
+    float: left;
+}
+
+/*分类*/
+.categories{
+
+    float: left;
+    width: 800px;
+    height: 100px;
+    display: inline-block;
+
+}
+
+.categories_ul{
+
+    margin-left: 50px;
+}
+
+/*li标签分类*/
+.li_home, .li_HTML5, .li_iOS, .li_ReavtNative, .li_other{
+
+    list-style: none;
+    width: 150px;
+    color: white;
+    font-size: 15px;
+    float: left;
+
+    cursor: pointer;
+}
+
+/*h3标签分类*/
+.h3_home, .h3_iOS, .li_HTML5, .li_ReavtNative, .li_other{
+
+    line-height: 90px;
+    text-align:center;
+    font-size: 15px;
+    font-family: "Oswald";
+    letter-spacing: 2px;
+}
+
+/*邮箱*/
+.email_div{
+
+    float: left;
+    width: 350px;
+    height: 100px;
+    line-height: 90px;
+}
+
+.email_h3{
+
+    color: white;
+    font-family: 'Oswald';
+    font-size: 15px;
+    cursor: pointer;
+    letter-spacing: 2px;
+}
+
+/*欢迎模块*/
+.welcome{
+
+    padding-top: 150px;
+}
+
+.welcome_p{
+
+    font-family: 'Oswald';
+    letter-spacing: 2px;
+    text-align: center;
+    font-size: 60px;
+    width: 100%;
+    color: white;
+}
+
+/*自我介绍*/
+.introduce{
+
+    margin-top: 40px;
+    width: 100%;
+    color: white;
+    font-family: 'Oswald';
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+/*了解更多*/
+.knowMore_div{
+
+    width: 100%;
+}
+
+.knowMore{
+
+    margin: 30px auto;
+    padding: 10px 35px;
+    width: 300px;
+    color: white;
+    font-family: 'Oswald';
+    letter-spacing: 2px;
+    text-align: center;
+    background-color: #4ecdc4;
+    font-size: 25px;
+    border-radius: 40px;
+    text-transform: uppercase;
+}
+
+/*滚动的鼠标*/
+.mouse-icon{
+
+    position: absolute;
+    left: 50%;
+    bottom: 100px;
+    border: 2px solid #fff;
+    border-radius: 16px;
+    height: 40px;
+    width: 24px;
+    margin-left: -15px;
+    display: block;
+    z-index: 10;
+    opacity: 0.7;
+}
+
+ .wheel {
+
+     position: relative;
+     border-radius: 10px;
+     background: #fff;
+     width: 2px;
+     height: 6px;
+     top: 4px;
+     margin-left: auto;
+     margin-right: auto;
+ }
+
+ .contents1_div{
+
+     width: 100%;
+     height: 250px;
+     background-color: #e6e6e6;
+
+ }
+
+ .contents1_div ul li{
+
+     width: 30%;
+     height: 300px;
+     float: left;
+     margin-top: 20px;
+     margin-left: 3%;
+     text-decoration: none;
+     list-style: none;
+     box-sizing: border-box;
+ }
+
+ .ios_content_div{
+
+     width: 200px;
+     height: 200px;
+     padding-left: 10px;
+     text-align: center;
+ }
+
+.categoryTitle {
+
+    font-size: x-large;
+    font-family: "Adobe Fan Heiti Std";
+    color: #4ecdc4;
+    text-align: center;
+}
+
+i.iOS, i.HTML5, i.RN{
+    color: #4ecdc4;
+    font-size: 150px;
+    margin: 0 auto;
+    margin-left: 35%;
+}
+
+.iOS_a, .HTML5_a, .RN_a{
+
+    text-decoration: none;
+}
+
+/*外部链接*/
+.links_div{
+
+    width: 100%;
+    background-color: #e6e6e6;
+    height: 150px;
+}
+
+.links{
+
+    width: 300px;
+    margin: 0 auto;
+
+    /*margin-top: 200px;*/
+    /*width: 300px;*/
+    /*height: 200px;*/
+    /*margin: 0 auto;*/
+}
+
+.links li{
+
+    width: 40px;
+    float: left;
+    list-style: none;
+    margin: 0 10px;
+}
+
+a{
+
+    text-decoration: none;
+}
+
+.links li a i{
+
+    color: #4ecdc4;
+    font-size: 30px;
+}
