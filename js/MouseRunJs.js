@@ -38,6 +38,21 @@ $(document).ready(function () {
 
         console.log('位置:'+$(this).scrollTop());
 
+        var winWidth;
+
+        // 获取窗口宽度
+        if (window.innerWidth) {
+
+            winWidth = window.innerWidth;
+        } else if ((document.body) && (document.body.clientWidth)){
+
+            winWidth = document.body.clientWidth;
+        }
+
+        console.log('windowSize = '+ winWidth);
+
+        if(winWidth < 1024) {return;}
+
         if($(this).scrollTop()>250){
 
             $('.shoppingCar_a').show(500);
