@@ -7,65 +7,52 @@
     <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.css">
     <script type="text/javascript" src="./js/jquery-3.2.1.js"></script>
     <script type="text/javascript" src="./js/MouseRunJs.js"></script>
-    <script>
-        $(document).ready(function () {
-
-
-            $(window).scroll(function () {
-
-                if($(this).scrollTop()>100) {
-                    $('.banner').css('backgroundColor', '#4ecdc4')
-                }else {
-                    $('.banner').css('backgroundColor', 'transparent')
-                }
-            })
-        })
-
-    </script>
 </head>
 <body>
+
+<!--banner-->
+<div class="banner">
+
+    <!--avator name-->
+    <a href="" class="avator_a">
+        <img class="avator" src="./Source/name.gif" alt="">
+        <h3 class="name">ethan</h3>
+    </a>
+
+    <!--list-->
+    <div class="categories">
+
+        <ul class="categories_ul">
+            <a href="">
+                <li class="li_home"><h3 class="h3_home">Home</h3></li>
+            </a>
+            <a href="./html/iOS/iOSArticleList.html">
+                <li class="li_iOS"><h3 class="h3_iOS">iOS</h3></li>
+            </a>
+            <a href="./html/HTML5/Html5ArticleList.html">
+                <li class="li_HTML5"><h3 class="h3_HTML5">HTML5</h3></li>
+            </a>
+            <a href="./html/ReactNative/ReactNativeArticleList.html">
+                <li class="li_ReavtNative"><h3 class="ReactNative">React Native</h3></li>
+            </a>
+            <a href="./html/Other/OtherArticleList.html">
+                <li class="li_other"><h3 class="Other">Other</h3></li>
+            </a>
+        </ul>
+    </div>
+
+    <!--email-->
+    <div class="email_div">
+
+        <h3 class="email_h3">Email: zz511627807@163.com</h3>
+    </div>
+
+</div>
 
 <!--背景1-->
 <div class="backgroundDiv">
 
-    <!--banner-->
-    <div class="banner">
 
-        <!--avator name-->
-        <a href="" class="avator_a">
-            <img class="avator" src="./Source/name.gif" alt="">
-            <h3 class="name">ethan</h3>
-        </a>
-
-        <!--list-->
-        <div class="categories">
-
-            <ul class="categories_ul">
-                <a href="">
-                    <li class="li_home"><h3 class="h3_home">Home</h3></li>
-                </a>
-                <a href="./html/iOS/iOSArticleList.html">
-                    <li class="li_iOS"><h3 class="h3_iOS">iOS</h3></li>
-                </a>
-                <a href="./html/HTML5/Html5ArticleList.html">
-                    <li class="li_HTML5"><h3 class="h3_HTML5">HTML5</h3></li>
-                </a>
-                <a href="./html/ReactNative/ReactNativeArticleList.html">
-                    <li class="li_ReavtNative"><h3 class="ReactNative">React Native</h3></li>
-                </a>
-                <a href="./html/Other/OtherArticleList.html">
-                    <li class="li_other"><h3 class="Other">Other</h3></li>
-                </a>
-            </ul>
-        </div>
-
-        <!--email-->
-        <div class="email_div">
-
-            <h3 class="email_h3">Email: zz511627807@163.com</h3>
-        </div>
-
-    </div>
 
     <!--welcome-->
     <div class="welcome">
@@ -85,12 +72,52 @@
     </div>
 </div>
 
+<!--推荐内容:购物车-->
+<div class="shoppingCarContentsAero">
+
+    <a href="html/iOS/shoppinCar/ShoppingCar.html" class="shoppingCar_a">
+
+    <div class="shoppingCar">
+
+            <img src="./Source/shopping121.png" class="shoppingCar_img">
+            <p class="shoppingCarIntruduce">
+                仿淘宝购物订单逻辑<br>
+                设计模式MVC <br>
+                控制器450行代码 <br>
+                cell 280行代码 实现类似淘宝购物车的选择，编辑，删除等功能<br>
+            </p>
+
+    </div>
+    </a>
+
+</div>
+
+<!--推荐内容ReactNative配置-->
+<div class="ReactNativeConfigContentAero">
+
+    <a class="ReactNativeConfigContentAero_a" href="./html/ReactNative/ReactNativeConfig/ReactNativeConfig.html">
+
+        <div class="ReactNativeConfigContentAero_div">
+
+            <img src="./Source/computer127.png" class="ReactNativeConfigContentAero_img">
+
+            <p class="ReactNativeConfigContentAero_p">
+                mac下配置React native开发环境<br>
+                一、需要的东西：Note.js/React Native Command Line Tools...<br>
+                二、安装软件包管理器：Homebrew<br>
+                三、安装最新版git<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;......<br>
+            </p>
+        </div>
+    </a>
+</div>
+
 <!--内容模块-->
 <div class="contents1_div">
 
     <ul>
         <li class="iOS_content_li">
-            <a  class="iOS_a" href="./html/iOS/iOSArticleList.html">
+            <a class="iOS_a" href="./html/iOS/iOSArticleList.html">
                 <div class="iOS_content_div">
 
                     <i class="fa fa-apple iOS"></i>
@@ -101,7 +128,7 @@
             </a>
         </li>
         <li class="HTML5_content_li">
-            <a  class="HTML5_a" href="./html/HTML5/Html5ArticleList.html">
+            <a class="HTML5_a" href="./html/HTML5/Html5ArticleList.html">
                 <div class="HTML5_content_div">
                     <i class="fa fa-html5 HTML5"></i>
                     <br>
@@ -122,7 +149,6 @@
 
 </div>
 
-
 <!--外部链接-->
 <div class="links_div">
 
@@ -134,7 +160,8 @@
             <a href="http://www.jianshu.com/u/1d52648daace"><h2 style="color: #4ecdc4">简</h2></a></h5><br>
         </li>
         <li>
-            <a href="http://weibo.com/p/1005056318522732/home?pids=&profile_ftype=1&is_all=1#_0"><i class="fa fa-weibo"></i></a><br>
+            <a href="http://weibo.com/p/1005056318522732/home?pids=&profile_ftype=1&is_all=1#_0"><i
+                    class="fa fa-weibo"></i></a><br>
         </li>
         <li>
             <a href="http://www.linkedin.com/in/%E6%AD%A3%E8%8B%B1-%E9%99%88-441061127/"><i class="fa fa-linkedin"></i></a><br>
