@@ -3,9 +3,14 @@
     margin: 0;
 }
 
+body{
+
+    background-color: red;
+}
+
 .backgroundDiv{
 
-    padding-top: 50px;
+    /*padding-top: 50px;*/
     position: relative;
     width:100%;
     height: 600px;
@@ -18,7 +23,7 @@
 /*整个导航条*/
 .banner{
 
-    width: 1800px;
+    width: 100%;
     height: 100px;
     background-color: rgba(36, 36, 42, 0.1);
 
@@ -63,22 +68,21 @@
 .categories{
 
     float: left;
-    width: 800px;
+    width: 65%;
     height: 100px;
     display: inline-block;
-
 }
 
 .categories_ul{
 
-    margin-left: 50px;
+    margin-left: 2%;
 }
 
 /*li标签分类*/
 .li_home, .li_HTML5, .li_iOS, .li_ReavtNative, .li_other{
 
     list-style: none;
-    width: 150px;
+    width: 20%;
     color: white;
     font-size: 15px;
     float: left;
@@ -93,15 +97,15 @@
     text-align:center;
     font-size: 15px;
     font-family: "Oswald";
-    letter-spacing: 2px;
+    letter-spacing: 1px;
 }
 
 /*邮箱*/
 .email_div{
 
-    float: left;
-    width: 350px;
-    height: 100px;
+    float: right;
+    width: 15%;
+    height: 60px;
     line-height: 90px;
 }
 
@@ -109,9 +113,9 @@
 
     color: white;
     font-family: 'Oswald';
-    font-size: 15px;
+    font-size: 14px;
     cursor: pointer;
-    letter-spacing: 2px;
+    /*letter-spacing: 1.5px;*/
 }
 
 /*欢迎模块*/
