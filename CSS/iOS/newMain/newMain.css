@@ -113,7 +113,7 @@ body{
 
     color: white;
     font-family: 'Oswald';
-    font-size: 14px;
+    font-size: 12px;
     cursor: pointer;
     /*letter-spacing: 1.5px;*/
 }
@@ -236,7 +236,8 @@ i.iOS, i.HTML5, i.RN{
     color: #4ecdc4;
     font-size: 150px;
     margin: 0 auto;
-    margin-left: 35%;
+    margin-left: 50%;
+    transform: translateX(-50%);
 }
 
 .iOS_a, .HTML5_a, .RN_a{
