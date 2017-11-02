@@ -7,13 +7,12 @@ h2{
     width: 100%;
 }
 
-p.desc{
+p.title{
 
-    font-size: small;
-    color: cadetblue;
-    padding-left: 20px;
+    font-size: 30px;
+    color: black;
+    margin-left: 50px;
 }
-
 
 h3{
     border: 1px solid rebeccapurple;
@@ -22,4 +21,10 @@ h3{
 
 div{
     border: 1px solid rebeccapurple;
+}
+
+h5{
+
+    font-size: 20px;
+    color: #4ecdc4;
 }
