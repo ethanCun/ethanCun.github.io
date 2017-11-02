@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iOS中的锁与信号量</title>
+    <link rel="stylesheet" href="../../../CSS/iOS/LocksIniOS/LocksIniOS.css">
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+</head>
+<body>
+
+<h2><b>iOS中的锁与信号量</b></h2>
+
+<br>
+<p>一. @synchronized(obj)</p>
+<br>
+<div>
+    <p>
+        #pragma mark - 1. @synchronized(obj)<br>
+        - (void)synchronizedDemo<br>
+        {<br>
+        /**<br>
+        @synchronized(self) 指令使用的 self 为该锁的唯一标识，只有当标识相同时，才为满足互斥，如果线程 2 中的 @synchronized(self) 改为 @synchronized(self.view) ，那么线程 2 就不会被阻塞，@synchronized 指令实现锁的优点就是我们不需要在代码中显式的创建锁对象，便可以实现锁的机制，但作为一种预防措施，@synchronized 块会隐式的添加一个异常处理例程来保护代码，该处理例程会在异常抛出的时候自动的释放互斥锁。所以如果不想让隐式的异常处理例程带来额外的开销，你可以考虑使用锁对象。<br><br>
+
+        @sychronized(self){} 内部 self 被释放或被设为 nil 不会影响锁的功能，但如果 self 一开始就是 nil，那就会丢失了锁的功能了。<br>
+        */<br><br>
+
+        dispatch_queue_t queue = dispatch_get_global_queue(0, 0);<br>
+        dispatch_queue_t queue2 = dispatch_get_global_queue(0, 0);<br><br>
+
+        dispatch_async(queue, ^{<br><br>
+
+        @synchronized (self) {<br><br>
+
+        NSLog(@"1 start");<br><br>
+
+        sleep(5);<br><br>
+
+        NSLog(@"1 end");<br>
+        }<br>
+        });<br><br><br>
+
+
+        dispatch_async(queue2, ^{<br><br>
+
+        @synchronized (self) {<br><br>
+
+        NSLog(@"2 start");<br><br>
+
+        sleep(5);<br><br>
+
+        NSLog(@"2 end");<br>
+        }<br>
+        });<br>
+        }<br>
+    </p>
+</div>
+
+<br>
+<p>二. NSLock</p>
+<br>
+<div>
+    <p>
+        - (void)NSLockDemo<br>
+        {<br>
+        /**NSLock、NSConditionLock、NSRecursiveLock、NSCondition，然后有一个 NSLocking 协议：<br>
+        lock与unlock操作必须在同一线程，否则结果不确定甚至会引起死锁<br>
+        trylock 和 lock 使用场景：当前线程锁失败，也可以继续其它任务，用 trylock 合适；当前线程只有锁成功后，才会做一些有意义的工作，那就 lock，没必要轮询 trylock。<br>
+        lockBeforeDate: 方法会在所指定 Date 之前尝试加锁，会阻塞线程，如果在指定时间之前都不能加锁，则返回 NO，指定时间之前能加锁，则返回 YES。<br>
+        由于是互斥锁，当一个线程进行访问的时候，该线程获得锁，其他线程进行访问的时候，将被操作系统挂起，直到该线程释放锁，其他线程才能对其进行访问，从而却确保了线程安全。但是如果连续锁定两次，则会造成死锁问题。<br>
+        */<br><br>
+
+        NSLock *lock = [NSLock new];<br><br>
+
+        dispatch_queue_t q = dispatch_get_global_queue(0, 0);<br>
+        dispatch_queue_t q2 = dispatch_get_global_queue(0, 0);<br><br>
+
+        dispatch_async(q, ^{<br><br>
+
+        if ([lock tryLock]) {<br><br>
+
+        NSLog(@"加锁成功");<br><br>
+
+        [lock lock];<br>
+        // 上锁解锁必须一对对出现<br>
+        // 此处报错 ： -[NSLock unlock]: lock (<NSLock: 0x6080000cbd70> '(null)') unlocked from thread which did not lock it<br>
+        //[lock lock];<br><br>
+
+        sleep(5);<br><br>
+
+        NSLog(@"NSLock 1 加锁成功");<br><br>
+
+        [lock unlock];<br><br>
+
+        NSLog(@"NSLock 1 解锁成功");<br><br>
+
+        }else{<br><br>
+
+        NSLog(@"加锁失败");<br>
+        }<br><br>
+
+        });<br><br>
+
+        dispatch_async(q2, ^{<br><br>
+
+        [lock lockBeforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];<br><br>
+
+        sleep(5);<br><br>
+
+        NSLog(@"NSLock 2 加锁成功");<br><br>
+
+        [lock unlock];<br><br>
+
+        NSLog(@"NSLock 2 解锁成功");<br>
+        });<br>
+        }<br><br>
+
+    </p>
+</div>
+
+<br>
+<p>三. NSRecursiveLock</p>
+<br>
+<div>
+    <p>
+        /**<br>
+        NSRecursiveLock 是递归锁，顾名思义，可以被一个线程多次获得，而不会引起死锁。它记录了成功获得锁的次数，每一次成功的获得锁，必须有一个配套的释放锁和其对应，这样才不会引起死锁。NSRecursiveLock 会记录上锁和解锁的次数，当二者平衡的时候，才会释放锁，其它线程才可以上锁成功。<br>
+        */<br>
+        - (void)NSRecursiveLockDemo<br>
+        {<br>
+        NSRecursiveLock *recursiveLock = [[NSRecursiveLock alloc] init];<br><br>
+
+        static void(^recursiveLockBlock)(int value);<br><br>
+
+        recursiveLockBlock = ^(int value){<br><br>
+
+        [recursiveLock lock];<br><br>
+
+        NSLog(@"recursiveLock 加锁成功");<br><br>
+
+        if (value < 10) {<br><br>
+
+        NSLog(@"value = %d", value);<br><br>
+
+        recursiveLockBlock(value+1);<br>
+        }<br><br>
+
+        [recursiveLock unlock];<br><br>
+
+        NSLog(@"recursiveLock解锁成功");<br>
+        };<br><br>
+
+        recursiveLockBlock(1);<br><br>
+
+        }<br>
+    </p>
+</div>
+
+
+<br>
+<p>四. NSConditionLock</p>
+<br>
+<div>
+    <p>
+        - (void)conditionLockDemo<br>
+        {<br>
+        /**<br>
+        NSConditionLock 对象所定义的互斥锁可以在使得在某个条件下进行锁定和解锁，它和 NSLock 类似，都遵循 NSLocking 协议，方法都类似，只是多了一个 condition 属性，以及每个操作都多了一个关于 condition 属性的方法，例如 tryLock、tryLockWhenCondition:，所以 NSConditionLock 可以称为条件锁。<br><br>
+
+        只有 condition 参数与初始化时候的 condition 相等，lock 才能正确进行加锁操作。<br>
+        unlockWithCondition: 并不是当 condition 符合条件时才解锁，而是解锁之后，修改 condition 的值。<br>
+        */<br><br>
+
+        NSConditionLock *conditionLock = [[NSConditionLock alloc] initWithCondition:0];<br><br>
+
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{<br><br>
+
+        NSLog(@"thread 1 = %@", [NSThread currentThread]);<br><br>
+
+        [conditionLock lock];<br><br>
+
+        NSLog(@"NSConditionLock 1 加锁成功");<br><br>
+
+        sleep(2);<br><br>
+
+        [conditionLock unlock];<br><br>
+
+        NSLog(@"NSConditionLock 1 解锁成功");<br>
+        });<br><br>
+
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{<br><br>
+
+        NSLog(@"thread 2 = %@", [NSThread currentThread]);<br><br>
+
+        [conditionLock lockWhenCondition:0];<br><br>
+
+        NSLog(@"NSConditionLock 2 加锁成功");<br><br>
+
+        sleep(2);<br><br>
+
+        //解锁之后，修改 condition 的值<br>
+        [conditionLock unlockWithCondition:1];<br><br>
+
+        NSLog(@"NSConditionLock 2 解锁成功");<br>
+        });<br><br>
+
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{<br><br>
+
+        NSLog(@"thread 3 = %@", [NSThread currentThread]);<br><br>
+
+        //lockWhenCondition 与 lock 方法类似，加锁失败会阻塞线程，所以线程会被阻塞着。<br>
+        [conditionLock lockWhenCondition:1];<br><br>
+
+        NSLog(@"NSConditionLock 3 加锁成功");<br><br>
+
+        sleep(2);<br><br>
+
+        [conditionLock unlock];<br><br>
+
+        NSLog(@"NSConditionLock 3 解锁成功");<br>
+        });<br><br>
+
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{<br><br>
+
+        NSLog(@"thread 4 = %@", [NSThread currentThread]);<br><br>
+
+        [conditionLock lockWhenCondition:0 beforeDate:[NSDate dateWithTimeIntervalSinceNow:5]];<br><br>
+
+        NSLog(@"NSConditionLock 4 加锁成功");<br><br>
+
+        sleep(2);<br><br>
+
+        [conditionLock unlock];<br><br>
+
+        NSLog(@"NSConditionLock 4 解锁成功");<br>
+        });<br>
+        }<br>
+
+    </p>
+</div>
+
+
+<br>
+<p>五. NSCondition</p>
+<br>
+<div>
+    <p>
+        - (void)NSConditionDemo<br>
+        {<br>
+        /**<br>
+        NSCondition 是一种特殊类型的锁，通过它可以实现不同线程的调度。一个线程被某一个条件所阻塞，直到另一个线程满足该条件从而发送信号给该线程使得该线程可以正确的执行。比如说，你可以开启一个线程下载图片，一个线程处理图片。这样的话，需要处理图片的线程由于没有图片会阻塞，当下载线程下载完成之后，则满足了需要处理图片的线程的需求，这样可以给定一个信号，让处理图片的线程恢复运行。<br><br>
+
+        NSCondition 的对象实际上作为一个锁和一个线程检查器，锁上之后其它线程也能上锁，而之后可以根据条件决定是否继续运行线程，即线程是否要进入 waiting 状态，如果进入 waiting (挂起线程)状态，当其它线程中的该锁执行 signal(唤醒一条挂起线程) 或者 broadcast(唤醒所有挂起线程) 方法时，线程被唤醒，继续运行之后的方法。<br><br>
+
+        NSCondition 可以手动控制线程的挂起与唤醒，可以利用这个特性设置依赖。<br>
+        */<br>
+
+        NSCondition *condition = [[NSCondition alloc] init];<br><br>
+
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{<br><br>
+
+        [condition lock];<br><br>
+
+        NSLog(@"condition thread 1 上锁");<br><br>
+
+        [condition wait];<br><br>
+
+        NSLog(@"condition thread 1 挂起");<br><br>
+
+        [condition unlock];<br><br>
+
+        NSLog(@"condition thread 1 解锁");<br><br>
+
+        });<br><br>
+
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{<br><br>
+
+        [condition lock];<br><br>
+
+        NSLog(@"condition thread 2 上锁");<br><br>
+
+        if ([condition waitUntilDate:[NSDate dateWithTimeIntervalSinceNow:10]]) {<br><br>
+
+        NSLog(@"condition thread 2 挂起");<br><br>
+
+        [condition unlock];<br><br>
+
+        NSLog(@"condition thread 2 解锁");<br>
+        }<br><br>
+
+        });<br><br>
+
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{<br><br>
+
+        sleep(5);<br><br>
+
+        //3s之后唤醒 signal没有唤醒thread2 造成死锁<br>
+        [condition signal];<br>
+        });<br>
+        }<br><br>
+    </p>
+</div>
+
+
+<br>
+<p>六. dispatch_semaphore_t</p>
+<br>
+<div>
+    <p>
+        - (void)dispatch_semaphoreDemo<br>
+        {<br>
+        /**<br>
+        dispatch_semaphore 使用信号量机制实现锁，等待信号和发送信号。<br><br>
+
+        dispatch_semaphore 是 GCD 用来同步的一种方式，与他相关的只有三个函数，一个是创建信号量，一个是等待信号，一个是发送信号。<br>
+        dispatch_semaphore 的机制就是当有多个线程进行访问的时候，只要有一个获得了信号，其他线程的就必须等待该信号释放。<br>
+        */<br><br>
+
+        //创建一个 dispatch_semaphore_t 类型的信号量，设定信号量的初始值为 1 这里的传入的参数必须大于或等于 0，否则 dispatch_semaphore_create 会返回 NULL。<br>
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);<br><br>
+
+        dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, 6 * NSEC_PER_SEC);<br><br>
+
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{<br><br>
+
+        //判断 semaphore 的信号值是否大于 0 大于 0 不会阻塞线程，消耗掉一个信号，执行后续任务。 如果信号值为 0，该线程会和 NSCondition 一样直接进入 waiting 状态，等待其他线程发送信号唤醒线程去执行后续任务，或者当 timeout 时限到了，也会执行后续任务。<br>
+        //lock unlock 只能同一时间，一个线程访问被保护的临界区，而如果 dispatch_semaphore 的信号量初始值为 x ，则可以有 x 个线程同时访问被保护的临界区。<br>
+        dispatch_semaphore_wait(semaphore, timeout);<br><br>
+
+        NSLog(@"线程1开始");<br><br>
+
+        sleep(5);<br><br>
+
+        NSLog(@"线程1结束");<br><br>
+
+        //发送信号，如果没有等待的线程接受信号，则使 signal 信号值加一（做到对信号的保存）<br>
+        dispatch_semaphore_signal(semaphore);<br>
+        });<br><br>
+
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{<br><br>
+
+        sleep(1);<br><br>
+
+        dispatch_semaphore_wait(semaphore, timeout);<br><br>
+
+        NSLog(@"线程2开始");<br><br>
+
+        dispatch_semaphore_signal(semaphore);<br>
+        });<br><br>
+
+
+        #pragma mark - semaphore 控制并发数量例子 模拟UI界面图片一组一组展现<br><br>
+
+        dispatch_semaphore_t semaphore2 = dispatch_semaphore_create(10);<br><br>
+
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{<br><br>
+
+        for (NSInteger i=0; i< 100; i++) {<br><br>
+
+        dispatch_semaphore_wait(semaphore2, DISPATCH_TIME_FOREVER);<br><br>
+
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{<br><br>
+
+        sleep(5);<br><br>
+
+        NSLog(@"i = %ld", i);<br><br>
+
+        dispatch_semaphore_signal(semaphore2);<br>
+        });<br>
+        }<br>
+        });<br><br>
+
+        }<br>
+    </p>
+</div>
+
+
+<br>
+<p>七. OSSpinLock</p>
+<br>
+<div>
+    <p>
+        导入#import <libkern/OSAtomic.h>
+
+        - (void)OSSpinLockDemo<br>
+        {<br>
+        /**<br>
+        OSSpinLock 是一种自旋锁，和互斥锁类似，都是为了保证线程安全的锁。但二者的区别是不一样的，对于互斥锁，当一个线程获得这个锁之后，其他想要获得此锁的线程将会被阻塞，直到该锁被释放。但自旋锁不一样，当一个线程获得锁之后，其他线程将会一直循环在哪里查看是否该锁被释放。所以，此锁比较适用于锁的持有者保存时间较短的情况下。<br>
+        */<br><br>
+
+        __block OSSpinLock lock = OS_SPINLOCK_INIT;<br><br>
+
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{<br><br>
+
+        OSSpinLockLock(&lock);<br><br>
+
+        NSLog(@"OSSpinLock 1 加锁成功");<br><br>
+
+        sleep(5);<br><br>
+
+        OSSpinLockUnlock(&lock);<br><br>
+
+        NSLog(@"OSSpinLock 1 解锁成功");<br><br>
+
+        });<br><br>
+
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{<br><br>
+
+        OSSpinLockLock(&lock);<br><br>
+
+        NSLog(@"OSSpinLock 2 加锁成功");<br><br>
+
+        sleep(2);<br><br>
+
+        OSSpinLockUnlock(&lock);<br><br>
+
+        NSLog(@"OSSpinLock 2 解锁成功");<br>
+        });<br><br>
+
+        }<br><br>
+
+    </p>
+</div>
+
+</body>
+</html>
