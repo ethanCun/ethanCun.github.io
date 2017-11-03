@@ -4,14 +4,20 @@ $(document).ready(function () {
 
         $('.ul1').show();
         $('.ul2').hide();
-
+        $('.ul3').hide();
     });
 
     $('.second').click(function () {
 
         $('.ul1').hide();
         $('.ul2').show();
+        $('.ul3').hide();
     })
-})/**
- * Created by macofethan on 17/11/2.
- */
+
+    $('.third').click(function () {
+
+        $('.ul1').hide();
+        $('.ul2').hide();
+        $('.ul3').show();
+    })
+})

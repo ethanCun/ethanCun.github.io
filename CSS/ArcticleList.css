@@ -90,7 +90,7 @@ p{
     padding-top: 50px;
 }
 
-.first, .second{
+.first, .second, .third{
 
     width: 80px;
     height: 30px;
@@ -99,7 +99,7 @@ p{
 .bottomDiv{
 
     /*transform:固定宽度使用*/
-    width: 180px;
+    width: 260px;
     margin-top: 70px;
     margin-bottom: 20px;
     margin-left: 50%;

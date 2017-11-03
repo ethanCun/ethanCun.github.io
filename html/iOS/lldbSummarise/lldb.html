@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>llbd常用调试技巧</title>
+    <link rel="stylesheet" href="../../../CSS/iOS/lldbSummarise/lldb.css">
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+</head>
+<body>
+
+<h2>llbd常用调试技巧</h2>
+<hr>
+
+<div>
+    <p>
+        &nbsp;&nbsp;&nbsp;&nbsp;LLDB是Xcode默认的调试器，它与LLVM编译器一起，带给我们更丰富的流程控制和数据检测的调试功能。平时用Xcode运行程序，实际走的都是LLDB。熟练使用LLDB，可以让debug事半功倍。
+        常用LLDB命令:
+    </p>
+</div>
+
+<br>
+<b>1. expression</b>
+<div>
+    <p>
+        expression命令的作用是执行一个表达式，并将表达式返回的结果输出。可以实现2个功能：
+    </p>
+    <p>
+        1) 执行某个表达式。 我们在代码运行过程中，可以通过执行某个表达式来动态改变程序运行的轨迹。 假如我们在运行过程中，突然想把self.view颜色改成红色，看看效果。我们不必写下代码，重新run，只需暂停程序，用expression改变颜色，再刷新一下界面，就能看到效果
+    </p>
+        //设置颜色<br>
+        expression -- self.view.backgroundColor = [UIColor redColor]<br>
+        //刷新<br>
+        expression -- (void)[CATransaction flush]<br>
+    <p>
+        2) 将返回值输出。 也就是说我们可以通过expression来打印东西。 假如我们想打印self.view
+    </p>
+        expression -- expression -- self.view
+    <p></p>
+</>
+
+<br>
+<b>2. p & print</b>
+<div>
+    <br>
+    print: 打印某个东西，可以是变量和表达式<br>
+    p: 可以看做是print的简写<br>
+    <br>
+</div>
+
+<br>
+<b>3. call</b>
+<div>
+    <br>
+    call: 调用某个方法<br>
+        call [self run]<br>
+    <br>
+</div>
+
+<br>
+<b>4. po</b>
+<div>
+    <br>
+    OC里所有的对象都是用指针表示的，所以一般打印的时候，打印出来的是对象的指针，而不是对象本身。如果我们想打印对象。我们需要使用命令选项:-O。为了更方便的使用，LLDB为expression -O 定义了一个别名：po<br>
+    <br>
+        po self.view<br>
+    <br>
+</div>
+
+
+<br><br>
+<b>5. help expression查到expression所有的信息</b>
+<br>
+
+<br><br><br>
+<b><a href="http://ios.jobbole.com/83393/">更多llbd命令</a></b>
+
+
+</body>
+</html>

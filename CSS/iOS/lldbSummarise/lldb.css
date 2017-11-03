@@ -23,3 +23,18 @@ div{
     border: 1px solid rebeccapurple;
 }
 
+a{
+    text-decoration: none;
+}
+
+pre{
+
+    font-size: 15px;
+}
+
+h4{
+
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+}
