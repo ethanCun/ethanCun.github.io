@@ -16,6 +16,11 @@ body{
     width: 100%;
 }
 
+body{
+
+    background-color: rgba(140, 98, 59, 0.4);
+
+}
 
 .listDiv{
 
