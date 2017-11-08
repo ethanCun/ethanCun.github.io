@@ -2,26 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>杂谈</title>
+    <title>Other</title>
     <link rel="icon" href="../../Source/icon-img.jpeg">
-    <link rel="stylesheet" type="text/css" href="../../CSS/ArcticleList.css">
-    <script type="text/javascript" src="../../js/iOS/iOSArticleList/iOSArticleList.js"></script>
+    <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../CSS/ArcticleList.css">
+    <script src="../../Vendor/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
 </head>
 <body>
 
-<div class="listDiv">
+<a href=""><i class="fa fa-angle-double-up"></i></a>
 
-    <h3 class="title">杂谈</h3>
 
-    <ul>
-        <li>
-            <a href="./PHPNotes/PhpNotes.html"><p>一. PHP 笔记</p></a>
-        </li>
-        <li>
-            <a href="./Delete_DS_Store/Delete_DS_Store.html"><p>二. 【Mac技巧】.DS_Store 文件删不掉？彻底删除不断复活的.DS_Store 文件</p></a>
-        </li>
-    </ul>
+<div class="container">
 
+    <span class="label label-warning">life</span>
+    <span class="label label-danger">OS/iOS</span>
+    <span class="label label-primary">PHP</span>
+
+    <div class="jumbotron shoppingcar">
+
+        <div class="container">
+            <h2>PHP 笔记</h2>
+            <p>
+                第一个php程序打开，显示502 Bad Gateway，如下图...<br>
+                <a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-9f48156d50fcedf6.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-9f48156d50fcedf6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+                <br><p class="desc">示意图</p><br>
+            <b>    解决办法：<br></b>
+            <p>Mac 下：phpstorm----preferences-----languages&frameworks---php</p>
+            <p>设置interpreter->点击左侧“+”添加，将exexutable路径设置为/Applications/XAMPP/bin/php</p>...
+            </p>
+            <button type="button" class="btn btn-warning"
+                    onclick="javascript:window.location.href='PHPNotes/PhpNotes.html'">查看更多
+            </button>
+        </div>
+    </div>
+
+    <div class="jumbotron wexinalipay">
+
+        <div class="container">
+            <h2>【Mac技巧】.DS_Store 文件删不掉？彻底删除不断复活的.DS_Store 文件</h2>
+            <p>
+                相信大部分Mac 用家都曾遇到过，当将Mac 整个文件夹移到Windows 或者其他装置时，文件夹会出现.DS_Store 这一个文件，
+                不过在Mac 却见不到这个文件，如果你不了解.DS_Store 你会误以为这是错误文件或是一个病毒。实际上 .DS_Store（全称 Desktop Services Store）是Apple 为 OS X 操作系统所创造的隐藏文件，
+                目的在于存贮目录的自定义属性，例如文件们的图标位置或者是背景色的选择...
+            </p>
+            <button type="button" class="btn btn-warning"
+                    onclick="javascript:window.location.href='Delete_DS_Store/Delete_DS_Store.html'">查看更多
+            </button>
+        </div>
+
+    </div>
 </div>
 
 

@@ -1,113 +1,119 @@
 
-body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form,
-fieldset, input, textarea, p, blockquote, th, td {
-    margin: 0;
+/*新样式*/
+*{
+
     padding: 0;
+    margin: 0;
 }
 
 body{
-    position: relative;
+    background: rgba(244, 245, 245, 1.0);
 }
 
+/*回到顶部*/
+.fa-angle-double-up{
 
-.bgImage{
-    /*position: absolute;*/
-    opacity: 0.8;
-    width: 100%;
+    width: 40px;
+    height: 40px;
+    position: fixed;
+    bottom: 30px;
+    right: 0px;
+    z-index: 100;
+    color: #4ecdc4;
+    font-size: 30px;
 }
 
-body{
+/*标签*/
+.label{
 
-    background-color: rgba(140, 98, 59, 0.4);
-
+    float: right;
+    margin-top: 20px;
+    margin-left: 10px;
 }
 
-.listDiv{
+/*背景大图*/
+.jumbotron{
 
-    position: relative;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    /*background-image: url("../Source/bgImg3.jpg");*/
-    /*background-size: cover;*/
-    /*background-repeat: no-repeat;*/
+    margin-top: 50px;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
-ul{
+/*查看更多*/
+.btn-warning{
+
+    float: right;
+    background-color: #4ecdc4;
+    border-color: #4ecdc4;
 }
 
-
-li{
-    /*去掉点*/
-    list-style: none;
+/*背景大图不同imageurl*/
+.shoppingcar{
+    background-image: url("http://demo.cssmoban.com/cssthemes4/tops_04_karmo/assets/img/services.jpg");
 }
 
-a{
-    /*去掉下划线*/
-    text-decoration: none;
+.wexinalipay{
+    background-image: url("http://img3.imgtn.bdimg.com/it/u=3030245777,1359886196&fm=27&gp=0.jpg");
 }
 
-
-p{
-    color: sienna;
-    font-size: x-large;
-    padding-left: 150px;
-    padding-top: 50px;
+.swift{
+    background-image: url("http://mpic.tiankong.com/bfd/a20/bfda2035ebd0b5e46c4a22aa1d7f7997/640.jpg");
 }
 
-body{
-    position: relative;
+.rac1{
+    background-image: url("http://f11.baidu.com/it/u=3480207485,1327695020&fm=72");
+}
+.rac2{
+    background-image: url("http://demo.cssmoban.com/cssthemes4/tops_04_karmo/assets/img/header.jpg");
+}
+.rac3{
+    background-image: url("http://img2.imgtn.bdimg.com/it/u=1288966139,2767113981&fm=27&gp=0.jpg");
 }
 
-ul{
+.navAndTab{
+    background-image: url("http://img1.imgtn.bdimg.com/it/u=2429969804,304779977&fm=27&gp=0.jpg");
 }
 
-.title{
-
-    text-align: center;
-    width: 100%;
-    color: darkgoldenrod;
-    font-weight: bolder;
-    font-size: xx-large;
-    padding-top: 50px;
+.locks{
+    background-image: url("http://img2.imgtn.bdimg.com/it/u=2468385267,3315247431&fm=27&gp=0.jpg");
 }
 
-.ul1{
-
-    position: relative;
+.lldb{
+    background-image: url("http://img5.imgtn.bdimg.com/it/u=1503452020,2675973337&fm=27&gp=0.jpg");
 }
 
-li{
-    /*去掉点*/
-    list-style: none;
+.jpush{
+    background-image: url("http://img1.imgtn.bdimg.com/it/u=3334199272,1561300111&fm=27&gp=0.jpg");
 }
 
-a{
-    /*去掉下划线*/
-    text-decoration: none;
+.GCD{
+    background-image: url("http://img5.imgtn.bdimg.com/it/u=706499394,1739854973&fm=27&gp=0.jpg");
 }
 
-
-p{
-    color: red;
-    font-size: x-large;
-    padding-left: 150px;
-    padding-top: 50px;
+.encrypt{
+    background-image: url("http://img0.imgtn.bdimg.com/it/u=3015554922,2993199700&fm=27&gp=0.jpg");
 }
 
-.first, .second, .third{
-
-    width: 80px;
-    height: 30px;
+.detailnotes{
+    background-image: url("http://img3.imgtn.bdimg.com/it/u=3850282918,4044379473&fm=200&gp=0.jpg");
 }
 
-.bottomDiv{
+.wexinalipaysummarise{
+    background-image: url("http://img1.imgtn.bdimg.com/it/u=1911225759,3668460650&fm=27&gp=0.jpg");
+}
 
-    /*transform:固定宽度使用*/
-    width: 260px;
-    margin-top: 70px;
-    margin-bottom: 20px;
-    margin-left: 50%;
-    transform: translateX(-50%);
+.cocoapods{
+    background-image: url("http://img1.imgtn.bdimg.com/it/u=1871377975,4067019460&fm=200&gp=0.jpg");
+}
 
+.clang{
+    background-image: url("http://img0.imgtn.bdimg.com/it/u=3907056736,1879431786&fm=200&gp=0.jpg");
+}
+
+.cache{
+    background-image: url("http://img4.imgtn.bdimg.com/it/u=3609377433,2859644039&fm=200&gp=0.jpg");
+}
+
+.appcheck{
+    background-image: url("http://img3.imgtn.bdimg.com/it/u=1284627649,2009452106&fm=27&gp=0.jpg");
 }

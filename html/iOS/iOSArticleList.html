@@ -2,106 +2,241 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>iOS文章集</title>
+    <title>iOS</title>
     <link rel="icon" href="../../Source/icon-img.jpeg">
-    <link rel="stylesheet" type="text/css" href="../../CSS/ArcticleList.css">
-    <script type="text/javascript" src="../../js/jquery-3.2.1.js"></script>
-    <script type="text/javascript" src="../../js/iOS/iOSArticleList/iOSArticleList.js"></script>
+    <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../CSS/ArcticleList.css">
+    <script src="../../Vendor/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+
 </head>
 <body>
 
-<div class="listDiv">
+<a href=""><i class="fa fa-angle-double-up"></i></a>
 
-    <h3 class="title">iOS文章集</h3>
+<div class="container">
 
-    <ul class="ul1">
-        <li>
-            <a href="./shoppinCar/ShoppingCar.html"><p>一. 购物车</p></a>
-        </li>
+    <span class="label label-primary">Objective-C</span>
+    <span class="label label-warning">Swift</span>
+    <span class="label label-danger">iOS</span>
 
-        <li>
-            <a href="./navAndTabBarDetails/NavAndTabBar.html"><p>二. 有关Nav和Tab属性和方法的一些细节记录</p></a>
-        </li>
+    <div class="jumbotron shoppingcar">
 
-        <li>
-            <a href="./GCDAndNSOperationQueue/GCDAndNSOperationQueue.html"><p>三. GCD/NSOperation/NSThread扩展</p></a>
-        </li>
-
-        <li>
-            <a href="./SwiftEasyToForgot/SwiftEasyToForgot.html"><p>四. Swift那些搞过却又容易忘记的东东</p></a>
-        </li>
-
-        <li>
-            <a href="./DetailiOSNotes/DetailiOSNotes.html"><p>五. 值得注意的小细节整理</p></a>
-        </li>
-
-        <li>
-            <a href="./CacheHanddle/CacheHanddle.html"><p>六. iOS之缓存清理的实现</p></a>
-        </li>
-
-        <li>
-            <a href="./CocoaPods/CocoapodsNotes.html"><p>七. CocoaPods记录</p></a>
-        </li>
-
-        <li>
-            <a href="./WexinDetailNotes/WeixinDetailNotes.html"><p>八. iOS 微信支付宝等第三方集成细节记录</p></a>
-        </li>
-
-    </ul>
-
-    <ul class="ul2" style="display: none">
-
-        <li>
-            <a href="./encrypt/encrypt.html"><p>九. 关于加密</p></a>
-        </li>
-
-        <li>
-            <a href="./AppCheckNotes/AppCheckNotes.html"><p>十. 那些年app审核遇到的坑</p></a>
-        </li>
-
-        <li>
-            <a href="./RACSummarise/RACSummarise.html"><p>十一. RAC核心方法总结(一)</p></a>
-        </li>
-
-        <li>
-            <a href="./RACSummarise/RACSummariseTwo.html"><p>十二. RAC核心方法总结(二)</p></a>
-        </li>
-
-        <li>
-            <a href="./RACSummarise/RACNormalUse.html"><p>十三. RAC核心方法总结(三)</p></a>
-        </li>
-        <li>
-            <a href="./Clang/UseOfClang.html"><p>十四. 使用clang diagnostic忽略Xcode警告</p></a>
-        </li>
-        <li>
-            <a href="./LocksIniOS/LocksIniOS.html"><p>十五. iOS中的锁与信号量</p></a>
-        </li>
-        <li>
-            <a href="./JPushSummarise/JPushSummarise.html"><p>十六. 极光推送小结</p></a>
-        </li>
-    </ul>
-
-
-    <ul class="ul3" style="display: none">
-
-        <li>
-            <a href="./CzyWxAlipaySummarise/WxAlipaySummarise.html"><p>十七. 微信支付宝支付总结</p></a>
-        </li>
-        <li>
-            <a href="./lldbSummarise/lldb.html"><p>十八. lldb常用调试命令</p></a>
-        </li>
-    </ul>
-
-    <div class="bottomDiv">
-        <button class="first">1</button>
-        <button class="second">2</button>
-        <button class="third">3</button>
+        <div class="container">
+            <h2>购物车:仿淘宝购物订单逻辑</h2>
+            <p>设计模式MVC 控制器450行代码 cell 280行代码 实现类似淘宝购物车的选择，编辑，删除等功能<br>
+                使用YYModel管理数据结构</p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='shoppinCar/ShoppingCar.html'">查看更多</button>
+        </div>
     </div>
+
+    <div class="jumbotron wexinalipay">
+
+        <div class="container">
+            <h2>iOS 微信支付宝等第三方集成细节记录</h2>
+            <p>一、 绕开静态库：Build Settings->Other link flags:-ObjC<br>
+                二、 少倒入了库<
+            </p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='WexinDetailNotes/WeixinDetailNotes.html'">查看更多</button>
+        </div>
+
+    </div>
+
+    <div class="jumbotron swift">
+
+        <div class="container">
+            <h2>Swift那些搞过却又容易忘记的东东</h2>
+            <p>1.、swift工程里新建Header file, 名称：项目名称-Bridging-Header.h<br>
+                2、设置路径 target -> building settings -> swift compiler -> objective-c bridging header</p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='SwiftEasyToForgot/SwiftEasyToForgot.html'">查看更多</button>
+        </div>
+
+    </div>
+
+    <div class="jumbotron rac1">
+
+        <div class="container">
+            <h2>RAC核心方法总结(一)</h2>
+            <p>一. concat:按一定顺序拼接信号，当多个信号发出的时候，有顺序的接收信号</p>
+            <p>二. then:用于连接两个信号，当第一个信号完成，才会连接then返回的信号。</p>
+            <p></p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='RACSummarise/RACSummarise.html'">查看更多</button>
+        </div>
+    </div>
+
+    <div class="jumbotron rac2">
+
+        <div class="container">
+            <h2>RAC核心方法总结(二)</h2>
+            <p>一.  doNext: 执行Next之前，会先执行这个Block</p>
+            <p>二. doCompleted: 执行sendCompleted之前，会先执行这个Block</p>
+            <p></p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='RACSummarise/RACSummariseTwo.html'">查看更多</button>
+        </div>
+    </div>
+
+    <div class="jumbotron rac3">
+
+        <div class="container">
+            <h2>RAC核心方法总结(三)</h2>
+            <p>一. target-action 响应事件</p>
+            <p>二. 代理</p>
+            <p>三. 通知</p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='RACSummarise/RACNormalUse.html'">查看更多</button>
+        </div>
+    </div>
+
+    <div class="jumbotron navAndTab">
+
+        <div class="container">
+            <h2>有关Nav和Tab属性和方法的一些细节记录</h2>
+            <p>状态栏的设置</p>
+            <p> 情形：设置欢迎页影藏，首页显示：
+                在info.plist里增加 Status bar is initially hidden，设置为yes<br>
+                然后在首页或者父类控制器里设置...
+            </p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='navAndTabBarDetails/NavAndTabBar.html'">查看更多</button>
+        </div>
+    </div>
+
+    <div class="jumbotron locks">
+
+        <div class="container">
+            <h2>iOS中的锁与信号量</h2>
+            <p>一. @synchronized(obj)</p>
+            <p>
+                @synchronized(self) 指令使用的 self 为该锁的唯一标识，只有当标识相同时，才为满足互斥，如果线程 2 中的 @synchronized(self) 改为
+                @synchronized(self.view) ，那么线程 2 就不会被阻塞，@synchronized
+                指令实现锁的优点就是我们不需要在代码中显式的创建锁对象，便可以实现锁的机制，但作为一种预防措施...
+            </p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='LocksIniOS/LocksIniOS.html'">查看更多</button>
+        </div>
+    </div>
+
+    <div class="jumbotron lldb">
+
+        <div class="container">
+            <h2>llbd常用调试技巧</h2>
+            <p>LLDB是Xcode默认的调试器，它与LLVM编译器一起，带给我们更丰富的流程控制和数据检测的调试功能。平时用Xcode运行程序，实际走的都是LLDB。熟练使用LLDB，可以让debug事半功倍。
+                常用LLDB命令:</p>
+            <p>
+                1. expression:expression命令的作用是执行一个表达式，并将表达式返回的结果输出。可以实现2个功能...
+            </p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='lldbSummarise/lldb.html'">查看更多</button>
+        </div>
+    </div>
+
+    <div class="jumbotron jpush">
+
+        <div class="container">
+            <h2>极光推送小结</h2>
+            <p></p>
+            <p>APNS路线:由JPush服务器发送至APNS服务器，再下发到手机...</p>
+            <p>JPush自定义消息路线:收到一条自定义消息走一次 会走多次...</p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='JPushSummarise/JPushSummarise.html'">查看更多</button>
+        </div>
+    </div>
+
+    <div class="jumbotron GCD">
+
+        <div class="container">
+            <h2>GCD/NSOperation/NSThread扩展</h2>
+            <p></p>
+            <p>1. NSOperation: 自定义的任务继承NSOperation 重写main方法...</p>
+            <p>2. 单例对象创建 dispatch_once 一次性操作...</p>
+            <p>3. 设置队列并行数，-1表示无上限...</p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='GCDAndNSOperationQueue/GCDAndNSOperationQueue.html'">查看更多</button>
+        </div>
+    </div>
+
+    <div class="jumbotron encrypt">
+
+        <div class="container">
+            <h2>iOS中的加密</h2>
+            <p></p>
+            <p>MD5加密是最常用的加密方法之一，是从一段字符串中通过相应特征生成一段32位的数字字母混合码...</p>
+            <p>RSA加密:非对称加密算法需要两个密钥：公开密钥（publickey）和私有密钥（privatekey）...</p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='encrypt/encrypt.html'">查看更多</button>
+        </div>
+    </div>
+
+    <div class="jumbotron detailnotes">
+
+        <div class="container">
+            <h2>值得注意的小细节整理</h2>
+            <p></p>
+            <p>一、如何输出超链接的各个组成部分...</p>
+            <p>二、CAShapeLayer的strokeStart和strokeEnd属性...</p>
+            <p>三、errors：The operation couldn’t be completed. Unable to log in with account 'myappleid'...</p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='DetailiOSNotes/DetailiOSNotes.html'">查看更多</button>
+        </div>
+    </div>
+
+    <div class="jumbotron wexinalipaysummarise">
+
+        <div class="container">
+            <h2>微信支付宝支付实用总结</h2>
+            <p>微信开放平台注册账号 填写管理员信息 开发者资质认证（审核费用：中国大陆地区：300元，非中国大陆地区：120美元）；
+                认证后就可以获取微信登录、智能接口、第三方平台开发等高级能力 认证有效期：一年，有效期最后三个月可申请年审即可续期
+                -> 管理中心创建应用（最多10个应用；应用创建完成后就有了AppID和AppSecret（可以重置；重置后将影响微信登录，之前安卓的同事重置了 我这边用不了)...</p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='CzyWxAlipaySummarise/WxAlipaySummarise.html'">查看更多</button>
+        </div>
+    </div>
+
+    <div class="jumbotron cocoapods">
+
+        <div class="container">
+            <h2>CocoaPods实用记录</h2>
+            <p></p>
+            <p>CocoaPods是ios开发平台一个非常流行的第三方库管理工具。在开发过程中，根据项目复杂程度，通常我们会需要外链很多的第三方库。而添加这些第三方库的过程有时候会变成一场灾难。
+                因此使用CocoaPods来代替我们管理这些库，将可以大幅缩短我们的开发时间...</p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='CocoaPods/CocoapodsNotes.html'">查看更多</button>
+        </div>
+    </div>
+
+    <div class="jumbotron clang">
+
+        <div class="container">
+            <h2>clang diagnostic的使用</h2>
+            <p><b>基本格式</b></p>
+            <p>
+                #pragma clang diagnostic push<br>
+                #pragma clang diagnostic ignored "-相关命令"<br>
+                #pragma clang diagnostic pop...
+            </p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='Clang/UseOfClang.html'">查看更多</button>
+        </div>
+    </div>
+
+    <div class="jumbotron cache">
+
+        <div class="container">
+            <h2>iOS之缓存清理的实现</h2>
+            <p></p>
+            <p>
+                一、一般Xcode的缓存分为两大块：
+                二、是自己工程缓存的一些数据;第二如果使用了SDWebImage则还需要清理图片缓存:
+                三、计算单个文件的大小...
+            </p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='CacheHanddle/CacheHanddle.html'">查看更多</button>
+        </div>
+    </div>
+
+    <div class="jumbotron appcheck">
+
+        <div class="container">
+            <h2>那些年app审核遇到的坑</h2>
+            <p></p>
+            <p>
+                有一阵子没更新博客了,最近一直在做版本迭代,
+                相信这段时间同样在做版本更新的小伙伴感受到了iOS 11出来苹果审核严格度的飙升; 我最近就被连续拒了11次,
+                下面记录一下今年遇到的被拒的情况...
+            </p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='AppCheckNotes/AppCheckNotes.html'">查看更多</button>
+        </div>
+    </div>
+
 </div>
-
-
-
-
 
 
 </body>
