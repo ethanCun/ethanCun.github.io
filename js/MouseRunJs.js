@@ -7,7 +7,7 @@ $(document).ready(function () {
 
     //鼠标滚动动画
     var top = 4;
-
+    
     setInterval(function () {
 
         top+=1;

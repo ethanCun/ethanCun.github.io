@@ -317,7 +317,7 @@
 
     .progress-striped, .progress-bar-danger, .progress-bar-info, .progress-bar-success, .progress-bar-warning {
 
-        width: 400%;
+        width: 600%;
         overflow: auto;
     }
 }
@@ -333,6 +333,11 @@
     float: left;
     width: 100%;
     cursor: pointer;
+}
+
+.shopping-car:hover, .rac-details:hover{
+
+    background: lightblue;
 }
 
 .shopping-car i, .rac-details i{
