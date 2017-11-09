@@ -38,6 +38,20 @@
     font-weight: 400;
 }
 
+@media (max-width: 768px) {
+
+    .navbar-default .navbar-nav > li > a{
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 767px){
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+        color: white;
+        font-size: 2rem;
+    }
+}
+
 .navbar-default .navbar-nav > li > a:visited{
 
     color: white;
@@ -218,6 +232,13 @@
     transform: translateX(-50%);
 }
 
+@media (max-width: 768px) {
+
+    .first i{
+        font-size: 3rem;
+    }
+}
+
 .title{
 
     width: 100%;
@@ -292,7 +313,7 @@
     height: 70px;
 }
 
-.skill .objc, .web, .swift, .ReactNative, .PHP, .Other{
+.skill .objc, .HTML5, .CSS, .javascript, .swift, .ReactNative, .PHP{
 
     line-height: 70px;
     margin-left: 20px;
