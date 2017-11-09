@@ -309,7 +309,7 @@
 
 .progress-striped, .progress-bar-danger, .progress-bar-info, .progress-bar-success, .progress-bar-warning {
 
-    width: 500%;
+    width: 600%;
     overflow: auto;
 }
 
@@ -317,7 +317,7 @@
 
     .progress-striped, .progress-bar-danger, .progress-bar-info, .progress-bar-success, .progress-bar-warning {
 
-        width: 600%;
+        width: 400%;
         overflow: auto;
     }
 }
