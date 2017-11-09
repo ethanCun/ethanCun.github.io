@@ -2,63 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ethan</title>
+    <title>Title</title>
+    <link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
     <link rel="stylesheet" href="./CSS/iOS/newMain/newMain.css">
+    <script type="text/javascript" src="./js/MouseRunJs.js"></script>
     <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.css">
     <script type="text/javascript" src="./js/jquery-3.2.1.js"></script>
-    <script type="text/javascript" src="./js/MouseRunJs.js"></script>
+    <script src="Vendor/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
 </head>
 <body>
 
+<!--导航栏-->
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
 
-<!--背景1-->
-<div class="backgroundDiv">
-
-
-    <!--banner-->
-    <div class="banner">
-
-        <!--avator name-->
-        <a href="" class="avator_a">
-            <img class="avator" src="./Source/name.gif" alt="">
-            <h3 class="name">ethan</h3>
-        </a>
-
-        <!--list-->
-        <div class="categories">
-
-            <ul class="categories_ul">
-                <a href="">
-                    <li class="li_home"><h3 class="h3_home">Home</h3></li>
-                </a>
-                <a href="./html/iOS/iOSArticleList.html">
-                    <li class="li_iOS"><h3 class="h3_iOS">iOS</h3></li>
-                </a>
-                <a href="./html/HTML5/Html5ArticleList.html">
-                    <li class="li_HTML5"><h3 class="h3_HTML5">HTML5</h3></li>
-                </a>
-                <a href="./html/ReactNative/ReactNativeArticleList.html">
-                    <li class="li_ReavtNative"><h3 class="ReactNative">React Native</h3></li>
-                </a>
-                <a href="./html/Other/OtherArticleList.html">
-                    <li class="li_other"><h3 class="Other">Other</h3></li>
-                </a>
-            </ul>
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#example-navbar-collapse">
+                <span class="sr-only">切换导航</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <img class="img-rounded" src="Source/name1.jpg">
+            <a class="navbar-brand" href="">ethan</a>
         </div>
 
-        <!--email-->
-        <div class="email_div">
+        <div class="collapse navbar-collapse" id="example-navbar-collapse">
 
-            <h3 class="email_h3">@:zz511627807@163.com</h3>
+            <ul class="nav navbar-nav">
+
+                <li class=""><a href="html/iOS/iOSArticleList.html">iOS</a></li>
+                <li class=""><a href="html/HTML5/Html5ArticleList.html">web</a></li>
+                <li class=""><a href="html/ReactNative/ReactNativeArticleList.html">ReactNative</a></li>
+                <li class="dropdown">
+                    <a href="" class="dropdown-toggle" data-toggle="dropdown">
+                        Other <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="html/Other/OtherArticleList.html">PHP</a></li>
+                        <li><a href="html/Other/OtherArticleList.html">LIFE</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+
         </div>
 
     </div>
+
+</nav>
+
+<!--背景图-->
+<div class="backgroundDiv">
 
     <!--welcome-->
     <div class="welcome">
 
         <h3 class="welcome_p">welcome!</h3>
-        <h3 class="introduce">A iOS developer, and also HTML5/ReactNative</h3>
+        <h3 class="introduce">A iOS developer, and also web/ReactNative</h3>
         <div class="knowMore_div">
             <a href="./html/iOS/iOSArticleList.html">
                 <h3 class="knowMore">Know me More</h3>
@@ -72,105 +75,177 @@
     </div>
 </div>
 
-<!--&lt;!&ndash;推荐内容:购物车&ndash;&gt;-->
-<!--<div class="shoppingCarContentsAero">-->
+<!--分类-->
+<div class="container">
 
-    <!--<a href="html/iOS/shoppinCar/ShoppingCar.html" class="shoppingCar_a">-->
+    <div class="row">
 
-    <!--<div class="shoppingCar">-->
+        <div class="col-xs-6 col-sm-3">
 
-            <!--<img src="./Source/shopping121.png" class="shoppingCar_img">-->
-            <!--<p class="shoppingCarIntruduce">-->
-                <!--仿淘宝购物订单逻辑<br>-->
-                <!--设计模式MVC <br>-->
-                <!--控制器450行代码 <br>-->
-                <!--cell 280行代码 实现类似淘宝购物车的选择，编辑，删除等功能<br>-->
-            <!--</p>-->
+            <div class="first"  onclick="javascript:window.location.href='html/iOS/iOSArticleList.html'">
+                <i class="fa fa-apple"></i>
+                <p class="title">iOS</p>
+            </div>
 
-    <!--</div>-->
-    <!--</a>-->
+        </div>
 
-<!--</div>-->
+        <div class="col-xs-6 col-sm-3">
 
-<!--&lt;!&ndash;推荐内容ReactNative配置&ndash;&gt;-->
-<!--<div class="ReactNativeConfigContentAero">-->
+            <div class="first" onclick="javascript:window.location.href='html/HTML5/Html5ArticleList.html'">
+                <i class="fa fa-html5"></i>
+                <p class="title">web</p>
+            </div>
 
-    <!--<a class="ReactNativeConfigContentAero_a" href="./html/ReactNative/ReactNativeConfig/ReactNativeConfig.html">-->
+        </div>
 
-        <!--<div class="ReactNativeConfigContentAero_div">-->
+        <div class="col-xs-6 col-sm-3">
 
-            <!--<img src="./Source/computer127.png" class="ReactNativeConfigContentAero_img">-->
+            <div class="first"  onclick="javascript:window.location.href='html/ReactNative/ReactNativeArticleList.html'">
+                <i class="fa fa-mortar-board"></i>
+                <p class="title">ReactNative</p>
+            </div>
 
-            <!--<p class="ReactNativeConfigContentAero_p">-->
-                <!--mac下配置React native开发环境<br>-->
-                <!--一、需要的东西：Note.js/React Native Command Line Tools...<br>-->
-                <!--二、安装软件包管理器：Homebrew<br>-->
-                <!--三、安装最新版git<br>-->
-                <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;......<br>-->
-            <!--</p>-->
-        <!--</div>-->
-    <!--</a>-->
-<!--</div>-->
+        </div>
 
-<!--内容模块-->
-<div class="contents1_div">
+        <div class="col-xs-6 col-sm-3">
 
-    <ul>
-        <li class="iOS_content_li">
-            <a class="iOS_a" href="./html/iOS/iOSArticleList.html">
-                <div class="iOS_content_div">
+            <div class="first" onclick="javascript:window.location.href='html/Other/OtherArticleList.html'">
+                <i class="fa fa-mobile"></i>
+                <p class="title">Others</p>
+            </div>
 
-                    <i class="fa fa-apple iOS"></i>
-                    <br>
-                    <h3 class="categoryTitle">iOS</h3>
+        </div>
 
-                </div>
-            </a>
-        </li>
-        <li class="HTML5_content_li">
-            <a class="HTML5_a" href="./html/HTML5/Html5ArticleList.html">
-                <div class="HTML5_content_div">
-                    <i class="fa fa-html5 HTML5"></i>
-                    <br>
-                    <h3 class="categoryTitle">HTML5</h3>
-                </div>
-            </a>
-        </li>
-        <li class="RN_content_li">
-            <a class="RN_a" href="./html/ReactNative/ReactNativeArticleList.html">
-                <div class="RN_content_div">
-                    <i class="fa fa-bullseye RN"></i>
-                    <br>
-                    <h3 class="categoryTitle">ReactNative</h3>
-                </div>
-            </a>
-        </li>
-    </ul>
+    </div>
 
 </div>
 
-<!--外部链接-->
-<div class="links_div">
 
-    <ul class="links">
-        <li>
-            <a href="https://github.com/ethanCun"><i class="fa fa-github"></i></a></h5><br>
-        </li>
-        <li>
-            <a href="http://www.jianshu.com/u/1d52648daace"><h2 style="color: #4ecdc4">简</h2></a></h5><br>
-        </li>
-        <li>
-            <a href="http://weibo.com/p/1005056318522732/home?pids=&profile_ftype=1&is_all=1#_0"><i
-                    class="fa fa-weibo"></i></a><br>
-        </li>
-        <li>
-            <a href="http://www.linkedin.com/in/%E6%AD%A3%E8%8B%B1-%E9%99%88-441061127/"><i class="fa fa-linkedin"></i></a><br>
-        </li>
-        <li>
-            <a href="http://www.500d.me/cvresume/4294191050/"><i class="fa fa-calendar-minus-o"></i></a><br>
-        </li>
-    </ul>
+<!--推荐-->
+<div class="container">
 
+    <div class="col-xs-12 col-md-6">
+        <div class="jumbotron shopping-car" onclick="javascript:window.location.href='html/iOS/shoppinCar/ShoppingCar.html'">
+            <i class="fa fa-shopping-cart"></i>
+            <h1>购物车</h1>
+            <p> 仿淘宝购物订单逻辑<br>
+                设计模式MVC 控制器450行代码 cell 280行代码 实现类似淘宝购物车的选择，编辑，删除等功能<br>
+                使用YYModel管理数据结构...
+            </p>
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-md-6">
+        <div class="jumbotron rac-details" onclick="javascript:window.location.href='html/iOS/RACSummarise/RACSummarise.html'">
+            <i class="fa fa-mobile-phone"></i>
+            <h1>RAC核心方法总结(一)</h1>
+            <p> 一. concat:按一定顺序拼接信号，当多个信号发出的时候，有顺序的接收信号<<br>
+                二. then:用于连接两个信号，当第一个信号完成，才会连接then返回的信号。<br>
+                三. merge:把多个信号合并为一个信号，任何一个信号有新值的时候就会调用...
+            </p>
+        </div>
+    </div>
+
+
+</div>
+
+
+<!--介绍-->
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-xs-12 col-md-6 skill">
+
+            <div class="objc">
+                <span class="label label-success">Objective-C</span>
+                <div class="progress progress-striped active">
+                    <div class="progress-bar progress-bar-success" role="progressbar"
+                         aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                         style="width: 95%;">
+                        <span class="sr-only">95% 完成</span>
+                    </div>
+                </div>
+            </div>
+            <div class="swift">
+                <span class="label label-info">Swift</span>
+                <div class="progress progress-striped active">
+                    <div class="progress-bar progress-bar-info" role="progressbar"
+                         aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                         style="width: 85%;">
+                        <span class="sr-only">85% 完成</span>
+                    </div>
+                </div>
+            </div>
+            <div class="web">
+                <span class="label label-primary">web</span>
+                <div class="progress progress-striped active">
+                    <div class="progress-bar progress-striped" role="progressbar"
+                         aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                         style="width: 80%;">
+                        <span class="sr-only">80% 完成</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ReactNative">
+                <span class="label label-danger">ReactNative</span>
+                <div class="progress progress-striped active">
+                    <div class="progress-bar progress-bar-danger" role="progressbar"
+                         aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                         style="width: 60%;">
+                        <span class="sr-only">60% 完成</span>
+                    </div>
+                </div>
+            </div>
+            <div class="PHP">
+                <span class="label label-warning">PHP</span>
+                <div class="progress progress-striped active">
+                    <div class="progress-bar progress-bar-warning" role="progressbar"
+                         aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                         style="width: 40%;">
+                        <span class="sr-only">40% 完成</span>
+                    </div>
+                </div>
+            </div>
+            <div class="Other">
+                <span class="label label-default">Other</span>
+                <div class="progress progress-striped active">
+                    <div class="progress-bar progress-bar-success" role="progressbar"
+                         aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                         style="width: 100%;">
+                        <span class="sr-only">0% 完成</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-md-6">
+
+            <div class="jumbotron aboutme">
+
+                <p>ABOUT ME!</p>
+                <h3><i class="fa fa-envelope-open-o"><span> : zz511627807@163.com</span></i></h3>
+                <h3><i class="fa fa-mobile-phone"><span> : +86 17673647340</span></i></h3>
+                <h3><i class="fa fa-wechat"><span> : wx15112348182</span></i></h3>
+                <h2><span><a class="company" href="http://www.tkface.net"><i class="fa fa-male"> &nbsp;&nbsp; ethan at TKFACE</i></a></span></h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--底部-->
+<div class="container bottomDiv">
+
+    <p class="right">@ 2017 ethan All right Reserved</p>
+
+    <div class="row">
+        <div><a href="http://www.500d.me/cvresume/4294191050/"><i class="fa fa-calendar-minus-o"></i></a></div>
+        <div><a href="http://weibo.com/p/1005056318522732/home?pids=&profile_ftype=1&is_all=1#_0"><i class="fa fa-weibo"></i></a></div>
+        <div><a href="http://www.jianshu.com/u/1d52648daace"><i class="fa fa-pinterest"></i></a></div>
+        <div><a href="http://www.linkedin.com/in/%E6%AD%A3%E8%8B%B1-%E9%99%88-441061127/"><i class="fa fa-linkedin"></i></a></div>
+        <div><a href="https://github.com/ethanCun"><i class="fa fa-github"></i></a></div>
+    </div>
 </div>
 
 </body>

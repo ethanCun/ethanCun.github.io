@@ -3,125 +3,119 @@
     margin: 0;
 }
 
-body{
+.navbar-default{
 
-    /*background-color: red;*/
+    background: #4ecdc4;
 }
 
+.navbar-collapse {
+    -webkit-box-shadow: none;
+}
+
+.navbar{
+
+    margin-bottom: 0;
+}
+
+@media (min-width: 768px){
+    .navbar {
+         border-radius: 0;
+    }
+}
+
+.navbar-nav{
+
+    background: #4ecdc4;
+}
+
+.navbar-default .navbar-nav > li > a{
+
+    padding-top: 15px;
+    padding-bottom: 20px;
+    font-size: 0.875rem;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+}
+
+.navbar-default .navbar-nav > li > a:visited{
+
+    color: white;
+}
+
+.navbar-default .navbar-nav > li > a:hover, a:active{
+
+    color: brown;
+}
+
+.img-rounded{
+
+    width: 30px;
+    height: 30px;
+    margin-top: 10px;
+}
+
+/*大屏小屏显示逻辑*/
+/*默认向右浮动*/
+.navbar-collapse{
+
+    float: right;
+}
+
+@media (min-width: 768px){
+    .navbar > .container .navbar-brand, .navbar > .container-fluid .navbar-brand {
+        margin-left: 0;
+        float: right;
+        color: white;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar > .container .navbar-brand, .navbar > .container-fluid .navbar-brand {
+
+        display: none;
+    }
+    .img-rounded{
+
+        margin-left: 20px;
+    }
+
+    /*展开后靠左边*/
+    .navbar-collapse {
+        float: left;
+    }
+}
+
+
+/*去掉线*/
+.navbar-default {
+    border-color: #4ecdc4;
+}
+
+.navbar-default .navbar-collapse, .navbar-default .navbar-form {
+    border-color: #4ecdc4;
+}
+
+/*选中打开的颜色*/
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+    background-color: #4ecdc4;
+}
+
+/*背景大图1*/
 .backgroundDiv{
 
-    /*padding-top: 50px;*/
-    position: relative;
-    width:100%;
-    height: 600px;
-    justify-content: center;
+    width: 100%;
+    height: 500px;
+    margin: 0;
     background-image: url("../../../Source/hero-img9.jpg");
     background-repeat: no-repeat;
     background-size: cover;
 }
 
-/*整个导航条*/
-.banner{
-
-    width: 100%;
-    height: 100px;
-    background-color: rgba(36, 36, 42, 0.1);
-
-    position: fixed;
-    transition: all linear 0.5s;
-    z-index: 100;
-}
-
-/*a标签*/
-.avator_a{
-    text-decoration: none;
-    display: inline-block;
-    height: 100px;
-    justify-items: center;
-    float: left;
-}
-
-/*头像*/
-.avator{
-
-    width: 60px;
-    height: 60px;
-    padding: 20px 20px;
-    border-radius: 50%;
-
-    float: left;
-}
-
-/*姓名*/
-.name{
-    color: white;
-    width: 80px;
-    height: 80px;
-    padding: 10px 5px;
-    display: block;
-    line-height: 70px;
-
-    float: left;
-}
-
-/*分类*/
-.categories{
-
-    float: left;
-    width: 65%;
-    height: 100px;
-    display: inline-block;
-}
-
-.categories_ul{
-
-    margin-left: 2%;
-}
-
-/*li标签分类*/
-.li_home, .li_HTML5, .li_iOS, .li_ReavtNative, .li_other{
-
-    list-style: none;
-    width: 20%;
-    color: white;
-    font-size: 15px;
-    float: left;
-
-    cursor: pointer;
-}
-
-/*h3标签分类*/
-.h3_home, .h3_iOS, .li_HTML5, .li_ReavtNative, .li_other{
-
-    line-height: 90px;
-    text-align:center;
-    font-size: 15px;
-    font-family: "Oswald";
-    letter-spacing: 1px;
-}
-
-/*邮箱*/
-.email_div{
-
-    float: right;
-    width: 15%;
-    height: 60px;
-    line-height: 90px;
-}
-
-.email_h3{
-
-    color: white;
-    font-family: 'Oswald';
-    font-size: 12px;
-    cursor: pointer;
-    /*letter-spacing: 1.5px;*/
-}
-
 /*欢迎模块*/
 .welcome{
 
-    padding-top: 150px;
+    padding-top: 50px;
 }
 
 .welcome_p{
@@ -151,9 +145,13 @@ body{
     width: 100%;
 }
 
+.knowMore_div a{
+    text-decoration: none;
+}
+
 .knowMore{
 
-    margin: 30px auto;
+    margin: 60px auto;
     padding: 10px 35px;
     width: 300px;
     color: white;
@@ -166,12 +164,12 @@ body{
     text-transform: uppercase;
 }
 
+
 /*滚动的鼠标*/
 .mouse-icon{
 
     position: absolute;
     left: 50%;
-    bottom: 100px;
     border: 2px solid #fff;
     border-radius: 16px;
     height: 40px;
@@ -179,182 +177,230 @@ body{
     margin-left: -15px;
     display: block;
     z-index: 10;
-    opacity: 0.7;
 }
 
- .wheel {
+.wheel {
 
-     position: relative;
-     border-radius: 10px;
-     background: #fff;
-     width: 2px;
-     height: 6px;
-     top: 4px;
-     margin-left: auto;
-     margin-right: auto;
- }
-
- /*内容区域*/
- .contents1_div{
-
-     width: 100%;
-     height: 250px;
-     background-color: #e6e6e6;
-
- }
-
- .contents1_div ul li{
-
-     width: 30%;
-     height: 300px;
-     float: left;
-     margin-top: 20px;
-     margin-left: 2.5%;
-     margin-right: 0;
-     text-decoration: none;
-     list-style: none;
-     box-sizing: border-box;
- }
-
- .ios_content_div{
-
-     width: 200px;
-     height: 200px;
-     padding-left: 10px;
-     text-align: center;
- }
-
-.categoryTitle {
-
-    font-size: x-large;
-    font-family: "Adobe Fan Heiti Std";
-    color: #4ecdc4;
-    text-align: center;
+    position: relative;
+    border-radius: 10px;
+    background: #fff;
+    width: 2px;
+    height: 6px;
+    top: 4px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-i.iOS, i.HTML5, i.RN{
-    color: #4ecdc4;
-    font-size: 150px;
+
+/*分类*/
+.first, .second, .third, .fourth{
+
+    height: 150px;
+    width: 80%;
     margin: 0 auto;
+    background-image: url("../../../Source/div_bg_img.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+}
+
+.first:hover, .second:hover, .third:hover, .fourth:hover{
+
+    background-image: url("../../../Source/div_bg_img_select.png");
+}
+
+.first i{
+
+    font-size: 4rem;
+    margin-top: 10px;
+    margin-bottom: 5px;
     margin-left: 50%;
     transform: translateX(-50%);
 }
 
-.iOS_a, .HTML5_a, .RN_a{
+.title{
 
-    text-decoration: none;
-}
-
-/*两个大模块的内容区域*/
-.shoppingCarContentsAero{
-
-    position: relative;
-    background-image: url("../../../Source/img2.jpg");
-    background-repeat: no-repeat;
-    background-size: cover;
-    padding-top: 10px;
     width: 100%;
-    height: 700px;
+    text-align: center;
+    margin-top: 10px;
 }
 
-/*购物车模块*/
-.shoppingCar{
+@media (max-width: 768px) {
 
-    width: 600px;
-    height: 600px;
-    float: right;
-    margin: 50px 20px;
-    background-color: rgba(0, 0 ,0 , 0.2);
+    .first i{
+
+        margin-top: 10px;
+    }
+
+    .title{
+        margin-top: 0px;
+    }
 }
 
-.shoppingCar_img{
+/*个人介绍区域*/
+.skills{
 
-    width: 300px;
-    height: 300px;
-    margin: 30px 50%;
-    transform: translateX(-50%);
+    /*margin-top: 30px;*/
+    /*width: 100%;*/
+    /*height: 420px;*/
+}
+
+.aboutme{
+
+    height: 100%;
+    background: rgba(244,245,245,0.9);
+}
+
+.aboutme p{
+
+    font-size: 50px;
+    color: #4ecdc4;
+    text-align: center;
+    border-radius: 20px;
+}
+
+.aboutme h2{
+
+    text-align: center;
+    font-size: 16px;
     color: #4ecdc4;
 }
 
-.shoppingCarIntruduce{
+.aboutme > h3{
 
-    color: white;
-    font-size: 25px;
-    margin: 10px 30px;
-}
-
-/*ReactNative配置模块*/
-.ReactNativeConfigContentAero{
-
-    position: relative;
-    background-image: url("../../../Source/img3.jpg");
-    background-repeat: no-repeat;
-    background-size: cover;
-    padding-top: 10px;
-    width: 100%;
-    height: 400px;
-
-}
-
-.ReactNativeConfigContentAero_div{
-
-    width: 300px;
-    height: 350px;
-    float: right;
-    margin: 10px 100px;
-    background-color: rgba(0, 0 ,0 , 0.2);
-}
-
-.ReactNativeConfigContentAero_img{
-
-    width: 150px;
-    height: 150px;
-    margin: 30px 50%;
-    transform: translateX(-50%);
-    color: #4ecdc4;
-}
-
-.ReactNativeConfigContentAero_p{
-
-    color: white;
+    text-align: center;
     font-size: 15px;
-    margin: 0px 30px;
+    color: #4ecdc4;
 }
 
-/*外部链接*/
-.links_div{
+.aboutme > h3 > i{
 
-    width: 100%;
-    background-color: #e6e6e6;
-    height: 150px;
+    font-size: 18px;
+    color: #4ecdc4;
 }
 
-.links{
+.skill{
 
-    width: 300px;
-    margin: 0 auto;
-
-    /*margin-top: 200px;*/
-    /*width: 300px;*/
-    /*height: 200px;*/
-    /*margin: 0 auto;*/
+    background: red;
+    background: rgba(244,245,245,0.9);
+    border-radius: 5px;
+    margin-bottom: 50px;
 }
 
-.links li{
+.skill > div{
 
-    width: 40px;
+    height: 70px;
+}
+
+.skill .objc, .web, .swift, .ReactNative, .PHP, .Other{
+
+    line-height: 70px;
+    margin-left: 20px;
+    color: #4ecdc4;
+    width: 80px;
+}
+
+.label-success, .label-primary, .label-warning, .label-danger, .label-default, .label-info{
+
     float: left;
-    list-style: none;
-    margin: 0 10px;
+    margin: 10px 0;
 }
 
-a{
+
+.progress-striped, .progress-bar-danger, .progress-bar-info, .progress-bar-success, .progress-bar-warning {
+
+    width: 500%;
+    overflow: auto;
+}
+
+@media (max-width: 768px) {
+
+    .progress-striped, .progress-bar-danger, .progress-bar-info, .progress-bar-success, .progress-bar-warning {
+
+        width: 400%;
+        overflow: auto;
+    }
+}
+
+.progress{
+    overflow: auto;
+}
+
+/*推荐区域*/
+.shopping-car, .rac-details{
+
+    margin: 50px 0;
+    float: left;
+    width: 100%;
+    cursor: pointer;
+}
+
+.shopping-car i, .rac-details i{
+
+    font-size: 200px;
+    color: #4ecdc4;
+    margin-left: 50%;
+    transform: translateX(-50%);
+}
+
+.shopping-car > h1, .rac-details > h1{
+
+    text-align: center;
+}
+
+.shopping-car > p, .rac-details > p{
+
+    margin-top: 30px;
+}
+
+.company:hover, .company:link, .company:visited, .company:active{
 
     text-decoration: none;
+    color: #4ecdc4;
 }
 
-.links li a i{
+/*底部*/
+.bottomDiv{
 
-    color: #4ecdc4;
-    font-size: 30px;
+    width: 100%;
+    height: 50px;
+    background: #4ecdc4;
+}
+
+.right{
+
+    float: left;
+    color: #fff;
+    margin-top: 15px;
+}
+
+.bottomDiv div{
+
+    line-height: 50px;
+}
+
+.bottomDiv i {
+
+    float: right;
+    line-height: 18px;
+    color: #fff;
+    font-size: 2rem;
+    padding: 5px;
+    border: 1px solid #fff;
+    border-radius: 0;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    margin-right: 15px;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+
+    .right{
+
+        width: 100px;
+        font-size: 10px;
+        margin-top: 8px;
+    }
 }

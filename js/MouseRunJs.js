@@ -32,43 +32,6 @@ $(document).ready(function () {
         })
     })
     
-    
-//    购物车动画
-    $(window).scroll(function () {
-
-        // console.log('位置:'+$(this).scrollTop());
-        //
-        // var winWidth;
-        //
-        // // 获取窗口宽度
-        // if (window.innerWidth) {
-        //
-        //     winWidth = window.innerWidth;
-        // } else if ((document.body) && (document.body.clientWidth)){
-        //
-        //     winWidth = document.body.clientWidth;
-        // }
-
-        // console.log('windowSize = '+ winWidth);
-
-        // if(winWidth < 1024) {return;}
-        //
-        // if($(this).scrollTop()>250){
-        //
-        //     $('.shoppingCar_a').show(500);
-        // }else {
-        //
-        //     $('.shoppingCar_a').hide(500);
-        // }
-        //
-        // if($(this).scrollTop()>900){
-        //
-        //     $('.ReactNativeConfigContentAero_a').show(500);
-        // }else {
-        //
-        //     $('.ReactNativeConfigContentAero_a').hide(500);
-        // }
-    })
 
 })
 
