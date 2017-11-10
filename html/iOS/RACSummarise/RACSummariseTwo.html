@@ -4,257 +4,279 @@
     <meta charset="UTF-8">
     <title>RAC核方法总结(二)</title>
     <link rel="icon" href="../../../Source/icon-img.jpeg">
-    <link rel="stylesheet" href="../../../CSS/iOS/RACSummarise/RACSummarise.css">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
 </head>
 <body>
 
-<h2>RAC核心方法总结(二)</h2>
+<div class="labels">
 
-
-<br>
-<p><b>一.  doNext: 执行Next之前，会先执行这个Block</b></p>
-<br>
-<div>
-    <p>
-        - (IBAction)diNext:(id)sender {<br><br>
-
-        [[_tf.rac_textSignal doNext:^(NSString * _Nullable x) {<br><br>
-
-        NSLog(@"doNext x = %@", x);<br>
-        }] subscribeNext:^(NSString * _Nullable x) {<br><br>
-
-        NSLog(@"next x = %@", x);<br>
-        }];<br>
-        }<br>
-    </p>
-</div>
-<div>
-    输出:
-    <p>
-        doNext x = 1<br>
-        next x = 1<br>
-    </p>
+    <span class="label label-primary">doNext</span>
+    <span class="label label-info">doCompleted</span>
+    <span class="label label-success">timeout</span>
+    <span class="label label-default">delay</span>
+    <span class="label label-danger">retry</span>
 </div>
 
-<br>
+<div class="contentBgDiv">
 
-<p><b>二. doCompleted: 执行sendCompleted之前，会先执行这个Block</b></p>
-<br>
-<div>
-    <p>
-        - (IBAction)doCompleted:(id)sender {<br><br>
+    <p class="title">RAC核心方法总结(二)</p>
+    <hr>
 
-        [[[RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {<br><br>
+    <br>
+    <p class="smallTitle"><b>一. doNext: 执行Next之前，会先执行这个Block</b></p>
+    <br>
+    <div class="codeAero">
+        <p>
+            - (IBAction)diNext:(id)sender {<br><br>
 
-        [subscriber sendNext:@"ethan"];<br>
-        [subscriber sendCompleted];<br>
+            [[_tf.rac_textSignal doNext:^(NSString * _Nullable x) {<br><br>
 
-        return nil;<br>
-        }] doCompleted:^{<br><br>
+            NSLog(@"doNext x = %@", x);<br>
+            }] subscribeNext:^(NSString * _Nullable x) {<br><br>
 
-        NSLog(@"doCompleted");<br>
-        }] subscribeCompleted:^{<br><br>
+            NSLog(@"next x = %@", x);<br>
+            }];<br>
+            }<br>
+        </p>
+    </div>
+    <div>
+        <p class="contents">
+            输出:<br>
+            doNext x = 1<br>
+            next x = 1<br>
+        </p>
+    </div>
 
-        NSLog(@"completed");<br>
-        }];<br>
-        }<br><br>
+    <br>
 
-    </p>
-</div>
-<div>
-    输出:
-    <p>
-        doCompleted<br>
-        completed<br>
-    </p>
-</div>
+    <p class="smallTitle"><b>二. doCompleted: 执行sendCompleted之前，会先执行这个Block</b></p>
+    <br>
+    <div class="codeAero">
+        <p>
+            - (IBAction)doCompleted:(id)sender {<br><br>
 
+            [[[RACSignal createSignal:^RACDisposable * _Nullable(id
+            &lt;RACSubscriber&gt; _Nonnull subscriber) {<br><br>
 
-<br>
+                [subscriber sendNext:@"ethan"];<br>
+                [subscriber sendCompleted];<br>
 
-<p><b>三. timeout：超时，可以让一个信号在一定的时间后，自动报错。</b></p>
-<br>
-<div>
-    <p>
-        - (IBAction)timeout:(id)sender {<br><br>
+                return nil;<br>
+                }] doCompleted:^{<br><br>
 
-        [[[RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {<br><br>
+                NSLog(@"doCompleted");<br>
+                }] subscribeCompleted:^{<br><br>
 
-        [subscriber sendNext:@"ethan"];<br>
-        return nil;<br><br>
+                NSLog(@"completed");<br>
+                }];<br>
+                }<br><br>
 
-        }] timeout:2.0f onScheduler:[RACScheduler currentScheduler]] subscribeNext:^(id  _Nullable x) {<br><br>
-
-        NSLog(@"x:%@", x);<br>
-        } error:^(NSError * _Nullable error) {<br><br>
-
-        //2s 后自动调用<br>
-        NSLog(@"error:%@", error);<br>
-        }];<br>
-        }<br><br>
-
-    </p>
-</div>
-<div>
-    输出:
-    <p>
-        x:ethan<br>
-        error:Error Domain=RACSignalErrorDomain Code=1 "(null)"<br>
-    </p>
-</div>
+        </p>
+    </div>
+    <div>
+        <p class="contents">
+            输出:<br>
+            doCompleted<br>
+            completed<br>
+        </p>
+    </div>
 
 
-<br>
+    <br>
 
-<p><b>四. delay 延迟发送next。</b></p>
-<br>
-<div>
-    <p>
-        - (IBAction)delay:(id)sender {<br><br>
+    <p class="smallTitle"><b>三. timeout：超时，可以让一个信号在一定的时间后，自动报错。</b></p>
+    <br>
+    <div class="codeAero">
+        <p>
+            - (IBAction)timeout:(id)sender {<br><br>
 
-        [[[RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {<br><br>
+            [[[RACSignal createSignal:^RACDisposable * _Nullable(id
+            &lt;RACSubscriber&gt; _Nonnull subscriber) {<br><br>
 
-        [subscriber sendNext:@"ethan"];<br><br>
+                [subscriber sendNext:@"ethan"];<br>
+                return nil;<br><br>
 
-        return nil;<br>
-        }] delay:5.0f] subscribeNext:^(id  _Nullable x) {<br><br>
+                }] timeout:2.0f onScheduler:[RACScheduler currentScheduler]] subscribeNext:^(id _Nullable x) {<br><br>
 
-        NSLog(@"delay x:%@", x);<br>
-        }];<br>
-        }<br><br>
-    </p>
-</div>
-<div>
-    输出: 5s后
-    <p>
-        delay x:ethan<br>
-    </p>
-</div>
+                NSLog(@"x:%@", x);<br>
+                } error:^(NSError * _Nullable error) {<br><br>
 
+                //2s 后自动调用<br>
+                NSLog(@"error:%@", error);<br>
+                }];<br>
+                }<br><br>
 
-<br>
-
-<p><b>五. retry重试 ：只要失败，就会重新执行创建信号中的block,直到成功.</b></p>
-<br>
-<div>
-    <p>
-        - (IBAction)retry:(id)sender {<br><br>
-
-        __block int i=0;<br><br>
-
-        [[[RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {<br><br>
-
-        if (i == 10) {<br>
-        [subscriber sendNext:@"ethan"];<br>
-        }else{<br>
-        NSLog(@"接收到了错误");<br>
-        [subscriber sendError:nil];<br>
-        }<br><br>
-
-        i++;<br><br>
-
-        return nil;<br>
-        }] retry] subscribeNext:^(id  _Nullable x) {<br><br>
-
-        NSLog(@"retry :%@", x);<br>
-        } error:^(NSError * _Nullable error) {<br><br>
-
-        NSLog(@"error :%@", error);<br>
-        }];<br>
-        }<br>
-
-    </p>
-</div>
-<div>
-    输出: 5s后
-    <p>
-        接收到了错误<br>
-        接收到了错误<br>
-        接收到了错误<br>
-        接收到了错误<br>
-        接收到了错误<br>
-        接收到了错误<br>
-        接收到了错误<br>
-        接收到了错误<br>
-        接收到了错误<br>
-        retry :ethan<br>
-    </p>
-</div>
+        </p>
+    </div>
+    <div>
+        <p class="contents">
+            输出:<br>
+            x:ethan<br>
+            error:Error Domain=RACSignalErrorDomain Code=1 "(null)"<br>
+        </p>
+    </div>
 
 
-<br>
-<p><b>六. replay重放：当一个信号被多次订阅,反复播放内容</b></p>
-<br>
-<div>
-    <p>
-        - (IBAction)replay:(id)sender {<br><br>
+    <br>
 
-        RACSignal *signal = [[RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {<br><br>
+    <p class="smallTitle"><b>四. delay 延迟发送next。</b></p>
+    <br>
+    <div class="codeAero">
+        <p>
+            - (IBAction)delay:(id)sender {<br><br>
 
-        [subscriber sendNext:@"ethan"];<br>
-        return nil;<br>
-        }] replay];;<br><br>
+            [[[RACSignal createSignal:^RACDisposable * _Nullable(id
+            &lt;RACSubscriber&gt; _Nonnull subscriber) {<br><br>
 
-        [signal subscribeNext:^(id  _Nullable x) {<br><br>
+                [subscriber sendNext:@"ethan"];<br><br>
 
-        NSLog(@"replay111:%@", x);<br>
-        }];<br><br>
+                return nil;<br>
+                }] delay:5.0f] subscribeNext:^(id _Nullable x) {<br><br>
 
-        [signal subscribeNext:^(id  _Nullable x) {<br><br>
-
-        NSLog(@"replay222:%@", x);<br>
-        }];<br>
-        }<br><br>
-    </p>
-</div>
-<div>
-    输出:
-    <p>
-        replay111:ethan<br>
-        replay222:ethan<br>
-    </p>
-</div>
-
-<br>
-<p><b>七. throttle节流:当某个信号发送比较频繁时，可以使用节流，在某一段时间不发送信号内容，过了一段时间获取信号的最新内容发出。</b></p>
-<br>
-<div>
-    <p>
-        - (IBAction)throttle:(id)sender {<br><br>
-
-        RACSubject *subject = [RACSubject subject];<br><br>
-
-        [subject sendNext:@"throttle ethan"];<br><br>
-
-        [[subject throttle:5] subscribeNext:^(id  _Nullable x) {<br><br>
-
-        NSLog(@"throttle :%@", x);<br>
-        }];<br>
-        }<br>
-    </p>
-</div>
+                NSLog(@"delay x:%@", x);<br>
+                }];<br>
+                }<br><br>
+        </p>
+    </div>
+    <div>
+        <p class="contents">
+            输出: 5s后<br>
+            delay x:ethan<br>
+        </p>
+    </div>
 
 
-<br>
-<p><b>八. interval 定时：每隔一段时间发出信号 dispose 终止</b></p>
-<br>
-<div>
-    <p>
-        - (IBAction)interval:(id)sender {<br><br>
+    <br>
 
-        [[RACSignal interval:2.0f onScheduler:[RACScheduler currentScheduler]] subscribeNext:^(NSDate * _Nullable x) {<br><br>
+    <p class="smallTitle"><b>五. retry重试 ：只要失败，就会重新执行创建信号中的block,直到成功.</b></p>
+    <br>
+    <div class="codeAero">
+        <p>
+            - (IBAction)retry:(id)sender {<br><br>
 
-        NSLog(@"haha");<br><br>
+            __block int i=0;<br><br>
 
-        }];<br>
-        }<br>
-    </p>
-</div>
-<div>
-    输出:
-    <p>
-        haha....一直输出
-    </p>
+            [[[RACSignal createSignal:^RACDisposable * _Nullable(id
+            &lt;RACSubscriber&gt; _Nonnull subscriber) {<br><br>
+
+                if (i == 10) {<br>
+                [subscriber sendNext:@"ethan"];<br>
+                }else{<br>
+                NSLog(@"接收到了错误");<br>
+                [subscriber sendError:nil];<br>
+                }<br><br>
+
+                i++;<br><br>
+
+                return nil;<br>
+                }] retry] subscribeNext:^(id _Nullable x) {<br><br>
+
+                NSLog(@"retry :%@", x);<br>
+                } error:^(NSError * _Nullable error) {<br><br>
+
+                NSLog(@"error :%@", error);<br>
+                }];<br>
+                }<br>
+
+        </p>
+    </div>
+    <div>
+        <p class="contents">
+            输出: 5s后<br>
+            接收到了错误<br>
+            接收到了错误<br>
+            接收到了错误<br>
+            接收到了错误<br>
+            接收到了错误<br>
+            接收到了错误<br>
+            接收到了错误<br>
+            接收到了错误<br>
+            接收到了错误<br>
+            retry :ethan<br>
+        </p>
+    </div>
+
+
+    <br>
+    <p class="smallTitle"><b>六. replay重放：当一个信号被多次订阅,反复播放内容</b></p>
+    <br>
+    <div class="codeAero">
+        <p>
+            - (IBAction)replay:(id)sender {<br><br>
+
+            RACSignal *signal = [[RACSignal createSignal:^RACDisposable * _Nullable(id
+            &lt;RACSubscriber&gt; _Nonnull subscriber) {<br><br>
+
+                [subscriber sendNext:@"ethan"];<br>
+                return nil;<br>
+                }] replay];;<br><br>
+
+                [signal subscribeNext:^(id _Nullable x) {<br><br>
+
+                NSLog(@"replay111:%@", x);<br>
+                }];<br><br>
+
+                [signal subscribeNext:^(id _Nullable x) {<br><br>
+
+                NSLog(@"replay222:%@", x);<br>
+                }];<br>
+                }<br><br>
+        </p>
+    </div>
+    <div>
+        <p class="contents">
+            输出:<br>
+            replay111:ethan<br>
+            replay222:ethan<br>
+        </p>
+    </div>
+
+    <br>
+    <p class="smallTitle"><b>七. throttle节流:当某个信号发送比较频繁时，可以使用节流，在某一段时间不发送信号内容，过了一段时间获取信号的最新内容发出。</b></p>
+    <br>
+    <div class="codeAero">
+        <p>
+            - (IBAction)throttle:(id)sender {<br><br>
+
+            RACSubject *subject = [RACSubject subject];<br><br>
+
+            [subject sendNext:@"throttle ethan"];<br><br>
+
+            [[subject throttle:5] subscribeNext:^(id _Nullable x) {<br><br>
+
+            NSLog(@"throttle :%@", x);<br>
+            }];<br>
+            }<br>
+        </p>
+    </div>
+
+
+    <br>
+    <p class="smallTitle"><b>八. interval 定时：每隔一段时间发出信号 dispose 终止</b></p>
+    <br>
+    <div class="codeAero">
+        <p>
+            - (IBAction)interval:(id)sender {<br><br>
+
+            [[RACSignal interval:2.0f onScheduler:[RACScheduler currentScheduler]] subscribeNext:^(NSDate * _Nullable x)
+            {<br><br>
+
+            NSLog(@"haha");<br><br>
+
+            }];<br>
+            }<br>
+        </p>
+    </div>
+    <div>
+        <p class="contents">
+            输出:<br>
+            haha....一直输出<br>
+        </p>
+    </div>
+
+    <br>
 </div>
 
 </body>

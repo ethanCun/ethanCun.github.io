@@ -300,6 +300,7 @@
     color: #4ecdc4;
 }
 
+
 .skill{
 
     background: red;
@@ -354,11 +355,6 @@
     float: left;
     width: 100%;
     cursor: pointer;
-}
-
-.shopping-car:hover, .rac-details:hover{
-
-    background: lightblue;
 }
 
 .shopping-car i, .rac-details i{

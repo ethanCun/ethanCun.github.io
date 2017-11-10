@@ -4,129 +4,139 @@
     <meta charset="UTF-8">
     <title>iOS 微信支付宝等第三方集成细节记录</title>
     <link rel="icon" href="../../../Source/icon-img.jpeg">
-    <link rel="stylesheet" href="../../../CSS/iOS/WexinDetailNotes/WexinDetailNotes.css">
-
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
 </head>
 <body>
 
-<h2>
-    iOS 微信支付宝等第三方集成细节记录
-</h2>
-<br>
+<div class="labels">
 
-<div>
-    <p><b>    一、 绕开静态库：Build Settings->Other link flags:-ObjC</b></p>
+    <span class="label label-primary">微信支付宝等第三方集成细节记录</span>
 </div>
-<br>
-<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-3a1522cc685c4dc0.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-3a1522cc685c4dc0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
-<br>
-<br>
-<div>
-    <p><b>    一、 二：少倒入了库：</b></p>
-</div>
-<br>
-<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-ecad0bcfa05500cb.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-ecad0bcfa05500cb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
-<br>
-<br>
 
-<div>
-    <p><b>解决办法：</b></p>
-</div>
-<br>
-<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-fa86386375671e70.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-fa86386375671e70.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
-<br>
-<br>
+<div class="contentBgDiv">
+    <p class="title">
+        iOS 微信支付宝等第三方集成细节记录
+    </p>
+    <hr>
 
-<div>
-    <p>
-        原因：微信SDK64位包报错，在替换SDK的时候突然少了两个库，在Link Binary With Libraries中依次加入 libsqlite3.dylib ，libz.dylib,libc++.dylib添加后就可以顺利编译通过。<br><br>
+    <p class="smallTitle"><b>一、绕开静态库：Build Settings->Other link flags:-ObjC</b></p>
+
+    <br>
+    <a target="_blank"
+       href="http://upload-images.jianshu.io/upload_images/3251504-3a1522cc685c4dc0.png?imageMogr2/auto-orient/strip"><img
+            src="http://upload-images.jianshu.io/upload_images/3251504-3a1522cc685c4dc0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+    <br>
+    <br>
+
+    <p class="smallTitle"><b>二、少倒入了库：</b></p>
+
+    <br>
+    <a target="_blank"
+       href="http://upload-images.jianshu.io/upload_images/3251504-ecad0bcfa05500cb.png?imageMogr2/auto-orient/strip"><img
+            src="http://upload-images.jianshu.io/upload_images/3251504-ecad0bcfa05500cb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+    <br>
+    <br>
+
+    <p class="contents"><b>解决办法：</b></p>
+
+    <br>
+    <a target="_blank"
+       href="http://upload-images.jianshu.io/upload_images/3251504-fa86386375671e70.png?imageMogr2/auto-orient/strip"><img
+            src="http://upload-images.jianshu.io/upload_images/3251504-fa86386375671e70.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+    <br>
+    <br>
+
+    <p class="contents">
+        原因：微信SDK64位包报错，在替换SDK的时候突然少了两个库，在Link Binary With Libraries中依次加入 libsqlite3.dylib
+        ，libz.dylib,libc++.dylib添加后就可以顺利编译通过。<br><br>
 
         下面的情况也是 同样的原因：<br>
     </p>
-</div>
-<br>
-<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-7464f360d20ade87.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-7464f360d20ade87.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
-<br>
-<br>
+    <br>
+    <a target="_blank"
+       href="http://upload-images.jianshu.io/upload_images/3251504-7464f360d20ade87.png?imageMogr2/auto-orient/strip"><img
+            src="http://upload-images.jianshu.io/upload_images/3251504-7464f360d20ade87.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+    <br>
+    <br>
 
-<div>
-    <p><b>三、apple id 未关联paysignKey</b></p>
-</div>
-<br>
-<div>
-    <p>
+    <p class="smallTitle"><b>三、apple id 未关联paysignKey</b></p>
+
+    <br>
+    <p class="contents">
         这个出现在微信支付当中，主要是因为没有和微信商户平台的API密钥关联起来签名，我们微信支付前期签名放在移动端，未进行关联签名时会出现这个错误。
     </p>
     <br>
-    <p>
+    <p class="contents">
         解决方法：将商户平台的密钥加入签名即可。
     </p>
-</div>
-<br>
-<br>
+    <br>
+    <br>
 
-<div>
-    <p><b>四、invalidate appSecret</b></p>
-</div>
-<br>
-<div>
-    <p>
+    <p class="smallTitle"><b>四、invalidate appSecret</b></p>
+
+    <br>
+    <p class="contents">
         这个出现在微信友盟第三方登录的时候，出现错误提示appSecret无效，检查了半天，原来是被安卓重置了。
     </p>
-    <p>
+    <p class="contents">
         解决方法：
     </p>
-    <p>
+    <p class="contents">
         使用新的appSeccret。
     </p>
-</div>
-<br>
-<br>
+    <br>
+    <br>
 
-<div>
-    <p>
+    <p class="smallTitle">
         <b>五、集成天翼rtc语音对讲时出现的bug</b>
     </p>
-</div>
-<br>
+    <br>
 
-<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-5cf9352af5f58b67.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-5cf9352af5f58b67.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
-<br>
-<p><b>怎么解决？</b></p><br>
+    <a target="_blank"
+       href="http://upload-images.jianshu.io/upload_images/3251504-5cf9352af5f58b67.png?imageMogr2/auto-orient/strip"><img
+            src="http://upload-images.jianshu.io/upload_images/3251504-5cf9352af5f58b67.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+    <br>
+    <p class="contents"><b>怎么解决？</b></p><br>
 
-<p>
-    检查了architectures，bitcode，bunddle id,等，还是不行，后来发现是因为没用真机调试，其实错误已经说得很明白了：不支持x86，类似的还有i318之类的，intel的处理器，你拿个模拟器怎么玩呢，zz...
-</p><br>
+    <p class="contents">
+        检查了architectures，bitcode，bunddle
+        id,等，还是不行，后来发现是因为没用真机调试，其实错误已经说得很明白了：不支持x86，类似的还有i318之类的，intel的处理器，你拿个模拟器怎么玩呢，zz...
+    </p><br>
 
-<div>
-    <p><b>五，项目里集成了微信支付宝等，完成后出现一大堆警告，如下：</b></p>
-</div>
-<br>
-<br>
-<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-d4b12166883f4433.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-d4b12166883f4433.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
-<br>
+    <p class="smallTitle"><b>五，项目里集成了微信支付宝等，完成后出现一大堆警告，如下：</b></p>
 
-<p>
-    ld: warning: directory not found for option '-L/Users/macofethan/Desktop/iOS—TFFACE/iOS/支付宝SDK'
-</p>
-<br>
-<p>
-    <b>解决办法：</b>
-</p>
-<br>
-<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-56946342c8c373c2.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-56946342c8c373c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a><br>
-<p>关于DWARF和DWARF with sSYM File可以参考下面的文章：</p><br>
-<p>http://www.cnblogs.com/whyandinside/archive/2013/04/28/3048366.html</p><br>
+    <br>
+    <br>
+    <a target="_blank"
+       href="http://upload-images.jianshu.io/upload_images/3251504-d4b12166883f4433.png?imageMogr2/auto-orient/strip"><img
+            src="http://upload-images.jianshu.io/upload_images/3251504-d4b12166883f4433.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+    <br>
 
-<div>
-    <p><b>六，支付宝处理后台返回的签名：</b></p>
-</div>
-<br>
-<div>
-    <p>
+    <p class="contents">
+        ld: warning: directory not found for option '-L/Users/macofethan/Desktop/iOS—TFFACE/iOS/支付宝SDK'
+    </p>
+    <br>
+    <p class="contents">
+        <b>解决办法：</b>
+    </p>
+    <br>
+    <a target="_blank"
+       href="http://upload-images.jianshu.io/upload_images/3251504-56946342c8c373c2.png?imageMogr2/auto-orient/strip"><img
+            src="http://upload-images.jianshu.io/upload_images/3251504-56946342c8c373c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a><br>
+    <p class="contents">关于DWARF和DWARF with sSYM File可以参考下面的文章：</p><br>
+    <p class="contents">http://www.cnblogs.com/whyandinside/archive/2013/04/28/3048366.html</p><br>
+
+    <p class="smallTitle"><b>六、支付宝处理后台返回的签名：</b></p>
+
+    <br>
+    <p class="contents">
         //使用CFURLCreateStringByAddingPercentEscapes处理后台拿到的签名即可正常支付<br><br>
 
-        CFStringRef CFURLCreateStringByAddingPercentEscapes(CFAllocatorRef allocator, CFStringRef originalString, CFStringRef charactersToLeaveUnescaped, CFStringRef legalURLCharactersToBeEscaped, CFStringEncoding encoding)<br><br>
+        CFStringRef CFURLCreateStringByAddingPercentEscapes(CFAllocatorRef allocator, CFStringRef originalString,
+        CFStringRef charactersToLeaveUnescaped, CFStringRef legalURLCharactersToBeEscaped, CFStringEncoding
+        encoding)<br><br>
     </p>
 </div>
 <br><br>

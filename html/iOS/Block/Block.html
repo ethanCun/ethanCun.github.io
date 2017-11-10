@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>从源码分析block的各种行为</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">Block内部实现</span>
+    <span class="label label-warning">瞬间捕获值</span>
+    <span class="label label-info">__block</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">从源码分析block</p>
+    <hr>
+
+    <p class="introduceText">Block与Closure是C语言的扩展,它非常类似于函数指针,网上很多文章都拿它来与函数指针比较,
+        平常开发中经常用来传值,回调等, 本文将从源码分析Block的一些行为.</p>
+
+    <p class="smallTitle">一. 普通block的内部实现</p>
+
+    <p class="contents">申明一个block,并打印一个值</p>
+
+    <div class="codeAero">
+
+        <p>void(^block2)(void) = ^(){</p>
+
+            <p> &nbsp; &nbsp; NSLog(@"%d", 19);</p>
+            <p>};</p>
+
+    </div>
+
+    <p class="contents">使用clang -rewrite-objc查看运行时代码:</p>
+
+    <div class="codeAero">
+        <p>cd到main.m目录下:</p>
+        <p>真机:xcrun -sdk iphoneos clang -rewrite-objc main.m</p>
+        <p>模拟器:xcrun -sdk iphonesimulator clang -rewrite-objc main.m</p>
+    </div>
+
+    <p class="contents">截取main.cpp关键运行时代码如下:</p>
+
+    <div class="codeAero">
+
+        <p> struct __block_impl {</p>
+           <p> &nbsp; &nbsp; void *isa;(指向类的指针)</p>
+            <p> &nbsp; &nbsp; int Flags;</p>
+            <p> &nbsp; &nbsp; int Reserved;</p>
+            <p> &nbsp; &nbsp; void *FuncPtr;(初始化时将__main_block_func_0赋值给FuncPtr)</p>
+            <p>};</p>
+
+
+        <p>struct __main_block_impl_0 {</p>
+        <p> &nbsp; &nbsp; struct __block_impl impl;</p>
+        <p> &nbsp; &nbsp; struct __main_block_desc_0* Desc;</p>
+        <p> &nbsp; &nbsp; __main_block_impl_0(void *fp, struct __main_block_desc_0 *desc, int flags=0) {</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;  impl.isa = &_NSConcreteStackBlock;</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;  impl.Flags = flags;</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;  impl.FuncPtr = fp;</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;  Desc = desc;</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp; }</p>
+        <p> &nbsp;&nbsp; };</p>
+        <p> &nbsp;&nbsp; static void __main_block_func_0(struct __main_block_impl_0 *__cself) {</p>
+
+
+        <p> &nbsp;&nbsp; &nbsp;&nbsp; NSLog((NSString *)</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp; &__NSConstantStringImpl__var_</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp; folders_tl_t_bq19kn6_g9y_388</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp; 6ljxsgh0000gn_T_main_4b283a_mi_0, </p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp; 19);</p>
+        <p> &nbsp;&nbsp; }</p>
+
+        <p> &nbsp;&nbsp; static struct __main_block_desc_0 {</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp; size_t reserved;</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp; size_t Block_size;</p>
+        <p> &nbsp;&nbsp; } __main_block_desc_0_DATA = { 0, sizeof(struct __main_block_impl_0)};</p><br>
+        <p> &nbsp;&nbsp; int main(int argc, const char * argv[]) {</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp; /* @autoreleasepool */ </p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp; { __AtAutoreleasePool __autoreleasepool;</p>
+
+        <p> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;  void(*block1)(void) = ((void (*)())&__main_block_impl_0((void *)__main_block_func_0,</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;  &__main_block_desc_0_DATA));</p>
+
+        <p> &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; ((void (*)(__block_impl *))((__block_impl *)block1)->FuncPtr)((__block_impl *)block1);</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp; }</p>
+        <p> &nbsp;&nbsp; return 0;</p>
+        <p> &nbsp;&nbsp; }</p>
+
+    </div>
+
+    <p class="contents">简化block1的申明与实现如下:</p>
+    <div class="codeAero">
+        <p>申明与初始化:</p>
+        <p>
+            void(*block1)(void) = (&__main_block_impl_0(__main_block_func_0, &__main_block_desc_0_DATA));
+        </p>
+        <p>实现:</p>
+        <p>
+            (__block_impl *)block1->FuncPtr)
+        </p>
+    </div>
+
+    <p class="contents">由上可以发现:</p>
+    <p class="contents"><b>1. 声明的block1是一个指向结构体类型block的指针</b></p>
+    <p class="contents"><b>2. block1的实现调用了结构体中的成员__block_impl的FuncPtr方法(即:__main_block_func_0)</b></p>
+
+    <p class="smallTitle">二. Block的瞬间捕获值</p>
+    <p class="contents">初始化一个外部变量,并在内部打印:</p>
+    <div class="codeAero">
+
+        <p> &nbsp;&nbsp; int a = 10;</p>
+
+        <p> &nbsp;&nbsp; void(^block2)(void) = ^(){</p>
+
+        <p> &nbsp;&nbsp; &nbsp;&nbsp; NSLog(@"%d", a);</p>
+        <p> &nbsp;&nbsp; };</p>
+
+        <p> &nbsp;&nbsp; a  = 30;</p>
+
+        <p> &nbsp;&nbsp; block2();</p>
+
+    </div>
+
+    <p class="contents">输出:10</p>
+    <p class="contents">使用clang输出运行时代码如下:</p>
+    <div class="codeAero">
+
+        <p> &nbsp;&nbsp; struct __block_impl {</p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp; void *isa;</p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp; int Flags;</p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp; int Reserved;</p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp; void *FuncPtr;</p>
+        <p> &nbsp;&nbsp;};</p>
+
+        <p> &nbsp;&nbsp; struct __main_block_impl_0 {</p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp; struct __block_impl impl;</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp;struct __main_block_desc_0* Desc;</p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp; int a;<b>新增a</b></p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp; __main_block_impl_0(void *fp, struct __main_block_desc_0 *desc, int _a, int flags=0) : a(_a) <b>新增a</b>{</p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;impl.isa = &_NSConcreteStackBlock;</p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; impl.Flags = flags;</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;impl.FuncPtr = fp;</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Desc = desc;</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp;}</p>
+        <p> &nbsp;&nbsp; };</p>
+        <p> &nbsp;&nbsp;static void __main_block_func_0(struct __main_block_impl_0 *__cself) {</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp;int a = __cself->a;<b>新增__cself</b> <b>// bound by copy</b></p>
+
+        <p> &nbsp;&nbsp;&nbsp;&nbsp;NSLog((NSString </p>
+        <p>&nbsp;&nbsp; *)&__NSConstantStringImpl__var_folde</p>
+        <p>&nbsp;&nbsp;  rs_tl_t_bq19kn6_g9y_3886ljxsgh</p>
+        <p>&nbsp;&nbsp; 0000gn_T_main_3f670b_mi_0, a);</p>
+        <p> &nbsp;&nbsp;}</p>
+
+        <p> &nbsp;&nbsp;static struct __main_block_desc_0 {</p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp;size_t reserved;</p>
+        <p> &nbsp;&nbsp; &nbsp;&nbsp;size_t Block_size;</p>
+        <p> &nbsp;&nbsp;} __main_block_desc_0_DATA = { 0, sizeof(struct __main_block_impl_0)};</p><br>
+        <p> &nbsp;&nbsp;int main(int argc, const char * argv[]) {</p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp;/* @autoreleasepool */ { __AtAutoreleasePool __autoreleasepool;</p>
+
+        <p> &nbsp;&nbsp;&nbsp;&nbsp;int a = 10;</p>
+
+        <p> &nbsp;&nbsp;&nbsp;&nbsp;void(*block2)(void) = &__main_block_impl_0(__main_block_func_0, &__main_block_desc_0_DATA, a);</p>
+
+        <p> &nbsp;&nbsp; &nbsp;&nbsp;a = 30;</p>
+
+        <p> &nbsp;&nbsp; &nbsp;&nbsp;((void (*)(__block_impl *))((__block_impl *)block2)->FuncPtr)((__block_impl *)block2);</p>
+        <p> &nbsp;&nbsp;}</p>
+        <p> &nbsp;&nbsp;return 0;</p>
+        <p> &nbsp;&nbsp;}</p>
+
+    </div>
+
+    <p class="contents">简化block2的申明与实现如下:</p>
+    <div class="codeAero">
+        <p>申明与初始化:</p>
+        <p>
+            void(*block2)(void) = &__main_block_impl_0(__main_block_func_0, &__main_block_desc_0_DATA, a);
+        </p>
+        <p>实现:</p>
+        <p>
+            (__block_impl *)block2->FuncPtr)
+        </p>
+    </div>
+    <p class="contents">由上可以发现:</p>
+    <p class="contents"><b>Block2的瞬间截获值本质是结构体内部增加了一个成员变量,
+        后续操作的都是内部变量, 因此在block外改变a的值是不会影响block内部输出的.</b></p>
+
+
+    <p class="smallTitle">三. __block</p>
+
+    <p class="contents">申明一个__block属性的值,并在内部修改输出,示例代码如下:</p>
+    <div class="codeAero">
+
+        <p>&nbsp;&nbsp;__block NSInteger aa = 10;</p>
+
+        <p>&nbsp;&nbsp;void(^block3)(void) = ^(){</p>
+
+        <p> &nbsp;&nbsp;&nbsp;&nbsp;aa = 20;</p>
+
+        <p> &nbsp;&nbsp;&nbsp;&nbsp;NSLog(@"aa = %ld", aa);</p>
+        <p>&nbsp;&nbsp;};</p>
+
+        <p>&nbsp;&nbsp;block3();</p>
+
+    </div>
+
+    <p class="contents">输出:20</p>
+    <p class="contents">使用clang输出运行时代码如下:</p>
+
+    <div class="codeAero">
+
+        <p> &nbsp;&nbsp; struct __block_impl {</p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp; void *isa;</p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp; int Flags;</p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp; int Reserved;</p>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp; void *FuncPtr;</p>
+        <p> &nbsp;&nbsp;};</p>
+
+
+        <p>&nbsp;&nbsp;struct __Block_byref_aa_0{ <b>新增结构体</b> </p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;void *__isa;</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;__Block_byref_aa_0 *__forwarding;<b>指向自己__Block_byref_aa_0</b></p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;int __flags;</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;int __size;</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;NSInteger aa;</p>
+        <p>&nbsp;&nbsp;};</p>
+
+        <p>&nbsp;&nbsp;struct __main_block_impl_0 {</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;struct __block_impl impl;</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;struct __main_block_desc_0* Desc;</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;__Block_byref_aa_0 *aa; <b>// by ref</b></p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;__main_block_impl_0(void *fp, struct __main_block_desc_0 *desc, __Block_byref_aa_0 *_aa, </p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;int flags=0) : aa(_aa->__forwarding) {</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;impl.isa = &_NSConcreteStackBlock;</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;impl.Flags = flags;</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;impl.FuncPtr = fp;</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Desc = desc;</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;}</p>
+        <p>&nbsp;&nbsp;};</p><br>
+
+        <p>&nbsp;&nbsp;static void __main_block_func_0(struct __main_block_impl_0 *__cself) {</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;__Block_byref_aa_0 *aa = __cself->aa; <b>//bound by ref
+        </b> </p>
+
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;(aa->__forwarding->aa) = 20;</p>
+
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;NSLog((NSString *)</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&__NSConstantStringImpl__var_</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;folders_tl_t_bq19kn6_g9y_3886ljxsgh0000gn_T</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;_main_ab0aba_mi_0,</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;(aa->__forwarding->aa));</p>
+        <p>&nbsp;&nbsp;}</p>
+
+        <p></p><b>新增</b></p>
+        <p>&nbsp;&nbsp;static void __main_block_copy_0(struct __main_block_impl_0*dst, struct __main_block_impl_0*src)
+        <p>&nbsp;&nbsp;{</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;_Block_object_assign((void*)&dst->aa, (void*)src->aa, 8/*BLOCK_FIELD_IS_BYREF*/);</p>
+        <p>&nbsp;&nbsp;}</p>
+
+        <p></p><b>新增</b></p>
+        <p>&nbsp;&nbsp;static void __main_block_dispose_0(struct __main_block_impl_0*src) {</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;_Block_object_dispose((void*)src->aa, 8/*BLOCK_FIELD_IS_BYREF*/);}</p>
+
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;static struct __main_block_desc_0 {</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t reserved;</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t Block_size;</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void (*copy)(struct __main_block_impl_0*, struct __main_block_impl_0*);
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void (*dispose)(struct __main_block_impl_0*);</p>
+        <p>&nbsp;&nbsp;} __main_block_desc_0_DATA = { 0, sizeof(struct __main_block_impl_0), __main_block_copy_0, __main_block_dispose_0};</p><br><br>
+
+
+        <p>&nbsp;&nbsp;int main(int argc, const char * argv[]) {</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;/* @autoreleasepool */ { __AtAutoreleasePool __autoreleasepool;</p>
+
+
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;__attribute__((__blocks__(byref))) __Block_byref_aa_0 aa = {(void*)0,(__Block_byref_aa_0 *)&aa, 0, sizeof(__Block_byref_aa_0), 10};
+
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;void(*block3)(void) = ((void (*)())&__main_block_impl_0((void *)__main_block_func_0, &__main_block_desc_0_DATA, (__Block_byref_aa_0 *)&aa, 570425344));
+
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;((void (*)(__block_impl *))((__block_impl *)block3)->FuncPtr)((__block_impl *)block3);
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;}
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;return 0;
+        <p>&nbsp;&nbsp;}
+
+
+    </div>
+
+    <p class="contents">可以发现:</p>
+    <p class="contents"><b>1. 使用__block来修饰变量时新增了3个结构体,
+        分别是:__Block_byref_aa_0,__main_block_copy_0,__main_block_dispose_0</b></p>
+    <p class="contents"><b>2. 其中__main_block_copy_0与__main_block_dispose_0是用来帮助__Block_byref_aa_0管理内存.</b></p>
+    <p class="contents"><b>3 .__Block_byref_aa_0根据变量名来命名,__forwarding指向自身,aa获取了外部的值.</b></p>
+    <p class="contents">赋值的时候变成了:</p>
+    <div class="codeAero">
+        <p>
+            __attribute__((__blocks__(byref))) __Block_byref_aa_0 aa = {(void*)0,(__Block_byref_aa_0 *)&aa, 0, sizeof(__Block_byref_aa_0), 10};
+        </p>
+        <p>
+            即:通过__forwarding指针给外部变量赋值.
+        </p>
+    </div>
+    <p class="contents">此时的__forwarding指向了外部变量aa, 后续操作的是__forwarding指针,
+        因此这时在Block内部可以修改外部变量的值</p>
+    <br><br>
+</div>
+
+
+</body>
+</html>

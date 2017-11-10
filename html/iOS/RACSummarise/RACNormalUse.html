@@ -2,114 +2,134 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>RAC</title>
+    <title>RAC核心方法总结(三)</title>
     <link rel="icon" href="../../../Source/icon-img.jpeg">
-    <link rel="stylesheet" href="../../../CSS/iOS/RACSummarise/RACSummarise.css">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
 </head>
 <body>
 
-<h2>RAC核心方法总结(三)</h2>
-<br>
+<div class="labels">
 
-<p><b>一. target-action 响应事件</b></p>
-<br>
-<p>例子1:</p>
-<div>
-    <p>
-        - (IBAction)rac_buttonClickedSignal:(id)sender {<br><br>
-
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"haha" message:@"11" delegate:self cancelButtonTitle:@"1" otherButtonTitles:@"2", nil];<br>
-        [alert show];<br>
-        [[alert rac_buttonClickedSignal] subscribeNext:^(NSNumber * _Nullable x) {<br><br>
-
-        NSLog(@"x:%@", x);<br>
-        }];<br>
-        }<br>
-    </p>
-</div>
-<p>例子2:</p>
-<div>
-    <p>
-        [[self.textFild rac_textSignal] subscribeNext:^(id x) {<br>
-        NSLog(@"%@",x);<br>
-        }];<br>
-    </p>
-</div>
-<p>例子3:</p>
-<div>
-    <p>
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] init];<br>
-        [[tap rac_gestureSignal] subscribeNext:^(id x) {<br>
-        NSLog(@"tap");<br>
-        }];<br>
-        [self.view addGestureRecognizer:tap];<br>
-    </p>
+    <span class="label label-primary">RAC</span>
+    <span class="label label-info">target-action</span>
+    <span class="label label-success">代理</span>
+    <span class="label label-default">KVO</span>
+    <span class="label label-danger">通知</span>
 </div>
 
+<div class="contentBgDiv">
+    <p class="title">RAC核心方法总结(三)</p>
+    <hr>
+    <br>
 
-<br>
+    <p class="smallTitle"><b>一. target-action 响应事件</b></p>
+    <br>
+    <p class="contents">例子1:</p>
+    <div class="codeAero">
+        <p>
+            - (IBAction)rac_buttonClickedSignal:(id)sender {<br><br>
 
-<p><b>二. 代理</b></p>
-<p>用RAC写代理是有局限的，它只能实现返回值为void的代理方法</p>
-<br>
-<div>
-    <p>
-        [[self rac_signalForSelector:@selector(alertView:clickedButtonAtIndex:) fromProtocol:@protocol(UIAlertViewDelegate)] subscribeNext:^(RACTuple *tuple) {<br>
-         NSLog(@"%@",tuple.first);<br>
-        NSLog(@"%@",tuple.second);<br>
-        NSLog(@"%@",tuple.third);<br>
-        }];<br>
-    </p>
+            &nbsp; &nbsp;UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"haha" message:@"11" delegate:self
+            &nbsp; &nbsp;cancelButtonTitle:@"1" otherButtonTitles:@"2", nil];<br>
+            &nbsp; &nbsp;[alert show];<br>
+            &nbsp; &nbsp;[[alert rac_buttonClickedSignal] subscribeNext:^(NSNumber * _Nullable x) {<br><br>
 
-</div>
+            &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;NSLog(@"x:%@", x);<br>
+            &nbsp; &nbsp;}];<br>
+            }<br>
+        </p>
+    </div>
+    <p class="contents">例子2:</p>
+    <div class="codeAero">
+        <p>
+            [[self.textFild rac_textSignal] subscribeNext:^(id x) {<br>
+            &nbsp; &nbsp;&nbsp; &nbsp;NSLog(@"%@",x);<br>
+            }];<br>
+        </p>
+    </div>
+    <p class="contents">例子3:</p>
+    <div class="codeAero">
+        <p>
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] init];<br>
+            [[tap rac_gestureSignal] subscribeNext:^(id x) {<br>
+            &nbsp; &nbsp;&nbsp; &nbsp;NSLog(@"tap");<br>
+            }];<br>
+            [self.view addGestureRecognizer:tap];<br>
+        </p>
+    </div>
 
 
-<br>
+    <br>
 
-<p><b>三. 通知</b></p>
-<p>用RAC写通知 不需要再去dealloc时移除 因为dispose的时候已经做了</p>
-<br>
-<div>
-    <p>
-        //接受一个名为postData的通知<br>
-        [[[NSNotificationCenter defaultCenter] rac_addObserverForName:@"postData" object:nil] subscribeNext:^(NSNotification *notification) {<br>
-        NSLog(@"%@", notification.name);<br>
-        NSLog(@"%@", notification.object);<br>
-        }];
-    </p>
+    <p class="smallTitle"><b>二. 代理</b></p>
+    <p class="introduceText">用RAC写代理是有局限的，它只能实现返回值为void的代理方法</p>
+    <div class="codeAero">
+        <p>
+            [[self rac_signalForSelector:@selector(alertView:clickedButtonAtIndex:)
+            fromProtocol:@protocol(UIAlertViewDelegate)] subscribeNext:^(RACTuple *tuple) {<br>
+            &nbsp; &nbsp;&nbsp; &nbsp;NSLog(@"%@",tuple.first);<br>
+            &nbsp; &nbsp;&nbsp; &nbsp;NSLog(@"%@",tuple.second);<br>
+            &nbsp; &nbsp;&nbsp; &nbsp;NSLog(@"%@",tuple.third);<br>
+            }];<br>
+        </p>
 
-</div>
+    </div>
 
-<br>
 
-<p><b>四. KVO</b></p>
-<br>
-<div>
-    <p>
-        [RACObserve(scrolView, contentOffset) subscribeNext:^(id x) {<br>
-        NSLog(@"success");<br>
-        }];<br>
-    </p>
+    <br>
 
-</div>
+    <p class="smallTitle"><b>三. 通知</b></p>
+    <p class="introduceText">用RAC写通知 不需要再去dealloc时移除 因为dispose的时候已经做了</p>
+    <div class="codeAero">
+        <p>
+            //接受一个名为postData的通知<br>
+            [[[NSNotificationCenter defaultCenter] rac_addObserverForName:@"postData" object:nil]
+            subscribeNext:^(NSNotification *notification) {<br>
+            &nbsp; &nbsp;&nbsp; &nbsp;NSLog(@"%@", notification.name);<br>
+            &nbsp; &nbsp;&nbsp; &nbsp;NSLog(@"%@", notification.object);<br>
+            }];
+        </p>
 
-<h2><b>RAC常使用的宏</b></h2>
+    </div>
 
-<br>
-<div>
+    <br>
 
-    <ul>
-        <li><b>一. RAC(TARGET, [KEYPATH, [NIL_VALUE]])</b>：用于给某个对象的某个属性绑定</li><br>
-        <li><b>二. RACObserve(self, name) </b>：监听某个对象的某个属性,返回的是信号。</li><br>
-        <li><b>三. @weakify(Obj)和@strongify(Obj)</b></li><br>
-        <li><b>四. RACTuplePack</b> ：把数据包装成RACTuple（元组类）<br><br>
-                    例子:          RACTuple *tuple = RACTuplePack(@"1",@"zhansgan");<br><br>
-        </li>
-        <li><b>五. RACTupleUnpack</b>：把RACTuple（元组类）解包成对应的数据<br><br>
-                    例子:        RACTupleUnpack(id num, NSDictionary *dic) = x;<br><br>
-        </li>
-    </ul>
+    <p class="smallTitle"><b>四. KVO</b></p>
+    <br>
+    <div class="codeAero">
+        <p>
+            [RACObserve(scrolView, contentOffset) subscribeNext:^(id x) {<br>
+            &nbsp; &nbsp;&nbsp; &nbsp;NSLog(@"success");<br>
+            }];<br>
+        </p>
 
+    </div>
+
+    <h2 class="smallTitle"><b>RAC常使用的宏</b></h2>
+
+    <br>
+    <div class="codeAero">
+
+        <br>
+        <ul>
+            <li><b>一. RAC(TARGET, [KEYPATH, [NIL_VALUE]])</b>：用于给某个对象的某个属性绑定</li>
+            <br>
+            <li><b>二. RACObserve(self, name) </b>：监听某个对象的某个属性,返回的是信号。</li>
+            <br>
+            <li><b>三. @weakify(Obj)和@strongify(Obj)</b></li>
+            <br>
+            <li><b>四. RACTuplePack</b> ：把数据包装成RACTuple（元组类）<br><br>
+                例子: RACTuple *tuple = RACTuplePack(@"1",@"zhansgan");<br><br>
+            </li>
+            <li><b>五. RACTupleUnpack</b>：把RACTuple（元组类）解包成对应的数据<br><br>
+                例子: RACTupleUnpack(id num, NSDictionary *dic) = x;<br><br>
+            </li>
+        </ul>
+
+    </div>
+    <br><br>
 </div>
 <br><br>
 

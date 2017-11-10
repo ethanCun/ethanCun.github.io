@@ -4,58 +4,69 @@
     <meta charset="UTF-8">
     <title>【Mac技巧】.DS_Store 文件删不掉？彻底删除不断复活的.DS_Store 文件</title>
     <link rel="icon" href="../../../Source/icon-img.jpeg">
-    <link rel="stylesheet" href="../../../CSS/Other/Delete_DS_Store/Delete_DS_Store.css">
-    <style>
-
-        p.dialog{
-            text-indent: 20px;
-        }
-
-    </style>
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
 </head>
 <body>
 
-<h2>
-    【Mac技巧】.DS_Store 文件删不掉？彻底删除不断复活的.DS_Store 文件
-</h2>
+<div class="labels">
 
-<p class="dialog">
-    相信大部分Mac 用家都曾遇到过，当将Mac 整个文件夹移到Windows 或者其他装置时，文件夹会出现.DS_Store 这一个文件，不过在Mac 却见不到这个文件，如果你不了解.DS_Store 你会误以为这是错误文件或是一个病毒。实际上 .DS_Store（全称 Desktop Services Store）是Apple 为 OS X 操作系统所创造的隐藏文件，目的在于存贮目录的自定义属性，例如文件们的图标位置或者是背景色的选择。
+    <span class="label label-success">.DS_Store</span>
+</div>
+
+<div class="contentBgDiv">
+    <p class="title">
+        【Mac技巧】.DS_Store 文件删不掉？彻底删除不断复活的.DS_Store 文件
+    </p>
+    <hr>
+
+    <p class="contents">
+        相信大部分Mac 用家都曾遇到过，当将Mac 整个文件夹移到Windows 或者其他装置时，文件夹会出现.DS_Store 这一个文件，不过在Mac 却见不到这个文件，如果你不了解.DS_Store
+        你会误以为这是错误文件或是一个病毒。实际上 .DS_Store（全称 Desktop Services Store）是Apple 为 OS X
+        操作系统所创造的隐藏文件，目的在于存贮目录的自定义属性，例如文件们的图标位置或者是背景色的选择。
+        <br>
+    </p>
+
+    <p class="contents">
+        很多用户会选择删除.DS_Store 文件，可恶的是.DS_Store 竟然会「自动复活」？！这一点令人非常困扰，为此小编特意教大家如何彻底删除.DS_Store，在Mac 输入指令让OS X 系统无法创造.DS_Store
+        文件。
+    </p>
+
     <br>
-</p>
+    <p class="contents">
+        1、打开终端机
+    </p>
 
-<p class="dialog">
-    很多用户会选择删除.DS_Store 文件，可恶的是.DS_Store 竟然会「自动复活」？！这一点令人非常困扰，为此小编特意教大家如何彻底删除.DS_Store，在Mac 输入指令让OS X 系统无法创造.DS_Store 文件。
-</p>
+    <p class="contents">
+        输入代码
+    </p>
 
-<p>
-    <br>1、打开终端机
-</p>
+    <p class="contents">
+        sudo find / -name ".DS_Store" -depth -exec rm {} \;
+    </p>
 
-<p>
-    <br>输入代码
-</p>
+    <br>
+    <p class="contents">
+        2、输入密码
+    </p>
 
-<div style="border: 1px solid rebeccapurple">
-    <p><b>sudo find / -name ".DS_Store" -depth -exec rm {} \;</b></p>
+    <p class="contents">
+        输入完以上代码后终端机会提示输入用户的密码，输入密码后继续输入下列代码：
+    </p>
+
+    <p class="contents">
+        defaults write com.apple.desktopservices DSDontWriteNetworkStores true
+    </p>
+
+
+    <p class="contents">
+        按下enter 后就完成了，以后将Mac 的文件转移到其他设备就不怕再出现.DS_Store 文件了！
+    </p>
+
+    <br>
 </div>
-
-<p>
-    2、输入密码
-</p>
-
-<p>
-    输入完以上代码后终端机会提示输入用户的密码，输入密码后继续输入下列代码：
-</p>
-
-<div style="border: 1px solid rebeccapurple">
-    <p><b>defaults write com.apple.desktopservices DSDontWriteNetworkStores true</b></p>
-</div>
-
-<p>
-    按下enter 后就完成了，以后将Mac 的文件转移到其他设备就不怕再出现.DS_Store 文件了！
-</p>
-
+<br>
 
 </body>
 </html>

@@ -4,91 +4,105 @@
     <meta charset="UTF-8">
     <title>iOS之缓存清理的实现</title>
     <link rel="icon" href="../../../Source/icon-img.jpeg">
-    <link rel="stylesheet" href="../../../CSS/iOS/CacheHanddle/CacheHanddle.css">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
 </head>
 <body>
 
-<h2>iOS之缓存清理的实现</h2>
+<div class="labels">
+    <span class="label label-primary">Xcode缓存</span>
+    <span class="label label-warning">线程安全</span>
+    <span class="label label-info">单例对象</span>
+</div>
 
-<h3>
-    一、一般Xcode的缓存分为两大块：
-    一是自己工程缓存的一些数据;第二如果使用了SDWebImage则还需要清理图片缓存。
-</h3>
+<div class="contentBgDiv">
 
-<h3>
-    二、计算单个文件的大小
-</h3>
 
-<div>
-    <p>
-        -(long long)fileSizeAtPath:(NSString *)path<br>
-        {<br>
-        NSFileManager *fileManager=[NSFileManager defaultManager];<br>
-        if([fileManager fileExistsAtPath:path]){<br>
-        long long size=[fileManager attributesOfItemAtPath:path error:nil].fileSize;<br>
-        return size;<br>
-        }<br>
-        return 0;<br>
-        }<br>
+    <p class="title">iOS之缓存清理的实现</p>
+    <hr>
+
+    <p class="introduceText">
+        一般Xcode的缓存分为两大块：
+        一是自己工程缓存的一些数据;第二如果使用了SDWebImage则还需要清理图片缓存。
     </p>
-</div>
 
-<h3>
-    三、计算文件夹的大小（含SDWenImage的图片缓存）
-</h3>
-<div>
-    <p>
-        -(float)folderSizeAtPath:(NSString *)path<br>
-        {<br>
-        NSFileManager *fileManager=[NSFileManager defaultManager];<br>
-        NSString *cachePath=    [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];<br>
-        cachePath=[cachePath stringByAppendingPathComponent:path];<br>
-        long long folderSize=0;<br>
-        if ([fileManager fileExistsAtPath:cachePath]) {<br>
-        NSArray *childerFiles=[fileManager subpathsAtPath:cachePath];<br>
-        for (NSString *fileName in childerFiles) {<br>
-        NSString *fileAbsolutePath=[cachePath stringByAppendingPathComponent:fileName];<br>
-        long long size=[self fileSizeAtPath:fileAbsolutePath];<br>
-        folderSize += size;<br>
-        NSLog(@"fileAbsolutePath=%@",fileAbsolutePath);<br>
-        }<br>
-        //SDWebImage框架自身计算缓存的实现<br>
-        folderSize+=[[SDImageCache sharedImageCache] getSize];<br>
-        return folderSize/1024.0/1024.0;<br>
-        }<br>
-        return 0;<br>
-        }
+    <p class="smallTitle">
+        <b>一、计算单个文件的大小</b>
     </p>
+
+    <div class="codeAero">
+        <p>-(long long)fileSizeAtPath:(NSString *)path</p>
+        <p> {</p>
+        <p> &nbsp; &nbsp;NSFileManager *fileManager=[NSFileManager defaultManager];</p>
+        <p> &nbsp; &nbsp;if([fileManager fileExistsAtPath:path]){</p>
+        <p> &nbsp; &nbsp;&nbsp;&nbsp;long long size=[fileManager attributesOfItemAtPath:path error:nil].fileSize;</p>
+        <p> &nbsp; &nbsp;return size;</p>
+        <p> &nbsp; &nbsp;}</p>
+        <p> &nbsp; &nbsp;return 0;</p>
+        <p> }</p>
+    </div>
+
+    <p class="smallTitle">
+        <b>二、计算文件夹的大小（含SDWenImage的图片缓存）</b>
+    </p>
+
+    <div class="codeAero">
+        <p>-(float)folderSizeAtPath:(NSString *)path</p>
+            <p>{</p>
+        <p> &nbsp; &nbsp;NSFileManager *fileManager=[NSFileManager defaultManager];</p>
+        <p> &nbsp; &nbsp;NSString *cachePath= [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];</p>
+        <p> &nbsp; &nbsp;cachePath=[cachePath stringByAppendingPathComponent:path];</p>
+        <p> &nbsp; &nbsp;long long folderSize=0;</p>
+        <p> &nbsp; &nbsp;if ([fileManager fileExistsAtPath:cachePath]) {</p>
+        <p> &nbsp; &nbsp;&nbsp; &nbsp;NSArray *childerFiles=[fileManager subpathsAtPath:cachePath];</p>
+        <p> &nbsp; &nbsp;&nbsp; &nbsp;for (NSString *fileName in childerFiles) {</p>
+        <p> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;NSString *fileAbsolutePath=[cachePath stringByAppendingPathComponent:fileName];</p>
+        <p> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;long long size=[self fileSizeAtPath:fileAbsolutePath];</p>
+        <p> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;folderSize += size;</p>
+        <p> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;NSLog(@"fileAbsolutePath=%@",fileAbsolutePath);</p>
+        <p> &nbsp; &nbsp;}</p>
+        <p> &nbsp; &nbsp;//SDWebImage框架自身计算缓存的实现</p>
+        <p> &nbsp; &nbsp;folderSize+=[[SDImageCache sharedImageCache] getSize];</p>
+        <p> &nbsp; &nbsp;&nbsp; &nbsp;return folderSize/1024.0/1024.0;</p>
+        <p> &nbsp; &nbsp;}</p>
+        <p> &nbsp; &nbsp;return 0;</p>
+        <p>}</p>
+    </div>
+
+    <p class="smallTitle">
+        <b>三、得到了缓存大小最后就是清除缓存了</b>
+    </p>
+    <div class="codeAero">
+        <p>//同样也是利用NSFileManager API进行文件操作，SDWebImage框架自己实现了清理缓存操作，我们可以直接调用。</p>
+        <p>-(void)clearCache:(NSString *)path{</p>
+        <p> &nbsp; &nbsp;NSString *cachePath=[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];</p>
+        <p> &nbsp; &nbsp;cachePath=[cachePath stringByAppendingPathComponent:path];</p>
+        <p> &nbsp; &nbsp;NSFileManager *fileManager=[NSFileManager defaultManager];</p>
+        <p> &nbsp; &nbsp;if ([fileManager fileExistsAtPath:cachePath]) {</p>
+        <p> &nbsp; &nbsp;&nbsp; &nbsp;NSArray *childerFiles=[fileManager subpathsAtPath:cachePath];</p>
+        <p> &nbsp; &nbsp;&nbsp; &nbsp;for (NSString *fileName in childerFiles) {</p>
+        <p> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;//如有需要，加入条件，过滤掉不想删除的文件</p>
+        <p> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;NSString *fileAbsolutePath=[cachePath stringByAppendingPathComponent:fileName];</p>
+        <p> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;NSLog(@"fileAbsolutePath=%@",fileAbsolutePath);</p>
+        <p> &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;[fileManager removeItemAtPath:fileAbsolutePath error:nil];</p>
+        <p> &nbsp; &nbsp;&nbsp; &nbsp;}</p>
+        <p>&nbsp; &nbsp;}</p>
+        <p> &nbsp; &nbsp;[[SDImageCache sharedImageCache] cleanDisk];</p>
+        <p>}</p>
+    </div>
+
+    <p class="smallTitle">
+        <b>四、总结</b><br>
+    </p>
+
+    <p class="contents">
+        1.做缓存清理最好封装一个单例管理对象，对象要保证唯一性；<br>
+        2.缓存路径可以封装一下，这样在外面调用的时候就可以不用再传路径了；<br>
+        3.清理的过程涉及到遍历子路径，当缓存多的时候，会有很长的耗时操作，所以这时应该将遍历删除的过程全部写到新开辟的子线程中去，然后回到主线程刷新UI界面；<br>
+    </p>
+
+    <br><br>
 </div>
-
-<h3>
-    四、得到了缓存大小最后就是清除缓存了
-</h3>
-<div>
-    //同样也是利用NSFileManager API进行文件操作，SDWebImage框架自己实现了清理缓存操作，我们可以直接调用。<br>
-    -(void)clearCache:(NSString *)path{<br>
-    NSString *cachePath=[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];<br>
-    cachePath=[cachePath stringByAppendingPathComponent:path];<br>
-    NSFileManager *fileManager=[NSFileManager defaultManager];<br>
-    if ([fileManager fileExistsAtPath:cachePath]) {<br>
-    NSArray *childerFiles=[fileManager subpathsAtPath:cachePath];<br>
-    for (NSString *fileName in childerFiles) {<br>
-    //如有需要，加入条件，过滤掉不想删除的文件<br>
-    NSString *fileAbsolutePath=[cachePath stringByAppendingPathComponent:fileName];<br>
-    NSLog(@"fileAbsolutePath=%@",fileAbsolutePath);<br>
-    [fileManager removeItemAtPath:fileAbsolutePath error:nil];<br>
-    }<br>
-    }<br>
-    [[SDImageCache sharedImageCache] cleanDisk];<br>
-    }<br>
-</div>
-
-<h3>
-    五、个人经验总结(坑)<br>
-    1.做缓存清理最好封装一个单例管理对象，对象要保证唯一性；<br>
-    2.缓存路径可以封装一下，这样在外面调用的时候就可以不用再传路径了；<br>
-    3.清理的过程涉及到遍历子路径，当缓存多的时候，会有很长的耗时操作，所以这时应该讲遍历删除的过程全部写到新开辟的子线程中去，然后回到主线程刷新UI界面；<br>
-</h3>
-
 </body>
 </html>

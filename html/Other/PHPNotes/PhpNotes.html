@@ -4,140 +4,134 @@
     <meta charset="UTF-8">
     <title>PHP 笔记</title>
     <link rel="icon" href="../../../Source/icon-img.jpeg">
-    <link rel="stylesheet" href="../../../CSS/Other/Other.css">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
 </head>
-
-<style>
-
-    *{
-        padding-left: 20px;
-    }
-
-    h2{
-        text-align: center;
-        width: 100%;
-    }
-
-
-</style>
-
 <body>
 
-<h2>PHP 笔记</h2>
-<div style="background-color: red; width: 100%">
-    <h2 style="background-color: lightcoral; width: 3px; float: left"><br></h2>
-    <h3 style="width: 80%; float: left; vertical-align: middle; padding-left: 5px; padding-top: 2px">第一个php程序打开，显示502 Bad Gateway，如下图：</h3>
-</div><br>
+<div class="labels">
 
-<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-9f48156d50fcedf6.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-9f48156d50fcedf6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
-<br><p class="desc">示意图</p><br>
+    <span class="label label-success">PHP</span>
+    <span class="label label-danger">正则表达式</span>
 
-<p>
-    <b>    解决办法：<br></b>
-    Mac 下：phpstorm----preferences-----languages&frameworks---php<br>
-    设置interpreter->点击左侧“+”添加，将exexutable路径设置为/Applications/XAMPP/bin/php<br><br>
-
-    如下图：<br>
-    <a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-6f74f649ade541b0.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-6f74f649ade541b0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
-</p>
-<p class="desc">解决办法示意.png</p>
-
-<div style="border: 1px solid rebeccapurple">
-    <h3>  mac下查看自带apache目录：open /etc </h3>
-</div><br>
-
-
-<p>
-    apache下部署web资源
-
-    跟windows不一样，它的部署包不是放在htdocs(windows下的存放目录),而是放在 “/资源库/WebServer/Documents/”下面
-
-    启动停用apache
-
-    启用apache的命令：
-</p><br>
-
-<div style="border: 1px solid rebeccapurple">
-    <h3>  sudo apachectl start/restart </h3>
-</div><br>
-
-<p>
-    启动成功输入localhost可以访问，或者127.0.0.1
-
-    停止apache的命令是：
-</p><br>
-
-<div style="border: 1px solid rebeccapurple">
-    <h3>  sudo apachectl stop </h3>
-</div><br>
-
-
-<p>
-    修改apache默认端口:
-    通过localhost或者127.0.0.1访问，表示默认的端口是80，有时候如果80端口被占用了，就得换个端口试试了。同样是在httpd.conf下面，找到Listen 80 那一行，修改成你想要的端口即可。
-</p><br>
-
-<div style="border: 1px solid rebeccapurple">
-    <h3>  php正则表达式： </h3>
-</div><br><br>
-
-<div style="border: 1px solid rebeccapurple">
-    <h3>  //定界符:不能用a-z A-Z 0-9 \  必须成对出现 如#\/# </h3>
-</div><br><br>
-
-<div style="border: 1px solid rebeccapurple">
-
-    <p>
-        //总结:<br>
-        // \d = [0-9]<br>
-        // \D = [^0-9]<br>
-        // \w = [a-zA-Z0-9_]<br>
-        // \W = [^a-zA-Z0-9_]<br>
-        // \s = [/r/t/n/f]<br>
-        // \S = [^/r/t/n/f] ^:抑扬符<br><br>
-
-        //元字符:可以匹配多个字符<br>
-        // +:匹配最少一次前面的字符<br>
-        // *:匹配0次或任意次数前面的字符<br>
-        // ?:前面的字符出现一次或者0次 但是不能出现多次<br>
-        // .:匹配除\n以外的所有字符<br>
-        // |:或者 优先级最低<br>
-        // ^:抑扬符:必须要以^之后的字符开始<br>
-        // $:必须要以$之前的字符结束<br>
-        // \b:词边界 必须出现在开始 结束 空格处<br>
-        // \B:非词边界 一定不能出现在开始 结束 空格处<br>
-        // {m}:出现且只能出现m词<br>
-        // {m,n}:可以出现m到n次<br>
-        // {m, }:至少出现m次<br>
-        // ():改变优先级 将某个字符串作为一个整体<br><br><br>
-
-
-        // 模式修正符:用法:/正则表达式/模式修正符<br>
-        // i:不区分大小写进行匹配<br>
-        // m:字符串视为多行<br>
-        // s:字符串视为单行 换行符作为普通字符<br>
-        // x:将模式中的空白字符忽略 如空格 #<br>
-        // A:强制仅从目标字符串的开头开始匹配<br>
-        // D:模式中的美元字符仅匹配目标字符串的结尾<br>
-        // U:匹配最近的字符 职匹配一次 贪婪模式控制<br>
-        //两个函数<br>
-        //1:输出匹配内容<br>
-        /*<br>
-        preg_match($pattern, $targetStr, $matched){<br>
-        <br>
-        echo  $matched;<br>
-        }<br>
-        */<br>
-        //2:输出指定匹配项<br>
-        // preg_replace($pattern, $replacement(第几项), $string(目标指定字符串))<br><br>
-
-        //常见正则表达式:<br>
-        //1.手机号 /^1[34578]\d{9}$/<br>
-        //2.邮箱 /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/<br>
-        //3.网址 ^((https?|ftp|news):\/\/)?([a-z]([a-z0-9\-]*[\.。])+([a-z]{2}|aero|arpa|biz|com|coop|edu|gov|info|int|jobs|mil|museum|name|nato|net|org|pro|travel)|(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))(\/[a-z0-9_\-\.~]+)*(\/([a-z0-9_\-\.]*)(\?[a-z0-9+_\-\.%=&]*)?)?(#[a-z][a-z0-9_]*)?$<br>
-        <br>
-    </p>
 </div>
 
+<div class="contentBgDiv">
+
+    <p class="title">PHP 笔记</p>
+    <hr>
+
+    <p class="contents">
+        第一个php程序打开，显示502 Bad Gateway，如下图：
+    </p>
+    <br>
+
+    <a target="_blank"
+       href="http://upload-images.jianshu.io/upload_images/3251504-9f48156d50fcedf6.png?imageMogr2/auto-orient/strip"><img
+            src="http://upload-images.jianshu.io/upload_images/3251504-9f48156d50fcedf6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+    <br>
+
+    <p class="contents">
+        <b> 解决办法：<br></b>
+        Mac 下：phpstorm----preferences-----languages&frameworks---php<br>
+        设置interpreter->点击左侧“+”添加，将exexutable路径设置为/Applications/XAMPP/bin/php<br><br>
+
+        如下图：<br>
+        <a target="_blank"
+           href="http://upload-images.jianshu.io/upload_images/3251504-6f74f649ade541b0.png?imageMogr2/auto-orient/strip"><img
+                src="http://upload-images.jianshu.io/upload_images/3251504-6f74f649ade541b0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+    </p>
+
+    <p class="contents"> mac下查看自带apache目录：open /etc </p>
+
+    <br>
+
+
+    <p class="contents">
+        apache下部署web资源
+
+        跟windows不一样，它的部署包不是放在htdocs(windows下的存放目录),而是放在 “/资源库/WebServer/Documents/”下面
+
+        启动停用apache
+
+        启用apache的命令：
+    </p>
+
+    <p class="contents"> sudo apachectl start/restart </p>
+
+    <p class="contents">
+        启动成功输入localhost可以访问，或者127.0.0.1
+
+        停止apache的命令是：
+    </p>
+
+    <p class="contents"> sudo apachectl stop </p>
+
+    <p class="contents">
+        修改apache默认端口:
+        通过localhost或者127.0.0.1访问，表示默认的端口是80，有时候如果80端口被占用了，就得换个端口试试了。同样是在httpd.conf下面，找到Listen 80 那一行，修改成你想要的端口即可。
+    <p class="contents"> php正则表达式： </p>
+
+
+    <p class="contents"> //定界符:不能用a-z A-Z 0-9 \ 必须成对出现 如#\/# </p>
+
+    <div class="codeAero">
+
+        <p class="contents">
+            //总结:<br>
+            // \d = [0-9]<br>
+            // \D = [^0-9]<br>
+            // \w = [a-zA-Z0-9_]<br>
+            // \W = [^a-zA-Z0-9_]<br>
+            // \s = [/r/t/n/f]<br>
+            // \S = [^/r/t/n/f] ^:抑扬符<br><br>
+
+            //元字符:可以匹配多个字符<br>
+            // +:匹配最少一次前面的字符<br>
+            // *:匹配0次或任意次数前面的字符<br>
+            // ?:前面的字符出现一次或者0次 但是不能出现多次<br>
+            // .:匹配除\n以外的所有字符<br>
+            // |:或者 优先级最低<br>
+            // ^:抑扬符:必须要以^之后的字符开始<br>
+            // $:必须要以$之前的字符结束<br>
+            // \b:词边界 必须出现在开始 结束 空格处<br>
+            // \B:非词边界 一定不能出现在开始 结束 空格处<br>
+            // {m}:出现且只能出现m词<br>
+            // {m,n}:可以出现m到n次<br>
+            // {m, }:至少出现m次<br>
+            // ():改变优先级 将某个字符串作为一个整体<br><br><br>
+
+
+            // 模式修正符:用法:/正则表达式/模式修正符<br>
+            // i:不区分大小写进行匹配<br>
+            // m:字符串视为多行<br>
+            // s:字符串视为单行 换行符作为普通字符<br>
+            // x:将模式中的空白字符忽略 如空格 #<br>
+            // A:强制仅从目标字符串的开头开始匹配<br>
+            // D:模式中的美元字符仅匹配目标字符串的结尾<br>
+            // U:匹配最近的字符 职匹配一次 贪婪模式控制<br>
+            //两个函数<br>
+            //1:输出匹配内容<br>
+            /*<br>
+            preg_match($pattern, $targetStr, $matched){<br>
+            <br>
+            echo $matched;<br>
+            }<br>
+            */<br>
+            //2:输出指定匹配项<br>
+            // preg_replace($pattern, $replacement(第几项), $string(目标指定字符串))<br><br>
+
+            //常见正则表达式:<br>
+            //1.手机号 /^1[34578]\d{9}$/<br>
+            //2.邮箱 /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/<br>
+            //3.网址
+            ^((https?|ftp|news):\/\/)?([a-z]([a-z0-9\-]*[\.。])+([a-z]{2}|aero|arpa|biz|com|coop|edu|gov|info|int|jobs|mil|museum|name|nato|net|org|pro|travel)|(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))(\/[a-z0-9_\-\.~]+)*(\/([a-z0-9_\-\.]*)(\?[a-z0-9+_\-\.%=&]*)?)?(#[a-z][a-z0-9_]*)?$<br>
+            <br>
+        </p>
+    </div>
+    <br>
+</div>
+<br>
 </body>
 </html>

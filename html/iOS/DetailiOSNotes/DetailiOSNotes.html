@@ -4,335 +4,331 @@
     <meta charset="UTF-8">
     <title>值得注意的小细节整理</title>
     <link rel="icon" href="../../../Source/icon-img.jpeg">
-    <link rel="stylesheet" href="../../../CSS/iOS/DetailiOSNotes/DetailiOSNotes.css">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
 </head>
 <body>
 
-<h2>
-    值得注意的小细节整理
-</h2>
+<div class="labels">
 
-<div style="border: 1px solid rebeccapurple">
-    <p><b>一、如何输出超链接的各个组成部分</b></p>
+    <span class="label label-primary">各种细节整理</span>
+    <span class="label label-warning">细节笔记</span>
 </div>
 
-<div style="border: 2px solid rebeccapurple">
-    <p>
-        NSURL *url = [NSURL URLWithString:@"http://www.baidu.com/search?id=1"];<br><br>
+<div class="contentBgDiv">
 
-        NSLog(@"scheme:%@", [url scheme]); //协议 http<br><br>
-
-        NSLog(@"host:%@", [url host]);     //域名 www.baidu.com<br><br>
-
-        NSLog(@"absoluteString:%@", [url absoluteString]); //完整的url字符串 http://www.baidu.com:8080/search?id=1   (刚才在真机上跑了一下，并没有打印出来端口 8080 啊)<br><br>
-
-        NSLog(@"relativePath: %@", [url relativePath]); //相对路径 search<br><br>
-
-        NSLog(@"port :%@", [url port]);  // 端口 8080<br><br>
-
-        NSLog(@"path: %@", [url path]);  // 路径 search<br><br>
-
-        NSLog(@"pathComponents:%@", [url pathComponents]); // search<br><br>
-
-        NSLog(@"Query:%@", [url query]);  //参数 id=1<br><br>
+    <p class="title">
+        值得注意的小细节整理
     </p>
-</div>
+    <hr>
 
-<br><br>
+    <p class="smallTitle"><b>一、如何输出超链接的各个组成部分</b></p>
 
-<div style="border: 1px solid rebeccapurple">
-    <p><b>二、CAShapeLayer的strokeStart和strokeEnd属性</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-    <p>
-        1 keyPath = strokeStart  动画的fromValue = 0，toValue = 1<br>
-        表示从路径的0位置画到1 怎么画是按照清除开始的位置也就是清除0 一直清除到1 效果就是一条路径慢慢的消失<br><br>
+    <div class="codeAero">
+        <p>
+            NSURL *url = [NSURL URLWithString:@"http://www.baidu.com/search?id=1"];<br><br>
 
-        2 keyPath = strokeStart  动画的fromValue = 1，toValue = 0<br>
-        表示从路径的1位置画到0 怎么画是按照清除开始的位置也就是1 这样开始的路径是空的（即都被清除掉了）一直清除到0 效果就是一条路径被反方向画出来<br><br>
+            NSLog(@"scheme:%@", [url scheme]); //协议 http<br><br>
 
-        3 keyPath = strokeEnd  动画的fromValue = 0，toValue = 1<br>
-        表示 这里我们分3个点说明动画的顺序  strokeEnd从结尾开始清除 首先整条路径先清除后2/3，接着清除1/3 效果就是正方向画出路径<br><br>
+            NSLog(@"host:%@", [url host]); //域名 www.baidu.com<br><br>
 
-        4 keyPath = strokeEnd  动画的fromValue = 1，toValue = 0<br>
-        效果就是反方向路径慢慢消失<br><br>
-        注释： 动画的0-1（fromValue = 0，toValue = 1） 或1-0 （fromValue = 1，toValue = 0） 表示执行的方向 和路径的范围。<br>
-        CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];<br>
-        pathAnimation.duration = 1.5;<br>
-        pathAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];<br>
-        pathAnimation.fromValue = [NSNumber numberWithFloat:0.0f];<br>
-        pathAnimation.toValue = [NSNumber numberWithFloat:1.0f];<br>
-        pathAnimation.autoreverses = NO;<br>
-        [_chartLine addAnimation:pathAnimation forKey:@"strokeEndAnimation"];<br>
-        _chartLine.strokeEnd = 2.0;<br>
-    </p>
-</div>
+            NSLog(@"absoluteString:%@", [url absoluteString]); //完整的url字符串 http://www.baidu.com:8080/search?id=1
+            (刚才在真机上跑了一下，并没有打印出来端口 8080 啊)<br><br>
 
-<br><br>
+            NSLog(@"relativePath: %@", [url relativePath]); //相对路径 search<br><br>
 
-<div style="border: 1px solid rebeccapurple">
-    <p><b>三、errors：The operation couldn’t be completed. Unable to log in with account 'myappleid'. An unexpected failure occurred while logging in (Underlying error code 1100).</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-    <p>
+            NSLog(@"port :%@", [url port]); // 端口 8080<br><br>
+
+            NSLog(@"path: %@", [url path]); // 路径 search<br><br>
+
+            NSLog(@"pathComponents:%@", [url pathComponents]); // search<br><br>
+
+            NSLog(@"Query:%@", [url query]); //参数 id=1<br><br>
+        </p>
+    </div>
+
+    <br><br>
+
+    <p class="smallTitle"><b>二、CAShapeLayer的strokeStart和strokeEnd属性</b></p>
+
+    <div class="codeAero">
+        <p>
+            1 keyPath = strokeStart 动画的fromValue = 0，toValue = 1<br>
+            表示从路径的0位置画到1 怎么画是按照清除开始的位置也就是清除0 一直清除到1 效果就是一条路径慢慢的消失<br><br>
+
+            2 keyPath = strokeStart 动画的fromValue = 1，toValue = 0<br>
+            表示从路径的1位置画到0 怎么画是按照清除开始的位置也就是1 这样开始的路径是空的（即都被清除掉了）一直清除到0 效果就是一条路径被反方向画出来<br><br>
+
+            3 keyPath = strokeEnd 动画的fromValue = 0，toValue = 1<br>
+            表示 这里我们分3个点说明动画的顺序 strokeEnd从结尾开始清除 首先整条路径先清除后2/3，接着清除1/3 效果就是正方向画出路径<br><br>
+
+            4 keyPath = strokeEnd 动画的fromValue = 1，toValue = 0<br>
+            效果就是反方向路径慢慢消失<br><br>
+            注释： 动画的0-1（fromValue = 0，toValue = 1） 或1-0 （fromValue = 1，toValue = 0） 表示执行的方向 和路径的范围。<br>
+            CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];<br>
+            pathAnimation.duration = 1.5;<br>
+            pathAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];<br>
+            pathAnimation.fromValue = [NSNumber numberWithFloat:0.0f];<br>
+            pathAnimation.toValue = [NSNumber numberWithFloat:1.0f];<br>
+            pathAnimation.autoreverses = NO;<br>
+            [_chartLine addAnimation:pathAnimation forKey:@"strokeEndAnimation"];<br>
+            _chartLine.strokeEnd = 2.0;<br>
+        </p>
+    </div>
+
+    <br><br>
+
+    <p class="smallTitle"><b>三、errors：The operation couldn’t be completed. Unable to log in with account 'myappleid'. An unexpected
+        failure occurred while logging in (Underlying error code 1100).</b></p>
+    <p class="contents">
         解决方法：
         原因是Apple ID 过时了，点击"Preferences" -> "Accounts", 重新登录；然后退出Xcode，重进，编译，就会自动修复repairing...
     </p>
-</div>
 
-<br><br>
+    <br><br>
 
-<div style="border: 1px solid rebeccapurple">
-    <p><b>四、label 文字实现竖直排布、</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-    <p>
+    <p class="smallTitle"><b>四、label 文字实现竖直排布、</b></p>
+
+    <p class="contents">
         只需要设置 numberOfLines = 0 然后再调用sizeToFit
     </p>
-</div>
 
-<br><br>
+    <br><br>
 
-<div style="border: 1px solid rebeccapurple">
-    <p><b>五、Archive的时候，选择了发布的Provisioning Profile，但是在选择Code Signing Identify时，没有唯一对应的。</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-    <a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-860c059b962cfaab.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-860c059b962cfaab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
-    <p class="desc">示意图</p>
-    <p>
-        此时即使你知道当前Provisioning Profile对应的是哪个Code Signing Identify，并选择它，开始Archive时，也会提示以下的错误：
-    </p>
-    <a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-48e1c5bd2802a301.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-48e1c5bd2802a301.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
-    <p class="desc">示意图</p>
+    <p class="smallTitle"><b>五、Archive的时候，选择了发布的Provisioning Profile，但是在选择Code Signing Identify时，没有唯一对应的。</b></p>
 
-    <div style="border: 1px silver solid">
-        <p>
-            解决方案：<br><br>
-
-            1.打开终端，输入：<br><br>
-
-            cd Library/MobileDevice/Provisioning\ Profiles<br><br>
-
-            2.在Xcode，Provisioning Profile中选择other，得到当前证书的UUID<br>
+    <div class="codeAero">
+        <a target="_blank"
+           href="http://upload-images.jianshu.io/upload_images/3251504-860c059b962cfaab.png?imageMogr2/auto-orient/strip"><img
+                src="http://upload-images.jianshu.io/upload_images/3251504-860c059b962cfaab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+        <p class="contents">
+            此时即使你知道当前Provisioning Profile对应的是哪个Code Signing Identify，并选择它，开始Archive时，也会提示以下的错误：
         </p>
-    </div>
+        <a target="_blank"
+           href="http://upload-images.jianshu.io/upload_images/3251504-48e1c5bd2802a301.png?imageMogr2/auto-orient/strip"><img
+                src="http://upload-images.jianshu.io/upload_images/3251504-48e1c5bd2802a301.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
 
-    <a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-c89f54e3e5bd823d.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-c89f54e3e5bd823d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
-    <p class="desc">示意图</p>
-
-    <div style="border: 1px solid rebeccapurple">
-
-        <p>
-            3.然后在终端中执行<br><br>
-
-            rm -rf 8ed7a446-9fd9-461e-9965-f85a75c78258.mobileprovision（此处替换成你的provision）<br><br>
-
-            4.从developer.apple.com重新下载证书，添加到Xcode。<br><br>
-
-            说明：有可能再次添加Provisioning Profile还会出现上面没有唯一Identify对应的情况，可以多试几次。<br><br>
-        </p>
-    </div>
-</div>
-
-<br><br>
-
-<div style="border: 1px solid rebeccapurple">
-
-    <p><b>六、如何知道tableview已经加载完成</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-
-    <p>
-        -(void)tableView:(UITableView*)tableViewwillDisplayCell:(UITableViewCell*)cellforRowAtIndexPath:(NSIndexPath*)indexPath<br>
-        {<br><br>
-
-        if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){<br>
-        //TODO:end refresh<br>
-        }<br>
-        }<br>
-    </p>
-</div>
-<p>
-    由于willDisplayCell是异步调用的，所以在上面的block里面不能即时更新UI，最好使用GCD通过主线程加上你的代码：
-</p>
-<div style="border: 1px solid rebeccapurple">
-    -(void)tableView:(UITableView*)tableViewwillDisplayCell:(UITableViewCell*)cellforRowAtIndexPath:(NSIndexPath*)indexPath<br>
-    {<br>
-    if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){<br>
-    dispatch_async(dispatch_get_main_queue,^{<br>
-    //for example [activityIndicator stopAnimating];<br>
-    });<br>
-    }<br>
-    }<br>
-</div>
-
-<br><br>
-<div style="border: 1px solid rebeccapurple">
-
-    <p><b>七、运行程序出现file too small (length=0)错误解决办法</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-
-    <p>ld: file too small (length=0) file '/Users/Allister/Library/Developer/Xcode/DerivedData/Haze_Meter-dkjjcmjehyitmcbhkcbujnsrhwpu/Build/Intermediates/Haze Meter.build/Debug-iphonesimulator/Haze Meter.build/Objects-normal/x86_64/ViewController.o' for architecture x86_64
-        clang: error: linker command failed with exit code 1 (use -v to see invocation)</p>
-    <p>
-        1.选择xcode菜单的Product下的Clean,或者组合键是Cmd+Shift+K,清除一遍
-        2.重新编译
-    </p>
-</div>
-
-<br><br>
-<div style="border: 1px solid rebeccapurple">
-    <p><b>八、上架错误提示</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-    
-    <a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-ef96cd419c8d445c.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-ef96cd419c8d445c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
-    <p>
-        原因：没有对应buddle id的应用， 先去itunes里新建一个对应buddle id的app， 然后再打包
-    </p>
-</div>
-
-<br><br>
-<div style="border: 1px solid rebeccapurple">
-
-    <p><b>九、统计项目中代码数量</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-
-    <p>
-        cd到项目根目录<br>
-        find . "(" -name "*.m" -or -name "*.mm" -or -name "*.cpp" -or -name "*.h" -or -name "*.rss" ")" -print | xargs wc -l
-    </p>
-</div>
-
-<br><br>
-
-<div style="border: 1px solid rebeccapurple">
-    <p><b>十、获取电脑ip</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-    <p>
-        ifconfig en0
-    </p>
-</div>
-
-<br><br>
-<div style="border: 1px solid rebeccapurple">
-    <p><b>十一、没有导入libz库</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-    <a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-eed92fb562063648.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-eed92fb562063648.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
-    <p class="desc">示意图</p>
-    <a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-6dec4953ec04b337.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-6dec4953ec04b337.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
-    <p class="desc">示意图</p>
-</div>
-
-<br><br>
-
-<div style="border: 1px solid rebeccapurple">
-    <p><b>十二、The file “Info.plist” couldn’t be opened because there is no such file.</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-    <b>解决办法：</b>
-    <a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-ff47d6ce94aff4d2.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-ff47d6ce94aff4d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
-    <p class="desc">示意图</p>
-</div>
-
-<br><br>
-<div style="border: 1px solid rebeccapurple">
-
-    <p><b>十三、 The file “CCYYXmpp” couldn’t be opened because you don’t have permission to view it.</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-
-    <b>解决办法：切换一下project和targerts 化成真机</b>
-    <a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-eec43a7182368914.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-eec43a7182368914.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
-    <p class="desc">示意图</p>
-</div>
-
-<br><br>
-
-<div style="border: 1px solid rebeccapurple">
-
-    <p><b>十四、iOS 跳转到设置界面</b></p>
-</div>
-
-<div style="border: 2px solid rebeccapurple">
-
-    <p>
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-    </p>
-
-    <b>设置其他界面</b>
-    <p>在 URL Types 添加 一个叫 prefs 的 URL Schemes</p>
-
-    <div style="border: 1px solid rebeccapurple">
-        <p>
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"跳转不同界面对应的URLString"]]
-        </p>
-
-        <br>
-
-        <div>
+        <div class="codeAero">
             <p>
-                蜂窝网络：App-Prefs:root=MOBILE_DATA_SETTINGS_ID<br>
-                VPN — App-Prefs:root=General&path=Network/VPN<br>
-                Wi-Fi：App-Prefs:root=WIFI<br>
-                定位服务：App-Prefs:root=LOCATION_SERVICES<br>
-                个人热点：App-Prefs:root=INTERNET_TETHERING<br>
-                关于本机：App-Prefs:root=General&path=About<br>
-                辅助功能：App-Prefs:root=General&path=ACCESSIBILITY<br>
-                飞行模式：App-Prefs:root=AIRPLANE_MODE<br>
-                锁定：App-Prefs:root=General&path=AUTOLOCK<br>
-                亮度：App-Prefs:root=Brightness<br>
-                蓝牙：App-Prefs:root=General&path=Bluetooth<br>
-                时间设置：App-Prefs:root=General&path=DATE_AND_TIME<br>
-                FaceTime：App-Prefs:root=FACETIME<br>
-                设置：App-Prefs:root=General<br>
-                键盘设置：App-Prefs:root=General&path=Keyboard<br>
-                iCloud：App-Prefs:root=CASTLE<br>
-                iCloud备份：App-Prefs:root=CASTLE&path=STORAGE_AND_BACKUP<br>
-                语言：App-Prefs:root=General&path=INTERNATIONAL<br>
-                定位：App-Prefs:root=LOCATION_SERVICES<br>
-                音乐：App-Prefs:root=MUSIC<br>
-                Music Equalizer — App-Prefs:root=MUSIC&path=EQ<br>
-                Music Volume Limit — App-Prefs:root=MUSIC&path=VolumeLimit<br>
-                Network — App-Prefs:root=General&path=Network<br>
-                Nike + iPod — App-Prefs:root=NIKE_PLUS_IPOD<br>
-                Notes — App-Prefs:root=NOTES<br>
-                Notification — App-Prefs:root=NOTIFICATIONS_ID<br>
-                Phone — App-Prefs:root=Phone<br>
-                Photos — App-Prefs:root=Photos<br>
-                Profile — App-Prefs:root=General&path=ManagedConfigurationList<br>
-                Reset — App-Prefs:root=General&path=Reset<br>
-                Safari — App-Prefs:root=Safari<br>
-                Siri — App-Prefs:root=General&path=Assistant<br>
-                Sounds — App-Prefs:root=Sounds<br>
-                Software Update — App-Prefs:root=General&path=SOFTWARE_UPDATE_LINK<br>
-                Store — App-Prefs:root=STORE<br>
-                Twitter — App-Prefs:root=TWITTER<br>
-                Usage — App-Prefs:root=General&path=USAGE<br>
-                Wallpaper — App-Prefs:root=Wallpaper<br>
+                解决方案：<br><br>
+
+                1.打开终端，输入：<br><br>
+
+                cd Library/MobileDevice/Provisioning\ Profiles<br><br>
+
+                2.在Xcode，Provisioning Profile中选择other，得到当前证书的UUID<br>
+            </p>
+        </div>
+
+        <a target="_blank"
+           href="http://upload-images.jianshu.io/upload_images/3251504-c89f54e3e5bd823d.png?imageMogr2/auto-orient/strip"><img
+                src="http://upload-images.jianshu.io/upload_images/3251504-c89f54e3e5bd823d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+
+        <div class="codeAero">
+
+            <p>
+                3.然后在终端中执行<br><br>
+
+                rm -rf 8ed7a446-9fd9-461e-9965-f85a75c78258.mobileprovision（此处替换成你的provision）<br><br>
+
+                4.从developer.apple.com重新下载证书，添加到Xcode。<br><br>
+
+                说明：有可能再次添加Provisioning Profile还会出现上面没有唯一Identify对应的情况，可以多试几次。<br><br>
             </p>
         </div>
     </div>
-</div>
 
-<br><br>
+    <br><br>
 
-<div style="border: 1px solid rebeccapurple">
-    <p><b>十五、获取AppStore应用版本号</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-    <p>
-        想不通过自己服务器后台，而是直接比较本地和appStore版本大小做版本更新，但是用http://itunes.apple.com/lookup?id=%@（这里写appid，通过在itunes connect App信息里面获取）获取不到版本号？<br>
-        这个时候应该怎么办： 加上*/cn*(当然这只是针对只在中国玩玩的APP) https也可以
-        http://itunes.apple.com/cn/lookup?id=%@<br>
-    </p>
-    <br><b>附上代码：</b>
-    <div style="border: 1px solid rebeccapurple">
+    <p class="smallTitle"><b>六、如何知道tableview已经加载完成</b></p>
+
+    <div class="codeAero">
+
         <p>
+            -(void)tableView:(UITableView*)tableViewwillDisplayCell:(UITableViewCell*)cellforRowAtIndexPath:(NSIndexPath*)indexPath<br>
+            {<br><br>
+
+            if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){<br>
+            //TODO:end refresh<br>
+            }<br>
+            }<br>
+        </p>
+    </div>
+    <p class="contents">
+        由于willDisplayCell是异步调用的，所以在上面的block里面不能即时更新UI，最好使用GCD通过主线程加上你的代码：
+    </p>
+    <div class="contents">
+        -(void)tableView:(UITableView*)tableViewwillDisplayCell:(UITableViewCell*)cellforRowAtIndexPath:(NSIndexPath*)indexPath<br>
+        {<br>
+        if([indexPath row] == ((NSIndexPath*)[[tableView indexPathsForVisibleRows] lastObject]).row){<br>
+        dispatch_async(dispatch_get_main_queue,^{<br>
+        //for example [activityIndicator stopAnimating];<br>
+        });<br>
+        }<br>
+        }<br>
+    </div>
+
+    <br><br>
+    <p class="smallTitle"><b>七、运行程序出现file too small (length=0)错误解决办法</b></p>
+
+    <div class="codeAero">
+
+        <p>ld: file too small (length=0) file
+            '/Users/Allister/Library/Developer/Xcode/DerivedData/Haze_Meter-dkjjcmjehyitmcbhkcbujnsrhwpu/Build/Intermediates/Haze
+            Meter.build/Debug-iphonesimulator/Haze Meter.build/Objects-normal/x86_64/ViewController.o' for architecture
+            x86_64
+            clang: error: linker command failed with exit code 1 (use -v to see invocation)</p>
+        <p>
+            1.选择xcode菜单的Product下的Clean,或者组合键是Cmd+Shift+K,清除一遍
+            2.重新编译
+        </p>
+    </div>
+
+    <br><br>
+    <p class="smallTitle"><b>八、上架错误提示</b></p>
+
+    <div class="codeAero">
+
+        <a target="_blank"
+           href="http://upload-images.jianshu.io/upload_images/3251504-ef96cd419c8d445c.png?imageMogr2/auto-orient/strip"><img
+                src="http://upload-images.jianshu.io/upload_images/3251504-ef96cd419c8d445c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+        <p class="contents">
+            原因：没有对应buddle id的应用， 先去itunes里新建一个对应buddle id的app， 然后再打包
+        </p>
+    </div>
+
+    <br><br>
+    <p class="smallTitle"><b>九、统计项目中代码数量</b></p>
+
+    <div class="codeAero">
+
+        <p>
+            cd到项目根目录<br>
+            find . "(" -name "*.m" -or -name "*.mm" -or -name "*.cpp" -or -name "*.h" -or -name "*.rss" ")" -print |
+            xargs wc -l
+        </p>
+    </div>
+
+    <br><br>
+
+    <p class="smallTitle"><b>十、获取电脑ip</b></p>
+
+    <div class="codeAero">
+        <p>
+            ifconfig en0
+        </p>
+    </div>
+
+    <br><br>
+    <p class="smallTitle"><b>十一、没有导入libz库</b></p>
+
+    <div class="codeAero">
+        <a target="_blank"
+           href="http://upload-images.jianshu.io/upload_images/3251504-eed92fb562063648.png?imageMogr2/auto-orient/strip"><img
+                src="http://upload-images.jianshu.io/upload_images/3251504-eed92fb562063648.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+        <a target="_blank"
+           href="http://upload-images.jianshu.io/upload_images/3251504-6dec4953ec04b337.png?imageMogr2/auto-orient/strip"><img
+                src="http://upload-images.jianshu.io/upload_images/3251504-6dec4953ec04b337.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+    </div>
+
+    <br><br>
+
+    <p class="smallTitle"><b>十二、The file “Info.plist” couldn’t be opened because there is no such file.</b></p>
+
+    <div class="codeAero">
+        <b>解决办法：</b>
+        <a target="_blank"
+           href="http://upload-images.jianshu.io/upload_images/3251504-ff47d6ce94aff4d2.png?imageMogr2/auto-orient/strip"><img
+                src="http://upload-images.jianshu.io/upload_images/3251504-ff47d6ce94aff4d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+    </div>
+
+    <br><br>
+
+    <p class="smallTitle"><b>十三、 The file “CCYYXmpp” couldn’t be opened because you don’t have permission to view it.</b></p>
+
+    <div class="codeAero">
+
+        <p class="contents">解决办法：切换一下project和targerts 化成真机</p>
+        <a target="_blank"
+           href="http://upload-images.jianshu.io/upload_images/3251504-eec43a7182368914.png?imageMogr2/auto-orient/strip"><img
+                src="http://upload-images.jianshu.io/upload_images/3251504-eec43a7182368914.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+    </div>
+
+    <br><br>
+
+    <p class="smallTitle"><b>十四、iOS 跳转到设置界面</b></p>
+
+
+    <div class="codeAero">
+
+        <p class="contents">
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+        </p>
+
+        <p class="contents">设置其他界面</p>
+        <p class="contents">在 URL Types 添加 一个叫 prefs 的 URL Schemes</p>
+
+        <p class="codeAero">
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"跳转不同界面对应的URLString"]]
+        </p>
+
+        <p class="contents">
+            蜂窝网络：App-Prefs:root=MOBILE_DATA_SETTINGS_ID<br>
+            VPN — App-Prefs:root=General&path=Network/VPN<br>
+            Wi-Fi：App-Prefs:root=WIFI<br>
+            定位服务：App-Prefs:root=LOCATION_SERVICES<br>
+            个人热点：App-Prefs:root=INTERNET_TETHERING<br>
+            关于本机：App-Prefs:root=General&path=About<br>
+            辅助功能：App-Prefs:root=General&path=ACCESSIBILITY<br>
+            飞行模式：App-Prefs:root=AIRPLANE_MODE<br>
+            锁定：App-Prefs:root=General&path=AUTOLOCK<br>
+            亮度：App-Prefs:root=Brightness<br>
+            蓝牙：App-Prefs:root=General&path=Bluetooth<br>
+            时间设置：App-Prefs:root=General&path=DATE_AND_TIME<br>
+            FaceTime：App-Prefs:root=FACETIME<br>
+            设置：App-Prefs:root=General<br>
+            键盘设置：App-Prefs:root=General&path=Keyboard<br>
+            iCloud：App-Prefs:root=CASTLE<br>
+            iCloud备份：App-Prefs:root=CASTLE&path=STORAGE_AND_BACKUP<br>
+            语言：App-Prefs:root=General&path=INTERNATIONAL<br>
+            定位：App-Prefs:root=LOCATION_SERVICES<br>
+            音乐：App-Prefs:root=MUSIC<br>
+            Music Equalizer — App-Prefs:root=MUSIC&path=EQ<br>
+            Music Volume Limit — App-Prefs:root=MUSIC&path=VolumeLimit<br>
+            Network — App-Prefs:root=General&path=Network<br>
+            Nike + iPod — App-Prefs:root=NIKE_PLUS_IPOD<br>
+            Notes — App-Prefs:root=NOTES<br>
+            Notification — App-Prefs:root=NOTIFICATIONS_ID<br>
+            Phone — App-Prefs:root=Phone<br>
+            Photos — App-Prefs:root=Photos<br>
+            Profile — App-Prefs:root=General&path=ManagedConfigurationList<br>
+            Reset — App-Prefs:root=General&path=Reset<br>
+            Safari — App-Prefs:root=Safari<br>
+            Siri — App-Prefs:root=General&path=Assistant<br>
+            Sounds — App-Prefs:root=Sounds<br>
+            Software Update — App-Prefs:root=General&path=SOFTWARE_UPDATE_LINK<br>
+            Store — App-Prefs:root=STORE<br>
+            Twitter — App-Prefs:root=TWITTER<br>
+            Usage — App-Prefs:root=General&path=USAGE<br>
+            Wallpaper — App-Prefs:root=Wallpaper<br>
+        </p>
+
+    </div>
+
+    <br><br>
+
+    <p class="smallTitle"><b>十五、获取AppStore应用版本号</b></p>
+
+    <div class="codeAero">
+        <p class="contents">
+            想不通过自己服务器后台，而是直接比较本地和appStore版本大小做版本更新，但是用http://itunes.apple.com/lookup?id=%@（这里写appid，通过在itunes connect
+            App信息里面获取）获取不到版本号？<br>
+            这个时候应该怎么办： 加上*/cn*(当然这只是针对只在中国玩玩的APP) https也可以
+            http://itunes.apple.com/cn/lookup?id=%@<br>
+        </p>
+        <br><p class="contents">附上代码：</p>
+        <p class="contents">
             //获取最新版本号<br>
             -(void)VersonUpdate{<br>
             //定义的app的地址<br>
@@ -347,19 +343,22 @@
 
             NSURLSession *session = [NSURLSession sharedSession];<br><br>
 
-            NSURLSessionDataTask *task = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {<br><br>
+            NSURLSessionDataTask *task = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data,
+            NSURLResponse * _Nullable response, NSError * _Nullable error) {<br><br>
 
             NSMutableDictionary *receiveStatusDic=[[NSMutableDictionary alloc]init];<br><br>
 
             if (data) {<br><br>
 
             //data是有关于App所有的信息<br>
-            NSDictionary *receiveDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];<br><br>
+            NSDictionary *receiveDic = [NSJSONSerialization JSONObjectWithData:data
+            options:NSJSONReadingMutableLeaves error:nil];<br><br>
 
             if ([[receiveDic valueForKey:@"resultCount"] intValue]>0) {<br><br>
 
             [receiveStatusDic setValue:@"1" forKey:@"status"];<br>
-            [receiveStatusDic setValue:[[[receiveDic valueForKey:@"results"] objectAtIndex:0] valueForKey:@"version"]   forKey:@"version"];<br><br>
+            [receiveStatusDic setValue:[[[receiveDic valueForKey:@"results"] objectAtIndex:0]
+            valueForKey:@"version"] forKey:@"version"];<br><br>
 
             //请求的有数据，进行版本比较<br>
             [self performSelectorOnMainThread:@selector(receiveData:) withObject:receiveStatusDic waitUntilDone:NO];<br>
@@ -375,16 +374,14 @@
             [task resume];<br>
             }<br>
         </p>
-    </div>
 
-    <div style="border: 1px solid rebeccapurple">
-
-        <p>
-            //比较版本号大小 挨个比  我自己规定都是3位 0.0.0<br>
+        <p class="contents">
+            //比较版本号大小 挨个比 我自己规定都是3位 0.0.0<br>
             -(void)receiveData:(id)sender<br>
             {<br>
             //获取APP自身版本号<br>
-            NSString *localVersion = [[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleShortVersionString"];<br><br>
+            NSString *localVersion = [[[NSBundle
+            mainBundle]infoDictionary]objectForKey:@"CFBundleShortVersionString"];<br><br>
 
             if ([localVersion compare:sender[@"version"] ] == NSOrderedAscending) {<br><br>
 
@@ -393,17 +390,16 @@
             }<br>
             }<br>
         </p>
-    </div>
 
-    <div style="border: 1px solid rebeccapurple">
-
-        <p>
+        <p class="contents">
             // 弹出框
             -(void)updateVersion{<br><br>
 
             NSString *msg = [NSString stringWithFormat:@"更新最新版本，优惠信息提前知"];<br>
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"升级提示" message:msg preferredStyle:UIAlertControllerStyleAlert];<br>
-            UIAlertAction *otherAction = [UIAlertAction actionWithTitle:@"现在升级"style:UIAlertActionStyleDestructive handler:^(UIAlertAction*action) {<br><br>
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"升级提示" message:msg
+            preferredStyle:UIAlertControllerStyleAlert];<br>
+            UIAlertAction *otherAction = [UIAlertAction actionWithTitle:@"现在升级"style:UIAlertActionStyleDestructive
+            handler:^(UIAlertAction*action) {<br><br>
 
             NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"您的app在AppStore的下载地址"]];<br>
             [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];<br>
@@ -413,192 +409,189 @@
             }<br>
         </p>
     </div>
-</div>
 
-<br><br>
+    <br><br>
 
-<div style="border: 1px solid rebeccapurple">
+    <p class="smallTitle"><b>十六、app导包检验错误 如图：</b></p>
 
-    <p><b>十六、app导包检验错误 如图：</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
+    <div class="codeAero">
 
-    <a style="margin-top: 10px" target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-982bf8d7ff1e0c1b.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-982bf8d7ff1e0c1b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
-    <p class="desc" style="width: 20%">示意图</p>
+        <a style="margin-top: 10px" target="_blank"
+           href="http://upload-images.jianshu.io/upload_images/3251504-982bf8d7ff1e0c1b.png?imageMogr2/auto-orient/strip"><img
+                src="http://upload-images.jianshu.io/upload_images/3251504-982bf8d7ff1e0c1b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
 
-    <b>解决方式：检查生产证书是否正确， 重新打开以下p12，更改bunddle id，然后再改回去，重新导出</b>
-</div>
+        <p class="contents">解决方式：检查生产证书是否正确， 重新打开以下p12，更改bunddle id，然后再改回去，重新导出</p>
+    </div>
 
-<br><br>
+    <br><br>
 
-<div style="border: 1px solid rebeccapurple">
-    <p><b>十七、Undefined symbols for architecture x86_64:</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-    <p>
-        "_main", referenced from:<br>
-        implicit entry/start for main executable<br>
-        ld: symbol(s) not found for architecture x86_64<br><br>
+    <p class="smallTitle"><b>十七、Undefined symbols for architecture x86_64:</b></p>
 
-        如图：<br>
-    </p>
+    <div class="codeAero">
+        <p class="contents">
+            "_main", referenced from:<br>
+            implicit entry/start for main executable<br>
+            ld: symbol(s) not found for architecture x86_64<br><br>
+        </p>
 
-    <a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-29e2bac373287357.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-29e2bac373287357.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
-    <p class="desc">示意图</p>
+        <a target="_blank"
+           href="http://upload-images.jianshu.io/upload_images/3251504-29e2bac373287357.png?imageMogr2/auto-orient/strip"><img
+                src="http://upload-images.jianshu.io/upload_images/3251504-29e2bac373287357.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
 
-    <p>
-        原因：工程里的main被删除了，重新添加一个main.m； 如果没有删除，则是因为main.m没有加入编译，解决办法：target -> build parse ->compile source 添加main.m。
-    </p>
-</div>
+        <p class="contents">
+            原因：工程里的main被删除了，重新添加一个main.m； 如果没有删除，则是因为main.m没有加入编译，解决办法：target -> build parse ->compile source 添加main.m。
+        </p>
+    </div>
 
-<br><br>
-<div style="border: 1px solid rebeccapurple">
-    <p><b>十八、 [#pragma clang diagnostic ignored 用法 更多看这]</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-    <p>
-        // 例子 没有使用的变量<br>
-        #pragma clang diagnostic push<br>
-        #pragma clang diagnostic ignored "-Unused-variable"<br>
-        int a;<br>
-        #pragma clang diagnostic pop<br>
-    </p>
-</div>
+    <br><br>
 
-<br><br>
+    <p class="smallTitle"><b>十八、 [#pragma clang diagnostic ignored 用法 更多看这]</b></p>
 
-<div style="border: 1px solid rebeccapurple">
-    <p><b>十九、宏与函数的区别(特有意思 举个例子)</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-    <p>
-        宏：<br>
-        #define czyMax(a,b) ((a)>(b)?(a):(b))<br>
-    </p>
-</div>
-<br>
-<div style="border: 2px solid rebeccapurple">
-    <p>
-        函数:<br>
-        - (NSInteger)compare:(NSInteger)a andB:(NSInteger)b<br>
-        {<br>
-        if (a++>b) {<br>
-        return a;<br>
-        }<br>
-        return b;<br>
-        }<br>
-    </p>
-</div>
-<br>
-<div style="border: 2px solid rebeccapurple">
-    <p>
-        比较部分：<br>
-        NSInteger a = 1;<br>
-        NSInteger b = 0;<br><br>
+    <div class="codeAero">
+        <p class="contents">
+            // 例子 没有使用的变量<br>
+            #pragma clang diagnostic push<br>
+            #pragma clang diagnostic ignored "-Unused-variable"<br>
+            int a;<br>
+            #pragma clang diagnostic pop<br>
+        </p>
+    </div>
 
-        [self compare:a andB:b];<br><br>
+    <br><br>
 
-        NSLog(@"a = %ld, b = %ld", a, b);<br><br>
+    <p class="smallTitle"><b>十九、宏与函数的区别(特有意思 举个例子)</b></p>
 
-        czyMax(a++, b);<br><br>
+    <div class="codeAero">
+        <p class="contents">
+            宏：<br>
+            #define czyMax(a,b) ((a)>(b)?(a):(b))<br>
+        </p>
+    </div>
+    <br>
+    <div class="codeAero">
+        <p class="contents">
+            函数:<br>
+            - (NSInteger)compare:(NSInteger)a andB:(NSInteger)b<br>
+            {<br>
+            if (a++>b) {<br>
+            return a;<br>
+            }<br>
+            return b;<br>
+            }<br>
+        </p>
+    </div>
+    <br>
+    <div class="codeAero">
+        <p class="contents">
+            比较部分：<br>
+            NSInteger a = 1;<br>
+            NSInteger b = 0;<br><br>
 
-        NSLog(@"a = %ld, b = %ld", a, b);<br><br>
+            [self compare:a andB:b];<br><br>
 
-        NSInteger c = 1;<br>
-        NSInteger d = 0;<br><br>
+            NSLog(@"a = %ld, b = %ld", a, b);<br><br>
 
-        czyMax(c++, d+10);<br><br>
+            czyMax(a++, b);<br><br>
 
-        NSLog(@"c = %ld, d = %ld", c, d);<br>
-    </p>
-</div>
-<br>
-<div style="border: 1px solid rebeccapurple">
-    <p>
-        输出结果：<br>
-        2017-09-01 11:37:24.835 czytext[14333:851733] a = 1, b = 0<br>
-        2017-09-01 11:37:24.835 czytext[14333:851733] a = 3, b = 0<br>
-        2017-09-01 11:37:24.835 czytext[14333:851733] c = 2, d = 0<br>
-    </p>
-</div>
-<br>
-<div style="border: 1px solid rebeccapurple">
-    <p>
-        充分说明了两者的变量作用域的区别 同时应该注意用宏比较a++之后a的值变化；<br>
-        即MAX(a++,b)；与MAX(a++,b+10)；运行两者后a的值是多少<br>
-        还有一个问题，如果我要是用上面的宏求a++(a=1), b=0的最大值,<br>
-        那么我得到的值是3，此时宏也不实用了，怎么办呢？<br>
-    </p>
-</div>
-<br>
-<div style="border: 1px solid rebeccapurple">
-    <p>
-        求最大值的宏正确书写姿势：<br>
-        //##合并<br>
-        #define CZY_JOGIN(A,B) A##B<br><br>
+            NSLog(@"a = %ld, b = %ld", a, b);<br><br>
 
-        //COUNTER是一个预定义的宏，这个值在编译过程中将从0开始计数，每次被调用时加1。<br>
-        //为变量名a和b添加了一个计数后缀，这样大大避免了变量名相同而导致问题的可能性<br>
-        #define CZY_MAX(A,B) CZY_GET_MAX(A,B,COUNTER)<br><br>
+            NSInteger c = 1;<br>
+            NSInteger d = 0;<br><br>
 
-        //求最大值 宏中用反斜杠换行\<br>
-        #define CZY_GET_MAX(A,B,L) ({ \<br>
-        typeof(A) CZY_JOGIN(__a,L) = (A);\<br>
-        typeof(B) CZY_JOGIN(__b,L) = (B);\<br>
-        (CZY_JOGIN(__a,L) > CZY_JOGIN(__b,L)) ? CZY_JOGIN(__a,L) : CZY_JOGIN(__b,L); \<br>
-        })<br><br>
+            czyMax(c++, d+10);<br><br>
 
-        //补充弱强类型的宏 也用的很多<br>
-        #define weak(obj) __weak typeof(obj) weak##obj = obj;<br>
-        #define strong(obj) __strong typeof(obj) strong##obj = obj;<br>
-    </p>
-</div>
-<br>
-<div style="border: 1px solid rebeccapurple">
-    <p>
-        //类似的求三者最大值的宏<br>
-        //三者求最大值<br>
-        #define CZY_THREE_JOIN(A,B) A##B<br>
-        #define CZY_THREE_MAX(A,B,C) CZY_THREE_COMPARE(A,B,C,COUNTER)<br>
-        #define CZY_THREE_COMPARE(A,B,C,COUNTER) ({\<br>
-        typeof(A) CZY_THREE_JOIN(__a, COUNTER) = (A);\<br>
-        typeof(B) CZY_THREE_JOIN(__b, COUNTER) = (B);\<br>
-        typeof(C) CZY_THREE_JOIN(__c, COUNTER) = (C);\<br>
-        (CZY_THREE_JOIN(__a, COUNTER)>CZY_THREE_JOIN(__b, COUNTER))?\<br>
-        ((CZY_THREE_JOIN(__a, COUNTER)>CZY_THREE_JOIN(__c, COUNTER))?CZY_THREE_JOIN(__a, COUNTER):CZY_THREE_JOIN(__c, COUNTER)):\<br>
-        ((CZY_THREE_JOIN(__b, COUNTER)>CZY_THREE_JOIN(__c, COUNTER))?CZY_THREE_JOIN(__b, COUNTER):CZY_THREE_JOIN(__c, COUNTER));\<br>
-        })<br>
-    </p>
-</div>
+            NSLog(@"c = %ld, d = %ld", c, d);<br>
+        </p>
+    </div>
+    <br>
+    <div class="codeAero">
+        <p class="contents">
+            输出结果：<br>
+            2017-09-01 11:37:24.835 czytext[14333:851733] a = 1, b = 0<br>
+            2017-09-01 11:37:24.835 czytext[14333:851733] a = 3, b = 0<br>
+            2017-09-01 11:37:24.835 czytext[14333:851733] c = 2, d = 0<br>
+        </p>
+    </div>
+    <br>
+    <div class="codeAero">
+        <p class="contents">
+            充分说明了两者的变量作用域的区别 同时应该注意用宏比较a++之后a的值变化；<br>
+            即MAX(a++,b)；与MAX(a++,b+10)；运行两者后a的值是多少<br>
+            还有一个问题，如果我要是用上面的宏求a++(a=1), b=0的最大值,<br>
+            那么我得到的值是3，此时宏也不实用了，怎么办呢？<br>
+        </p>
+    </div>
+    <br>
+    <div class="codeAero">
+        <p class="contents">
+            求最大值的宏正确书写姿势：<br>
+            //##合并<br>
+            #define CZY_JOGIN(A,B) A##B<br><br>
 
-<br><br>
-<div style="border: 1px solid rebeccapurple">
-    <p><b>十九、 Xcode实现顶部自定义注释</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-    <p>
-        Xcode 显示包内容 :Contents -> Developer -> Platforms -> iPhoneOS.platform -> Developer -> Library -> Xcode -> Templates -> File Templates
-        修改Source文件夹下面的Cocoa Touch Class.xctemplate对应的所有文件的.h和.m，如果只修改一个，那么新建文件的时候，必须继承这个类才会看到自定义的文件注释。
-    </p>
-</div>
+            //COUNTER是一个预定义的宏，这个值在编译过程中将从0开始计数，每次被调用时加1。<br>
+            //为变量名a和b添加了一个计数后缀，这样大大避免了变量名相同而导致问题的可能性<br>
+            #define CZY_MAX(A,B) CZY_GET_MAX(A,B,COUNTER)<br><br>
 
-<br><br>
+            //求最大值 宏中用反斜杠换行\<br>
+            #define CZY_GET_MAX(A,B,L) ({ \<br>
+            typeof(A) CZY_JOGIN(__a,L) = (A);\<br>
+            typeof(B) CZY_JOGIN(__b,L) = (B);\<br>
+            (CZY_JOGIN(__a,L) > CZY_JOGIN(__b,L)) ? CZY_JOGIN(__a,L) : CZY_JOGIN(__b,L); \<br>
+            })<br><br>
 
-<div style="border: 1px solid rebeccapurple">
-    <p><b>十九、 如图</b></p>
-</div>
-<div style="border: 2px solid rebeccapurple">
-    <a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-0b9eb30796b2772d.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-0b9eb30796b2772d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
-    <p class="desc">示意图</p>
-    <b>
-        解决：用文本编辑器打开Launch.storyboard 和Main.storyboard 文件删掉：
-    </b>
-    <div style="border: 1px solid rebeccapurple">
-        <p>
+            //补充弱强类型的宏 也用的很多<br>
+            #define weak(obj) __weak typeof(obj) weak##obj = obj;<br>
+            #define strong(obj) __strong typeof(obj) strong##obj = obj;<br>
+        </p>
+    </div>
+    <br>
+    <div class="codeAero">
+        <p class="contents">
+            //类似的求三者最大值的宏<br>
+            //三者求最大值<br>
+            #define CZY_THREE_JOIN(A,B) A##B<br>
+            #define CZY_THREE_MAX(A,B,C) CZY_THREE_COMPARE(A,B,C,COUNTER)<br>
+            #define CZY_THREE_COMPARE(A,B,C,COUNTER) ({\<br>
+            typeof(A) CZY_THREE_JOIN(__a, COUNTER) = (A);\<br>
+            typeof(B) CZY_THREE_JOIN(__b, COUNTER) = (B);\<br>
+            typeof(C) CZY_THREE_JOIN(__c, COUNTER) = (C);\<br>
+            (CZY_THREE_JOIN(__a, COUNTER)>CZY_THREE_JOIN(__b, COUNTER))?\<br>
+            ((CZY_THREE_JOIN(__a, COUNTER)>CZY_THREE_JOIN(__c, COUNTER))?CZY_THREE_JOIN(__a,
+            COUNTER):CZY_THREE_JOIN(__c, COUNTER)):\<br>
+            ((CZY_THREE_JOIN(__b, COUNTER)>CZY_THREE_JOIN(__c, COUNTER))?CZY_THREE_JOIN(__b,
+            COUNTER):CZY_THREE_JOIN(__c, COUNTER));\<br>
+            })<br>
+        </p>
+    </div>
+
+    <br><br>
+
+    <p class="smallTitle"><b>二十、 Xcode实现顶部自定义注释</b></p>
+
+    <div class="codeAero">
+        <p class="contents">
+            Xcode 显示包内容 :Contents -> Developer -> Platforms -> iPhoneOS.platform -> Developer -> Library -> Xcode ->
+            Templates -> File Templates
+            修改Source文件夹下面的Cocoa Touch Class.xctemplate对应的所有文件的.h和.m，如果只修改一个，那么新建文件的时候，必须继承这个类才会看到自定义的文件注释。
+        </p>
+    </div>
+
+    <br><br>
+
+    <p class="smallTitle"><b>二十一、 如图</b></p>
+
+    <div class="codeAero">
+        <a target="_blank"
+           href="http://upload-images.jianshu.io/upload_images/3251504-0b9eb30796b2772d.png?imageMogr2/auto-orient/strip"><img
+                src="http://upload-images.jianshu.io/upload_images/3251504-0b9eb30796b2772d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></a>
+        <p class="desc">示意图</p>
+        <p class="contents">
+            解决：用文本编辑器打开Launch.storyboard 和Main.storyboard 文件删掉：
+        </p>
+        <p class="contents">
             capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"
         </p>
     </div>
 </div>
-
 </body>
 </html>

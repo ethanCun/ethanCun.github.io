@@ -4,519 +4,479 @@
     <meta charset="UTF-8">
     <title>GCD/NSOperation/NSThread扩展</title>
     <link rel="icon" href="../../../Source/icon-img.jpeg">
-    <link rel="stylesheet" href="../../../CSS/common.css">
-    <style>
-
-        body{
-            background-image: url("../../../Source/bgImg1.jpg");
-        }
-
-        .style1{
-
-            padding-left: 50px;
-            width: 100%;
-            height: 100px;
-        }
-
-        p{
-            padding-left: 20px;
-        }
-
-        p.style1p1{
-
-            float: left;
-            padding-top: 80px;
-            padding-left: 0px;
-            height: 20px;
-            width: 5px;
-            background-color: gray;
-        }
-
-        p.style1p2{
-
-            float: none;
-            padding-top: 40px;
-        }
-
-        /*代码区域*/
-        .boxDiv{
-
-            background-color: gainsboro;
-            border: solid 1px sienna;
-            padding: 10px;
-        }
-
-        /*小标题样式*/
-        .smallTitle{
-
-            padding: 20px;
-        }
-
-    </style>
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
 </head>
 <body>
 
-<h2 style="text-align: center; padding-top: 20px;">GCD/NSOperation/NSThread扩展</h2>
-
-<div class="style1">
-
-    <p class="style1p1"></p>
-    <p class="style1p2">闲来无事， 打开自己的印象笔记看到之前自己关于GCD/NSOperation/NSThread的笔记，觉得很清晰易懂，于是晒出来：</p>
-
-</div>
-<br>
-<p style="font-size: x-large; font-weight: bolder">NSOperation</p>
-<p class="smallTitle">自定义的任务继承NSOperation 重写main方法：</p>
-<br>
-
-<div class="boxDiv">
-
-    <p>
-        #import "Operation.h"<br><br>
-
-        @implementation Operation<br><br>
-
-        - (void)main<br><br>
-
-        {<br><br>
-
-        NSLog(@"任务即将开始执行");<br><br>
-
-        }<br><br>
-    </p>
+<div class="labels">
+    <span class="label label-info">NSThread</span>
+    <span class="label label-primary">NSOperationQueue</span>
+    <span class="label label-warning">GCD</span>
 </div>
 
-<p class="smallTitle">单例对象创建 dispatch_once 一次性操作：</p>
-<div class="boxDiv">
+<div class="contentBgDiv">
+    <p class="title">GCD/NSOperation/NSThread扩展</p>
+        <hr>
 
-    <p>
-        /**<br><br>
+    <p class="introduceText">闲来无事， 打开自己的印象笔记看到之前自己关于GCD/NSOperation/NSThread的笔记，觉得很清晰易懂，于是晒出来：</p>
 
-        单例对象创建<br><br>
+    <br>
+    <p class="contents">自定义的任务继承NSOperation 重写main方法：</p>
+    <br>
 
-        */<br><br>
+    <div class="codeAero">
 
-        + (instancetype) sharedInstance<br><br>
+        <p>
+            #import "Operation.h"<br><br>
 
-        {<br><br>
+            @implementation Operation<br><br>
 
-        static SingleInstance *instance = nil;<br><br>
+            - (void)main<br><br>
 
+            {<br><br>
 
-        static dispatch_once_t onceToken;<br><br>
+            NSLog(@"任务即将开始执行");<br><br>
 
-        dispatch_once(&onceToken, ^{<br><br>
+            }<br><br>
+        </p>
+    </div>
 
-        //只会调用一次<br><br>
+    <p class="contents">单例对象创建 dispatch_once 一次性操作：</p>
+    <div class="codeAero">
 
-        instance = [[self alloc] init];<br><br>
+        <p>
+            /**<br><br>
 
-        });<br><br>
+            单例对象创建<br><br>
 
+            */<br><br>
 
-        return instance;<br><br>
+            + (instancetype) sharedInstance<br><br>
 
-        }<br><br>
+            {<br><br>
 
-    </p>
-</div>
+            static SingleInstance *instance = nil;<br><br>
 
-<p class="smallTitle">各种队列：</p>
 
-<div class="boxDiv">
+            static dispatch_once_t onceToken;<br><br>
 
-    <p>
-        //  ViewController.m<br><br>
+            dispatch_once(&onceToken, ^{<br><br>
 
-        //  GCD-2<br><br>
+            //只会调用一次<br><br>
 
-        //<br><br>
+            instance = [[self alloc] init];<br><br>
 
-        //  Created by vera on 15/8/3.<br><br>
+            });<br><br>
 
-        //  Copyright (c) 2015年 vera. All rights reserved.<br><br>
 
-        //<br><br>
+            return instance;<br><br>
 
-        #import "ViewController.h"<br><br>
+            }<br><br>
 
-        #import "Operation.h"<br><br>
+        </p>
+    </div>
 
-        @interface ViewController ()<br><br>
+    <p class="contents">各种队列：</p>
 
-        {<br><br>
+    <div class="codeAero">
 
-        //串行队列<br><br>
+        <p>
+            // ViewController.m<br><br>
 
-        dispatch_queue_t mainQueue;<br><br>
+            // GCD-2<br><br>
 
-        //并行队列<br><br>
+            //<br><br>
 
-        dispatch_queue_t globalQueue;<br><br>
+            // Created by vera on 15/8/3.<br><br>
 
-        }<br><br>
+            // Copyright (c) 2015年 vera. All rights reserved.<br><br>
 
-        @end<br><br>
+            //<br><br>
 
-        @implementation ViewController<br><br>
+            #import "ViewController.h"<br><br>
 
-        - (void)viewDidLoad {<br><br>
+            #import "Operation.h"<br><br>
 
-        [super viewDidLoad];<br><br>
+            @interface ViewController ()<br><br>
 
-        // Do any additional setup after loading the view, typically from a nib.<br><br>
+            {<br><br>
 
+            //串行队列<br><br>
 
-        //串行队列<br><br>
+            dispatch_queue_t mainQueue;<br><br>
 
-        mainQueue = dispatch_get_main_queue();<br><br>
+            //并行队列<br><br>
 
-        //并行队列<br><br>
+            dispatch_queue_t globalQueue;<br><br>
 
-        globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);<br><br>
+            }<br><br>
 
+            @end<br><br>
 
-        #if 0<br><br>
+            @implementation ViewController<br><br>
 
-        //并行队列<br><br>
+            - (void)viewDidLoad {<br><br>
 
-        dispatch_queue_create("queueName", DISPATCH_QUEUE_CONCURRENT)<br><br>
+            [super viewDidLoad];<br><br>
 
-        //串行队列<br><br>
+            // Do any additional setup after loading the view, typically from a nib.<br><br>
 
-        dispatch_queue_create("queueName", DISPATCH_QUEUE_SERIAL);<br><br>
 
-        #endif<br><br>
-    </p>
-</div>
+            //串行队列<br><br>
 
-<p class="smallTitle">设置队列并行数，-1表示无上限：</p>
-<div class="boxDiv">
-    <p>
-        /*<br><br>
+            mainQueue = dispatch_get_main_queue();<br><br>
 
-        队列：先进先出<br><br>
+            //并行队列<br><br>
 
-        栈：先进后出<br><br>
+            globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);<br><br>
 
-        */<br><br>
 
-        /*<br><br>
+            #if 0<br><br>
 
-        Operation *o = [[Operation alloc] init];<br><br>
+            //并行队列<br><br>
 
+            dispatch_queue_create("queueName", DISPATCH_QUEUE_CONCURRENT)<br><br>
 
-        NSOperationQueue *queue = [[NSOperationQueue alloc] init];<br><br>
+            //串行队列<br><br>
 
-        queue.maxConcurrentOperationCount = 1;<br><br>
+            dispatch_queue_create("queueName", DISPATCH_QUEUE_SERIAL);<br><br>
 
-        [queue addOperation:o];<br><br>
+            #endif<br><br>
+        </p>
+    </div>
 
-        */<br><br>
-    </p>
-</div>
+    <p class="contents">设置队列并行数，-1表示无上限：</p>
+    <div class="codeAero">
+        <p>
+            /*<br><br>
 
-<p class="smallTitle">
-    有一个需求:需要将N个请求全部完成之后执行某个操作该如何处理:dispatch_group_notify NSOperation使用addDenpendency来处理这个需求
-</p>
+            队列：先进先出<br><br>
 
-<div class="boxDiv">
+            栈：先进后出<br><br>
 
-    <p>
-        - (void)有一个需求_需要将N个请求全部完成之后执行某个操作_该如何处理<br><br>
+            */<br><br>
 
-        {<br><br>
+            /*<br><br>
 
-        //调度组<br><br>
+            Operation *o = [[Operation alloc] init];<br><br>
 
-        dispatch_group_t group = dispatch_group_create();<br><br>
 
+            NSOperationQueue *queue = [[NSOperationQueue alloc] init];<br><br>
 
-        dispatch_group_async(group, globalQueue, ^{<br><br>
+            queue.maxConcurrentOperationCount = 1;<br><br>
 
+            [queue addOperation:o];<br><br>
 
-        NSLog(@"任务1开始");<br><br>
+            */<br><br>
+        </p>
+    </div>
 
-        [NSThread sleepForTimeInterval:3];<br><br>
-
-        NSLog(@"任务1结束");<br><br>
-
-
-        });<br><br><br>
-
-
-        dispatch_group_async(group, globalQueue, ^{<br><br>
-
-        NSLog(@"任务2开始");<br><br>
-
-        [NSThread sleepForTimeInterval:10];<br><br>
-
-        NSLog(@"任务2结束");<br><br>
-
-        });<br><br><br>
-
-
-
-        //必须放到最后,当前面执行的任务都执行完才会执行下面的任务<br><br>
-
-        dispatch_group_notify(group, globalQueue, ^{<br><br>
-
-
-        NSLog(@"上面的所有任务都完成");<br><br>
-
-        });<br><br>
-
-        }<br><br>
-    </p>
-</div>
-
-<p class="smallTitle">主线程中同步调度，造成死锁：</p>
-<div class="boxDiv">
-
-    <p>
-
-        - (void)死锁<br><br>
-
-        {<br><br>
-
-        NSLog(@"1111111");<br><br>
-
-
-        //dispatch_sync 同步调度：就是把任务添加到指定队列里面，然后必须等待任务完成才能继续。<br><br>
-
-        //dispatch_async 异步调度：就是把任务添加到指定队列里面，没必须等待任务完成才能继续。<br><br>
-
-
-        //串行队列<br><br>
-
-        //并行队列<br><br>
-
-        //同步调度<br><br>
-
-        //异步调度<br><br>
-
-
-        //死锁<br><br>
-
-        dispatch_sync(mainQueue, ^{<br><br>
-
-        NSLog(@"222222");<br><br>
-
-        });<br><br>
-
-
-
-        NSLog(@"333333");<br><br>
+    <p class="contents">
+        有一个需求:需要将N个请求全部完成之后执行某个操作该如何处理:dispatch_group_notify NSOperation使用addDenpendency来处理这个需求
     </p>
 
-</div>
+    <div class="codeAero">
 
-<p class="smallTitle">连续调用某个任务多少次 dispatch_apply</p>
-<div class="boxDiv">
+        <p>
+            - (void)有一个需求_需要将N个请求全部完成之后执行某个操作_该如何处理<br><br>
 
-    <p>
+            {<br><br>
 
-        - (void)test6<br><br>
+            //调度组<br><br>
 
-        {<br><br>
+            dispatch_group_t group = dispatch_group_create();<br><br>
 
-        //连续调用多少次<br><br>
 
-        dispatch_apply(10, globalQueue, ^(size_t time) {<br><br>
+            dispatch_group_async(group, globalQueue, ^{<br><br>
 
-        NSLog(@"连续调用多少次 -- %zu",time);<br><br>
 
-        });<br><br>
+            NSLog(@"任务1开始");<br><br>
 
-        }<br><br>
+            [NSThread sleepForTimeInterval:3];<br><br>
 
+            NSLog(@"任务1结束");<br><br>
+
+
+            });<br><br><br>
+
+
+            dispatch_group_async(group, globalQueue, ^{<br><br>
+
+            NSLog(@"任务2开始");<br><br>
+
+            [NSThread sleepForTimeInterval:10];<br><br>
+
+            NSLog(@"任务2结束");<br><br>
+
+            });<br><br><br>
+
+
+            //必须放到最后,当前面执行的任务都执行完才会执行下面的任务<br><br>
+
+            dispatch_group_notify(group, globalQueue, ^{<br><br>
+
+
+            NSLog(@"上面的所有任务都完成");<br><br>
+
+            });<br><br>
+
+            }<br><br>
+        </p>
+    </div>
+
+    <p class="contents">主线程中同步调度，造成死锁：</p>
+    <div class="codeAero">
+
+        <p>
+
+            - (void)死锁<br><br>
+
+            {<br><br>
+
+            NSLog(@"1111111");<br><br>
+
+
+            //dispatch_sync 同步调度：就是把任务添加到指定队列里面，然后必须等待任务完成才能继续。<br><br>
+
+            //dispatch_async 异步调度：就是把任务添加到指定队列里面，没必须等待任务完成才能继续。<br><br>
+
+
+            //串行队列<br><br>
+
+            //并行队列<br><br>
+
+            //同步调度<br><br>
+
+            //异步调度<br><br>
+
+
+            //死锁<br><br>
+
+            dispatch_sync(mainQueue, ^{<br><br>
+
+            NSLog(@"222222");<br><br>
+
+            });<br><br>
+
+
+            NSLog(@"333333");<br><br>
+        </p>
+
+    </div>
+
+    <p class="contents">连续调用某个任务多少次 dispatch_apply</p>
+    <div class="codeAero">
+
+        <p>
+
+            - (void)test6<br><br>
+
+            {<br><br>
+
+            //连续调用多少次<br><br>
+
+            dispatch_apply(10, globalQueue, ^(size_t time) {<br><br>
+
+            NSLog(@"连续调用多少次 -- %zu",time);<br><br>
+
+            });<br><br>
+
+            }<br><br>
+
+        </p>
+
+    </div>
+
+    <p class="contents">
+        延迟调用 dispatch_after
     </p>
 
-</div>
+    <div class="codeAero">
 
-<p class="smallTitle">
-    延迟调用 dispatch_after
-</p>
+        <p>
 
-<div class="boxDiv">
+            - (void)test5<br><br>
 
-    <p>
+            {<br><br>
 
-        - (void)test5<br><br>
+            //延迟delayInSeconds秒调用<br><br>
 
-        {<br><br>
-
-        //延迟delayInSeconds秒调用<br><br>
-
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{<br><br>
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(),
+            ^{<br><br>
 
 
-        NSLog(@" ----- 延迟3秒调用");<br><br>
+            NSLog(@" ----- 延迟3秒调用");<br><br>
 
-        });<br><br>
+            });<br><br>
 
-        }<br><br>
-    </p>
-</div>
+            }<br><br>
+        </p>
+    </div>
 
-<p class="smallTitle">
-    线程优先级相关
-</p>
-
-<div class="boxDiv">
-
-    <p>
-
-        A,B并发执行  然后执行C  最后D,E并发执行<br><br>
-        - (void)test4<br><br>
-        {<br><br>
-        /**<br><br>
-        1.分割任务必须是自定义的队列<br><br>
-        2. dispatch_queue_create(队列的标签, 串行/并行)<br><br>
-        (1)DISPATCH_QUEUE_CONCURRENT;//并行<br><br>
-        (2)DISPATCH_QUEUE_SERIAL //串行<br><br>
-        */<br><br>
-
-        //    dispatch_sync;系统没有创建线程<br><br>
-        //    dispatch_async;系统创建线程<br><br>
-
-
-        /**<br><br>
-        创建一个自定义的并行队列<br><br>
-        */<br><br>
-        dispatch_queue_t customQueue = dispatch_queue_create("com.GCD.customQueue", DISPATCH_QUEUE_CONCURRENT);<br><br>
-
-        dispatch_async(mainQueue, ^{<br><br>
-        NSLog(@"################ %@",[NSThread currentThread]);<br><br>
-        });<br><br>
-
-        //任务A<br><br>
-        dispatch_async(customQueue, ^{<br><br>
-        [self doSomeOperation:@"A"];<br><br>
-
-        NSLog(@"######### %@",[NSThread currentThread]);<br><br>
-        });<br><br>
-        //任务B<br><br>
-        dispatch_async(customQueue, ^{<br><br>
-        [self doSomeOperation:@"B"];<br><br>
-        });<br><br>
-
-        //分割，把前面的任务和后面的任务分开<br><br>
-        //任务C<br><br>
-        dispatch_barrier_async(customQueue, ^{<br><br>
-        [self doSomeOperation:@"C"];<br><br>
-        });<br><br>
-
-        //任务D<br><br>
-        dispatch_async(customQueue, ^{<br><br>
-        [self doSomeOperation:@"D"];<br><br>
-        });<br><br>
-        //任务E<br><br>
-        dispatch_async(customQueue, ^{<br><br>
-        [self doSomeOperation:@"E"];<br><br>
-        });<br><br>
-        }<br><br>
-
-        //A,B,C 3个任务，A,B并发执行，最后执行C<br><br>
-        - (void)test3<br><br>
-        {<br><br>
-
-        //调度组<br><br>
-        dispatch_group_t group = dispatch_group_create();<br><br>
-
-
-        dispatch_group_async(group, globalQueue, ^{<br><br>
-        NSLog(@"任务1开始");<br><br>
-        //NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://d3.s.hjfile.cn/2012/201202_3/43904b09-24e1-4fdb-8b46-d3dba3323278.mp3"]];<br><br>
-        NSLog(@"任务1完成");<br><br>
-        });<br><br>
-
-        dispatch_group_async(group, globalQueue, ^{<br><br>
-        NSLog(@"任务2开始");<br><br>
-        //        sleep(5);<br><br>
-        NSLog(@"任务2完成");<br><br>
-        });<br><br>
-
-
-        //必须放到最后<br><br>
-        dispatch_group_notify(group, globalQueue, ^{<br><br>
-        //NSLog(@"任务3");<br><br>
-
-        //1.开始请求数据<br><br>
-        sleep(2);<br><br>
-        NSLog(@"请求数据完成");<br><br>
-
-        //2.回到主线程<br><br>
-        dispatch_async(mainQueue, ^{<br><br>
-        NSLog(@"回到主线程");<br><br>
-
-        //刷新UI<br><br>
-        });<br><br><br><br>
-
-
-
-        //前面的任务都完成了。<br><br>
-
-        // NSLog(@"---- %d",[NSThread isMainThread]);<br><br>
-        });<br><br>
-
-        }<br><br>
-
-        //任务A,B,C并发执行，无顺序<br><br>
-        - (void)test2<br><br>
-        {<br><br>
-        dispatch_async(globalQueue, ^{<br><br>
-        //任务1<br><br>
-        [self doSomeOperation:@"A"];<br><br>
-        });<br><br>
-        dispatch_async(globalQueue, ^{<br><br>
-        //任务2<br><br>
-        [self doSomeOperation:@"B"];<br><br>
-        });<br><br>
-        dispatch_async(globalQueue, ^{<br><br>
-        //任务3<br><br>
-        [self doSomeOperation:@"C"];<br><br>
-        });<br><br>
-        }<br><br>
-
-        //任务A,B,C串行执行<br><br>
-        - (void)test1<br><br>
-        {<br><br>
-        /**<br><br>
-        同步调度和异步调度<br><br>
-        串行队列和并行队列<br><br>
-        */<br><br>
-
-        dispatch_async(mainQueue, ^{<br><br>
-
-        NSLog(@"---- %@",[NSThread currentThread]);<br><br>
-
-        //任务1<br><br>
-        [self doSomeOperation:@"A"];<br><br>
-        });<br><br>
-        NSLog(@"11111");<br><br>
-        dispatch_async(mainQueue, ^{<br><br>
-        //任务2<br><br>
-        [self doSomeOperation:@"B"];<br><br>
-        });<br><br>
-        NSLog(@"22222");<br><br>
-        dispatch_async(mainQueue, ^{<br><br>
-        //任务3<br><br>
-        [self doSomeOperation:@"C"];<br><br>
-        });<br><br>
-        NSLog(@"333333");<br><br>
-        }<br><br>
-
-        - (void)doSomeOperation:(NSString *)name<br><br>
-        {<br><br>
-        sleep(1);<br><br>
-        NSLog(@"----- %@",name);<br><br>
-
-        //NSData *data = [NSData dataWithContentsOfURL:#(NSURL *)#];<br><br>
-        }<br><br>
-
+    <p class="contents">
+        线程优先级相关
     </p>
 
+    <div class="codeAero">
+
+        <p>
+
+            A,B并发执行 然后执行C 最后D,E并发执行<br><br>
+            - (void)test4<br><br>
+            {<br><br>
+            /**<br><br>
+            1.分割任务必须是自定义的队列<br><br>
+            2. dispatch_queue_create(队列的标签, 串行/并行)<br><br>
+            (1)DISPATCH_QUEUE_CONCURRENT;//并行<br><br>
+            (2)DISPATCH_QUEUE_SERIAL //串行<br><br>
+            */<br><br>
+
+            // dispatch_sync;系统没有创建线程<br><br>
+            // dispatch_async;系统创建线程<br><br>
+
+
+            /**<br><br>
+            创建一个自定义的并行队列<br><br>
+            */<br><br>
+            dispatch_queue_t customQueue = dispatch_queue_create("com.GCD.customQueue",
+            DISPATCH_QUEUE_CONCURRENT);<br><br>
+
+            dispatch_async(mainQueue, ^{<br><br>
+            NSLog(@"################ %@",[NSThread currentThread]);<br><br>
+            });<br><br>
+
+            //任务A<br><br>
+            dispatch_async(customQueue, ^{<br><br>
+            [self doSomeOperation:@"A"];<br><br>
+
+            NSLog(@"######### %@",[NSThread currentThread]);<br><br>
+            });<br><br>
+            //任务B<br><br>
+            dispatch_async(customQueue, ^{<br><br>
+            [self doSomeOperation:@"B"];<br><br>
+            });<br><br>
+
+            //分割，把前面的任务和后面的任务分开<br><br>
+            //任务C<br><br>
+            dispatch_barrier_async(customQueue, ^{<br><br>
+            [self doSomeOperation:@"C"];<br><br>
+            });<br><br>
+
+            //任务D<br><br>
+            dispatch_async(customQueue, ^{<br><br>
+            [self doSomeOperation:@"D"];<br><br>
+            });<br><br>
+            //任务E<br><br>
+            dispatch_async(customQueue, ^{<br><br>
+            [self doSomeOperation:@"E"];<br><br>
+            });<br><br>
+            }<br><br>
+
+            //A,B,C 3个任务，A,B并发执行，最后执行C<br><br>
+            - (void)test3<br><br>
+            {<br><br>
+
+            //调度组<br><br>
+            dispatch_group_t group = dispatch_group_create();<br><br>
+
+
+            dispatch_group_async(group, globalQueue, ^{<br><br>
+            NSLog(@"任务1开始");<br><br>
+            //NSData *data = [NSData dataWithContentsOfURL:[NSURL
+            URLWithString:@"http://d3.s.hjfile.cn/2012/201202_3/43904b09-24e1-4fdb-8b46-d3dba3323278.mp3"]];<br><br>
+            NSLog(@"任务1完成");<br><br>
+            });<br><br>
+
+            dispatch_group_async(group, globalQueue, ^{<br><br>
+            NSLog(@"任务2开始");<br><br>
+            // sleep(5);<br><br>
+            NSLog(@"任务2完成");<br><br>
+            });<br><br>
+
+
+            //必须放到最后<br><br>
+            dispatch_group_notify(group, globalQueue, ^{<br><br>
+            //NSLog(@"任务3");<br><br>
+
+            //1.开始请求数据<br><br>
+            sleep(2);<br><br>
+            NSLog(@"请求数据完成");<br><br>
+
+            //2.回到主线程<br><br>
+            dispatch_async(mainQueue, ^{<br><br>
+            NSLog(@"回到主线程");<br><br>
+
+            //刷新UI<br><br>
+            });<br><br><br><br>
+
+
+            //前面的任务都完成了。<br><br>
+
+            // NSLog(@"---- %d",[NSThread isMainThread]);<br><br>
+            });<br><br>
+
+            }<br><br>
+
+            //任务A,B,C并发执行，无顺序<br><br>
+            - (void)test2<br><br>
+            {<br><br>
+            dispatch_async(globalQueue, ^{<br><br>
+            //任务1<br><br>
+            [self doSomeOperation:@"A"];<br><br>
+            });<br><br>
+            dispatch_async(globalQueue, ^{<br><br>
+            //任务2<br><br>
+            [self doSomeOperation:@"B"];<br><br>
+            });<br><br>
+            dispatch_async(globalQueue, ^{<br><br>
+            //任务3<br><br>
+            [self doSomeOperation:@"C"];<br><br>
+            });<br><br>
+            }<br><br>
+
+            //任务A,B,C串行执行<br><br>
+            - (void)test1<br><br>
+            {<br><br>
+            /**<br><br>
+            同步调度和异步调度<br><br>
+            串行队列和并行队列<br><br>
+            */<br><br>
+
+            dispatch_async(mainQueue, ^{<br><br>
+
+            NSLog(@"---- %@",[NSThread currentThread]);<br><br>
+
+            //任务1<br><br>
+            [self doSomeOperation:@"A"];<br><br>
+            });<br><br>
+            NSLog(@"11111");<br><br>
+            dispatch_async(mainQueue, ^{<br><br>
+            //任务2<br><br>
+            [self doSomeOperation:@"B"];<br><br>
+            });<br><br>
+            NSLog(@"22222");<br><br>
+            dispatch_async(mainQueue, ^{<br><br>
+            //任务3<br><br>
+            [self doSomeOperation:@"C"];<br><br>
+            });<br><br>
+            NSLog(@"333333");<br><br>
+            }<br><br>
+
+            - (void)doSomeOperation:(NSString *)name<br><br>
+            {<br><br>
+            sleep(1);<br><br>
+            NSLog(@"----- %@",name);<br><br>
+
+            //NSData *data = [NSData dataWithContentsOfURL:#(NSURL *)#];<br><br>
+            }<br><br>
+
+        </p>
+
+    </div>
+
+    <br><br>
 </div>
 
 </body>

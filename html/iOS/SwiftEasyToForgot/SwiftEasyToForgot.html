@@ -4,101 +4,118 @@
     <meta charset="UTF-8">
     <title>Swift那些搞过却又容易忘记的东东</title>
     <link rel="icon" href="../../../Source/icon-img.jpeg">
-    <link rel="stylesheet" href="../../../CSS/iOS/SwiftEasyToForgot/SwiftEasyToForgot.css">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
 </head>
 <body>
-<h2>Swift那些搞过却又容易忘记的东东</h2>
-<div style="border: 1px solid rebeccapurple">
-    <h3>  <b>一、swift 调用oc库</b> </h3>
-</div><br>
 
-<p>
-    1.、swift工程里新建Header file, 名称：项目名称-Bridging-Header.h
-</p>
+<div class="labels">
 
-<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-28538c944470898a.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-28538c944470898a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
-<p class="desc">项目名称-Bridging-Header.h</p>
-
-<p>
-    2、设置路径 target -> building settings -> swift compiler -> objective-c bridging header
-</p>
-
-<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-219154da7df8daaf.png?imageMogr2/auto-orient/strip%7CimageView2/2/format/jpg"><img src="http://upload-images.jianshu.io/upload_images/3251504-219154da7df8daaf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240/format/jpg"></a>
-<p class="desc">设置路径</p>
-
-
-<p>
-    3、导入库 注意导入方式
-</p>
-
-<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-cacc0ac39568debc.png?imageMogr2/auto-orient/strip%7CimageView2/2/format/jpg"><img src="http://upload-images.jianshu.io/upload_images/3251504-cacc0ac39568debc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240/format/jpg"></a>
-<p class="desc">导入第三方oc库</p>
-
-<div style="border: 1px solid rebeccapurple">
-    <h3>  <b>二、oc工程使用swift库</b> </h3>
-</div><br>
-
-<p>
-    在需要使用的地方添加：项目名称-Swift.h
-</p>
-
-<div style="border: 1px solid rebeccapurple">
-    <h3>  <b>三、call can throw but is mot marked with try...</b> </h3>
-</div><br>
-
-<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-74e7b9d11c100885.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-74e7b9d11c100885.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
-<p class="desc">错误示意图1</p>
-
-<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-5d55359915853406.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-5d55359915853406.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
-<p class="desc">没有使用try.png</p>
-
-<p>
-    <b>解决:</b>
-</p>
-
-<a target="_blank" href="http://upload-images.jianshu.io/upload_images/3251504-272f9efe48bb346a.png?imageMogr2/auto-orient/strip"><img src="http://upload-images.jianshu.io/upload_images/3251504-272f9efe48bb346a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
-<p class="desc">do catch+try.png</p>
-
-
-<div style="border: 1px solid rebeccapurple">
-    <h3>  <b>四、swift项目中使用oc框架不提示方法</b> </h3>
-</div><br>
-
-<p>
-    在swift工程中使用oc框架时：正确在项目名-Bridging-Header里导入了框架，
-    如#import <KissXML/KissXML.h>,#import <XMLReader/XMLReader.h>还是不提示方法，
-    可以这样：
-</p>
-
-<div style="border: 1px solid rebeccapurple">
-
-    <p>
-        1.第一步首先删除 此目录下的这个文件夹：~/Library/Developer/Xcode/DerivedData<br><br>
-
-        2.重启xcode试试，如果还不提示，删除此目录下的这个文件：~/Library/Caches/com.apple.dt.Xcode<br><br>
-
-        3.重新运行xcode就好了<br><br>
-    </p>
+    <span class="label label-success">swiftSwift那些搞过却又容易忘记的东东</span>
 </div>
 
-<p>
-    如果还是没用：在使用的地方再导入一次，如：import XMLReader
-</p>
+<div class="contentBgDiv">
+    <p class="title">Swift那些搞过却又容易忘记的东东</p>
 
-<div style="border: 1px solid rebeccapurple">
-    <h3>  <b>五、关于变量类型</b> </h3>
-</div><br>
+    <p class="smallTitle"><b>一、swift 调用oc库</b></p>
 
-<p>
-    Striing -》int 需要使用NSString来过渡，toInt不行了 注意变量的类型可以很大程度提高编译速度 特别是类似a/b/c
-</p>
 
-<div style="border: 1px solid rebeccapurple">
-
-    <p>
-        如：
-        print(NSString(string:s).intValue+1)
+    <p class="contents">
+        1.、swift工程里新建Header file, 名称：项目名称-Bridging-Header.h
     </p>
+
+    <a target="_blank"
+       href="http://upload-images.jianshu.io/upload_images/3251504-28538c944470898a.png?imageMogr2/auto-orient/strip"><img
+            src="http://upload-images.jianshu.io/upload_images/3251504-28538c944470898a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+
+    <p class="contents">
+        2、设置路径 target -> building settings -> swift compiler -> objective-c bridging header
+    </p>
+
+    <a target="_blank"
+       href="http://upload-images.jianshu.io/upload_images/3251504-219154da7df8daaf.png?imageMogr2/auto-orient/strip%7CimageView2/2/format/jpg"><img
+            src="http://upload-images.jianshu.io/upload_images/3251504-219154da7df8daaf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240/format/jpg"></a>
+
+
+    <p class="contents">
+        3、导入库 注意导入方式
+    </p>
+
+    <a target="_blank"
+       href="http://upload-images.jianshu.io/upload_images/3251504-cacc0ac39568debc.png?imageMogr2/auto-orient/strip%7CimageView2/2/format/jpg"><img
+            src="http://upload-images.jianshu.io/upload_images/3251504-cacc0ac39568debc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240/format/jpg"></a>
+
+    <p class="smallTitle"><b>二、oc工程使用swift库</b></p>
+
+    <br>
+
+    <p class="contents">
+        在需要使用的地方添加：项目名称-Swift.h
+    </p>
+
+    <p class="smallTitle"><b>三、call can throw but is mot marked with try...</b></p>
+
+    <br>
+
+    <a target="_blank"
+       href="http://upload-images.jianshu.io/upload_images/3251504-74e7b9d11c100885.png?imageMogr2/auto-orient/strip"><img
+            src="http://upload-images.jianshu.io/upload_images/3251504-74e7b9d11c100885.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+    <p class="contents">错误示意图1</p>
+
+    <a target="_blank"
+       href="http://upload-images.jianshu.io/upload_images/3251504-5d55359915853406.png?imageMogr2/auto-orient/strip"><img
+            src="http://upload-images.jianshu.io/upload_images/3251504-5d55359915853406.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+    <p class="contents">没有使用try.png</p>
+
+    <p class="contents">
+        <b>解决:</b>
+    </p>
+
+    <a target="_blank"
+       href="http://upload-images.jianshu.io/upload_images/3251504-272f9efe48bb346a.png?imageMogr2/auto-orient/strip"><img
+            src="http://upload-images.jianshu.io/upload_images/3251504-272f9efe48bb346a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+    <p class="contents">do catch+try.png</p>
+
+    <p class="smallTitle"><b>四、swift项目中使用oc框架不提示方法</b></p>
+
+    <br>
+
+    <p class="contents">
+        在swift工程中使用oc框架时：正确在项目名-Bridging-Header里导入了框架，
+        如#import &lt;KissXML/KissXML.h&gt;,#import &lt;XMLReader/XMLReader.h&gt;还是不提示方法，
+        可以这样：
+    </p>
+
+    <div class="codeAero">
+
+        <p class="contents">
+            1.第一步首先删除 此目录下的这个文件夹：~/Library/Developer/Xcode/DerivedData<br><br>
+
+            2.重启xcode试试，如果还不提示，删除此目录下的这个文件：~/Library/Caches/com.apple.dt.Xcode<br><br>
+
+            3.重新运行xcode就好了<br><br>
+        </p>
+    </div>
+
+    <p class="contents">
+        如果还是没用：在使用的地方再导入一次，如：import XMLReader
+    </p>
+
+    <p class="smallTitle"><b>五、关于变量类型</b></p>
+
+    <br>
+
+    <p class="contents">
+        Striing -》int 需要使用NSString来过渡，toInt不行了 注意变量的类型可以很大程度提高编译速度 特别是类似a/b/c
+    </p>
+
+    <p class="contents">
+        如：<br>
+        print(NSStrinwg(string:s).intValue+1)<br>
+    </p>
+
+    <br>
 </div>
 
 </body>
