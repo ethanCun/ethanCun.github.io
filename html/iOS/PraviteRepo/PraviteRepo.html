@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cocoapod私有库的制作</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">Cocoapod</span>
+    <span class="label label-info">私有仓库</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Cocoapod私有库的制作</p>
+    <hr>
+
+    <p class="introduceText">
+        开发中我们经常通过Cocoapod来拉取第三方库到自己的工程,比如网络请求的AFNetworking, 图片加载的SDWebImage等;
+        下面我将介绍一下怎么制作自己的私有库:
+    </p>
+
+    <p class="contents"><b>一. 首先到自己的私有git服务器或者github创建一个仓库如下图</b></p>
+    <img src="../../../Source/cocoapod.png">
+
+    <p class="contents">创建之后的效果如下:
+        LICENSE与README.md</p>
+    <img src="../../../Source/cocoapod2.png">
+
+    <p class="contents"><b>二. 接着创建本地Repo</b></p>
+    <p class="contents">pod repo add 本地Repo名称 github仓库地址</p>
+    <p class="contents">    如下:
+    </p>
+    <div class="codeAero">
+        <p class="contents">pod repo add CzyPraviteRepoDemo https://github.com/ethanCun/CzyPraviteRepoDemo.git<br></p>
+    </div>
+    <img src="../../../Source/cocoapod3.png">
+
+    <p class="contents">在终端输入上述命令之后,在Finder中前往 <b>~/.cocoapods</b> 查看发现新增了CzyPraviteRepoDemo</p>
+    <p class="contents">
+        如果看不到,可以试着切换下面的命令:
+    </p>
+    <div class="codeAero">
+        <p class="contents">
+            //打开隐藏的命令:<br>
+            defaults write com.apple.finder AppleShowAllFiles -bool true<br>
+            //关闭隐藏的命令:<br>
+            defaults write com.apple.finder AppleShowAllFiles -bool false<br>
+        </p>
+    </div>
+
+    <p class="contents"><b>三. 接着将代码clone到本地</b></p>
+    <div class="codeAero">
+        <p class="contents">
+            cd ~<br>
+            git clone https://github.com/marklin2012/O2View.git<br>
+        </p>
+    </div>
+    <p class="contents">或者使用终端工具github desktop</p>
+
+
+    <p class="contents"><b>四. 将自己的代码放入本地文件中如下</b></p>
+    <img src="../../../Source/cocoapod4.png">
+
+
+    <p class="contents"><b>五. 创建.podspec文件</b></p>
+    <p class="contents">cd 到本地文件夹下:</p>
+    <div class="codeAero">
+        <p class="contents">pod spec create CzyPraviteRepoDemo<br></p>
+    </div>
+    <p class="contents">会生成一个CzyPraviteRepoDemo.podspec文件</p>
+    <p class="contents">编辑.podspec文件很关键,建议按照一些第三方的demo来比较,如<a href=""><b>这</b></a></p>
+    <p class="contents">期间可能会出现一些问题,往往是编辑有错误,但终端一般会给出修复提示;</p>
+
+    <p class="contents">修改完成之后进行验证:</p>
+    <div class="codeAero">
+        <p class="contents">
+            pod lib lint
+        </p>
+        <p class="contents">使用下面的命令可以忽略一些警告:</p>
+        <p class="contents">
+            pod lib lint --allow-warnings
+        </p>
+    </div>
+    <p class="contents">结果如下:</p>
+    <img src="../../../Source/cocoapod5.png">
+
+    <p class="contents"><b>六. 将本地的文件push到远程仓库,可以使用终端命令,也可使用github desktop</b></p>
+    <div class="codeAero">
+        <p class="contents">
+            git add .<br>
+            git commit -m 'init pod podspec'<br>
+            git pull<br>
+            git push<br>
+            git tag -a 0.0.1 -m desc<br>
+            git push origin --tags (推送到tag分支)<br>
+            // git push origin master (推送到master分支)<br>
+        </p>
+    </div>
+
+    <p class="contents"><b>七. 最后,推送.podspec描述文件</b></p>
+    <p class="contents">cd 到本地文件夹下:</p>
+    <div class="codeAero">
+        <p class="contents">
+            pod repo push CzyPraviteRepoDemo CzyPraviteRepoDemo.podspec --allow-warnings
+        </p>
+    </div>
+    <p class="contents">结果如下:</p>
+    <img src="../../../Source/cocoapod6.png">
+
+    <p class="contents">推送失败可以尝试下如下命令:</p>
+    <div class="codeAero">
+        <p class="contents">
+            rm ~/Library/Caches/CocoaPods/search_index.json
+        </p>
+    </div>
+
+    <p class="contents"><b>八. 我们来搜索一下这个库</b></p>
+    <div class="contents">
+        <p class="contents">
+            pod search CzyPraviteRepoDemo
+        </p>
+    </div>
+    <p class="contents">结果如下:</p>
+    <img src="../../../Source/cocoapod7.png">
+
+    <p class="contents"><b>九. 在新的工程里导入试试</b></p>
+    <img src="../../../Source/cocoapod8.png">
+    <p class="contents">发现报错如下:</p>
+    <div class="codeAero">
+        <p class="contents">
+            [!] Unable to find a specification for `CzyPraviteRepoDemo (~> 0.0.1)`
+        </p>
+    </div>
+
+    <p class="contents">
+        原因在于并不是一个release版本:
+    </p>
+    <p class="contents">
+        解决办法:
+    </p>
+    <p class="contents">
+        1. 引入git地址:
+    </p>
+    <img src="../../../Source/cocoapod9.png">
+
+    <p class="contents">2. 发布成一个release版本:</p>
+
+    <p class="contents">cd到本地依赖库中:</p>
+    <div class="codeAero">
+
+        <p class="contents">
+            git tag '0.0.1'<br>
+            git push --tags<br>
+            git push origin master<br>
+        </p>
+    </div>
+
+    <br><br>
+
+</div>
+
+</body>
+</html>
