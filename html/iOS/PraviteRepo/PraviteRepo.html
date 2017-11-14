@@ -153,16 +153,38 @@
 
     <p class="contents">2. 发布成一个release版本:</p>
 
-    <p class="contents">cd到本地依赖库中:</p>
+    <p class="contents">注册trunk</p>
+    <p class="contents">
+        trunk需要pod在0.33及以上版本，如果你不满足要求，打开Terminal使用ruby的gem命令更新pod:
+    </p>
     <div class="codeAero">
-
         <p class="contents">
-            git tag '0.0.1'<br>
-            git push --tags<br>
-            git push origin master<br>
+            sudo gem install cocoapods
+        </p>
+    </div>
+    <p class="contents">开始注册trunk(-verbose参数是为了便于输出注册过程中的调试信息)</p>
+    <div class="codeAero">
+        <p class="contents">
+            pod trunk register zz511627807@163.com 'ethan' --verbose
+        </p>
+    </div>
+    <p class="contents">向trunk服务器查询自己的注册信息</p>
+    <div class="codeAero">
+        <p class="contents">
+            pod trunk me
+        </p>
+    </div>
+    <img src="../../../Source/cocoapod10.png">
+
+    <p class="contents">最后,通过trunk推送podspec文件:</p>
+    <div class="codeAero">
+        <p class="contents">
+            pod trunk push CzyPraviteRepoDemo.podspec
         </p>
     </div>
 
+    <p class="contents">接来下就是等待CocoaPods团队审核,一般需要一到两个工作日.</p>
+    <p class="contents">如果接下来一直没有审核结果变化,建议使用pod setup更新本地依赖库, 当然这会需要点时间</p>
     <br><br>
 
 </div>
