@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bootstrap: 一个用于快速开发 Web 应用程序和网站的前端响应式框架</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+
+<div class="labels">
+
+    <span class="label label-success">Bootstrap响应式框架</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Bootstrap: 一个用于快速开发 Web 应用程序和网站的前端响应式框架</p>
+
+    <hr>
+
+    <p class="smallTitle"><b>一. Bootstrap</b></p>
+    <p class="contents">1.移动设备优先：自 Bootstrap 3 起，框架包含了贯穿于整个库的移动设备优先的样式。
+    </p>
+    <p class="contents">2.浏览器支持：所有的主流浏览器都支持 Bootstrap。</p>
+    <p class="contents">3.容易上手</p>
+    <p class="contents">4.响应式设计：Bootstrap 的响应式 CSS 能够自适应于台式机、平板电脑和手机</p>
+
+    <p class="smallTitle"><b>二. Bootstrap</b></p>
+
+    <p class="contents" onclick="window.location.href='http://www.bootcss.com/'"><b>Bootstrap学习网址</b></p>
+
+
+    <p class="smallTitle"><b>三. Bootstrap使用</b></p>
+
+    <p class="contents" onclick="window.location.href='http://getbootstrap.com/'"><b>源代码</b></p>
+    <p class="contents" onclick="window.location.href='https://v2.bootcss.com/'"><b>插件</b></p>
+    <p class="contents">使用时, 将插件引入工程, 在html页面导入bootstrap.css与bootstrap.js</p>
+
+    <pre>
+        &lt;link rel="stylesheet" href="../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css"&gt;
+        &lt;script src="../../Vendor/bootstrap-3.3.7-dist/js/bootstrap.js"&gt&lt/script&gt;
+    </pre>
+
+    <p class="contents">
+        <b> 1.Bootstrap 使用了一些 HTML5 元素和 CSS 属性。为了让这些正常工作，您需要使用 HTML5 文档类型（Doctype）。 因此，请在使用 Bootstrap 项目的开头包含下面的代码段</b>
+    </p>
+    <pre>
+        &lt;!DOCTYPE html&gt;
+        &lt;html&gt;
+        ....
+        &lt;html&gt;
+    </pre>
+
+    <p class="contents">
+        <b>2.Bootstrap 移动设备优先, 不需要引入另外一个对应移动设备的CSS</b>
+    </p>
+    <p class="contents">
+        为了让 Bootstrap 开发的网站对移动设备友好，确保适当的绘制和触屏缩放，需要在网页的 head 之中添加 viewport meta 标签，如下所示：
+    </p>
+
+    <pre>
+        &lt;meta name="viewport" content="width=device-width,
+                                     initial-scale=1.0,
+                                     maximum-scale=1.0,
+                                     user-scalable=no"&gt;
+    </pre>
+    <p class="contents">
+        width 属性控制设备的宽度。假设您的网站将被带有不同屏幕分辨率的设备浏览，那么将它设置为 device-width 可以确保它能正确呈现在不同设备上。
+    </p>
+    <p class="contents">
+        initial-scale=1.0 确保网页加载时，以 1:1 的比例呈现，不会有任何的缩放。
+    </p>
+    <p class="contents">
+        在移动设备浏览器上，通过为 viewport meta 标签添加 user-scalable=no 可以禁用其缩放（zooming）功能。<br>
+    </p>
+    <p class="contents">
+        通常情况下，maximum-scale=1.0 与 user-scalable=no 一起使用。这样禁用缩放功能后，用户只能滚动屏幕，就能让您的网站看上去更像原生应用的感觉。
+    </p>
+
+    <p class="contents"> <b>3.响应式图像</b> </p>
+
+    <p class="contents">
+        在下面的代码中，可以看到img-responsive class 为图像赋予了 max-width: 100%; 和 height: auto; 属性，可以让图像按比例缩放，不超过其父元素的尺寸。
+    </p>
+
+    <pre>
+        .img-responsive {
+             display: block;
+             height: auto;
+             max-width: 100%;
+        }
+    </pre>
+
+    <p class="contents">
+        这表明相关的图像呈现为 block。当您把元素的 display 属性设置为 block，以块级元素显示。
+    </p>
+    <p class="contents">
+        设置 height:auto，相关元素的高度取决于浏览器。
+    </p>
+    <p class="contents">
+        设置 max-width 为 100% 会重写任何通过 width 属性指定的宽度。这让图片对响应式布局的支持更友好。
+    </p>
+    <p class="contents">
+        如果需要让使用了 .img-responsive 类的图片水平居中，请使用 .center-block 类，不要用 .text-center。
+    </p>
+
+
+    <p class="contents">
+        <b>4. Bootstrap 网格系统（Grid System）</b>
+    </p>
+    <p class="contents">
+        Bootstrap 提供了一套响应式、移动设备优先的流式网格系统，随着屏幕或视口（viewport）尺寸的增加，系统会自动分为最多12列。
+    </p>
+    <p class="contents">
+        媒体查询是非常别致的"有条件的 CSS 规则"。它只适用于一些基于某些规定条件的 CSS。如果满足那些条件，则应用相应的样式。
+    </p>
+    <p class="contents">
+        Bootstrap 中的媒体查询允许您基于视口大小移动、显示并隐藏内容。下面的媒体查询在 LESS 文件中使用，用来创建 Bootstrap 网格系统中的关键的分界点阈值。
+    </p>
+    <pre>
+        /* 超小设备（手机，小于 768px） */
+        /* Bootstrap 中默认情况下没有媒体查询 */
+
+        /* 小型设备（平板电脑，768px 起） */
+        @media (min-width: @screen-sm-min) { ... }
+
+        /* 中型设备（台式电脑，992px 起） */
+        @media (min-width: @screen-md-min) { ... }
+
+        /* 大型设备（大台式电脑，1200px 起） */
+        @media (min-width: @screen-lg-min) { ... }
+
+        //对于所有带有 min-width: @screen-sm-min 的设备，如果屏幕的宽度小于 @screen-sm-max，则会进行一些处理。
+
+        /* 我们有时候也会在媒体查询代码中包含 max-width，从而将 CSS 的影响限制在更小范围的屏幕大小之内 */
+        @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) { ... }
+
+    </pre>
+
+    <p class="contents">
+        下表总结了 Bootstrap 网格系统如何跨多个设备工作：
+    </p>
+    <img src="../../../Source/grid.png" class="center-block">
+
+    <p class="contents">在进行CSS布局的时候我们只需通过设置不同的col-*-*配合@medio媒体查询来进行.</p>
+
+    <p class="contents">Bootstrap也提供了响应式工具,减少了开发者需要重写媒体查询的负担,如下:</p>
+    <p class="contents">但同时,需要谨慎使用这些工具，避免在同一个站点创建完全不同的版本。响应式实用工具目前只适用于块和表切换。</p>
+    <p class="contents">不同设备:</p>
+    <img src="../../../Source/responsive1.png" class="center-block">
+    <p class="contents">block与inline:</p>
+    <img src="../../../Source/responsive2.png" class="center-block">
+    <p class="contents">打印:</p>
+    <img src="../../../Source/responsive3.png" class="center-block">
+
+    <p class="contents">偏移列</p>
+    <p class="contents">
+        偏移是一个用于更专业的布局的有用功能。它们可用来给列腾出更多的空间。例如，.col-xs-* 类不支持偏移，但是它们可以简单地通过使用一个空的单元格来实现该效果。
+    </p>
+    <p class="contents">
+        为了在大屏幕显示器上使用偏移，请使用 .col-md-offset-* 类。这些类会把一个列的左外边距（margin）增加 * 列，其中 * 范围是从 1 到 11。
+    </p>
+
+    <p class="contents">列排序</p>
+    <p class="contents">
+        使用 .col-md-push-* 和 .col-md-pull-* 类的内置网格列的顺序，其中 * 范围是从 1 到 11。
+    </p>
+    <p class="contents">
+        其中.col-md-push-*表示向右移动*; .col-md-pull-*表示向左移动*;
+    </p>
+
+    <pre>
+            &lt;div class="row"&gt;
+                &lt;div class="col-md-4 col-md-push-8" style="background-color: #dedef8; "&gt;
+                    之前在左边, col-md-push-8之后到了右边
+                &lt;/div&gt;
+                &lt;div class="col-md-8 col-md-pull-4" style="background-color: #dedef8; "&gt;
+                    之前在右边, col-md-pull-8之后到了左边
+                &lt;/div&gt;
+            &lt;/div&gt;
+    </pre>
+
+    <p class="smallTitle"><b>5. Bootstrap 排版</b></p>
+    <p class="contents">
+        1.Bootstrap 中定义了所有的 HTML 标题（h1 到 h6）的样式。
+    </p>
+    <p class="contents">
+        2.内联子标题 &lt;small&gt;
+    </p>
+    <p class="contents">
+        3.引导主体副本 为了给段落添加强调文本，则可以添加 class="lead"，这将得到更大更粗、行高更高的文本.
+    </p>
+    <p class="contents">
+        4.强调类
+    </p>
+    <img src="../../../Source/strong.png" class="center-block">
+
+    <p class="contents">
+        5.缩写:&lt;abbr&gt;
+    </p>
+
+    <p class="contents">
+        6.地址 &lt; address &gt;
+    </p>
+    <p class="contents">7.邮件</p>
+    <p class="contents">
+        &lt;a href="mailto:#"&gt;mailto@somedomain.com&lt;/a&gt;
+    </p>
+
+    <p class="contents">8. 引用</p>
+    <p class="contents">
+        <!--pull-right设置引用位置-->
+        &lt; blockquote  class="pull-right" &gt;
+    </p>
+
+    <p class="contents">9. 列表</p>
+    <p class="contents">
+        1.有序列表：有序列表是指以数字或其他有序字符开头的列表。
+    </p>
+    <p class="contents">
+        2.无序列表：无序列表是指没有特定顺序的列表，是以传统风格的着重号开头的列表。如果您不想显示这些着重号，您可以使用 class .list-unstyled 来移除样式。您也可以通过使用 class .list-inline 把所有的列表项放在同一行中。
+    </p>
+    <p class="contents">
+        3.定义列表：在这种类型的列表中，每个列表项可以包含 &lt;dt&gt; 和 &lt;dd&gt; 元素。&lt;dt&gt; 代表 定义术语，就像字典，这是被定义的属于（或短语）。接着，&lt;dd&gt; 是 &lt;dt&gt; 的描述。您可以使用 class dl-horizontal 把 &lt;dl&gt; 行中的属于与描述并排显示。
+    </p>
+    <pre>
+        &lt;h4&gt;水平的定义列表&lt;/h4&gt;
+        &lt;dl class="dl-horizontal"&gt;
+            &lt;dt&gt;Description 1&lt;/dt&gt;
+            &lt;dd&gt;Item 1&lt;/dd&gt;
+            &lt;dt&gt;Description 2&lt;/dt&gt;
+            &lt;dd&gt;Item 2&lt;/dd&gt;
+        &lt;/dl&gt;
+    </pre>
+
+    <p class="smallTitle"><b>6.代码</b></p>
+    <p class="contents">
+        Bootstrap 允许两种方式显示代码:&lt;code&gt; &lt;pre&gt;
+    </p>
+
+    <p class="smallTitle"><b>7.表格</b></p>
+    <p class="contents">
+    <p class="contents">.active	     对某一特定的行或单元格应用悬停颜色</p>
+    <p class="contents">.success	 表示一个成功的或积极的动作</p>
+    <p class="contents">.warning	 表示一个需要注意的警告</p>
+    <p class="contents">.danger	     表示一个危险的或潜在的负面动作</p>
+    </p>
+
+    <pre>
+        &lt;table class="table">
+            &lt;caption>基本的表格布局&gt;/caption>
+            &lt;thead&gt;
+            &lt;tr class="success"&gt;
+                &lt;th&gt;名称&lt;/th&gt;
+                &lt;th&gt;城市&lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;/thead&gt;
+            &lt;tbody&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Tanmay&lt;/td&gt;
+                &lt;td&gt;Bangalore&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Sachin&lt;/td&gt;
+                &lt;td&gt;Mumbai&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/tbody&gt;
+        &lt;/table&gt;
+    </pre>
+
+    <p class="smallTitle"><b>7.表单</b></p>
+    <p class="contents">
+        基本的表单结构是 Bootstrap 自带的，个别的表单控件自动接收一些全局样式。下面列出了创建基本表单的步骤：
+    </p>
+    <p class="contents">
+        1.向父 &lt;form&gt; 元素添加 role="form"
+    </p>
+    <p class="contents">
+        2.把标签和控件放在一个带有 class .form-group 的 &lt;div&gt; 中。这是获取最佳间距所必需的
+    </p>
+    <p class="contents">
+        3.向所有的文本元素 &lt;input&gt;、&lt;textarea&gt; 和 &lt;select&gt; 添加 class ="form-control"
+    </p>
+    <pre>
+        &lt;form role="form"&gt;
+            &lt;div class="form-group"&gt;
+                &lt;label for="name"&gt;名称&lt;/label&gt;
+                 &lt;input type="text" class="form-control" id="name" placeholder="请输入名称"&gt;
+            &lt;/div&gt;
+            &lt;div class="form-group"&gt;
+                &lt;label for="inputfile"&gt;文件输入&lt;/label&gt;
+                &lt;input type="file" id="inputfile"&gt;
+                &lt;p class="help-block"&gt;这里是块级帮助文本的实例。&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="checkbox"&gt;
+                &lt;label&gt;
+                    &lt;input type="checkbox"&gt;请打勾
+                &lt;/label&gt;
+            &lt;/div&gt;
+            &lt;button type="submit" class="btn btn-default"&gt;提交&lt;/button&gt;
+        &lt;/form&gt;
+    </pre>
+
+    <p class="smallTitle"><b>8.按钮</b></p>
+    <p class="contents">类型:btn btn-default, btn btn-primary, btn btn-success, btn btn-info, btn btn-warning, </p>
+    <p class="contents">btn btn-danger, btn btn-link</p>
+    <p class="contents">用法:</p>
+    <pre>
+        &lt;button type="button" class="btn btn-default"&gt;默认按钮&lt;/button&gt;
+    </pre>
+
+    <p class="smallTitle"><b>9.图片</b></p>
+    <p class="contents">
+        .img-rounded：添加图片圆角。
+    </p>
+    <p class="contents">
+        .img-circle：整个图片变成圆形。
+    </p>
+    <p class="contents">
+        .img-thumbnail：一个灰色的边框。
+    </p>
+    <p class="contents">用法:</p>
+    <pre>
+        &lt;img src="/wp-content/uploads/2014/06/download.png" class="img-rounded"&gt;
+    </pre>
+
+    <br>
+
+</div>
+
+
+</body>
+</html>
