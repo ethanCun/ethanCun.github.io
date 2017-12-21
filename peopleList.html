@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jquery</title>
+    <script type="text/javascript" src="./js/jquery-3.2.1.js"></script>
+
+</head>
+<body>
+
+<div class="textAera">
+    <ul>
+        <li>
+            <p>name1</p>
+            <p>company1</p>
+        </li>
+        <li>
+            <p>name2</p>
+            <p>company2</p>
+        </li>
+        <li>
+            <p>name3</p>
+            <p>company3</p>
+        </li>
+    </ul>
+</div>
+
+<script>
+
+    $('body').click(getList());
+
+    function getList() {
+
+        var dat = {'AccessToken':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiJhZG1pbiIsImV4cCI6IjE1MTM4Mjk5MDQifQ.bpy7u8DA7jA76hF6zlHarYaLytiH9C7HT9lJjjX_m6g',
+                'BuildId':'d3f1bae5a05443e3900643948073d110',
+                'Company':'',
+                'IdNumber':'',
+                'MobilePhone':'',
+                'Name':'',
+                'PageCount':7,
+                'PageSize':1,
+                'PlateNumber':''};
+
+        $.ajax({
+
+            url:'http://58.20.113.249:8081/PCClient/Staff/BuildStaff',
+            data:JSON.stringify(dat),
+            type:'post',
+            contentType:'application/json',
+            success:function (data) {
+                
+                console.log(data)
+                var html = '';
+                for(var i=0; i<data.StaffList.length; i++){
+
+                    html += '<ul>\
+                    <li>'+data.StaffList[i].Name+'</li>\
+                    <li>'+data.StaffList[i].Company+'</li>\
+                             </ul>';
+                }
+
+                //2s后显示请求到的数据
+                setTimeout(function () {
+
+                    console.log(html);
+
+                    $('.textAera').html(html);
+
+                }, 2000);
+
+            },
+            error:function (error) {
+
+                console.log('error='+error);
+            }
+
+        });
+    }
+
+</script>
+
+</body>
+</html>
