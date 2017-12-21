@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>基于AVPlayer封装的播放器细节</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">AVPlayer</span>
+    <span class="label label-success">播放器</span>
+    <span class="label label-info" style="cursor: pointer" onclick="javascript:window.location.href='https://github.com/ethanCun/ZYPlayer'">一个demo</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">基于AVPlayer封装的播放器细节</p>
+    <hr>
+
+    <p class="smallTitle">一个播放器需要解决的技术点:</p>
+
+    <p><b>基本功能</b></p>
+    <p class="contents">1.支持本地视频、网络视频播放</p>
+    <p class="contents">2.支持横、竖屏切换</p>
+    <p class="contents">3.左侧1/2位置上下滑动调节屏幕亮度</p>
+    <p class="contents">4.右侧1/2位置上下滑动调节音量</p>
+    <p class="contents">5.左右滑动调节播放进度</p>
+    <p class="contents">6.拖动slider控制进度，显示视频的预览图</p>
+
+    <p><b>其他功能</b></p>
+    <p class="contents">1.支持在TableviewCell播放视频</p>
+    <p class="contents">2.断点下载功能</p>
+    <p class="contents">3.切换视频分辨率</p>
+
+
+    <p class="smallTitle">AVPlayer主要的类</p>
+    <p class="contents">
+        Asset：AVAsset是抽象类，不能直接使用，其子类AVURLAsset可以根据URL生成包含媒体信息的Asset对象。
+    </p>
+    <p class="contents">
+        AVPlayerItem：和媒体资源存在对应关系，管理媒体资源的信息和状态。
+    </p>
+    <p class="contents">
+        AVPlayerLayer: CALayer的subclass，它主要用来在iOS中播放视频内容.
+    </p>
+
+    <pre>
+        AVURLAsset *urlAsset = [AVURLAsset assetWithURL:videoURL];
+        // 初始化playerItem
+        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:urlAsset];
+        // 也可以使用来初始化playerItem
+        // AVPlayerItem * playerItem = [AVPlayerItem playerItemWithURL:videoURL];
+
+        // 初始化Player
+        AVPlayer *player = [AVPlayer playerWithPlayerItem:playerItem];
+        // 初始化playerLayer
+        AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:player];
+        // 添加playerLayer到self.layer
+        [self.layer insertSublayer:self.playerLayer atIndex:0];
+    </pre>
+
+    <p class="smallTitle">播放</p>
+    <p class="contents">
+
+        AVPlayer不能直接播放,需要先监听AVPlayerItem的播放状态 @"status", 在状态为AVPlayerItemStatusReadyToPlay
+        时调用[self.player play];
+        另外几个观察字段:loadedTimeRanges-缓存进度,playbackBufferEmpty/playbackLikelyToKeepUp-是否有足够缓存以备播放.
+        这里需要注意观察者的移除;
+    </p>
+
+    <p class="smallTitle">监听播放</p>
+    <pre>
+        //status and loadedTimeRanges
+        [self.player.currentItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
+        [self.player.currentItem addObserver:self forKeyPath:@"loadedTimeRanges" options:NSKeyValueObservingOptionNew context:nil];
+
+        //buffer
+        [self.player.currentItem addObserver:self forKeyPath:@"playbackBufferEmpty" options:NSKeyValueObservingOptionNew context:nil];
+        [self.player.currentItem addObserver:self forKeyPath:@"playbackLikelyToKeepUp" options:NSKeyValueObservingOptionNew context:nil];
+    </pre>
+    <pre>
+        [self.player.currentItem removeObserver:self forKeyPath:@"status"];
+        [self.player.currentItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
+        [self.player.currentItem removeObserver:self forKeyPath:@"playbackBufferEmpty"];
+        [self.player.currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
+    </pre>
+
+    <p class="smallTitle">监听AVPlayer播放完成通知</p>
+    <pre>
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemDidReachEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
+    </pre>
+
+    <p class="smallTitle">暂停</p>
+    <p class="contents">
+
+        [self.player pause];
+    </p>
+
+    <p class="smallTitle">切换</p>
+    <p class="contents">
+
+        AVPlayer切换视频是一个可以优化的点,其中一种方法是调用:
+    </p>
+    <pre>
+        [player replaceCurrentItemWithPlayerItem:playerItem];
+    </pre>
+    <p class="contents">但是该方法在切换视频时底层会调用信号量等待然后导致当前线程卡顿</p>
+    <p class="contents">更好的做法:需要切换视频时，需重新创建AVPlayer和AVPlayerItem</p>
+    <p class="contents">
+        另外也可以使用AVQueuePlayer播放多个items，AVQueuePlayer是AVPlayer的子类，可以用一个数组来初始化一个AVQueuePlayer对象
+    </p>
+    <pre>
+        //items表示播放列表
+        AVQueuePlayer *queuePlayer = [[AVQueuePlayer alloc] initWithItems:items];
+    </pre>
+    <p class="contents">调用play方法来播放,queue player顺序播放队列中的item，如果想要跳过一个item，播放下一个item，可以调用方法advanceToNextItem</p>
+    <pre>
+        //insertItem:afterItem:, removeItem:,
+        if ([queuePlayer canInsertItem:anItem afterItem:nil]) {
+            [queuePlayer insertItem:anItem afterItem:nil];
+        }
+    </pre>
+
+    <p class="smallTitle">重播与续播</p>
+    <p class="contents">
+        这两者都应该考虑的是从何时开始播放 重播:seekToTime:kCMTimeZero;  续播:seekToTime:上次播放到的时间
+    </p>
+    <p class="contents">其他如播放指定时间</p>
+    <pre>
+        //快进5s
+        [player seekToTime:CMTimeMake(5, 1)];
+        //该方法需要进行大量解码工作，比较耗性能
+        [player seekToTime:CMTimeMake(5, 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
+    </pre>
+
+    <p class="smallTitle">监听播放进度</p>
+    <p class="contents">
+        使用addPeriodicTimeObserverForInterval:queue:usingBlock:来监听播放器的进度
+        需要注意的几点:
+    </p>
+    <p class="contents">
+        1.传入一个CMTime结构体，每到一定时间都会回调一次，包括开始和结束播放
+    </p>
+    <p class="contents">
+        2.如果block里面的操作耗时太长，下次不一定会收到回调，所以尽量减少block的操作耗时
+    </p>
+    <p class="contents">
+        3.返回一个观察者对象，当播放完毕时需要移除这个观察者, 添加观察者：
+    </p>
+    <pre>
+        id timeObserve = [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(0.1, NSEC_PER_SEC) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+
+                weakself.currentDuration = CMTimeGetSeconds(time);
+                weakself.totalDuration = CMTimeGetSeconds([weakself.player.currentItem duration]);
+
+                weakself.timeLab.text = [weakself getTimeWithSecond:weakself.currentDuration];
+
+                /**播放时改变进度条*/
+                [weakself.slider setValue:self.currentDuration / self.totalDuration animated:NO];
+            }];
+    </pre>
+    <p class="contents">移除观察者:</p>
+    <pre>
+        if (timeObserve) {
+            [player removeTimeObserver:_timeObserve];
+            timeObserve = nil;
+        }
+    </pre>
+
+    <p class="smallTitle">音量</p>
+    <pre>
+     /**
+     *  获取系统音量 导入#import &lt;MediaPlayer/MediaPlayer.h&gt; 改变_volumeViewSlider.value
+
+     */
+    - (void)configureVolume
+    {
+        MPVolumeView *volumeView = [[MPVolumeView alloc] init];
+        _volumeViewSlider = nil;
+        for (UIView *view in [volumeView subviews]){
+            if ([view.class.description isEqualToString:@"MPVolumeSlider"]){
+                _volumeViewSlider = (UISlider *)view;
+                break;
+            }
+        }
+
+        // 使用这个category的应用不会随着手机静音键打开而静音，可在手机静音下播放声音
+        NSError *setCategoryError = nil;
+        BOOL success = [[AVAudioSession sharedInstance]
+                        setCategory: AVAudioSessionCategoryPlayback
+                        error: &setCategoryError];
+
+        if (!success) { /* handle the error in setCategoryError */ }
+
+        // 监听耳机插入和拔掉通知
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioRouteChangeListenerCallback:) name:AVAudioSessionRouteChangeNotification object:nil];
+
+    }
+
+    </pre>
+    <pre>
+        /**
+        *  耳机插入、拔出事件
+        */
+        - (void)audioSessionRouteChanged:(NSNotification *)info
+        {
+            NSInteger audioRouteChanedReason = [info.userInfo[@"AVAudioSessionRouteChangeReasonKey"] integerValue];
+
+            switch (audioRouteChanedReason) {
+                case AVAudioSessionRouteChangeReasonNewDeviceAvailable:
+
+                    // insert headset
+                    NSLog(@"insert headset");
+
+                    break;
+                case AVAudioSessionRouteChangeReasonOldDeviceUnavailable:
+
+                    //output headset
+                    //default to pause
+                    NSLog(@"output headset");
+                    [self play];
+
+                    break;
+                default:
+
+                    break;
+            }
+        }
+    </pre>
+
+    <p class="smallTitle">亮度</p>
+    <pre>
+        //亮度
+        [UIScreen mainScreen].brightness = ...
+    </pre>
+
+    <p class="smallTitle">屏幕旋转</p>
+    <p class="contents">
+        旋转的关键在于16:9这个比例(苹果手机除iPhone 4s(320*480)屏幕宽高比不是16：9外，其他都为16：9，所以横竖屏可以这样实现) 与 setOrientation:的调用
+    </p>
+    <pre>
+        //旋转 打开landscape left 与landscape right portrait
+        - (void)rotateToOritation:(UIDeviceOrientation)orientation
+        {
+            if ([[UIDevice currentDevice] respondsToSelector:@selector(setOrientation:)]) {
+
+                NSMethodSignature *methodSignature = [[UIDevice currentDevice] methodSignatureForSelector:@selector(setOrientation:)];
+                NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
+                [invocation setTarget:[UIDevice currentDevice]];
+                [invocation setSelector:@selector(setOrientation:)];
+                [invocation  setArgument:&orientation atIndex:2];
+                [invocation invoke];
+            }
+
+            [self setNeedsLayout];
+        }
+    </pre>
+
+    <p class="smallTitle">
+        监听设备旋转通知
+    </p>
+    <pre>
+        //开始监听
+        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+    </pre>
+    <pre>
+        - (void)orientationDidChange:(NSNotification *)noti
+        {
+            UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+
+            if (orientation == UIDeviceOrientationPortrait) {
+                self.playerView.frame = CGRectMake(0, 20, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.width*9/16);
+                self.tableView.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.width*9/16+20, [UIScreen mainScreen].bounds.size.width, 300);
+                
+            }else{
+                self.playerView.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.width*9/16);
+                self.tableView.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.width, 300);
+            }
+
+            [self.playerView setNeedsLayout];
+        }
+    </pre>
+    <pre>
+        //移除
+        [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+    </pre>
+
+    <p class="smallTitle">
+        前后台切换
+    </p>
+    <pre>
+        //backround
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationEnterBackground:) name:UIApplicationWillResignActiveNotification object:nil];
+        //foreground
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationEnterForeground:) name:UIApplicationDidBecomeActiveNotification object:nil];
+    </pre>
+    <pre>
+        #pragma mark - applicationEnterBackground
+        - (void)applicationEnterBackground:(NSNotification *)info
+        {
+            [self.player pause];
+        }
+
+        #pragma mark - applicationEnterForeground
+        - (void)applicationEnterForeground:(NSNotification *)info
+        {
+            [self.player play];
+        }
+    </pre>
+
+    <p class="smallTitle">
+        手势识别:包含快进快退, 音量调节, 亮度调节等
+    </p>
+    <p class="contents">
+        滑竿上的手势:
+    </p>
+    <pre>
+        [self.slider addTarget:self action:@selector(valueChangedBySlide:) forControlEvents:UIControlEventValueChanged];
+
+        //拖动滑竿的时候解决松手与按下value变化导致的晃动:UIControlEventTouchDown的时候暂停 UIControlEventTouchUpInside播放
+        [self.slider addTarget:self action:@selector(sliderTouchDown:) forControlEvents:UIControlEventTouchDown];
+        [self.slider addTarget:self action:@selector(sliderTouchUp:) forControlEvents:UIControlEventTouchUpInside];
+
+        //点击滑竿
+        _sliderTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sliderTap:)];
+        [self.slider addGestureRecognizer:_sliderTap];
+    </pre>
+    <p class="contents">滑动</p>
+    <pre>
+        - (void)valueChangedBySlide:(UISlider *)slider
+        {
+            //delete replay btn if any
+            [self removeReplayBtn];
+
+            [self pause];
+
+            CGFloat totalTime = CMTimeGetSeconds(self.player.currentItem.duration);
+
+            [self.player.currentItem seekToTime:CMTimeMakeWithSeconds(totalTime * slider.value, NSEC_PER_SEC)];
+        }
+    </pre>
+    <p class="contents">优化按下与松手前后晃动</p>
+    <pre>
+        - (void)sliderTouchDown:(UITapGestureRecognizer *)tap
+        {
+            //delete replay btn if any
+            [self removeReplayBtn];
+
+            _sliderTap.enabled = NO;
+
+            [self pause];
+
+        }
+
+        - (void)sliderTouchUp:(UITapGestureRecognizer *)tap
+        {
+            //delete replay btn if any
+            [self removeReplayBtn];
+
+            _sliderTap.enabled = YES;
+
+            [self play];
+
+        }
+    </pre>
+    <p class="contents">点击</p>
+    <pre>
+        - (void)sliderTap:(UITapGestureRecognizer *)sender
+        {
+            //delete replay btn if any
+            [self removeReplayBtn];
+
+            [self pause];
+
+            //拿到滑竿的进度
+            CGPoint touchPoint = [sender locationInView:self.slider];
+            CGFloat value = (self.slider.maximumValue - self.slider.minimumValue) * (touchPoint.x / self.slider.frame.size.width );
+            [self.slider setValue:value animated:YES];
+
+            CGFloat totalTime = CMTimeGetSeconds(self.player.currentItem.duration);
+            [self.player.currentItem seekToTime:CMTimeMakeWithSeconds(totalTime * self.slider.value, NSEC_PER_SEC)];
+
+            [self play];
+        }
+    </pre>
+
+    <p class="smallTitle">快进快退</p>
+    <pre>
+        UIPanGestureRecognizer *panGes = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGes:)];
+        [self addGestureRecognizer:panGes];
+    </pre>
+    <pre>
+        #pragma mark - panGes
+        - (void)panGes:(UIPanGestureRecognizer *)sender
+        {
+            //delete replay btn if any
+            [self removeReplayBtn];
+
+            //手指在avplayerlayer中的位置
+            CGPoint point = [sender locationInView:self];
+
+            //可以理解为加速度 用来区分拖动方向
+            CGPoint velocityPoint = [sender velocityInView:self];
+
+            //根据手势状态区分
+            switch (sender.state) {
+                case UIGestureRecognizerStateBegan:
+                {
+                    CGFloat x = fabs(velocityPoint.x);
+                    CGFloat y = fabs(velocityPoint.y);
+
+                    if (x > y) { // horizontal
+
+                        self.panDirection = ZYPanDirectionHorizontal;
+
+                        // pause
+                        [self pause];
+
+                        // initial sumTime
+                        CMTime currentTime = self.player.currentTime;
+                        self.sumTime = currentTime.value/currentTime.timescale;
+
+                        //开始拖动的时候添加进度指示视图
+                        _zyProgressView = [[ZYProgessView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+                        _zyProgressView.center = self.center;
+                        [self addSubview:_zyProgressView];
+
+                    }else if(x < y){ // vertical
+
+                        self.panDirection = ZYPanDirectionVetical;
+
+
+                        if (point.x > [UIScreen mainScreen].bounds.size.width/2) {
+
+                            //音量
+                            _isVolume = YES;
+
+                        }else{
+
+                            //亮度
+                            _isVolume = NO;
+
+                            //添加自定义亮度视图
+                            _brightnessView = [[ZYBrightnessView alloc] initWithFrame:CGRectMake(0, 0, 150, 150)];
+                            _brightnessView.center = [UIApplication sharedApplication].keyWindow.center;
+                            [[UIApplication sharedApplication].keyWindow addSubview:_brightnessView];
+                        }
+                    }
+
+
+                    break;
+                }
+                case UIGestureRecognizerStateChanged:
+                {
+                    if (self.panDirection == ZYPanDirectionHorizontal) {
+
+                        [self horizontalGesChanged:velocityPoint.x];
+
+                    }else{
+
+                        [self verticalGesChaned:velocityPoint.y];
+                    }
+
+                    break;
+                }
+
+                case UIGestureRecognizerStateEnded:
+                {
+
+                    //手指离开的时候更新播放进度 移除相关视图
+                    if (self.panDirection == ZYPanDirectionHorizontal) {
+
+                        [self.player seekToTime:CMTimeMake(self.sumTime, 1) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
+
+                        // 0
+                        self.sumTime = 0;
+                        [_zyProgressView removeFromSuperview];
+                        _zyProgressView = nil;
+
+                        // play
+                        [self play];
+
+                    }else{
+
+                        // volume
+                        self.isVolume = NO;
+
+                        [_brightnessView removeFromSuperview];
+                    }
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+        }
+
+    </pre>
+    <p class="contents">水平滑动更新播放进度</p>
+    <pre>
+        - (void)horizontalGesChanged:(CGFloat)gesPointX
+        {
+            if (self.panDirection == ZYPanDirectionVetical) {
+                return;
+            }
+
+            //delete replay btn if any
+            [self removeReplayBtn];
+
+            self.sumTime += gesPointX/500;
+
+            if (self.sumTime >= self.totalDuration) {
+                self.sumTime = self.totalDuration;
+            }else if (self.sumTime <= 0){
+                self.sumTime = 0;
+            }
+
+            if (gesPointX <0 ) { // backforwards
+
+                [_zyProgressView.arrowImageView setImage:[UIImage imageNamed:@"backforwards"]];
+            }else{
+                [_zyProgressView.arrowImageView setImage:[UIImage imageNamed:@"forwards"]];
+            }
+
+            [_zyProgressView.progressView setProgress:self.sumTime/self.totalDuration animated:NO];
+            _zyProgressView.timeLab.text = [self getTimeWithSecond:self.sumTime];
+            [self.slider setValue:self.sumTime/self.totalDuration animated:NO];
+        }
+    </pre>
+    <p class="contents">垂直滑动更新音量和亮度</p>
+    <pre>
+        - (void)verticalGesChaned:(CGFloat)gesPointY
+        {
+            if (self.panDirection == ZYPanDirectionHorizontal) {
+                return;
+            }
+
+            if (self.isVolume) {
+
+                // volume
+                self.volumeSlider.value -= gesPointY/10000;
+
+            }else{
+
+                // brightness
+                [UIScreen mainScreen].brightness -= gesPointY / 10000;
+
+                // UI
+                if ([UIScreen mainScreen].brightness <= 0.1) {
+
+                    _brightnessView.value = 0.1;
+                }else{
+
+                    _brightnessView.value = [UIScreen mainScreen].brightness;
+                }
+            }
+        }
+
+    </pre>
+
+    <p class="contents">基本功能至此,其他功能待续...</p>
+
+    <br>
+</div>
+
+</body>
+</html>
