@@ -4,9 +4,37 @@
     <meta charset="UTF-8">
     <title>Jquery</title>
     <script type="text/javascript" src="./js/jquery-3.2.1.js"></script>
-
+    <link rel="stylesheet" type="text/css" href="../newCZY/CSS/loadding/loaders.css">
+    <link rel="stylesheet" type="text/css" href="../newCZY/CSS/loadding/demo.css">
 </head>
 <body>
+
+
+<main>
+
+    <div class="loader-inner ball-pulse-sync">
+
+        <div></div>
+
+        <div></div>
+
+        <div></div>
+
+    </div>
+
+</main>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        document.querySelector('main').className += 'loaded';
+
+    });
+
+</script>
+
+
 
 <div class="textAera">
     <ul>
@@ -48,7 +76,12 @@
             type:'post',
             contentType:'application/json',
             success:function (data) {
-                
+
+                setTimeout(function () {
+
+//                    $('.loader').css('display','none');
+                }, 5000);
+
                 console.log(data)
                 var html = '';
                 for(var i=0; i<data.StaffList.length; i++){
@@ -59,12 +92,15 @@
                              </ul>';
                 }
 
+
+
                 //2s后显示请求到的数据
                 setTimeout(function () {
 
                     console.log(html);
 
                     $('.textAera').html(html);
+
 
                 }, 2000);
 

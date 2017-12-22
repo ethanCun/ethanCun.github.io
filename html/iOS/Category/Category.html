@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iOS中的类别和类扩展</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">Catogory</span>
+    <span class="label label-info">Extension</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">iOS中的类别和类扩展</p>
+    <hr>
+
+    <p class="smallTitle">
+        类别的结构
+    </p>
+    <pre>
+        typedef struct category_t {
+
+             const char *name;  //类的名字
+             classref_t cls;  //类
+             struct method_list_t *instanceMethods;  //category中所有给类添加的实例方法的列表
+             struct method_list_t *classMethods;  //category中所有添加的类方法的列表
+             struct protocol_list_t *protocols;  //category实现的所有协议的列表
+             struct property_list_t *instanceProperties;  //category中添加的所有属性
+         } category_t;
+    </pre>
+
+    <p class="smallTitle">
+        类别作用:<br>
+    </p>
+    <p class="contents">
+        1.可以在不修改原来类的基础上，为一个类扩展方法；<br><br>
+
+        2.可以减少单个文件的体积;<br><br>
+
+        3.可以把不同的功能组织到不同的category里;<br><br>
+
+        4.可以由多个开发者共同完成一个类等等；<br><br>
+
+        5.可以按需加载想要的category；<br><br>
+
+        6.声明私有方法；<br><br>
+
+        7.模拟多继承（另外可以模拟多继承的还有protocol)；<br><br>
+
+        8.把framework的私有方法公开；<br>
+    </p>
+
+    <p class="smallTitle">类别的特点</p>
+    <p class="contents">
+        1.调用顺序：分类(category) > 本类 > 父类<br><br>
+
+        2.如果有两个分类，他们都实现了相同的方法，如何判断谁先执行？分类执行顺序可以通过targets,Build Phases,Complie Source进行调节，即执行最后一个参与编译的category文件，注意执行顺序是从上到下的。（只有两个相同方法名的分类）<br><br>
+
+        3.分类中可以访问原来类中的成员变量 @public @protected @private(是的@private也可以， 子类在编译期的时候就会报错)<br><br>
+
+        4.在不使用运行时的情况下：category只能给某个已有的类扩充方法，不能扩充成员变量。<br><br>
+        Category不能添加成员变量（instance variables）编译期即报错 （因为在运行期，对象的内存布局已经确定，如果添加实例变量就会破坏类的内部布局，这对编译型语言来说是灾难性的)<br>
+        category中也可以添加属性，只不过@property只会生成setter和getter的声明，不会生成setter和getter的实现以及成员变量。<br><br>
+
+        5.category是在运行时加载的，不是在编译时<br><br>
+
+        6.Category的可为（可以添加实例方法，类方法，甚至可以实现协议，添加属性）和不可为（无法添加实例变量）。<br><br>
+
+        7.category的方法没有“完全替换掉”原来类已经有的方法，也就是说如果category和原来类都有
+        methodA，那么category附加完成之后，类的方法列表里会有两个methodA。
+        category的方法被放到了新方法列表的前面，而原来类的方法被放到了新方法列表的后面，
+        这也就是我们平常所说的category的方法会“覆盖”掉原来类的同名方法，这是因为运行时在查找
+        方法的时候是顺着方法列表的顺序查找的，它只要一找到对应名字的方法，就会罢休，殊不知后面
+        可能还有一样名字的方法.
+    </p>
+
+    <p class="contents"><b>关于对象的内存布局</b></p>
+    <p class="contents">Objective-C类是由Class类型来表示的，它实际上是一个指向objc_class结构体的指针.</p>
+    <pre>
+        struct objc_class {
+
+                Class isa  OBJC_ISA_AVAILABILITY;
+            #if !__OBJC2__
+                Class super_class                       OBJC2_UNAVAILABLE;  // 父类
+                const char *name                        OBJC2_UNAVAILABLE;  // 类名
+                long version                            OBJC2_UNAVAILABLE;  // 类的版本信息，默认为0
+                long info                               OBJC2_UNAVAILABLE;  // 类信息，供运行期使用的一些位标识
+                long instance_size                      OBJC2_UNAVAILABLE;  // 该类的实例变量大小
+                struct objc_ivar_list *ivars            OBJC2_UNAVAILABLE;  // 该类的成员变量链表
+                struct objc_method_list **methodLists   OBJC2_UNAVAILABLE;  // 方法定义的链表
+                struct objc_cache *cache                OBJC2_UNAVAILABLE;  // 方法缓存
+                struct objc_protocol_list *protocols    OBJC2_UNAVAILABLE;  // 协议链表
+            #endif
+            } OBJC2_UNAVAILABLE;
+    </pre>
+    <p class="contents">
+        ivars是objc_ivar_list（成员变量列表）指针；
+        methodLists是指向objc_method_list指针的指针。
+        在Runtime中，objc_class结构体大小是固定的，不可能往这个结构体中添加数据，只能修改。
+        所以ivars指向的是一个固定区域，只能修改成员变量值，不能增加成员变量个数。
+        methodList是一个二维数组，所以可以修改*methodLists的值来增加成员方法，
+        虽没办法扩展methodLists指向的内存区域，却可以改变这个内存区域的值（存储的是指针）。
+        因此，可以动态添加方法，不能添加成员变量。
+    </p>
+
+    <p class="contents"><b>运行时增加类别属性的setName:与name的实现</b></p>
+    <pre>
+        //#import &lt;objc/runtime.h&gt;
+        - (void)setName:(NSString *)name
+        {
+            objc_setAssociatedObject(self, &"name", name, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        }
+
+        - (NSString *)name
+        {
+            return objc_getAssociatedObject(self, &"name");
+        }
+    </pre>
+
+    <p class="smallTitle">匿名类/类扩展的作用与特点</p>
+    <p class="contents">
+        1.类扩展(extension）是category的一个特例，有时候也被称为匿名分类。他的作用是为一个类添加一些私有的成员变量和方法。
+        extension不但可以声明方法，还可以声明属性、成员变量。<br><br>
+
+        2.类扩展能写点啥？和分类不同，类扩展即可以声明成员变量又可以声明方法。<br><br>
+
+        3.承自UIViewController的ViewController和继承自NSObject的类有什么不同么? 前者创建时默认就有类扩展了<br><br>
+
+        4.类扩展可以定义在.m文件中，这种扩展方式中定义的变量都是私有的，也可以定义在.h文件中，这样定义的代码就是共有的，类扩展在.m文件中声明私有方法是非常好的方式。<br><br>
+
+    </p>
+
+    <p class="smallTitle">Category与Extension的区别</p>
+    <p class="contents">
+        1.category有.h文件和.m文件。extension只有一个.h文件中，或者extension只能寄生于一个类的.m文件中。<br><br>
+
+        2.Category不能添加成员变量,添加属性的正确姿势需要用到关联取值; Extension可以直接添加属性,成员变量;<br><br>
+
+        3.extension一般用来隐藏类的私有信息，必须有一个类的源码才能为一个类添加extension，
+        所以你无法为系统的类比如NSString添加extension，除非创建子类再添加extension。
+        而category不需要有类的源码，我们可以给系统提供的类添加category。<br><br>
+
+        4.extension在编译期决议，它就是类的一部分，但是category则完全不一样
+        ，它是在运行期决议的。extension在编译期和头文件里的@interface以及实现文件里的
+        @implement一起形成一个完整的类，它、extension伴随类的产生而产生，
+        亦随之一起消亡。<br>
+    </p>
+
+    <br>
+</div>
+
+</body>
+</html>
