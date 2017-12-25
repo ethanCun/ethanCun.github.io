@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Const extern static #define 与 FOUNDATION_EXPORT</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">Const</span>
+    <span class="label label-success">static</span>
+    <span class="label label-default">extern</span>
+    <span class="label label-warning">#define</span>
+    <span class="label label-info">FOUNDATION_EXPORT</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Const extern static #define 与 FOUNDATION_EXPORT的区别</p>
+    <hr>
+
+    <p class="smallTitle">static</p>
+    <p class="contents">
+        static可以修饰全局变量,局部变量,函数<br>
+    </p>
+    <pre>
+        static表示变量是静态存储变量,存放在静态存储区.
+        表示该变量是内部连接
+        (这种情况是指该变量不在任何{}之内,就象全局变量那样,这时候加上static)
+        ,也就是说在其它的.cpp文件中,该变量是不可见的(不能用).
+
+        //关于静态区与非静态区
+        非静态全局变量的作用域是整个源程序，当一个源程序由多个源文件组成时，
+        非静态的全局变量在各个源文件中都是有效的。 而静态全局变量则限制了其作用域，
+        即只在定义该变量的源文件内有效， 在同一源程序的其它源文件中不能使用它。
+
+        因此可以在不同的文件中以static形式来声明同名全局变量.
+
+        当static加在函数前面的时候
+        表示该函数是内部连接,仅在本文件中有效,别的文件中不能应用该函数.
+        不加static的函数默认为是全局的.
+        也就是说在其他的.cpp中只要申明一下这个函数,就可以使用它.
+
+    </pre>
+    <p class="contents">
+        1.static全局变量只初使化一次，防止在其他文件单元中被引用;
+    </p>
+    <p class="contents">
+        2.static局部变量只被初始化一次，下一次依据上一次结果值;
+    </p>
+    <pre>
+        - (void)viewDidLoad {
+        [super viewDidLoad];
+
+            [self log];
+            [self log];
+            [self log];
+        }
+
+        - (void)log
+        {
+            static NSInteger a = 10;
+            a++;
+
+            NSInteger b = 10;
+            b++;
+
+            NSLog(@"a = %ld b = %ld", a, b);
+        }
+
+        //输出
+        2016-12-24 15:44:29.608 YYModelRead[4862:70849] a = 11 b = 11
+        2016-12-24 15:44:29.609 YYModelRead[4862:70849] a = 12 b = 11
+        2016-12-24 15:44:29.609 YYModelRead[4862:70849] a = 13 b = 11
+    </pre>
+
+    <p class="contents">
+        3.static函数在内存中只有一份，普通函数在每个被调用中维持一份拷贝;
+    </p>
+
+
+    <p class="smallTitle">extren：外部变量</p>
+    <p class="contents">作用：引用其他类的全局变量</p>
+    <pre>
+
+        .h
+        extern const NSString * const externText;
+
+        .m
+        const NSString * const externText = @"text";
+
+    </pre>
+
+    <p class="smallTitle">const</p>
+    <p class="contents">
+        const：只用一份内存,适用于只有一个变量且不允许修改, 可以用来修饰指针与普通变量.保证不可变.
+    </p>
+
+    <p class="smallTitle">#define</p>
+    <p class="contents">
+        define：预处理指令，在编译之前替换宏值，运行中有几个宏就开辟几个临时内存空间，适用于传入多个变量.
+    </p>
+    <pre>
+        #define ZYColor(r, g, b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1.0]
+    </pre>
+
+    <p class="smallTitle">FOUNDATION_EXPORT</p>
+    <pre>
+        FOUNDATION_EXPORT double YYModelVersionNumber;
+    </pre>
+    <p class="contents">
+        FOUNDATION_EXPORT double YYModelVersionNumber;宏定义定义了一个double 类型的 YYModelVersionNumber.<br>
+        FOUNDATION_EXPORT 和#define 作用是一样的;<br>
+        前者在检索字符串的时候可以用==   后者需要使用isEqualToString;<br>
+        在效率上前者由于是基于地址的判断速度会更快一些.<br>
+    </p>
+
+    <br>
+</div>
+
+
+</body>
+</html>

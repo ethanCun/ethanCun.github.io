@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>YYModel源码解读</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">YYModel</span>
+    <span class="label label-success">Json解析</span>
+    <span class="label label-info">序列化与反序列化</span>
+    <span class="label label-info">j2m</span>
+    <span class="label label-warning">m2j</span>
+
+</div>
+<div class="labels">
+    <span class="label label-default" style="cursor: pointer" onclick="javascript:window.location.href='http://blog.csdn.net/junjun150013652/article/details/53148711'">
+        关于__unsafe-unretained与__weak的区别
+    </span>
+</div>
+<div class="labels">
+    <span class="label label-info" style="cursor: pointer" onclick="javascript:window.location.href='https://www.jianshu.com/p/bb63aabdb2db'">
+        关于__weak与__strong的区别
+    </span>
+</div><div class="labels">
+    <span class="label label-danger" style="cursor: pointer" onclick="javascript:window.location.href='../ConstStaticDefine/ConstStaticDefine.html'">
+        关于static,const,与#define的区别请看这篇文章
+    </span>
+</div>
+<div class="contentBgDiv">
+
+    <p class="title">YYModel源码解读</p>
+    <hr>
+    
+    <img src="../../../Source/YYModel.png">
+
+    <p class="smallTitle">结构</p>
+    <p class="contents">YYModel非常轻量,总共5个文件:头文件(&lt;YYModel/YYModel.h&gt;)
+        + &lt;YYModel/NSObject+YYModel.h&gt; + &lt;YYModel/YYClassInfo.h&gt;
+    </p>
+    <p class="contents">头文件</p>
+    <pre>
+        #if __has_include(&ltYYModel/YYModel.h&gt;)
+        FOUNDATION_EXPORT double YYModelVersionNumber;
+        FOUNDATION_EXPORT const unsigned char YYModelVersionString[];
+        #import &lt;YYModel/NSObject+YYModel.h&gt;
+        #import &lt;YYModel/YYClassInfo.h&gt;
+        #else
+        #import "NSObject+YYModel.h"
+        #import "YYClassInfo.h"
+        #endif
+    </pre>
+
+    <p class="contents">
+        这里需要说一下的有 #if __has_include(); FOUNDATION_EXPORT; #import "" 与 #import <>的区别
+    </p>
+
+    <p class="contents">
+       <b> #if __has_include() </b>
+    </p>
+    <p class="contents">
+        这句话字面意思是如果头文件中包括了&lt;YYModel/YYModel.h&gt; 那么就返回YES 否则返回NO.<br>
+        如果已经引入了 YYModel 那么在这里继续引入 &lt;YYModel/NSObject+YYModel.h&gt;  和  &lt;YYModel/YYClassInfo.h&gt; 这两个类。<br>
+        如果没有引入<>的 那么就引入两个子类 "NSObject+YYModel.h" 和 "YYClassInfo.h"
+    </p>
+
+    <p class="contents">
+        <b>FOUNDATION_EXPORT</b>
+    </p>
+    <p class="contents">
+        FOUNDATION_EXPORT double YYModelVersionNumber;宏定义定义了一个double 类型的 YYModelVersionNumber.<br>
+        FOUNDATION_EXPORT 和#define 作用是一样的;<br>
+        前者在检索字符串的时候可以用==   后者需要使用isEqualToString;<br>
+        在效率上前者由于是基于地址的判断速度会更快一些.<br>
+    </p>
+    <p>
+        <b style="cursor: pointer" onclick="javascript:window.location.href='../ConstStaticDefine/ConstStaticDefine.html'">关于static,const,与#define的区别请看这篇文章</b>
+    </p>
+    <p class="contents">
+        <b>
+            #import "" 与 #import <>的区别
+        </b>
+    </p>
+    <p class="contents">
+        前者是本地文件夹下导入头文件，后者是整个类库导入头文件。<br>
+        ""表示从当前项目路径开始寻找文件，如果找不到，则到系统（项目）中配置的头文件路径去找；<br>
+        <>表示直接到系统（项目）中配置的头文件路径去找。<br>
+    </p>
+
+
+    <p class="smallTitle">YYClassInfo</p>
+    <p class="contents">YYClassInfo包含了YYClassIvarInfo,YYClassMethodInfo,YYClassInfo,YYClassPropertyInfo</p>
+    <p class="contents">
+        YYClassInfo 主要将 Runtime 层级的一些结构体封装到 NSObject 层级以便调用。
+    </p>
+    <b style="cursor: pointer" onclick="javascript:window.location.href='https://opensource.apple.com/tarballs/objc4/'">runtime源码</b>
+    <pre>
+        YYClassIvarInfo -- objc_ivar
+        YYClassMethodInfo -- objc_method
+        YYClassPropertyInfo -- property_t
+        YYClassInfo -- objc_class
+    </pre>
+
+
+    <p class="contents">YYClassIvarInfo</p>
+    <pre>
+        @interface YYClassIvarInfo : NSObject
+
+        @property (nonatomic, assign, readonly) Ivar ivar;  变量，对应 objc_ivar
+        @property (nonatomic, strong, readonly) NSString *name;  变量名称，对应 ivar_name
+        @property (nonatomic, assign, readonly) ptrdiff_t offset;  变量偏移量，对应 ivar_offset
+        @property (nonatomic, strong, readonly) NSString *typeEncoding;  变量类型编码，通过 ivar_getTypeEncoding 函数得到
+        @property (nonatomic, assign, readonly) YYEncodingType type;  变量类型，通过 YYEncodingGetType 方法从类型编码中得到
+
+        - (instancetype)initWithIvar:(Ivar)ivar;
+        @end
+
+    </pre>
+    <p class="contents">objc_ivar</p>
+    <pre>
+        struct objc_ivar {
+
+        char * _Nullable ivar_name OBJC2_UNAVAILABLE; // 变量名称
+        char * _Nullable ivar_type OBJC2_UNAVAILABLE; // 变量类型
+        int ivar_offset OBJC2_UNAVAILABLE; // 变量偏移量
+
+        #ifdef __LP64__ // 如果已定义 __LP64__ 则表示正在构建 64 位目标
+            int space OBJC2_UNAVAILABLE; // 变量空间
+        #endif
+        }
+    </pre>
+
+    <p class="contents">YYClassMethodInfo</p>
+    <pre>
+        @interface YYClassMethodInfo : NSObject
+
+        @property (nonatomic, assign, readonly) Method method;  方法
+        @property (nonatomic, strong, readonly) NSString *name;  方法名称
+        @property (nonatomic, assign, readonly) SEL sel;  方法选择器
+        @property (nonatomic, assign, readonly) IMP imp;  方法实现，指向实现方法函数的函数指针
+        @property (nonatomic, strong, readonly) NSString *typeEncoding;  方法参数和返回类型编码
+        @property (nonatomic, strong, readonly) NSString *returnTypeEncoding;  返回值类型编码
+        @property (nullable, nonatomic, strong, readonly) NSArray&lt;NSString *&gt; *argumentTypeEncodings;  参数类型编码数组
+
+        - (instancetype)initWithMethod:(Method)method;
+
+        @end
+    </pre>
+
+    <p class="contents">objc_method</p>
+    <pre>
+        struct objc_method {
+
+            SEL _Nonnull method_name OBJC2_UNAVAILABLE; // 方法名称
+            char * _Nullable method_types OBJC2_UNAVAILABLE; // 方法类型
+            IMP _Nonnull method_imp OBJC2_UNAVAILABLE; // 方法实现（函数指针）
+        }
+    </pre>
+
+    <p class="contents">YYClassPropertyInfo</p>
+    <pre>
+        @interface YYClassPropertyInfo : NSObject
+
+        @property (nonatomic, assign, readonly) objc_property_t property;  属性
+        @property (nonatomic, strong, readonly) NSString *name;  属性名称
+        @property (nonatomic, assign, readonly) YYEncodingType type;  属性类型
+        @property (nonatomic, strong, readonly) NSString *typeEncoding;  属性类型编码
+        @property (nonatomic, strong, readonly) NSString *ivarName;  变量名称
+        @property (nullable, nonatomic, assign, readonly) Class cls;  类型
+        @property (nullable, nonatomic, strong, readonly) NSArray&lt;NSString *&gt; *protocols;  属性相关协议
+        @property (nonatomic, assign, readonly) SEL getter;  getter 方法选择器
+        @property (nonatomic, assign, readonly) SEL setter;  setter 方法选择器
+
+        - (instancetype)initWithProperty:(objc_property_t)property;
+        @end
+
+    </pre>
+
+    <p class="contents">property_t</p>
+    <pre>
+        struct property_t {
+            const char *name; // 名称
+            const char *attributes; // 修饰
+        };
+    </pre>
+
+    <p class="contents">YYClassInfo</p>
+    <pre>
+        @interface YYClassInfo : NSObject
+
+        @property (nonatomic, assign, readonly) Class cls;  类
+        @property (nullable, nonatomic, assign, readonly) Class superCls;  超类
+        @property (nullable, nonatomic, assign, readonly) Class metaCls;   元类
+        @property (nonatomic, readonly) BOOL isMeta;  元类标识，自身是否为元类
+        @property (nonatomic, strong, readonly) NSString *name; ///< 类名称
+        @property (nullable, nonatomic, strong, readonly) YYClassInfo *superClassInfo;  父类（超类）信息
+        @property (nullable, nonatomic, strong, readonly) NSDictionary&lt;NSString *, YYClassIvarInfo *&gt; *ivarInfos;  变量信息
+        @property (nullable, nonatomic, strong, readonly) NSDictionary&lt;NSString *, YYClassMethodInfo *&gt; *methodInfos;  方法信息
+         @property (nullable, nonatomic, strong, readonly) NSDictionary&lt;NSString *, YYClassPropertyInfo *&gt; *propertyInfos;  属性信息
+
+         - (void)setNeedUpdate;
+         - (BOOL)needUpdate;
+
+         + (nullable instancetype)classInfoWithClass:(Class)cls;
+         + (nullable instancetype)classInfoWithClassName:(NSString *)className;
+
+    </pre>
+
+    <p class="contents">objc_class</p>
+    <pre>
+        // objc.h
+        typedef struct objc_class *Class;
+
+        // runtime.h
+        struct objc_class {
+            Class _Nonnull isa OBJC_ISA_AVAILABILITY; // isa 指针
+
+        #if !__OBJC2__
+            Class _Nullable super_class OBJC2_UNAVAILABLE; // 父类（超类）指针
+            const char * _Nonnull name OBJC2_UNAVAILABLE; // 类名
+            long version OBJC2_UNAVAILABLE; // 版本
+            long info OBJC2_UNAVAILABLE; // 信息
+            long instance_size OBJC2_UNAVAILABLE; // 初始尺寸
+            struct objc_ivar_list * _Nullable ivars OBJC2_UNAVAILABLE; // 变量列表
+            struct objc_method_list * _Nullable * _Nullable methodLists OBJC2_UNAVAILABLE; // 方法列表
+            struct objc_cache * _Nonnull cache OBJC2_UNAVAILABLE; // 缓存
+            struct objc_protocol_list * _Nullable protocols OBJC2_UNAVAILABLE; // 协议列表
+        #endif
+
+        } OBJC2_UNAVAILABLE;
+    </pre>
+
+    <p class="smallTitle">YYClassInfo 的初始化</p>
+    <pre>
+        + (instancetype)classInfoWithClass:(Class)cls {
+
+            if (!cls) return nil;
+            //缓存单例
+            static CFMutableDictionaryRef classCache;
+            static CFMutableDictionaryRef metaCache;
+            static dispatch_once_t onceToken;
+            static dispatch_semaphore_t lock;
+            dispatch_once(&onceToken, ^{
+                classCache = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+                metaCache = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+
+                // 初始化之前，首先会根据当前 YYClassInfo 是否为元类(class_isMetaClass(cls))去对应的单例缓存中查找
+                // 这里使用了上面的 dispatch_semaphore 加锁，保证单例缓存的线程安全
+                lock = dispatch_semaphore_create(1);
+            });
+            dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+            YYClassInfo *info = CFDictionaryGetValue(class_isMetaClass(cls) ? metaCache : classCache, (__bridge const void *)(cls));
+            //如果找到了，且找到的信息需要更新的话则执行更新操作
+            //_needUpdate 用以表示当前的 YYClassInfo 实例是否需要更新(objc_class 实例发生变化时更新,比如使用了 class_addMethod 方法)
+            if (info && info->_needUpdate) {
+
+                //_update，它是 YYClassInfo 的私有方法，
+                它的实现逻辑清空当前 YYClassInfo 实例变量，方法以及属性，之后再重新初始化它们。
+                [info _update];
+            }
+            dispatch_semaphore_signal(lock);
+
+            //没找到再去创建 同样线程安全
+            if (!info) {
+                info = [[YYClassInfo alloc] initWithClass:cls];
+                if (info) {
+                    dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+
+                    //存入缓存，key = cls，value = info
+                    CFDictionarySetValue(info.isMeta ? metaCache : classCache, (__bridge const void *)(cls), (__bridge const void *)(info));
+                    dispatch_semaphore_signal(lock);
+                }
+            }
+            return info;
+        }
+
+    </pre>
+
+    <p class="contents">_update:清空当前 YYClassInfo 实例变量，方法以及属性，之后再重新初始化它们。</p>
+
+    <pre>
+        - (void)_update {
+
+            _ivarInfos = nil;
+            _methodInfos = nil;
+            _propertyInfos = nil;
+
+            Class cls = self.cls;
+            unsigned int methodCount = 0;
+            Method *methods = class_copyMethodList(cls, &methodCount);
+            if (methods) {
+                NSMutableDictionary *methodInfos = [NSMutableDictionary new];
+                _methodInfos = methodInfos;
+                for (unsigned int i = 0; i < methodCount; i++) {
+                    YYClassMethodInfo *info = [[YYClassMethodInfo alloc] initWithMethod:methods[i]];
+                    if (info.name) methodInfos[info.name] = info;
+                }
+                free(methods);
+            }
+            unsigned int propertyCount = 0;
+            objc_property_t *properties = class_copyPropertyList(cls, &propertyCount);
+            if (properties) {
+                NSMutableDictionary *propertyInfos = [NSMutableDictionary new];
+                _propertyInfos = propertyInfos;
+                for (unsigned int i = 0; i < propertyCount; i++) {
+                    YYClassPropertyInfo *info = [[YYClassPropertyInfo alloc] initWithProperty:properties[i]];
+                    if (info.name) propertyInfos[info.name] = info;
+                }
+                free(properties);
+            }
+
+            unsigned int ivarCount = 0;
+            Ivar *ivars = class_copyIvarList(cls, &ivarCount);
+            if (ivars) {
+                NSMutableDictionary *ivarInfos = [NSMutableDictionary new];
+                _ivarInfos = ivarInfos;
+                for (unsigned int i = 0; i < ivarCount; i++) {
+                    YYClassIvarInfo *info = [[YYClassIvarInfo alloc] initWithIvar:ivars[i]];
+                    if (info.name) ivarInfos[info.name] = info;
+                }
+                free(ivars);
+            }
+
+            if (!_ivarInfos) _ivarInfos = @{};
+            if (!_methodInfos) _methodInfos = @{};
+            if (!_propertyInfos) _propertyInfos = @{};
+
+            _needUpdate = NO;
+        }
+    </pre>
+
+    <p class="smallTitle">NSObject+YYModel</p>
+    <p class="contents">NSObject+YYModel包含了_YYModelMeta与_YYModelPropertyMeta, 其中在<br>
+        _YYModelMeta中主要使用了YYClassInfo, _YYModelPropertyMeta主要使用了YYClassPropertyInfo<br>
+        NSObject+YYModel 在 YYModel 中担当的责任则是利用 YYClassInfo 层级封装好的类切实的执行 JSON 模型之间的转换逻辑
+    </p>
+
+    <p class="smallTitle">_YYModelPropertyMeta</p>
+    <p class="contents">
+        _YYModelPropertyMeta 表示模型对象中的属性信息，它包含 YYClassPropertyInfo。
+    </p>
+    <pre>
+        @interface _YYModelPropertyMeta : NSObject {
+
+            @package
+            NSString *_name;              属性名称
+            YYEncodingType _type;         属性类型
+            YYEncodingNSType _nsType;     属性在 Foundation 框架中的类型
+            BOOL _isCNumber;              是否为 CNumber
+            Class _cls;                   属性类
+            Class _genericCls;            属性包含的泛型类型，没有则为 nil
+            SEL _getter;                  getter
+            SEL _setter;                  setter
+            BOOL _isKVCCompatible;        如果可以使用 KVC 则返回 YES
+            BOOL _isStructAvailableForKeyedArchiver;  如果可以使用 archiver/unarchiver 归/解档则返回 YES
+            BOOL _hasCustomClassFromDictionary;  类/泛型自定义类型，例如需要在数组中实现不同类型的转换需要用到
+
+            /*
+             property->key:       _mappedToKey:key     _mappedToKeyPath:nil            _mappedToKeyArray:nil
+             property->keyPath:   _mappedToKey:keyPath _mappedToKeyPath:keyPath(array) _mappedToKeyArray:nil
+             property->keys:      _mappedToKey:keys[0] _mappedToKeyPath:nil/keyPath    _mappedToKeyArray:keys(array)
+             */
+            NSString *_mappedToKey;       映射 key
+            NSArray *_mappedToKeyPath;    映射 keyPath，如果没有映射到 keyPath 则返回 nil
+            NSArray *_mappedToKeyArray;   key 或者 keyPath 的数组，如果没有映射多个键的话则返回 nil
+            YYClassPropertyInfo *_info;   属性信息，详见上文 YYClassPropertyInfo && property_t 章节
+            _YYModelPropertyMeta *_next;  如果有多个属性映射到同一个 key 则指向下一个模型属性元
+        }
+        @end
+    </pre>
+
+    <p class="smallTitle">_YYModelMeta</p>
+    <p class="contents">
+        _YYModelMeta 表示模型的类信息，它包含 YYClassInfo。
+    </p>
+    <pre>
+         @package
+        YYClassInfo *_classInfo;
+
+        // Key:被映射的 key 与 keyPath, Value:_YYModelPropertyMeta.
+        NSDictionary *_mapper;
+        //Array&lt;_YYModelPropertyMeta&gt;, 当前模型的所有 _YYModelPropertyMeta 数组
+        NSArray *_allPropertyMetas;
+        //Array&lt;_YYModelPropertyMeta&gt;, 被映射到 keyPath 的 _YYModelPropertyMeta 数组
+        NSArray *_keyPathPropertyMetas;
+        //Array&lt;_YYModelPropertyMeta&gt;, 被映射到多个 key 的 _YYModelPropertyMeta 数组
+        NSArray *_multiKeysPropertyMetas;
+        //映射 key 与 keyPath 的数量，等同于 _mapper.count
+        NSUInteger _keyMappedCount;
+        //模型 class 类型
+        YYEncodingNSType _nsType;
+
+        BOOL _hasCustomWillTransformFromDictionary;
+        BOOL _hasCustomTransformFromDictionary;
+        BOOL _hasCustomTransformToDictionary;
+        BOOL _hasCustomClassFromDictionary;
+    </pre>
+
+    <p class="smallTitle">实用篇:JSON 与 Model 相互转换</p>
+    <p class="contents">j2m:JSON->Model</p>
+    <p class="contents">
+        JSON: JavaScript Object Notation;
+    </p>
+    <p class="contents">
+        入口:NSObject+YYModel.m
+    </p>
+    <pre>
+        + (instancetype)yy_modelWithJSON:(id)json {
+            NSDictionary *dic = [self _yy_dictionaryWithJSON:json];
+            return [self yy_modelWithDictionary:dic];
+        }
+    </pre>
+    <p class="contents">将json转换为字典</p>
+    <pre>
+        + (NSDictionary *)_yy_dictionaryWithJSON:(id)json {
+
+            //其中 kCFNull 是 CoreFoundation 中 CFNull 的单例对象。
+            如同 Foundation 框架中的 NSNull 一样，CFNull 是用来表示集合对象中的空值（不允许为 NULL）。
+            CFNull对象既不允许被创建也不允许被销毁，而是通过定义一个 CFNull 常量，即 kCFNull，在需要空值时使用。
+            if (!json || json == (id)kCFNull) return nil;
+
+            NSDictionary *dic = nil;
+            NSData *jsonData = nil;
+            if ([json isKindOfClass:[NSDictionary class]]) {
+                dic = json;
+            } else if ([json isKindOfClass:[NSString class]]) {
+
+                jsonData = [(NSString *)json dataUsingEncoding : NSUTF8StringEncoding];
+            } else if ([json isKindOfClass:[NSData class]]) {
+                jsonData = json;
+            }
+            if (jsonData) {
+
+                //利用 NSJSONSerialization 方法将 jsonData 转为 dic
+                dic = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:NULL];
+                if (![dic isKindOfClass:[NSDictionary class]]) dic = nil;
+            }
+            return dic;
+        }
+    </pre>
+
+    <p class="contents">将字典转化为模型</p>
+    <pre>
+        + (instancetype)yy_modelWithDictionary:(NSDictionary *)dictionary {
+
+            if (!dictionary || dictionary == (id)kCFNull) return nil;
+            if (![dictionary isKindOfClass:[NSDictionary class]]) return nil;
+
+            //获取当前类类型
+            Class cls = [self class];
+            //使用类型生成一个_YYModelMeta
+            _YYModelMeta *modelMeta = [_YYModelMeta metaWithClass:cls];
+            //_hasCustomClassFromDictionary 用于标识是否需要自定义返回类
+            //通常可以在外部实现@protocol YYModel &lt;NSObject&gt;中的方法
+            if (modelMeta->_hasCustomClassFromDictionary) {
+                cls = [cls modelCustomClassForDictionary:dictionary] ?: cls;
+            }
+
+            NSObject *one = [cls new];
+            //调用 yy_modelSetWithDictionary 为新建的类实例 one 赋值，赋值成功则返回 one
+            if ([one yy_modelSetWithDictionary:dictionary]) return one;
+            return nil;
+        }
+    </pre>
+
+    <p class="contents">dic赋值给model</p>
+    <pre>
+
+        - (BOOL)yy_modelSetWithDictionary:(NSDictionary *)dic {
+
+            //参数校验
+            if (!dic || dic == (id)kCFNull) return NO;
+            if (![dic isKindOfClass:[NSDictionary class]]) return NO;
+
+            //根据self的class生成_YYModelMeta
+            _YYModelMeta *modelMeta = [_YYModelMeta metaWithClass:object_getClass(self)];
+
+            //_keyMappedCount表示字典模型映射数量 如果映射失败 返回NO
+            if (modelMeta->_keyMappedCount == 0) return NO;
+
+            //modelCustomWillTransformFromDictionary类似modelCustomTransformFromDictionary
+                在模型转换之前调用;
+            if (modelMeta->_hasCustomWillTransformFromDictionary) {
+
+                dic = [((id&lt;YYModel&gt;)self) modelCustomWillTransformFromDictionary:dic];
+
+                if (![dic isKindOfClass:[NSDictionary class]]) return NO;
+            }
+
+            <b>// 初始化模型设置上下文 ModelSetContext</b>
+            ModelSetContext context = {0};
+            context.modelMeta = (__bridge void *)(modelMeta);
+            context.model = (__bridge void *)(self);
+            context.dictionary = (__bridge void *)(dic);
+
+        <b>
+            // 判断模型元键值映射数量与 JSON 所得字典的数量关系
+            // CFDictionaryGetCount :返回键值对数目。
+            // 一般情况下他们的数量相等
+            // 特殊情况比如有的属性元会映射字典中的多个 key</b>
+            if (modelMeta->_keyMappedCount >= CFDictionaryGetCount((CFDictionaryRef)dic)) {
+
+                //CFDictionaryApplyFunction //对所有键值对执行一个方法。
+                //ModelSetWithDictionaryFunction:通过字典设置模型
+                CFDictionaryApplyFunction((CFDictionaryRef)dic, ModelSetWithDictionaryFunction, &context);
+
+
+                <b>// 判断模型中是否存在映射 keyPath 的属性元素</b>
+                if (modelMeta->_keyPathPropertyMetas) {
+
+                    //CFArrayApplyFunction //对数组中的每个元素执行一个方法 : ModelSetWithPropertyMetaArrayFunction
+                    //CFArrayGetCount: 数组元素数量
+                    CFArrayApplyFunction((CFArrayRef)modelMeta->_keyPathPropertyMetas,
+                    CFRangeMake(0, CFArrayGetCount((CFArrayRef)modelMeta->_keyPathPropertyMetas)),
+                    ModelSetWithPropertyMetaArrayFunction,
+                    &context);
+                }
+
+                <b>// 断模型中是否存在映射多个 key 的属性元素</b>
+                if (modelMeta->_multiKeysPropertyMetas) {
+
+                    //为每个映射多个 key 的属性元执行 ModelSetWithPropertyMetaArrayFunction
+                    CFArrayApplyFunction((CFArrayRef)modelMeta->_multiKeysPropertyMetas,
+                    CFRangeMake(0, CFArrayGetCount((CFArrayRef)modelMeta->_multiKeysPropertyMetas)),
+                    ModelSetWithPropertyMetaArrayFunction,
+                    &context);
+                }
+
+        } else {
+
+            <b>//模型元键值映射数量少，不存在映射多个 key 的属性元素</b>
+            // 直接为每个 modelMeta 属性元素执行ModelSetWithPropertyMetaArrayFunction
+            CFArrayApplyFunction((CFArrayRef)modelMeta->_allPropertyMetas,
+            CFRangeMake(0, modelMeta->_keyMappedCount),
+            ModelSetWithPropertyMetaArrayFunction,
+            &context);
+        }
+
+        if (modelMeta->_hasCustomTransformFromDictionary) {
+
+            <b>// 这个时候dic->模型的转换在上边已经完成了 可以在这里做一些转换完成的事
+            // 该接口用于当默认 JSON 转 Model 不适合模型对象时做额外的逻辑处理
+            // 你可以在这里对数据进行校验，如果校验不通过，可以返回 NO，则该转换得到的 Model 会被忽略。</b>
+            return [((id&lt;YYModel&gt;)self) modelCustomTransformFromDictionary:dic];
+        }
+
+        return YES;
+        }
+    </pre>
+    <p class="contents">
+        上下文:一个包含模型元，模型实例以及待转换字典的结构体。
+    </p>
+
+        <pre>
+            typedef struct {
+                void *modelMeta;  ///< _YYModelMeta 模型元
+                void *model;      ///< id (self) 模型实例
+                void *dictionary; ///< NSDictionary (json) 待转换字典
+            } ModelSetContext;
+        </pre>
+
+    <p class="contents">字典转模型</p>
+    <pre>
+        static void ModelSetWithDictionaryFunction(const void *_key, const void *_value, void *_context) {
+
+            //拿到入参上下文
+            ModelSetContext *context = _context;
+
+            <b style="cursor: pointer" onclick="javascript:window.location.href='http://blog.csdn.net/junjun150013652/article/details/53148711'">关于__unsafe-unretained与__weak的区别</b>
+            <b style="cursor: pointer" onclick="javascript:window.location.href='https://www.jianshu.com/p/bb63aabdb2db'">关于__weak与__strong的区别</b>
+
+            //取出上下文中模型元
+            __unsafe_unretained _YYModelMeta *meta = (__bridge _YYModelMeta *)(context->modelMeta);
+
+            //根据入参 _key 从模型元中取出映射表对应的属性元
+            __unsafe_unretained _YYModelPropertyMeta *propertyMeta = [meta->_mapper objectForKey:(__bridge id)(_key)];
+
+            //拿到待赋值模型
+            __unsafe_unretained id model = (__bridge id)(context->model);
+
+            //遍历 propertyMeta，直到 propertyMeta->_next == nil
+            while (propertyMeta) {
+
+                //当前遍历的 propertyMeta 有 setter 方法，则调用 ModelSetValueForProperty 赋值
+                if (propertyMeta->_setter) {
+                    ModelSetValueForProperty(model, (__bridge __unsafe_unretained id)_value, propertyMeta);
+                }
+
+                propertyMeta = propertyMeta->_next;
+            };
+        }
+    </pre>
+
+    <p class="contents">同样,管理多个映射的key数组函数</p>
+    <p class="contents">最终都是调用ModelSetValueForProperty为属性赋值</p>
+    <pre>
+        static void ModelSetWithPropertyMetaArrayFunction(const void *_propertyMeta, void *_context) {
+
+            ModelSetContext *context = _context;
+
+            //拿到字典
+            __unsafe_unretained NSDictionary *dictionary = (__bridge NSDictionary *)(context->dictionary);
+            __unsafe_unretained _YYModelPropertyMeta *propertyMeta = (__bridge _YYModelPropertyMeta *)(_propertyMeta);
+            if (!propertyMeta->_setter) return;
+            id value = nil;
+
+            if (propertyMeta->_mappedToKeyArray) {
+                value = YYValueForMultiKeys(dictionary, propertyMeta->_mappedToKeyArray);
+            } else if (propertyMeta->_mappedToKeyPath) {
+                value = YYValueForKeyPath(dictionary, propertyMeta->_mappedToKeyPath);
+            } else {
+                value = [dictionary objectForKey:propertyMeta->_mappedToKey];
+            }
+
+            if (value) {
+                __unsafe_unretained id model = (__bridge id)(context->model);
+                ModelSetValueForProperty(model, value, propertyMeta);
+            }
+        }
+
+    </pre>
+
+    <b><p class="contents">关键的属性赋值函数ModelSetValueForProperty()</p></b>
+    <pre>
+        static void ModelSetValueForProperty(__unsafe_unretained id model,
+                                     __unsafe_unretained id value,
+                                     __unsafe_unretained _YYModelPropertyMeta *meta) {
+
+         // 如果属性是一个 CNumber，即输入 int、uint……
+        if (meta->_isCNumber) {
+
+            //转为NSNumber
+            NSNumber *num = YYNSNumberCreateFromID(value);
+            //赋值
+            ModelSetNumberToProperty(model, num, meta);
+            if (num) [num class]; // hold the number
+
+        // 如果属性属于 nsType，即 NSString、NSNumber……
+        } else if (meta->_nsType) {
+            if (value == (id)kCFNull) {
+
+                // 为空，则赋值 nil（通过属性元 _setter 方法使用 objc_msgSend 将 nil 赋值）
+                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, (id)nil);
+            } else {
+                switch (meta->_nsType) {
+
+                    //// NSString 或 NSMutableString
+                    case YYEncodingTypeNSString:
+                    case YYEncodingTypeNSMutableString: {
+
+                        //调用_setter方法处理NSString
+                        if ([value isKindOfClass:[NSString class]]) {
+                            if (meta->_nsType == YYEncodingTypeNSString) {
+                                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, value);
+                            } else {
+                                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, ((NSString *)value).mutableCopy);
+                            }
+
+                        //调用_setter方法处理NSNumber
+                        } else if ([value isKindOfClass:[NSNumber class]]) {
+                            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model,
+                                                                           meta->_setter,
+                                                                           (meta->_nsType == YYEncodingTypeNSString) ?
+                                                                           ((NSNumber *)value).stringValue :
+                                                                           ((NSNumber *)value).stringValue.mutableCopy);
+
+                        //调用_setter方法处理NSData
+                        } else if ([value isKindOfClass:[NSData class]]) {
+                            NSMutableString *string = [[NSMutableString alloc] initWithData:value encoding:NSUTF8StringEncoding];
+                            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, string);
+
+                        //调用_setter方法处理NSURL
+                        } else if ([value isKindOfClass:[NSURL class]]) {
+                            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model,
+                                                                           meta->_setter,
+                                                                           (meta->_nsType == YYEncodingTypeNSString) ?
+                                                                           ((NSURL *)value).absoluteString :
+                                                                           ((NSURL *)value).absoluteString.mutableCopy);
+
+                        //调用_setter方法处理NSAttributedString
+                        } else if ([value isKindOfClass:[NSAttributedString class]]) {
+                            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model,
+                                                                           meta->_setter,
+                                                                           (meta->_nsType == YYEncodingTypeNSString) ?
+                                                                           ((NSAttributedString *)value).string :
+                                                                           ((NSAttributedString *)value).string.mutableCopy);
+                        }
+                    } break;
+
+                    case YYEncodingTypeNSValue:
+                    case YYEncodingTypeNSNumber:
+                    case YYEncodingTypeNSDecimalNumber: {
+                        if (meta->_nsType == YYEncodingTypeNSNumber) {
+                            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, YYNSNumberCreateFromID(value));
+                        } else if (meta->_nsType == YYEncodingTypeNSDecimalNumber) {
+                            if ([value isKindOfClass:[NSDecimalNumber class]]) {
+                                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, value);
+                            } else if ([value isKindOfClass:[NSNumber class]]) {
+                                NSDecimalNumber *decNum = [NSDecimalNumber decimalNumberWithDecimal:[((NSNumber *)value) decimalValue]];
+                                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, decNum);
+                            } else if ([value isKindOfClass:[NSString class]]) {
+                                NSDecimalNumber *decNum = [NSDecimalNumber decimalNumberWithString:value];
+                                NSDecimal dec = decNum.decimalValue;
+                                if (dec._length == 0 && dec._isNegative) {
+                                    decNum = nil; // NaN
+                                }
+                                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, decNum);
+                            }
+                        } else { // YYEncodingTypeNSValue
+                            if ([value isKindOfClass:[NSValue class]]) {
+                                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, value);
+                            }
+                        }
+                    } break;
+
+                    case YYEncodingTypeNSData:
+                    case YYEncodingTypeNSMutableData: {
+                        if ([value isKindOfClass:[NSData class]]) {
+                            if (meta->_nsType == YYEncodingTypeNSData) {
+                                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, value);
+                            } else {
+                                NSMutableData *data = ((NSData *)value).mutableCopy;
+                                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, data);
+                            }
+                        } else if ([value isKindOfClass:[NSString class]]) {
+                            NSData *data = [(NSString *)value dataUsingEncoding:NSUTF8StringEncoding];
+                            if (meta->_nsType == YYEncodingTypeNSMutableData) {
+                                data = ((NSData *)data).mutableCopy;
+                            }
+                            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, data);
+                        }
+                    } break;
+
+                    case YYEncodingTypeNSDate: {
+                        if ([value isKindOfClass:[NSDate class]]) {
+                            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, value);
+                        } else if ([value isKindOfClass:[NSString class]]) {
+                            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, YYNSDateFromString(value));
+                        }
+                    } break;
+
+                    case YYEncodingTypeNSURL: {
+                        if ([value isKindOfClass:[NSURL class]]) {
+                            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, value);
+                        } else if ([value isKindOfClass:[NSString class]]) {
+                            NSCharacterSet *set = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+                            NSString *str = [value stringByTrimmingCharactersInSet:set];
+                            if (str.length == 0) {
+                                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, nil);
+                            } else {
+                                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, [[NSURL alloc] initWithString:str]);
+                            }
+                        }
+                    } break;
+
+                    //NSArray 与 NSMutableArray
+                    case YYEncodingTypeNSArray:
+                    case YYEncodingTypeNSMutableArray: {
+
+                        // 对属性元的泛型判断:如果存在泛型
+                        if (meta->_genericCls) {
+                            NSArray *valueArr = nil;
+                            if ([value isKindOfClass:[NSArray class]]) valueArr = value;
+
+                            //处理NSSet
+                            else if ([value isKindOfClass:[NSSet class]]) valueArr = ((NSSet *)value).allObjects;
+                            if (valueArr) {
+
+                                //遍历数组 根据类型处理
+                                NSMutableArray *objectArr = [NSMutableArray new];
+                                for (id one in valueArr) {
+                                    if ([one isKindOfClass:meta->_genericCls]) {
+                                        [objectArr addObject:one];
+                                    } else if ([one isKindOfClass:[NSDictionary class]]) {
+                                        Class cls = meta->_genericCls;
+                                        if (meta->_hasCustomClassFromDictionary) {
+                                            cls = [cls modelCustomClassForDictionary:one];
+                                            if (!cls) cls = meta->_genericCls; // for xcode code coverage
+                                        }
+
+                                        //根据cls与dic实例化一个 加入数组
+                                        NSObject *newOne = [cls new];
+                                        [newOne yy_modelSetWithDictionary:one];
+                                        if (newOne) [objectArr addObject:newOne];
+                                    }
+                                }
+                                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, objectArr);
+                            }
+                        } else {
+                            if ([value isKindOfClass:[NSArray class]]) {
+                                if (meta->_nsType == YYEncodingTypeNSArray) {
+                                    ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, value);
+                                } else {
+                                    ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model,
+                                                                                   meta->_setter,
+                                                                                   ((NSArray *)value).mutableCopy);
+                                }
+                            } else if ([value isKindOfClass:[NSSet class]]) {
+                                if (meta->_nsType == YYEncodingTypeNSArray) {
+                                    ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, ((NSSet *)value).allObjects);
+                                } else {
+                                    ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model,
+                                                                                   meta->_setter,
+                                                                                   ((NSSet *)value).allObjects.mutableCopy);
+                                }
+                            }
+                        }
+                    } break;
+
+                    //NSDictionary 与 NSMutableDictionary
+                    case YYEncodingTypeNSDictionary:
+                    case YYEncodingTypeNSMutableDictionary: {
+                        if ([value isKindOfClass:[NSDictionary class]]) {
+                            if (meta->_genericCls) {
+                                NSMutableDictionary *dic = [NSMutableDictionary new];
+                                [((NSDictionary *)value) enumerateKeysAndObjectsUsingBlock:^(NSString *oneKey, id oneValue, BOOL *stop) {
+
+                                    //处理值
+                                    if ([oneValue isKindOfClass:[NSDictionary class]]) {
+                                        Class cls = meta->_genericCls;
+                                        if (meta->_hasCustomClassFromDictionary) {
+                                            cls = [cls modelCustomClassForDictionary:oneValue];
+                                            if (!cls) cls = meta->_genericCls; // for xcode code coverage
+                                        }
+
+                                        //重新实例化一个设置
+                                        NSObject *newOne = [cls new];
+                                        [newOne yy_modelSetWithDictionary:(id)oneValue];
+                                        if (newOne) dic[oneKey] = newOne;
+                                    }
+                                }];
+                                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, dic);
+                            } else {
+                                if (meta->_nsType == YYEncodingTypeNSDictionary) {
+                                    ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, value);
+                                } else {
+                                    ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model,
+                                                                                   meta->_setter,
+                                                                                   ((NSDictionary *)value).mutableCopy);
+                                }
+                            }
+                        }
+                    } break;
+
+                    //同理处理NSSet
+                    case YYEncodingTypeNSSet:
+                    case YYEncodingTypeNSMutableSet: {
+                        NSSet *valueSet = nil;
+                        if ([value isKindOfClass:[NSArray class]]) valueSet = [NSMutableSet setWithArray:value];
+                        else if ([value isKindOfClass:[NSSet class]]) valueSet = ((NSSet *)value);
+
+                        if (meta->_genericCls) {
+
+                            NSMutableSet *set = [NSMutableSet new];
+                            for (id one in valueSet) {
+                                if ([one isKindOfClass:meta->_genericCls]) {
+                                    [set addObject:one];
+                                } else if ([one isKindOfClass:[NSDictionary class]]) {
+                                    Class cls = meta->_genericCls;
+                                    if (meta->_hasCustomClassFromDictionary) {
+                                        cls = [cls modelCustomClassForDictionary:one];
+                                        if (!cls) cls = meta->_genericCls; // for xcode code coverage
+                                    }
+                                    NSObject *newOne = [cls new];
+                                    [newOne yy_modelSetWithDictionary:one];
+                                    if (newOne) [set addObject:newOne];
+                                }
+                            }
+                            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, set);
+                        } else {
+                            if (meta->_nsType == YYEncodingTypeNSSet) {
+                                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, valueSet);
+                            } else {
+                                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model,
+                                                                               meta->_setter,
+                                                                               ((NSSet *)valueSet).mutableCopy);
+                            }
+                        }
+                    } // break; commented for code coverage in next line
+
+                    default: break;
+                }
+            }
+        } else {
+            BOOL isNull = (value == (id)kCFNull);
+            switch (meta->_type & YYEncodingTypeMask) {
+                case YYEncodingTypeObject: {
+                    if (isNull) {
+                        ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, (id)nil);
+
+                    // 属性元与 value 从属于同一个类，则直接赋值
+                    } else if ([value isKindOfClass:meta->_cls] || !meta->_cls) {
+                        ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, (id)value);
+
+                    } else if ([value isKindOfClass:[NSDictionary class]]) {
+
+
+                        NSObject *one = nil;
+
+                        // 如果属性元有 getter 方法，则通过 getter 获取到实例
+                        if (meta->_getter) {
+                            one = ((id (*)(id, SEL))(void *) objc_msgSend)((id)model, meta->_getter);
+                        }
+                        if (one) {
+                            [one yy_modelSetWithDictionary:value];
+                        } else {
+                            Class cls = meta->_cls;
+                            if (meta->_hasCustomClassFromDictionary) {
+                                cls = [cls modelCustomClassForDictionary:value];
+                                if (!cls) cls = meta->_genericCls; // for xcode code coverage
+                            }
+                            one = [cls new];
+                            [one yy_modelSetWithDictionary:value];
+                            ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, (id)one);
+                        }
+                    }
+                } break;
+
+                case YYEncodingTypeClass: {
+
+                    //NULL
+                    if (isNull) {
+                        ((void (*)(id, SEL, Class))(void *) objc_msgSend)((id)model, meta->_setter, (Class)NULL);
+                    } else {
+                        Class cls = nil;
+                        if ([value isKindOfClass:[NSString class]]) {
+                            cls = NSClassFromString(value);
+                            if (cls) {
+                                ((void (*)(id, SEL, Class))(void *) objc_msgSend)((id)model, meta->_setter, (Class)cls);
+                            }
+                        } else {
+                            cls = object_getClass(value);
+                            if (cls) {
+                                if (class_isMetaClass(cls)) {
+                                    ((void (*)(id, SEL, Class))(void *) objc_msgSend)((id)model, meta->_setter, (Class)value);
+                                }
+                            }
+                        }
+                    }
+                } break;
+
+                case  YYEncodingTypeSEL: {
+                    if (isNull) {
+                        ((void (*)(id, SEL, SEL))(void *) objc_msgSend)((id)model, meta->_setter, (SEL)NULL);
+                    } else if ([value isKindOfClass:[NSString class]]) {
+                        SEL sel = NSSelectorFromString(value);
+                        if (sel) ((void (*)(id, SEL, SEL))(void *) objc_msgSend)((id)model, meta->_setter, (SEL)sel);
+                    }
+                } break;
+
+                case YYEncodingTypeBlock: {
+                    if (isNull) {
+                        ((void (*)(id, SEL, void (^)()))(void *) objc_msgSend)((id)model, meta->_setter, (void (^)())NULL);
+                    } else if ([value isKindOfClass:YYNSBlockClass()]) {
+                        ((void (*)(id, SEL, void (^)()))(void *) objc_msgSend)((id)model, meta->_setter, (void (^)())value);
+                    }
+                } break;
+
+                case YYEncodingTypeStruct:
+                case YYEncodingTypeUnion:
+                case YYEncodingTypeCArray: {
+                    if ([value isKindOfClass:[NSValue class]]) {
+                        const char *valueType = ((NSValue *)value).objCType;
+                        const char *metaType = meta->_info.typeEncoding.UTF8String;
+                        if (valueType && metaType && strcmp(valueType, metaType) == 0) {
+                            [model setValue:value forKey:meta->_name];
+                        }
+                    }
+                } break;
+
+                case YYEncodingTypePointer:
+                case YYEncodingTypeCString: {
+                    if (isNull) {
+                        ((void (*)(id, SEL, void *))(void *) objc_msgSend)((id)model, meta->_setter, (void *)NULL);
+                    } else if ([value isKindOfClass:[NSValue class]]) {
+                        NSValue *nsValue = value;
+                        if (nsValue.objCType && strcmp(nsValue.objCType, "^v") == 0) {
+                            ((void (*)(id, SEL, void *))(void *) objc_msgSend)((id)model, meta->_setter, nsValue.pointerValue);
+                        }
+                    }
+                } // break; commented for code coverage in next line
+
+                default: break;
+            }
+        }
+    }
+
+    </pre>
+
+    <p class="smallTitle">总结一下j2m</p>
+    <p class="contents">
+
+        ->外部调用yy_modelWithJSON:<br> ->调用_yy_dictionaryWithJSON将json转化为dic;<br> -> 调用
+        yy_modelWithDictionary将dic转化为模型; <br> -> 判断是否外部重写映射类名 调用
+        yy_modelSetWithDictionary:将dic转化为模型 <br> ->在yy_modelSetWithDictionary中根据类型
+        实例化模型元<br>  -> 根据映射数量与字典键值对数量作比较,处理模型与字典(ModelSetWithDictionaryFunction),模型与数组的
+        转换(ModelSetWithPropertyMetaArrayFunction); <br> -> ModelSetWithDictionaryFunction/ModelSetWithPropertyMetaArrayFunction
+        取到模型上下元,遍历调用ModelSetValueForProperty根据_value赋值
+    </p>
+
+
+    <p class="smallTitle">m2j:模型转换为json</p>
+    <p class="contents">模型转换json的要求</p>
+    <pre>
+        NSJSONSerialization 在对 JSON 的转换时做了一些规定：
+
+        顶级对象是 NSArray 或者 NSDictionary 类型
+        所有的对象都是 NSString, NSNumber, NSArray, NSDictionary, 或 NSNull 的实例
+        所有字典中的 key 都是一个 NSString 实例
+        Numbers 是除去无穷大和 NaN 的其他表示
+    </pre>
+    <p class="contents">入口 yy_modelToJSONData/yy_modelToJSONString都是调用yy_modelToJSONObject</p>
+    <pre>
+        - (id)yy_modelToJSONObject {
+
+
+            /*
+             Apple said:
+             The top level object is an NSArray or NSDictionary.
+             All objects are instances of NSString, NSNumber, NSArray, NSDictionary, or NSNull.
+             All dictionary keys are instances of NSString.
+             Numbers are not NaN or infinity.
+             */
+            id jsonObject = ModelToJSONObjectRecursive(self);
+            if ([jsonObject isKindOfClass:[NSArray class]]) return jsonObject;
+            if ([jsonObject isKindOfClass:[NSDictionary class]]) return jsonObject;
+            return nil;
+        }
+    </pre>
+
+    <p class="contents">ModelToJSONObjectRecursive的递归实现</p>
+    <pre>
+        static id ModelToJSONObjectRecursive(NSObject *model) {
+
+            if (!model || model == (id)kCFNull) return model;
+            if ([model isKindOfClass:[NSString class]]) return model;
+            if ([model isKindOfClass:[NSNumber class]]) return model;
+            if ([model isKindOfClass:[NSDictionary class]]) {
+
+                // isValidJSONObject判断对象是否可以构建成json对象
+                if ([NSJSONSerialization isValidJSONObject:model]) return model;
+                NSMutableDictionary *newDic = [NSMutableDictionary new];
+                [((NSDictionary *)model) enumerateKeysAndObjectsUsingBlock:^(NSString *key, id obj, BOOL *stop) {
+                    NSString *stringKey = [key isKindOfClass:[NSString class]] ? key : key.description;
+                    if (!stringKey) return;
+                    id jsonObj = ModelToJSONObjectRecursive(obj);
+                    if (!jsonObj) jsonObj = (id)kCFNull;
+                    newDic[stringKey] = jsonObj;
+                }];
+                return newDic;
+            }
+
+            //处理NSSet
+            if ([model isKindOfClass:[NSSet class]]) {
+                NSArray *array = ((NSSet *)model).allObjects;
+                if ([NSJSONSerialization isValidJSONObject:array]) return array;
+                NSMutableArray *newArray = [NSMutableArray new];
+                for (id obj in array) {
+                    if ([obj isKindOfClass:[NSString class]] || [obj isKindOfClass:[NSNumber class]]) {
+                        [newArray addObject:obj];
+                    } else {
+
+                        //不是NSString/NSNumber类型继续遍历递归
+                        id jsonObj = ModelToJSONObjectRecursive(obj);
+                        if (jsonObj && jsonObj != (id)kCFNull) [newArray addObject:jsonObj];
+                    }
+                }
+                return newArray;
+            }
+
+            //处理NSArray 同理
+            if ([model isKindOfClass:[NSArray class]]) {
+                if ([NSJSONSerialization isValidJSONObject:model]) return model;
+                NSMutableArray *newArray = [NSMutableArray new];
+                for (id obj in (NSArray *)model) {
+                    if ([obj isKindOfClass:[NSString class]] || [obj isKindOfClass:[NSNumber class]]) {
+                        [newArray addObject:obj];
+                    } else {
+                        id jsonObj = ModelToJSONObjectRecursive(obj);
+                        if (jsonObj && jsonObj != (id)kCFNull) [newArray addObject:jsonObj];
+                    }
+                }
+                return newArray;
+            }
+
+            //处理NSURL 全部去字符串
+            if ([model isKindOfClass:[NSURL class]]) return ((NSURL *)model).absoluteString;
+            //...
+            if ([model isKindOfClass:[NSAttributedString class]]) return ((NSAttributedString *)model).string;
+            if ([model isKindOfClass:[NSDate class]]) return [YYISODateFormatter() stringFromDate:(id)model];
+
+            //返回nil
+            if ([model isKindOfClass:[NSData class]]) return nil;
+
+            //self class初始化模型元类
+            _YYModelMeta *modelMeta = [_YYModelMeta metaWithClass:[model class]];
+            if (!modelMeta || modelMeta->_keyMappedCount == 0) return nil;
+            NSMutableDictionary *result = [[NSMutableDictionary alloc] initWithCapacity:64];
+
+            //__unsafe_unretained 弱引用
+            __unsafe_unretained NSMutableDictionary *dic = result; // avoid retain and release in block
+
+            [modelMeta->_mapper enumerateKeysAndObjectsUsingBlock:^(NSString *propertyMappedKey, _YYModelPropertyMeta *propertyMeta, BOOL *stop) {
+                if (!propertyMeta->_getter) return;
+
+                //以下都是用_getter取value
+                id value = nil;
+                if (propertyMeta->_isCNumber) {
+                    value = ModelCreateNumberFromProperty(model, propertyMeta);
+                } else if (propertyMeta->_nsType) {
+                    id v = ((id (*)(id, SEL))(void *) objc_msgSend)((id)model, propertyMeta->_getter);
+                    value = ModelToJSONObjectRecursive(v);
+                } else {
+                    switch (propertyMeta->_type & YYEncodingTypeMask) {
+                        case YYEncodingTypeObject: {
+                            id v = ((id (*)(id, SEL))(void *) objc_msgSend)((id)model, propertyMeta->_getter);
+                            value = ModelToJSONObjectRecursive(v);
+                            if (value == (id)kCFNull) value = nil;
+                        } break;
+                        case YYEncodingTypeClass: {
+                            Class v = ((Class (*)(id, SEL))(void *) objc_msgSend)((id)model, propertyMeta->_getter);
+                            value = v ? NSStringFromClass(v) : nil;
+                        } break;
+                        case YYEncodingTypeSEL: {
+                            SEL v = ((SEL (*)(id, SEL))(void *) objc_msgSend)((id)model, propertyMeta->_getter);
+                            value = v ? NSStringFromSelector(v) : nil;
+                        } break;
+                        default: break;
+                    }
+                }
+                if (!value) return;
+
+                // 当前属性元是 KeyPath 映射，即 a.b.c 之类
+                if (propertyMeta->_mappedToKeyPath) {
+
+                    NSMutableDictionary *superDic = dic;
+                    NSMutableDictionary *subDic = nil;
+
+                    // _mappedToKeyPath 是 a.b.c 根据 '.' 拆分成的字符串数组，遍历 _mappedToKeyPath
+                    for (NSUInteger i = 0, max = propertyMeta->_mappedToKeyPath.count; i < max; i++) {
+
+                        NSString *key = propertyMeta->_mappedToKeyPath[i];
+                        if (i + 1 == max) { // end
+
+                            if (!superDic[key]) superDic[key] = value;
+                            break;
+                        }
+
+                        subDic = superDic[key];
+                        if (subDic) {
+
+                            if ([subDic isKindOfClass:[NSDictionary class]]) {
+
+                                subDic = subDic.mutableCopy;
+                                superDic[key] = subDic;
+                            } else {
+
+                                break;
+                            }
+                        } else {
+
+                            subDic = [NSMutableDictionary new];
+                            superDic[key] = subDic;
+                        }
+
+                        superDic = subDic;
+                        subDic = nil;
+                    }
+                } else {
+
+                    if (!dic[propertyMeta->_mappedToKey]) {
+                        dic[propertyMeta->_mappedToKey] = value;
+                    }
+                }
+            }];
+
+            //处理转换结束外部重写
+            if (modelMeta->_hasCustomTransformToDictionary) {
+
+                BOOL suc = [((id&lt;YYModel&gt;)model) modelCustomTransformToDictionary:dic];
+                if (!suc) return nil;
+            }
+
+            return result;
+        }
+
+    </pre>
+
+    <p class="smallTitle">总结一下m2j</p>
+    <p class="contents">
+
+        ->外部调用yy_modelToJSONData/yy_modelToJSONString/yy_modelToJSONObject;<br>
+        ->调用ModelToJSONObjectRecursive(model)返回id类型,如果是NSArray/NSDictionary则满足条件;<br>
+        ->根据model的种类做处理:NSString/NSNumber直接返回; NSURL返回.absoluteString;NSAttributedString返回.string;<br>
+            NSDate返回[YYISODateFormatter() stringFromDate:(id)model];data返回nil;<br>
+        ->判断能否转换为json([NSJSONSerialization isValidJSONObject:model]);<br>
+            NSDictionary遍历键值对/NSSet遍历allObjects/NSArray遍历 调用ModelToJSONObjectRecursive做递归<br>
+        ->如果上面条件不被满足，则用 Model 的 Class 初始化一个模型元 _YYModelMeta<br>
+            判断模型元的映射关系，遍历映射表拿到对应键值对并存入字典中并返回;<br>
+    </p>
+<br>
+</div>
+
+
+
+</body>
+</html>
