@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>iOS消息传递详解</title>
+    <title>iOS运行时,消息传递与消息转发</title>
     <link rel="icon" href="../../../Source/icon-img.jpeg">
     <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
     <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
@@ -12,14 +12,420 @@
 
 <div class="labels">
 
+    <span class="label label-danger" style="cursor: pointer" onclick="javascript:window.location.href='https://github.com/ethanCun/ZYNotes/tree/master/YYModelRead'">runtimeDemo</span>
     <span class="label label-success">消息传递</span>
     <span class="label label-info">消息转发</span>
+</div>
+<div class="labels">
+    <span class="label label-success"><a style="color: white" href="#synthesize">@dymamic与@synthesize的区别</a></span>
+</div>
+<div class="labels">
+    <span class="label label-primary"><a style="color: whitesmoke" href="#dynamic">利用消息转发机制来实现@dynamic的setter和getter方法</a></span>
+</div>
+<div class="labels">
+    <span class="label label-default"><a style="color: whitesmoke" href="#protocol">为protocol添加属性</a> </span>
 </div>
 
 <div class="contentBgDiv">
 
-    <p class="title">iOS中的消息传递与消息转发</p>
+    <p class="title">iOS运行时,消息传递与消息转发</p>
     <hr>
+
+    <p class="smallTitle">从运行时开始</p>
+    <p class="contents">导入:#import &lt;objc/message.h&gt; ; 在Runtime中 以char *定义的API都被视为UTF-8编码</p>
+    <p class="contents">调用objc_msgSend报错Too many arguments to function call ,expected 0,have3:</p>
+    <pre>
+             Build Setting--> Apple LLVM 6.0 - Preprocessing--> Enable Strict Checking of objc_msgSend Calls  改为 NO
+    </pre>
+    <pre>
+            objc_msgSend(manager, @selector(say:s:), @"123", @"456");
+    </pre>
+    <p class="smallTitle">1.获取类名</p>
+    <pre>
+        #pragma mark - 获取类名
+        - (NSString *)getClassNameWithClass:(Class)cls
+        {
+            const char *class = object_getClassName(cls);
+
+            return [NSString stringWithUTF8String:class];
+        }
+    </pre>
+    <p class="smallTitle">2.获取实例变量列表</p>
+    <pre>
+        /**
+             关于实例变量的编码类型
+             基本类型都是由一个字母代替的，
+             q -> NSInteger; i -> int B -> bool
+             引用类型的话，则直接就是一个字符串了
+             @\"NSString\" -> NSString  @\"NSNumber\" -> NSNumber
+             @\"NSDictionary\" -> NSDictionary @\"NSArray\" -> NSArray
+
+             关于ivar_getOffset指针偏移量 为8位 1个字节
+        */
+        #pragma mark - 获取实例变量列表
+        - (NSArray *)getIvarListWithClass:(Class)cls
+        {
+            unsigned int count = 0;
+
+        #pragma mark - 添加实例变量 无效 因为到运行时分配的空间已经固定了
+            [self addIvarWithClass:cls];
+
+            Ivar *ivarList = class_copyIvarList(cls, &count);
+
+            NSMutableArray *ivars = [NSMutableArray array];
+            for (NSInteger i=0; i&lt;count; i++) {
+
+                NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+                const char *ivarName = ivar_getName(ivarList[i]);
+                const char *ivarType = ivar_getTypeEncoding(ivarList[i]);
+                ptrdiff_t ivarOffset = ivar_getOffset(ivarList[i]);
+
+                [dic setObject:[NSString stringWithUTF8String:ivarName] forKey:@"name"];
+                [dic setObject:[NSString stringWithUTF8String:ivarType] forKey:@"type"];
+                [dic setObject:@(ivarOffset) forKey:@"offset"];
+
+                [ivars addObject:dic];
+            }
+
+            //保证释放
+            free(ivarList);
+
+            return [NSMutableArray arrayWithArray:ivars];
+        }
+    </pre>
+    <p class="smallTitle">3.获取成员属性 包括公有私有 以及定义在扩展里的属性</p>
+    <pre>
+        - (NSArray *)getPropertyListWithClass:(Class)cls
+        {
+            [self addPropertyWithClass:cls];
+
+            unsigned int count = 0;
+
+            objc_property_t *propertys = class_copyPropertyList([RuntimeManager class], &count);
+
+            NSMutableArray *props = [NSMutableArray array];
+            for (NSInteger i=0; i&lt;count; i++) {
+
+                NSMutableDictionary *paras = [NSMutableDictionary dictionary];
+                const char *name = property_getName(propertys[i]);
+                //"T@\"NSString\",C,D,N"
+                const char *attr = property_getAttributes(propertys[i]);
+
+                [paras setObject:[NSString stringWithUTF8String:name] forKey:@"name"];
+                [paras setObject:[NSString stringWithUTF8String:attr] forKey:@"attr"];
+
+                [props addObject:paras];
+            }
+
+            free(propertys);
+
+            return [NSArray arrayWithArray:props];
+        }
+    </pre>
+    <p class="smallTitle">4.获取类的实例方法</p>
+    <pre>
+        #pragma mark - 获取类的实例方法
+        - (NSArray *)getInstanceMethodWithClass:(Class)cls
+        {
+            unsigned int count = 0;
+
+        #pragma mark - 不能获取类方法 没实现的方法不能获取
+            Method *method = class_copyMethodList(cls, &count);
+
+            NSMutableArray *methods = [NSMutableArray array];
+
+            for (NSInteger i=0; i&lt;count; i++) {
+
+                NSMutableDictionary *params = [NSMutableDictionary dictionary];
+
+                SEL name = method_getName(method[i]);
+                const char *type = method_getTypeEncoding(method[i]);
+        //        IMP imp = method_getImplementation(method[i]);
+                unsigned int argueNum = method_getNumberOfArguments(method[i]);
+
+                [params setObject:NSStringFromSelector(name) forKey:@"sel"];
+        //        [params setObject:[NSString stringWithUTF8String:imp] forKey:@"imp"];
+                [params setObject:[NSString stringWithUTF8String:type] forKey:@"type"];
+                [params setObject:@(argueNum) forKey:@"argueNum"];
+
+                [methods addObject:params];
+            }
+
+            free(method);
+
+            return methods;
+        }
+
+    </pre>
+
+    <p class="smallTitle">5.获取协议列表</p>
+    <pre>
+        #pragma mark - 获取协议列表
+        - (NSArray *)getProtocalListWithClass:(Class)cls
+        {
+            unsigned int count = 0;
+
+            __unsafe_unretained Protocol ** protocolList = class_copyProtocolList(cls, &count);
+
+            NSMutableArray *protocols = [NSMutableArray array];
+
+            for (NSInteger i=0; i&lt;count; i++) {
+
+                const char *name =  protocol_getName(protocolList[i]);
+
+                [protocols addObject:[NSString stringWithUTF8String:name]];
+            }
+
+            free(protocolList);
+
+            return [NSArray arrayWithArray:protocols];
+        }
+    </pre>
+
+    <p class="smallTitle">6.动态增加实例变量 无效</p>
+    <pre>
+        #pragma mark - 动态增加实例变量 无效？ 具体参考objc对象的本质 此时内存已经分配完成
+        - (BOOL)addIvarWithClass:(Class)cls
+        {
+            /**
+             运行时规定,只能在objc_allocateClassPair与objc_registerClassPair两个函数之间为类添加变量
+             */
+            //额外空间  变量size sizeof(NSString)   未知,通常设置为 0
+            Class subClass = objc_allocateClassPair(cls, "RuntimrManagerSubClass", 0);
+
+            //class,变量名,变量size,对齐,类型
+            BOOL flag = class_addIvar(subClass, "expression", sizeof(NSString *), 0, "*");
+
+            NSLog(@"%@", flag ? @"succeed" : @"failed");
+
+            objc_registerClassPair(subClass);
+
+            return flag;
+        }
+    </pre>
+
+    <p class="smallTitle">7.动态增加属性</p>
+    <pre>
+        #pragma mark - 动态增加属性
+        NSString *cccc(id self, SEL _cmd){
+
+            Ivar ivar = class_getInstanceVariable([RuntimeManager class], "_cccc");
+            return object_getIvar(self, ivar);
+        }
+
+        void setCccc(id self, SEL _cmd){
+
+            Ivar ivar = class_getInstanceVariable([RuntimeManager class], "_cccc");
+            id oldCccc = object_getIvar(self, ivar);
+
+            object_setIvar(self, ivar, [oldCccc copy]);
+        }
+
+
+        - (BOOL)addPropertyWithClass:(Class)cls
+        {
+        //    objc_allocateClassPair([RuntimeManager class], "subclass", 0);
+
+            objc_property_attribute_t type = {"T", "\"NSString\""};
+             // C = copy
+            objc_property_attribute_t ownnerShip = {"C", ""};
+            objc_property_attribute_t backingIvar = {"V", "_cccc"};
+            objc_property_attribute_t attr[] = {type, ownnerShip, backingIvar};
+
+            BOOL isSucceed = class_addProperty(cls, "cccc", attr, 2);
+
+            //添加setter与getter @@:表示返回为字符串 参数为空 "v@:@"表示返回为空 带一个字符串参数
+        //    class_addMethod(cls, @selector(cccc), (IMP)cccc, "@@:");
+        //    class_addMethod(cls, @selector(setCccc:), (IMP)setCccc, "v@:@");
+
+            [self addMethodWithClass:cls sel:@selector(cccc) impSelector:@selector(cccc)];
+            [self addMethodWithClass:cls sel:@selector(setCccc:) impSelector:@selector(setCccc:)];
+
+            return isSucceed;
+        }
+    </pre>
+
+    <p class="smallTitle">8.动态增加方法</p>
+    <pre>
+        #pragma mark - 动态增加方法
+        - (void)addMethodWithClass:(Class)class sel:(SEL)sel impSelector:(SEL)impSelector
+        {
+            Method method = class_getInstanceMethod(class, sel);
+            IMP methodImp = method_getImplementation(method);
+            const char *types = method_getTypeEncoding(method);
+
+            //动态绑定sel与imp
+            class_addMethod(class, sel, methodImp, types);
+        }
+    </pre>
+
+    <p class="smallTitle">9.方法实现交换</p>
+    <pre>
+        - (void)methodImplemetationExchangeWithClass:(Class)class sel1:(SEL)sel1 sel2:(SEL)sel2
+        {
+            Method method1 = class_getInstanceMethod(class, sel1);
+            Method method2 = class_getInstanceMethod(class, sel2);
+
+            method_exchangeImplementations(method1, method2);
+
+        }
+    </pre>
+    <p class="contents">另外几个交换方法的实例</p>
+    <pre>
+        //交换时机:加入内存即交换
+        + (void)load
+        {
+            Method m1 = class_getInstanceMethod(self, @selector(stringByAppendingString:));
+            Method m2 = class_getInstanceMethod(self, @selector(zy_stringByAppendingString:));
+            method_exchangeImplementations(m1, m2);
+
+            Method m3 = class_getClassMethod(self, @selector(stringWithString:));
+            Method m4 = class_getClassMethod(self, @selector(zy_stringWithString:));
+
+            method_exchangeImplementations(m3, m4);
+        }
+
+        + (instancetype)zy_stringWithString:(NSString *)format
+        {
+            NSString *ss = [@"拼接" stringByAppendingString:[format stringByAppendingString:@"&& "]];
+            NSString *s = [self zy_stringWithString:ss];
+
+            return s;
+        }
+
+        - (instancetype)zy_stringByAppendingString:(NSString *)string
+        {
+
+            if (string.length == 0 || [string containsString:@"&"]) {
+
+                string = @"拼接的字符串不合法";
+            }
+
+            NSString *s = [self zy_stringByAppendingString:string];
+
+            return s;
+        }
+    </pre>
+    <pre>
+        + (void)load
+        {
+            Method m1 = class_getClassMethod(self, @selector(imageNamed:));
+            Method m2 = class_getClassMethod(self, @selector(zy_imageNamed:));
+
+            method_exchangeImplementations(m1, m2);
+        }
+
+        + (instancetype)zy_imageNamed:(NSString *)name
+        {
+            UIImage *img = [self zy_imageNamed:name];
+
+            NSLog(@"ssssueed");
+
+            return img;
+        }
+    </pre>
+
+    <p class="smallTitle">10.属性关联</p>
+    <pre>
+        //使用@dynamic生命自己生成setter与getter
+
+        @dynamic location;
+
+        - (void)setLocation:(NSString *)location
+        {
+            objc_setAssociatedObject(self, &locationKey, location, OBJC_ASSOCIATION_COPY_NONATOMIC);
+        }
+
+        - (NSString *)location
+        {
+            return objc_getAssociatedObject(self, &locationKey);
+        }
+    </pre>
+
+    <p class="smallTitle" id="synthesize">补充:@dymamic与@synthesize的区别</p>
+    <pre>
+         在@implementation 中通过@dynamic xxx 告诉编译器、xxx属性的setter、getter方法由开发者自己来生成
+         @ synthesize xxx = _xxx； 告诉编译器、xxx属性的setter、getter方法由编译器来生成、同时用_xxx 来合成 成员变量
+         */
+
+    </pre>
+
+    <p class="smallTitle" id="dynamic">补充:利用消息转发机制来实现@dynamic的setter和getter方法</p>
+    <pre>
+        #pragma mark - 利用消息转发机制来实现@dynamic的setter和getter方法
+        - (NSMethodSignature *)methodSignatureForSelector:(SEL)selector
+        {
+            NSString *sel = NSStringFromSelector(selector);
+
+            if ([sel rangeOfString:@"set"].location == 0)
+            {
+                //setter
+                return [NSMethodSignature signatureWithObjCTypes:"v@:@"];
+            }
+
+            else
+            {
+                //getter
+                return [NSMethodSignature signatureWithObjCTypes:"@@:"];
+            }
+        }
+    </pre>
+    <pre>
+        - (void)forwardInvocation:(NSInvocation *)invocation
+        {
+            NSMutableDictionary *propertiesDict = [[NSMutableDictionary alloc] init];
+
+            NSString *key = NSStringFromSelector([invocation selector]);
+
+            if ([key rangeOfString:@"set"].location == 0)
+            {
+                key= [[key substringWithRange:NSMakeRange(3, [key length]-4)] lowercaseString];
+
+                NSInteger obj;
+
+                [invocation getArgument:&obj atIndex:2];
+
+                [propertiesDict setObject:@(obj) forKey:key];
+
+            }
+            else
+            {
+                NSString *obj = [propertiesDict objectForKey:key];
+
+                [invocation setReturnValue:&obj];
+            }
+
+        }
+    </pre>
+
+    <p class="smallTitle" id="protocol">补充:为protocol添加属性</p>
+    <pre>
+
+        /**在OC中的给类添加成员属性其实就是添加了一个成员变量和getter以及setter方法。*/
+
+        ///**在协议、分类中声明的属性，只有对应的setter／getter方法，并没有生成对应的成员变量。*/
+        /**通过在@implementation使用@synthesize指定该属性的成员变量*/
+        //设置代理应该在调用代理方法之前
+        @synthesize speed = _zySpeed;
+        @synthesize currentColor = _zyCurrentColor;
+
+        /**
+        @synthesize 上面声明部分的 @synthesize speed = _speed; 意思是说，speed 属性为 _speed 成员变量合成访问器方法。
+        也就是说，speed属性生成存取方法是setSpeed，这个setSpeed方法就是_speed变量的存取方法，它操作的就是_speed这个变量。
+        通过这个看似是赋值的这样一个操作，我们可以在@synthesize 中定义与变量名不相同的getter和setter的命名，
+        籍此来保护变量不会被不恰当的访问。
+        Category中的implementation中不支持用@synthesize 来合成属性.正确的做法使用关联属性.
+
+    </pre>
+
+    <p class="smallTitle">消息的传递与转发</p>
+
+    <p class="introduceText">
+        当你调用一个类的方法时，先在本类中的方法缓存列表中进行查询(参考YYModel)，
+        如果在缓存列表中找到了该方法的实现，就执行，如果找不到就在本类中的方列表中进行查找。
+        在本类方列表中查找到相应的方法实现后就进行调用，如果没找到，就去父类中进行查找。
+        如果在父类中的方法列表中找到了相应方法的实现，那么就执行，否则就执行下方的几步。
+    </p>
 
     <p class="contents">
         使用performSelector运行时系统找方法，在编译时候不做任何校验；如果直接调用编译是会自动校验。
@@ -28,6 +434,8 @@
         //这里并没有在People中实现say 程序崩溃
         [[People new] performSelector:@selector(say) withObject:@"1111" afterDelay:0];
     </pre>
+
+
 
     <p class="smallTitle">1.动态方法解析</p>
     <p class="contents">
@@ -151,12 +559,6 @@
             }
 
             return [super forwardInvocation:anInvocation];
-        }
-    </pre>
-    <pre>
-        - (void)sayGoodBye:(NSString *)s
-        {
-            NSLog(@"byebye %@", s);
         }
     </pre>
 

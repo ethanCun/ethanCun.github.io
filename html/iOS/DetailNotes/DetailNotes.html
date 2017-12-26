@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>那些非常值得记录的知识细节</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-danger" style="cursor: pointer" onclick="javascript:window.location.href='https://github.com/ethanCun/ZYNotes/tree/master/YYModelRead'">示例demo</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">那些非常值得记录的知识细节</p>
+    <hr>
+
+    <p class="smallTitle">1. .与->访问方式</p>
+    <pre>
+
+        self.表示调用属性的setter或getter; self->用来访问实例变量
+    </pre>
+
+    <p class="smallTitle">2. isKindOfClass与isMemberOfClass</p>
+    <pre>
+        /**
+         　　isKindOfClass来确定一个对象是否是一个类的成员，或者是派生自该类的成员搜索
+         　　isMemberOfClass只能确定一个对象是否是当前类的成员
+         */
+
+        //son继承于people
+        NSLog(@" %d  %d", [self isKindOfClass:[son class]],[self isMemberOfClass:[son class]]);
+
+        NSLog(@" %d  %d", [self isKindOfClass:[people class]],[self isMemberOfClass:[people class]]);
+
+        2016-12-26 10:06:32.992 YYModelRead[4013:223341]  1  1
+        2016-12-26 10:06:32.992 YYModelRead[4013:223341]  1  0
+    </pre>
+
+    <p class="smallTitle">3.self与super; class与superclass</p>
+    <pre>
+        /**
+         class:获取方法调用类名
+         superclass:获取方法调用者的父类类名
+         super:编译修饰符,不是指针,指向父类标志,
+         本质还是拿到当前对象去调用父类的方法
+         注意:super并不是拿到父类对象去调用父类方法
+         */
+
+        NSLog(@" %@, %@ %@ %@", [self class], [super class], [self superclass], [super superclass]);
+
+        2016-12-26 10:06:32.992 YYModelRead[4013:223341]  son, son people people
+    </pre>
+
+    <p class="smallTitle">4. __weak与__strong</p>
+    <pre>
+
+        //__weak用来弱引用一个对象,这种现象非常常见,
+        此处是演示使用__strong来强引用一次,防止弱引用对象释放;
+        - (void)__weakAnd__strong
+        {
+            Text *text = [Text new];
+
+            self.text = text;
+
+            __weak typeof(Text *) weakText = self.text;
+
+            dispatch_async(dispatch_get_global_queue(0, 0), ^{
+
+                NSLog(@"pre weakText = %@", weakText);
+
+                //        __strong typeof(Text *) strongText = weakText;
+
+                NSInteger i = 0;
+
+                while (i < 10) {
+
+                    NSLog(@"weakText = %@  ", weakText);
+                    //            NSLog(@"strongText = %@", strongText);
+                    i++;
+
+                    sleep(2);
+                }
+
+            });
+
+
+            //2s后释放
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+
+
+                self.text = nil;
+            });
+
+        }
+    </pre>
+
+    <p class="smallTitle">5. __unsafe_unretained与__weak</p>
+    <pre>
+
+        //__unsafe_unretained:和__weak 一样，唯一的区别便是，对象即使被销毁，指针也不会自动置空，
+        此时指针指向的是一个无用的野地址。如果使用此指针，程序会抛出 BAD_ACCESS 的异常。
+        - (void)unsafeunretainedAndWeak
+        {
+
+            id __weak obj2 = [[NSMutableArray alloc] init];
+
+            //obj2释放 并指向nil 对nil发送消息不会崩溃
+            [obj2 addObject:@"2"];
+
+            NSLog(@"__weak obj2 = %@", obj2);
+
+            id __unsafe_unretained obj1 = [[NSMutableArray alloc] init];
+
+            //obj1内存区域释放, 没有指向nil 访问野指针崩溃
+            //    [obj1 addObject:@"1"];
+
+            id __unsafe_unretained obj3 = nil;
+            {
+                id __strong obj0 = [[NSMutableArray alloc] init];
+
+                [obj0 addObject:@"obj3"];
+
+                obj3 = obj0;
+
+                NSLog(@"obj0 = %@", obj0);
+
+                //不会崩溃 obj0指向的内存区域仍在
+                NSLog(@"obj3 = %@", obj3);
+            }
+
+            // 崩溃 obj0指向的内存区域已经释放 但是obj0没有置为nil
+            //    NSLog(@"obj33 = %@", obj3);
+
+            //正确的释放姿势
+            id __unsafe_unretained obj4 = nil;
+
+            NSLog(@"obj4 = %@", obj4);
+        }
+
+    </pre>
+</div>
+
+</body>
+</html>
