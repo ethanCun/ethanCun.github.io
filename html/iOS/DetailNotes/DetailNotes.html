@@ -13,6 +13,7 @@
 <div class="labels">
 
     <span class="label label-danger" style="cursor: pointer" onclick="javascript:window.location.href='https://github.com/ethanCun/ZYNotes/tree/master/YYModelRead'">示例demo</span>
+    <span class="label label-success" style="cursor: pointer;" onclick="javascript:window.location.href='#copy'">NSArray/NSMutableArray等集合的copy与MutableCopy操作demo</span>
 </div>
 
 <div class="contentBgDiv">
@@ -46,7 +47,7 @@
     <pre>
         /**
          class:获取方法调用类名
-         superclass:获取方法调用者的父类类名
+         superclass:获取方法调用者的父类类名 NSObject superClass指向null
          super:编译修饰符,不是指针,指向父类标志,
          本质还是拿到当前对象去调用父类的方法
          注意:super并不是拿到父类对象去调用父类方法
@@ -144,6 +145,59 @@
         }
 
     </pre>
+
+    <p class="smallTitle" id="copy">6. NSArray/NSMutableArray等集合的copy与MutableCopy操作</p>
+    <pre>
+
+        NSArray *arr = [NSArray arrayWithObjects:@"1", @"2", nil];
+        NSMutableArray *mutArr = [NSMutableArray arrayWithObjects:@"3",@"4", nil];
+
+        /** 0x60800002ba20, 0x608000046870*/
+        NSLog(@"%p, %p", arr, mutArr);
+
+        id arrCopy = [arr copy];
+        id arrMutableCopy = [arr mutableCopy];
+
+        NSLog(@"arr %p %p %d %d %d %d %@ %@", arrCopy, arrMutableCopy, [arrCopy isKindOfClass:[NSArray class]],
+        [arrMutableCopy isKindOfClass:[NSArray class]], [arrCopy isKindOfClass:[NSMutableArray class]],
+        [arrMutableCopy isKindOfClass:[NSMutableArray class]], arrCopy, arrMutableCopy);
+
+        /**
+         arr 0x60800002ba20 0x600000049b10 1 1 0 1 (
+         1,
+         2
+         ) (
+         1,
+         2
+
+         结论：
+         <b>1.对不可变数组的copy操作是地址的引用（浅拷贝）,mutableCopy操作是深拷贝</b>
+         <b>2.对不可变素组操作copy与mutableCopy后的对象都是不可变类型</b>
+         */
+
+        id mutArrCopy = [mutArr copy];
+        id mutArrMutableCopy = [mutArr mutableCopy];
+
+        NSLog(@"mutArr %p %p %d %d %d %d %@ %@", mutArrCopy, mutArrMutableCopy,
+        [mutArrCopy isKindOfClass:[NSArray class]], [mutArrMutableCopy isKindOfClass:[NSArray class]],
+        [mutArrCopy isKindOfClass:[NSMutableArray class]], [mutArrMutableCopy isKindOfClass:[NSMutableArray class]],
+        mutArrCopy, mutArrMutableCopy);
+
+        /**
+        mutArr 0x60000002dc20 0x600000049a50 1 1 0 1 (
+            3,
+            4
+        ) (
+            3,
+            4
+        )
+
+         结论：
+         <b>1.对可变数组的copy操作后的对象是不可变数组,mutableCopy操作可变数组</b>
+         <b>2.对可变素组操作copy与mutableCopy都是深拷贝</b>
+         */
+    </pre>
+
 </div>
 
 </body>

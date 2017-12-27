@@ -282,7 +282,7 @@
 
     </pre>
 
-    <p class="contents">_update:清空当前 YYClassInfo 实例变量，方法以及属性，之后再重新初始化它们。</p>
+    <p class="contents">_update:清空当前 _ivarInfos( 实例变量) _methodInfos(方法)以及_propertyInfos(属性)，之后再重新初始化它们。</p>
 
     <pre>
         - (void)_update {
@@ -341,6 +341,308 @@
         NSObject+YYModel 在 YYModel 中担当的责任则是利用 YYClassInfo 层级封装好的类切实的执行 JSON 模型之间的转换逻辑
     </p>
 
+    <p class="smallTitle">_YYModelMeta</p>
+    <p class="contents">
+        _YYModelMeta 表示模型的类信息，它包含 YYClassInfo。
+    </p>
+    <pre>
+         @package
+        YYClassInfo *_classInfo;
+
+        // Key:被映射的 key 与 keyPath, Value:_YYModelPropertyMeta.
+        NSDictionary *_mapper;
+        //Array&lt;_YYModelPropertyMeta&gt;, 当前模型的所有 _YYModelPropertyMeta 数组
+        NSArray *_allPropertyMetas;
+        //Array&lt;_YYModelPropertyMeta&gt;, 被映射到 keyPath 的 _YYModelPropertyMeta 数组
+        NSArray *_keyPathPropertyMetas;
+        //Array&lt;_YYModelPropertyMeta&gt;, 被映射到多个 key 的 _YYModelPropertyMeta 数组
+        NSArray *_multiKeysPropertyMetas;
+        //映射 key 与 keyPath 的数量，等同于 _mapper.count
+        NSUInteger _keyMappedCount;
+        //模型 class 类型
+        YYEncodingNSType _nsType;
+
+        BOOL _hasCustomWillTransformFromDictionary;
+        BOOL _hasCustomTransformFromDictionary;
+        BOOL _hasCustomTransformToDictionary;
+        BOOL _hasCustomClassFromDictionary;
+    </pre>
+
+    <p class="smallTitle">_YYModelMeta的初始化方法</p>
+    <p class="contents">
+        - (instancetype)initWithClass:(Class)cls 用来处理外部重写的协议里的方法, 并生成一个封装好属性的
+        以属性名为key,_YYModelPropertyMeta为值的字典, 然后用该字典赋值给_YYModelMeta的各个成员变量
+    </p>
+    <pre>
+        - (instancetype)initWithClass:(Class)cls {
+
+        // 根据类 生成 抽象的ClassInfo 类
+        YYClassInfo *classInfo = [YYClassInfo classInfoWithClass:cls];
+        if (!classInfo) return nil;
+        self = [super init];
+
+        // Get black list
+        //  黑名单，在转换过程中会忽略数组中属性
+        NSSet *blacklist = nil;
+        if ([cls respondsToSelector:@selector(modelPropertyBlacklist)]) {
+            NSArray *properties = [(id&lt;YYModel&gt;)cls modelPropertyBlacklist];
+            if (properties) {
+                blacklist = [NSSet setWithArray:properties];
+            }
+        }
+
+        // Get white list
+        // 白名单，转换过程 中处理 数组内的属性，不处理数组外的数据
+        NSSet *whitelist = nil;
+        if ([cls respondsToSelector:@selector(modelPropertyWhitelist)]) {
+            NSArray *properties = [(id&lt;YYModel&gt;)cls modelPropertyWhitelist];
+            if (properties) {
+                whitelist = [NSSet setWithArray:properties];
+            }
+        }
+
+        // Get container property's generic class
+        //获取 容器内部制定的类型字典
+        /**
+        比如：
+        @{
+        @"shadows" : [Shadow class],
+        @"borders" : Border.class,
+        @"attachments" : @"Attachment"
+        };
+
+        转变为：
+        @{
+        @"shadows" : Shadow,
+        @"borders" : Border,
+        @"attachments" : Attachment
+        };
+        */
+        NSDictionary *genericMapper = nil;
+        if ([cls respondsToSelector:@selector(modelContainerPropertyGenericClass)]) {
+            genericMapper = [(id&lt;YYModel&gt;)cls modelContainerPropertyGenericClass];
+
+            if (genericMapper) {
+
+                NSMutableDictionary *tmp = [NSMutableDictionary new];
+                [genericMapper enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                //key一定是字符串 不给字符串不处理
+                    if (![key isKindOfClass:[NSString class]]) return;
+
+                    Class meta = object_getClass(obj);
+                    if (!meta) return;
+
+                    //是元类直接赋值
+                    if (class_isMetaClass(meta)) {
+
+                     tmp[key] = obj;
+
+                    } else if ([obj isKindOfClass:[NSString class]]) {
+
+                         Class cls = NSClassFromString(obj);
+
+                        if (cls) {
+                            tmp[key] = cls;
+                        }
+                    }
+                }];
+
+                genericMapper = tmp;
+             }
+        }
+
+        // Create all property metas.
+        //获取 所有的属性
+        NSMutableDictionary *allPropertyMetas = [NSMutableDictionary new];
+        YYClassInfo *curClassInfo = classInfo;
+        //向上层便利类，直到父类为null，目的是获取所有的属性
+        while (curClassInfo && curClassInfo.superCls != nil) { // recursive parse super class, but ignore root class (NSObject/NSProxy)
+
+            //字典的值存的是属性:YYClassPropertyInfo
+            for (YYClassPropertyInfo *propertyInfo in curClassInfo.propertyInfos.allValues) {
+
+                    if (!propertyInfo.name) continue;
+
+                    //移除黑名单
+                    if (blacklist && [blacklist containsObject:propertyInfo.name]) continue;
+                    //处理外部重写的白名单
+                    if (whitelist && ![whitelist containsObject:propertyInfo.name]) continue;
+
+                    //创建对该条属性的抽象类
+                    _YYModelPropertyMeta *meta = [_YYModelPropertyMeta metaWithClassInfo:classInfo
+                    propertyInfo:propertyInfo
+                    generic:genericMapper[propertyInfo.name]];
+                    if (!meta || !meta->_name) continue;
+
+                    if (!meta->_getter || !meta->_setter) continue;
+
+                        //如果已经存在该属性 则跳过
+                        if (allPropertyMetas[meta->_name]) continue;
+                              allPropertyMetas[meta->_name] = meta;
+                        }
+
+                        //指向父类 以此遍历
+                          curClassInfo = curClassInfo.superClassInfo;
+                    }
+
+                    if (allPropertyMetas.count) _allPropertyMetas = allPropertyMetas.allValues.copy;
+
+                    // create mapper
+                    NSMutableDictionary *mapper = [NSMutableDictionary new];
+                    NSMutableArray *keyPathPropertyMetas = [NSMutableArray new];
+                    NSMutableArray *multiKeysPropertyMetas = [NSMutableArray new];
+
+                    if ([cls respondsToSelector:@selector(modelCustomPropertyMapper)]) {
+
+                        //获取自定义的字典
+                        NSDictionary *customMapper = [(id &lt;YYModel&gt;)cls modelCustomPropertyMapper];
+                            //遍历字典
+                            [customMapper enumerateKeysAndObjectsUsingBlock:^(NSString *propertyName, NSString *mappedToKey, BOOL *stop) {
+
+                                //根据名字 在 全部属性字典中取出与之相对应的属性抽象类
+                                _YYModelPropertyMeta *propertyMeta = allPropertyMetas[propertyName];
+                                if (!propertyMeta) return;
+
+                                //如果重写了 属性映射 则先移除原来的属性映射关系
+                                [allPropertyMetas removeObjectForKey:propertyName];
+
+                                //_mappedToKey 或者 _mappedToKeyPath 的情况
+                                /**
+                                比如：
+                                @{@"name"  : @"n",
+                                @"page"  : @"p",
+                                @"desc"  : @"ext.desc",
+                                };
+                                */
+                                if ([mappedToKey isKindOfClass:[NSString class]]) {
+                                if (mappedToKey.length == 0) return;
+
+                                    //给_mappedToKey赋值
+                                    propertyMeta->_mappedToKey = mappedToKey;
+                                    NSArray *keyPath = [mappedToKey componentsSeparatedByString:@"."];
+                                    for (NSString *onePath in keyPath) {
+
+                                        //移除空字符串
+                                        if (onePath.length == 0) {
+                                            NSMutableArray *tmp = keyPath.mutableCopy;
+                                            [tmp removeObject:@""];
+                                            keyPath = tmp;
+                                            break;
+                                        }
+                                    }
+
+                                    //给_mappedToKeyPath赋值
+                                    if (keyPath.count > 1) {
+
+                                        propertyMeta->_mappedToKeyPath = keyPath;
+                                        [keyPathPropertyMetas addObject:propertyMeta];
+                                    }
+
+                                    //指向下个属性
+                                    propertyMeta->_next = mapper[mappedToKey] ?: nil;
+                                    mapper[mappedToKey] = propertyMeta;
+
+                                    } else if ([mappedToKey isKindOfClass:[NSArray class]]) {
+
+                                    //_mappedToKeyArray的情况
+                                    /**
+                                    比如:
+                                    @{
+                                    @"bookID": @[@"id", @"ID", @"book_id"]
+                                    }
+                                    */
+
+                                    NSMutableArray *mappedToKeyArray = [NSMutableArray new];
+
+                                    //遍历数组中的每个字符串做判断
+                                    for (NSString *oneKey in ((NSArray *)mappedToKey)) {
+                                        if (![oneKey isKindOfClass:[NSString class]]) continue;
+                                        if (oneKey.length == 0) continue;
+
+                                        NSArray *keyPath = [oneKey componentsSeparatedByString:@"."];
+
+                                        if (keyPath.count > 1) {
+
+                                            //_mappedToKeyPath情况
+                                            [mappedToKeyArray addObject:keyPath];
+                                        } else {
+
+                                            //_mappedToKey情况
+                                            [mappedToKeyArray addObject:oneKey];
+                                        }
+
+                                        //如果是propertyMeta->_mappedToKey不存在
+                                        if (!propertyMeta->_mappedToKey) {
+                                            propertyMeta->_mappedToKey = oneKey;
+                                            propertyMeta->_mappedToKeyPath = keyPath.count > 1 ? keyPath : nil;
+                                        }
+                                    }
+                                    if (!propertyMeta->_mappedToKey) return;
+
+                                    //给_mappedToKeyArray赋值
+                                    propertyMeta->_mappedToKeyArray = mappedToKeyArray;
+
+                                    [multiKeysPropertyMetas addObject:propertyMeta];
+
+                                    propertyMeta->_next = mapper[mappedToKey] ?: nil;
+                                    mapper[mappedToKey] = propertyMeta;
+                                }
+                            }];
+                        }
+
+                        [allPropertyMetas enumerateKeysAndObjectsUsingBlock:^(NSString *name, _YYModelPropertyMeta *propertyMeta, BOOL *stop) {
+
+                        //遍历赋值 链表指向下一个_YYModelPropertyMeta抽象类
+                        propertyMeta->_mappedToKey = name;
+                        propertyMeta->_next = mapper[name] ?: nil;
+                        mapper[name] = propertyMeta;
+                        }];
+
+                        if (mapper.count) _mapper = mapper;
+                        if (keyPathPropertyMetas) _keyPathPropertyMetas = keyPathPropertyMetas;
+                        if (multiKeysPropertyMetas) _multiKeysPropertyMetas = multiKeysPropertyMetas;
+
+                        _classInfo = classInfo;
+                        _keyMappedCount = _allPropertyMetas.count;
+                        _nsType = YYClassGetNSType(cls);
+                        _hasCustomWillTransformFromDictionary = ([cls instancesRespondToSelector:@selector(modelCustomWillTransformFromDictionary:)]);
+                        _hasCustomTransformFromDictionary = ([cls instancesRespondToSelector:@selector(modelCustomTransformFromDictionary:)]);
+                        _hasCustomTransformToDictionary = ([cls instancesRespondToSelector:@selector(modelCustomTransformToDictionary:)]);
+                        _hasCustomClassFromDictionary = ([cls respondsToSelector:@selector(modelCustomClassForDictionary:)]);
+
+                        return self;
+                    }
+
+    </pre>
+
+    <p class="contents">+ (instancetype)metaWithClass:(Class)cls 主要操作的是_YYModelMeta的缓存, 这是一个YYModel优化了的地方, 锁的方式也变成了dispatch_semaphore_wait, 替代了OSSpinLock</p>
+    <pre>
+        + (instancetype)metaWithClass:(Class)cls {
+
+            if (!cls) return nil;
+            static CFMutableDictionaryRef cache;
+            static dispatch_once_t onceToken;
+            static dispatch_semaphore_t lock;
+            dispatch_once(&onceToken, ^{
+                cache = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+                lock = dispatch_semaphore_create(1);
+            });
+            dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+            _YYModelMeta *meta = CFDictionaryGetValue(cache, (__bridge const void *)(cls));
+            dispatch_semaphore_signal(lock);
+            if (!meta || meta->_classInfo.needUpdate) {
+                meta = [[_YYModelMeta alloc] initWithClass:cls];
+                if (meta) {
+                    dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+                    CFDictionarySetValue(cache, (__bridge const void *)(cls), (__bridge const void *)(meta));
+                    dispatch_semaphore_signal(lock);
+                }
+            }
+            return meta;
+        }
+
+    </pre>
+
     <p class="smallTitle">_YYModelPropertyMeta</p>
     <p class="contents">
         _YYModelPropertyMeta 表示模型对象中的属性信息，它包含 YYClassPropertyInfo。
@@ -374,33 +676,134 @@
         }
         @end
     </pre>
-
-    <p class="smallTitle">_YYModelMeta</p>
-    <p class="contents">
-        _YYModelMeta 表示模型的类信息，它包含 YYClassInfo。
-    </p>
     <pre>
-         @package
-        YYClassInfo *_classInfo;
+        + (instancetype)metaWithClassInfo:(YYClassInfo *)classInfo propertyInfo:(YYClassPropertyInfo *)propertyInfo
+        generic:(Class)generic
+        {
+            .....
 
-        // Key:被映射的 key 与 keyPath, Value:_YYModelPropertyMeta.
-        NSDictionary *_mapper;
-        //Array&lt;_YYModelPropertyMeta&gt;, 当前模型的所有 _YYModelPropertyMeta 数组
-        NSArray *_allPropertyMetas;
-        //Array&lt;_YYModelPropertyMeta&gt;, 被映射到 keyPath 的 _YYModelPropertyMeta 数组
-        NSArray *_keyPathPropertyMetas;
-        //Array&lt;_YYModelPropertyMeta&gt;, 被映射到多个 key 的 _YYModelPropertyMeta 数组
-        NSArray *_multiKeysPropertyMetas;
-        //映射 key 与 keyPath 的数量，等同于 _mapper.count
-        NSUInteger _keyMappedCount;
-        //模型 class 类型
-        YYEncodingNSType _nsType;
+            //这里是根据_YYModelMeta传过来的clsclassInfo,YYClassPropertyInfo生成一个_YYModelPropertyMeta
+            //虽然有点长,还是准备贴出来,看起来容易一些
+            if (!generic && propertyInfo.protocols) {
+                for (NSString *protocol in propertyInfo.protocols) {
+                    Class cls = objc_getClass(protocol.UTF8String);
+                    if (cls) {
+                        generic = cls;
+                        break;
+                    }
+                }
+            }
 
-        BOOL _hasCustomWillTransformFromDictionary;
-        BOOL _hasCustomTransformFromDictionary;
-        BOOL _hasCustomTransformToDictionary;
-        BOOL _hasCustomClassFromDictionary;
+            //根据_YYModelMeta传过来的类相关的信息赋值给_YYModelPropertyMeta
+            propertyInfo与classInfo已经在YYClassInfo.m中做了处理
+            _YYModelPropertyMeta *meta = [self new];
+            meta->_name = propertyInfo.name;
+            meta->_type = propertyInfo.type;
+            meta->_info = propertyInfo;
+            meta->_genericCls = generic;
+
+
+            //给需要转成的存储类型赋值 即:_nsType/_isCNumber  后续在ModelSetValueForProperty函数中根据meta->_nsType/_isCNumber给模型赋值
+            // 如果是object类型
+            if ((meta->_type & YYEncodingTypeMask) == YYEncodingTypeObject) {
+                meta->_nsType = YYClassGetNSType(propertyInfo.cls);
+            } else {
+                //否则判断是不是C 类型
+                meta->_isCNumber = YYEncodingTypeIsCNumber(meta->_type);
+            }
+            //结构体类型
+            if ((meta->_type & YYEncodingTypeMask) == YYEncodingTypeStruct) {
+                /*
+                 It seems that NSKeyedUnarchiver cannot decode NSValue except these structs:
+                 */
+                static NSSet *types = nil;
+                static dispatch_once_t onceToken;
+                dispatch_once(&onceToken, ^{
+                    NSMutableSet *set = [NSMutableSet new];
+
+                    //下面是一些支持归档的结构体类型
+                    // 32 bit
+                    [set addObject:@"{CGSize=ff}"];
+                    [set addObject:@"{CGPoint=ff}"];
+                    [set addObject:@"{CGRect={CGPoint=ff}{CGSize=ff}}"];
+                    [set addObject:@"{CGAffineTransform=ffffff}"];
+                    [set addObject:@"{UIEdgeInsets=ffff}"];
+                    [set addObject:@"{UIOffset=ff}"];
+                    // 64 bit
+                    [set addObject:@"{CGSize=dd}"];
+                    [set addObject:@"{CGPoint=dd}"];
+                    [set addObject:@"{CGRect={CGPoint=dd}{CGSize=dd}}"];
+                    [set addObject:@"{CGAffineTransform=dddddd}"];
+                    [set addObject:@"{UIEdgeInsets=dddd}"];
+                    [set addObject:@"{UIOffset=dd}"];
+                    types = set;
+                });
+                if ([types containsObject:propertyInfo.typeEncoding]) {
+                    meta->_isStructAvailableForKeyedArchiver = YES;
+                }
+            }
+
+            //类型
+            meta->_cls = propertyInfo.cls;
+
+            //外部是否重写了协议(@protocol YYModel &lt;NSObject&gt;)中的方法
+            if (generic) {
+                meta->_hasCustomClassFromDictionary = [generic respondsToSelector:@selector(modelCustomClassForDictionary:)];
+            } else if (meta->_cls && meta->_nsType == YYEncodingTypeNSUnknown) {
+                meta->_hasCustomClassFromDictionary = [meta->_cls respondsToSelector:@selector(modelCustomClassForDictionary:)];
+            }
+
+            //给getter赋值
+            if (propertyInfo.getter) {
+                if ([classInfo.cls instancesRespondToSelector:propertyInfo.getter]) {
+                    meta->_getter = propertyInfo.getter;
+                }
+            }
+
+            //给setter赋值
+            if (propertyInfo.setter) {
+                if ([classInfo.cls instancesRespondToSelector:propertyInfo.setter]) {
+                    meta->_setter = propertyInfo.setter;
+                }
+            }
+
+            //给是否支持kvc赋值
+            if (meta->_getter && meta->_setter) {
+                /*
+                 KVC invalid type:
+                 long double
+                 pointer (such as SEL/CoreFoundation object)
+                 */
+                switch (meta->_type & YYEncodingTypeMask) {
+                    case YYEncodingTypeBool:
+                    case YYEncodingTypeInt8:
+                    case YYEncodingTypeUInt8:
+                    case YYEncodingTypeInt16:
+                    case YYEncodingTypeUInt16:
+                    case YYEncodingTypeInt32:
+                    case YYEncodingTypeUInt32:
+                    case YYEncodingTypeInt64:
+                    case YYEncodingTypeUInt64:
+                    case YYEncodingTypeFloat:
+                    case YYEncodingTypeDouble:
+                    case YYEncodingTypeObject:
+                    case YYEncodingTypeClass:
+                    case YYEncodingTypeBlock:
+                    case YYEncodingTypeStruct:
+                    case YYEncodingTypeUnion: {
+                        meta->_isKVCCompatible = YES;
+                    } break;
+                    default: break;
+                }
+            }
+
+            return meta;
+        }
+
+        }
     </pre>
+
+
 
     <p class="smallTitle">实用篇:JSON 与 Model 相互转换</p>
     <p class="contents">j2m:JSON->Model</p>
