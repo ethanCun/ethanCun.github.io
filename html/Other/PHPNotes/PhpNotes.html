@@ -71,10 +71,43 @@
     <p class="contents">
         修改apache默认端口:
         通过localhost或者127.0.0.1访问，表示默认的端口是80，有时候如果80端口被占用了，就得换个端口试试了。同样是在httpd.conf下面，找到Listen 80 那一行，修改成你想要的端口即可。
-    <p class="contents"> php正则表达式： </p>
 
 
-    <p class="contents"> //定界符:不能用a-z A-Z 0-9 \ 必须成对出现 如#\/# </p>
+    <p class="smallTitle"> php正则表达式： </p>
+
+    <p class="contents">
+        语法:/正则表达式主体/修饰符(可选)
+    </p>
+
+    <b>正则表达式修饰符
+    </b>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>修饰符</th>
+            <th>描述</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>i</td>
+            <td>执行对大小写不敏感的匹配。</td>
+        </tr>
+        <tr>
+            <td>g</td>
+            <td>执行全局匹配（查找所有匹配而非在找到第一个匹配后停止）。</td>
+        </tr>
+        <tr>
+            <td>m</td>
+            <td>执行多行匹配。</td>
+        </tr>
+        </tbody>
+    </table>
+
+
+
+    <p id="RegularExpression" class="contents"> //定界符:不能用a-z A-Z 0-9 \ 必须成对出现 如#\/# </p>
 
     <div class="codeAero">
 
@@ -84,7 +117,7 @@
             // \D = [^0-9]<br>
             // \w = [a-zA-Z0-9_]<br>
             // \W = [^a-zA-Z0-9_]<br>
-            // \s = [/r/t/n/f]<br>
+            // \s = [/r/t/n/f] 查找空白字符。<br>
             // \S = [^/r/t/n/f] ^:抑扬符<br><br>
 
             //元字符:可以匹配多个字符<br>
