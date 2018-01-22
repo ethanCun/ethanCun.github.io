@@ -348,6 +348,26 @@
     </div>
 
 
+    <div class="jumbotron">
+
+        <div class="container">
+
+            <h2>iOS内存检测与优化之Analyze静态分析与Instruments动态监测</h2>
+            <p>
+                Objective_C 有3种内存管理方法:<br>
+                1. MRR<br>
+                ① 也称为 MRC(Manual Reference Counting, 手动引用计数)<br>
+                ② 由程序员自己负责管理对象生命周期,负责对象的创建和销毁.<br><br>
+
+                2. ARC<br>
+                ① 采用和 MRR 一样的内存引用计数管理方法。<br>
+                ② 在编译时会在适合的位置插入对象内存释放, (如 release, autorelease, 和 retain 等),<br>
+                ③ 程序员不用关心对象释放的问题, 苹果推荐在新项目中使用 ARC, 但在 iOS5之前的系统中不能采用 ARC...
+            </p>
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='instruments.html'">查看更多</button>
+        </div>
+    </div>
+
 
 
 </div>
