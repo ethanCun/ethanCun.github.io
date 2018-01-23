@@ -17,8 +17,22 @@
 
 <div class="contentBgDiv">
     <p class="title">Swift那些搞过却又容易忘记的东东</p>
+    <hr>
 
-    <p class="smallTitle"><b>一、swift 调用oc库</b></p>
+    <ul>
+        <li><a href="#mark">swift中的mark</a> </li>
+        <li><a href="#swift">swift 调用oc库</a> </li>
+        <li><a href="#swiftInOc">oc工程使用swift库</a></li>
+        <li><a href="#try">call can throw but is mot marked with try...</a> </li>
+        <li><a href="#ocInSwift">swift项目中使用oc框架不提示方法</a> </li>
+        <li><a href="#stringTransfer">关于变量类型</a> </li>
+        <li><a href="#class">获取对象类型</a> </li>
+        <li><a href="#after">swift的延时操作</a> </li>
+        <li><a href="#mean">$0、$1的实际含义</a> </li>
+        <li><a href="#lazy">swift中的数组与懒加载</a> </li>
+    </ul>
+
+    <p class="smallTitle" id="swift"><b>swift 调用oc库</b></p>
 
 
     <p class="contents">
@@ -27,7 +41,7 @@
 
     <a target="_blank"
        href="http://upload-images.jianshu.io/upload_images/3251504-28538c944470898a.png?imageMogr2/auto-orient/strip"><img
-            src="http://upload-images.jianshu.io/upload_images/3251504-28538c944470898a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+            src="http://upload-images.jianshu.io/upload_images/3251504-28538c944470898a.png?imageMogr2/auto-orient/strip"></a>
 
     <p class="contents">
         2、设置路径 target -> building settings -> swift compiler -> objective-c bridging header
@@ -44,28 +58,51 @@
 
     <a target="_blank"
        href="http://upload-images.jianshu.io/upload_images/3251504-cacc0ac39568debc.png?imageMogr2/auto-orient/strip%7CimageView2/2/format/jpg"><img
-            src="http://upload-images.jianshu.io/upload_images/3251504-cacc0ac39568debc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240/format/jpg"></a>
+            src="http://upload-images.jianshu.io/upload_images/3251504-cacc0ac39568debc.png?imageMogr2/auto-orient/strip%7CimageView2/2/format/jpg"></a>
 
-    <p class="smallTitle"><b>二、oc工程使用swift库</b></p>
+    <p class="smallTitle" id="swiftInOc"><b>oc工程使用swift库</b></p>
 
     <br>
 
     <p class="contents">
         在需要使用的地方添加：项目名称-Swift.h
     </p>
+    <p class="contents">如果oc中调用不了swift方法,请在前面加上@objc</p>
+    <p class="contents">原因:</p>
+    <pre>
+            Objective-C和Swift在底层使用的是两套完全不同的机制，Cocoa中的Objective-C对象是基于运行时的，
+        它从骨子里遵循了KVC（Key-Value Coding，通过类似字典的方式存储对象信息）以及动态派发
+        （Dynamic Dispatch，在运行调用时再决定实际调用的具体实现）。
 
-    <p class="smallTitle"><b>三、call can throw but is mot marked with try...</b></p>
+            而Swift为了追求性能，如果没有特殊需要的话，是不会在运行时再来决定这些的。
+        也就是说，Swift类型的成员或者方法在编译时就已经决定，而运行时便不再需要经过一次查找，
+        而可以直接使用。
+
+            显而易见，这带来的问题是如果我们要使用Objective-C的代码或者特性来调用纯Swift的类型时候，
+        我们会因为找不到所需要的这些运行时信息，而导致失败。解决起来也很简单，在Swift类型文件中，
+        我们可以将需要暴露给Objective-C使用的任何地方（包括类，属性和方法等）的声明前面加上
+        @objc修饰符。注意这个步骤只需要对那些不是继承自NSObject的类型进行，
+        如果你用Swift写的class是继承自NSObject的话，Swift会默认自动为所有的非private的类和成员加上@objc。
+        这就是说，对一个NSObject的子类，你只需要导入相应的头文件就可以在Objective-C里使用这个类了。
+
+            添加@objc修饰符并不意味着这个方法或者属性会变成动态派发，Swift依然可能会将其优化为静态调用。
+        如果你需要和Objective-C里动态调用时相同的运行时特性的话，你需要使用的修饰符是dynamic。
+        一般情况下在做App开发时应该用不上，但是在施展一些像动态替换方法或者运行时再决定实现这样的
+        "黑魔法" 的时候，我们就需要用到dynamic修饰符了。
+    </pre>
+
+    <p class="smallTitle" id="try"><b>call can throw but is mot marked with try...</b></p>
 
     <br>
 
     <a target="_blank"
        href="http://upload-images.jianshu.io/upload_images/3251504-74e7b9d11c100885.png?imageMogr2/auto-orient/strip"><img
-            src="http://upload-images.jianshu.io/upload_images/3251504-74e7b9d11c100885.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+            src="http://upload-images.jianshu.io/upload_images/3251504-74e7b9d11c100885.png?imageMogr2/auto-orient/strip"></a>
     <p class="contents">错误示意图1</p>
 
     <a target="_blank"
        href="http://upload-images.jianshu.io/upload_images/3251504-5d55359915853406.png?imageMogr2/auto-orient/strip"><img
-            src="http://upload-images.jianshu.io/upload_images/3251504-5d55359915853406.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+            src="http://upload-images.jianshu.io/upload_images/3251504-5d55359915853406.png?imageMogr2/auto-orient/strip"></a>
     <p class="contents">没有使用try.png</p>
 
     <p class="contents">
@@ -74,10 +111,10 @@
 
     <a target="_blank"
        href="http://upload-images.jianshu.io/upload_images/3251504-272f9efe48bb346a.png?imageMogr2/auto-orient/strip"><img
-            src="http://upload-images.jianshu.io/upload_images/3251504-272f9efe48bb346a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/320"></a>
+            src="http://upload-images.jianshu.io/upload_images/3251504-272f9efe48bb346a.png?imageMogr2/auto-orient/strip"></a>
     <p class="contents">do catch+try.png</p>
 
-    <p class="smallTitle"><b>四、swift项目中使用oc框架不提示方法</b></p>
+    <p class="smallTitle" id="ocInSwift"><b>swift项目中使用oc框架不提示方法</b></p>
 
     <br>
 
@@ -102,7 +139,7 @@
         如果还是没用：在使用的地方再导入一次，如：import XMLReader
     </p>
 
-    <p class="smallTitle"><b>五、关于变量类型</b></p>
+    <p class="smallTitle" id="stringTransfer"><b>关于变量类型</b></p>
 
     <br>
 
@@ -115,7 +152,77 @@
         print(NSStrinwg(string:s).intValue+1)<br>
     </p>
 
+    <p class="smallTitle" id="class"><b>获取对象类型</b></p>
+    <pre>
+        object_getClass(&lt;#T##obj: AnyObject!##AnyObject!#&gt;)
+        tableView.register(object_getClass(UITableViewCell()), forCellReuseIdentifier: "hehe")
+    </pre>
+
+    <p class="smallTitle" id="after"><b>swift的延时操作</b></p>
+    <pre>
+        //延时1秒执行
+        let time: TimeInterval = 1.0
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + time) {
+          //code
+          print("1 秒后输出")
+        }
+    </pre>
+
+    <p class="smallTitle" id="mean"><b>$0、$1的实际含义</b></p>
+    <p class="contents">
+        swift自动为闭包提供参数名缩写功能，可以直接通过$0和$1等来表示闭包中的第一个第二个参数，并且对应的参数类型会根据函数类型来进行判断。如下代码：
+    </p>
+    <pre>
+        let nums = [3,7,90,1,2,3,4,5,6,7]
+
+        let sortNums = nums.sorted(by: { (a, b) -> Bool in
+
+            return a < b
+        })
+
+        let sortNums2 = nums.sorted(by: {$0 < $1})
+
+        print("sortNums = \(sortNums)\nsortNums2=\(sortNums2)")
+    </pre>
+    <p class="contents">
+        输出结果:
+    </p>
+    <pre>
+        sortNums = [1, 2, 3, 3, 4, 5, 6, 7, 7, 90]
+        sortNums2=[1, 2, 3, 3, 4, 5, 6, 7, 7, 90]
+    </pre>
+
+    <p class="smallTitle" id="mark"><b>swift中的mark</b></p>
+    <pre>
+        oc:#pragma mark -说明文字
+        swift:  // MARK: - 说明文字,带分割线
+                // MARK: 说明文字,不带分割线
+    </pre>
+
+    <p class="smallTitle" id="lazy"><b>swift中的数组与懒加载</b></p>
+    <p class="contents">
+        使用let修饰的数组是不可变数组:let array2 : [NSObject] = ["age", 18]<br>
+        使用var修饰的数组是可变数组:var array1 : [String] = [String]()
+    </p>
+    <pre>
+        var datas:[String?] = {
+
+            () -> [String?] in
+
+            var dataSources:[String?] = [String?]()
+
+            for i:Int in 0...5 {
+
+                    dataSources.append(String.init(format: "第%ld个", i))
+            }
+
+            return  dataSources
+        }()
+    </pre>
+
     <br>
+
+
 </div>
 
 </body>
