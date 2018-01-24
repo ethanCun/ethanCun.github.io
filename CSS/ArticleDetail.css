@@ -115,3 +115,8 @@ pre{
 
     margin:  10px 20px !important;
 }
+
+td, th {
+    padding: 0;
+    text-align: center;
+}

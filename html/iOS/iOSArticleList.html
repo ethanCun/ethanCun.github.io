@@ -23,6 +23,25 @@
     <div class="jumbotron">
 
         <div class="container">
+
+            <h2>nil, Nil, NULL和NSNull的区别</h2>
+            <p>
+                Technically they're all the same, but in practice they give someone reading your code some hints about what's going on;
+                just like naming classes with a capital letter and instances with lowercase is recommended, but not required.
+
+                If someone sees you passing NULL, they know the receiver expects a C pointer.
+                If they see nil, they know the receiver is expecting an object.
+                If they see Nil, they know the receiver is expecting a class. Readability.
+            </p>
+
+            <button type="button" class="btn btn-warning" onclick="javascript:window.location.href='Null/Null.html'">查看更多</button>
+
+        </div>
+    </div>
+
+    <div class="jumbotron">
+
+        <div class="container">
             <h2>购物车:仿淘宝购物订单逻辑</h2>
             <p>设计模式MVC 控制器450行代码 cell 280行代码 实现类似淘宝购物车的选择，编辑，删除等功能<br>
                 使用YYModel管理数据结构</p>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>nil, Nil, NULL和NSNull的区别</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">nil, Nil, NULL和NSNull的区别</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">nil, Nil, NULL和NSNull的区别</p>
+    <hr>
+
+    <p class="contents">先看一段解释</p>
+    <pre>
+        Technically they're all the same, but in practice they give someone reading your code some hints about what's going on;
+        just like naming classes with a capital letter and instances with lowercase is recommended, but not required.
+
+        If someone sees you passing NULL, they know the receiver expects a C pointer.
+        If they see nil, they know the receiver is expecting an object.
+        If they see Nil, they know the receiver is expecting a class. Readability.
+    </pre>
+
+    <p class="contents">
+
+        翻译过来:<br>
+        nil、Nil、NULL三个关键字和NSNull类都是表示空，只是用处不一样<br>
+        用到了NULL就知道这是个C指针，看到nil就知道这是个Objective-C对象，看到Nil就知道这是个Class类型的数据。<br>
+        NSNull是一个Objective-C类，只不过这个类相当特殊，因为它表示的是空值，即什么都不存。它也只有一个单例方法+[NSUll null]。该类通常用于在集合对象中保存一个空的占位对象。<br>
+    </p>
+
+    <table class="table table-bordered" style="margin: 10%; width: 80%; margin-top: 10px; margin-bottom: 10px">
+
+        <thead>
+            <tr>
+                <td>Symbol</td>
+                <td>value</td>
+                <td>Meaning</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>NULL</td>
+                <td>(void *)0</td>
+                <td>literal null value for C pointers</td>
+            </tr>
+            <tr>
+                <td>nil</td>
+                <td>(id)0</td>
+                <td>literal null value for Objective-C objects</td>
+            </tr>
+            <tr>
+                <td>Nil</td>
+                <td>(Class)0</td>
+                <td>literal null value for Objective-C classes</td>
+            </tr>
+            <tr>
+                <td>NSNull</td>
+                <td>[NSNull null]</td>
+                <td>singleton object used to represent null</td>
+            </tr>
+        </tbody>
+
+    </table>
+
+
+    <p class="contents"><b>NULL：基本数据对象指针为空</b></p>
+    <p class="contents">
+        用于c语言的各种数据类型的指针为空:int *p = NULL;
+    </p>
+
+    <p class="contents"><b>nil：对象为空</b></p>
+    <p class="contents">
+        定义某一实例对象为空值:NSObject* obj = nil;
+    </p>
+
+    <p class="contents"><b>Nil：类为空</b></p>
+    <p class="contents">
+        定义某一类为空:Class someCls = Nil;
+    </p>
+
+    <p class="contents"><b>NSNull:表示nil值,NSNull 提供了一个单一实例用于表示对象属性中的的nil值。 </b></p>
+    <pre>
+        @interface NSNull : NSObject &lt;NSCopying, NSSecureCoding&gt;
+
+        + (NSNull *)null;
+
+        @end
+
+        NSMutableDictionary *paras = [NSMutableDictionary dictionary];
+        [paras setObject:[NSNull null] forKey:@"null1"];
+        NSLog(@"p1 = %@", paras); // 输出:p1 = {null1 = "&lt;null&gt;"};
+
+        [paras setObject:nil forKey:@"nil1"]; //崩溃:'-[__NSDictionaryM setObject:forKey:]: object cannot be nil (key: nil1)'
+        NSLog(@"p2 = %@", paras);
+    </pre>
+
+    <p class="contents"><b>tips:</b> NSNull在数组中的应用</p>
+    <pre>
+        NSObject *obj1 = [[NSObject alloc] init];
+        NSObject *obj2 = [NSNull null];
+        NSObject *obj3 = [NSObject new];
+        NSObject *obj4;
+        NSArray *arr1 = [NSArray arrayWithObjects:obj1, obj2, obj3, obj4, nil, nil];
+        NSLog(@"arr1 count: %ld", [arr1 count]);    //arr1 count: 3
+
+
+        NSObject *obj1;
+        NSObject *obj2 = [[NSObject alloc] init];
+        NSObject *obj3 = [NSNull null];
+        NSObject *obj4 = [NSObject new];
+        NSArray *arr2 = [NSArray arrayWithObjects:obj1, obj2, obj3, obj4, nil, nil];
+        NSLog(@"arr2 count: %ld", [arr2 count]);   //arr2 count: 0
+    </pre>
+    <p class="contents">
+        原因:NSArray是以nil结尾的,当NSArray里遇到nil时，就说明这个数组对象的元素截止了，即NSArray只关注nil之前的对象，nil之后的对象会被抛弃。
+    </p>
+
+    <br>
+</div>
+
+
+
+</body>
+</html>

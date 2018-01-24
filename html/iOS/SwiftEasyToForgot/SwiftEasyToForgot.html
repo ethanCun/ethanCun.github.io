@@ -30,6 +30,10 @@
         <li><a href="#after">swift的延时操作</a> </li>
         <li><a href="#mean">$0、$1的实际含义</a> </li>
         <li><a href="#lazy">swift中的数组与懒加载</a> </li>
+        <li><a href="#error1">Property 'self.backgroundLabBgColor' not initialized at super.init - Delegate</a> </li>
+        <li><a href="#objc">@objc,@nonobjc与@objcMembers</a> </li>
+        <li><a href="#closure">swift中的闭包</a> </li>
+        <li><a href="#setget">swift中的set与get</a> </li>
     </ul>
 
     <p class="smallTitle" id="swift"><b>swift 调用oc库</b></p>
@@ -89,6 +93,60 @@
         如果你需要和Objective-C里动态调用时相同的运行时特性的话，你需要使用的修饰符是dynamic。
         一般情况下在做App开发时应该用不上，但是在施展一些像动态替换方法或者运行时再决定实现这样的
         "黑魔法" 的时候，我们就需要用到dynamic修饰符了。
+    </pre>
+
+    <p class="contents" id="objc"><b>@objc,@nonobjc,@objcMembers</b></p>
+    <pre>
+          1，过去的情况（Swift3）
+        （1）在项目中如果想把 Swift 写的 API 暴露给 Objective-C 调用，需要增加 @objc。
+            在 Swift 3 中，编译器会在很多地方为我们隐式的加上 @objc。
+        （2）比如当一个类继承于 NSObject，那么这个类的所有方法都会被隐式的加上 @objc。
+        class MyClass: NSObject {
+            func print() { } // 包含隐式的 @objc
+            func show() { } // 包含隐式的 @objc
+        }
+        （3）但这样做很多并不需要暴露给 Objective-C 也被加上了 @objc。而大量 @objc 会导致二进制文件大小的增加。
+
+        2，现在的情况（Swift4）
+        （1）在 Swift 4 中隐式 @objc 自动推断只会发生在下面这种必须要使用 @objc 的情况：
+            覆盖父类的 Objective-C 方法
+            符合一个 Objective-C 的协议
+
+        （2）大多数地方必须手工显示地加上 @objc。
+        class MyClass: NSObject {
+            @objc func print() { } //显示的加上 @objc
+            @objc func show() { } //显示的加上 @objc
+        }
+
+        （3）如果在类前加上 @objcMembers，那么它、它的子类、扩展里的方法都会隐式的加上 @objc。
+        @objcMembers
+        class MyClass: NSObject {
+            func print() { } //包含隐式的 @objc
+            func show() { } //包含隐式的 @objc
+        }
+
+        extension MyClass {
+            func baz() { } //包含隐式的 @objc
+        }
+
+        （4）如果在扩展（extension）前加上 @objc，那么该扩展里的方法都会隐式的加上 @objc。
+        class SwiftClass { }
+
+        @objc extension SwiftClass {
+            func foo() { } //包含隐式的 @objc
+            func bar() { } //包含隐式的 @objc
+        }
+
+        （5）如果在扩展（extension）前加上 @nonobjc，那么该扩展里的方法都不会隐式的加上 @objc。
+        @objcMembers
+        class MyClass : NSObject {
+            func wibble() { } //包含隐式的 @objc
+        }
+
+        @nonobjc extension MyClass {
+            func wobble() { } //不会包含隐式的 @objc
+        }
+
     </pre>
 
     <p class="smallTitle" id="try"><b>call can throw but is mot marked with try...</b></p>
@@ -218,6 +276,105 @@
 
             return  dataSources
         }()
+    </pre>
+
+    <p class="smallTitle" id="error1">
+        <b>Property 'self.backgroundLabBgColor' not initialized at super.init - Delegate</b></p>
+    <p class="contents">解决:将backgroundLabBgColor设置为optional:<a href="https://stackoverflow.com/questions/36635896/property-self-mydelegate-not-initialized-at-super-init-delegate">stackoverflow</a></p>
+
+    <p class="smallTitle" id="closure">
+        <b>swift中的闭包</b>
+    </p>
+    <pre>
+        简单实例:
+        声明:
+            // 更改开关状态
+            typealias ChangeSwiStateClosure = (Bool?)->(Void)
+            var changeSwiStateClosure:ChangeSwiStateClosure?
+
+            // MARK: - 开关事件
+            func changeSwiState(swi:UISwitch) -> Void {
+
+                changeSwiStateClosure!(swi.isOn)
+            }
+
+        调用:
+            // 切换消息推送开关状态
+            cell?.changeSwiStateClosure = {(state:Bool?) ->Void in
+
+                // 网络更改消息推送开关状态
+                self.changeMsgPushStateByNet(Switch: state, GuideId: userInfoModel.guideId, AccessToken: userInfoModel.accessToken)
+            }
+    </pre>
+
+    <p class="contents" id="setget">
+        <b>swift中的set与get</b>
+    </p>
+    <pre>
+        当调用set方法的时候，系统会有一个newValue，
+        将newVaule赋值给我们定义的变量，然后从get方法里面返回去。
+
+        //定义一个变量
+        var _a:String?
+
+        var a:String?{
+
+            set{
+
+                _a = newValue
+            }
+
+            <b>//如果只从写get方法，会默认为readOnly</b>
+            get{
+
+                return _a
+            }
+        }
+
+    </pre>
+    <p class="contents">
+        <b>另外:willSet和didSet这两个特性来监视属性的除初始化之外的属性值变化
+            和OC相比较，我们可以在didSet里面执行一些改变UI的操作。
+        </b>
+    </p>
+    <pre>
+
+        var _a:String?
+
+        var a:String?{
+
+            <b>如果实现willSet观察，则将传递一个新的常量属性值，如果没有为其指定名称，则又默认名称“newValue”
+                相似的，如果实现didSet观察，将传递旧的常量属性值，你可以为其指定名称，否则默认为“oldValue”</b>
+            willSet{
+
+                print("willSet = \(String(describing: newValue))")
+            }
+
+            <b>//设置指定名称</b>
+            willSet(nnewValue){
+
+                print("willSet = \(a ?? 0)") //willSet = 0
+                print("nnew = \(nnewValue ?? 0)") //nnew = 11
+
+            }
+
+            <b>//如果在didSet里面给这个值再重新赋值，那么最终值是这个新值</b>
+            didSet{
+
+                print("didSet = \(String(describing: a))") //didSet = 11
+                print("old = \(oldValue ?? 0)") //old = 0
+
+                a = "hehe"
+            }
+        }
+
+        scratchCard.a = 11
+        print("a = \(scratchCard.a ?? 0)")
+
+        输出:
+        willSet = Optional("haha")
+        didSet = Optional("haha")
+        a = Optional("hehe")
     </pre>
 
     <br>
