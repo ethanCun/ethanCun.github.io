@@ -21,13 +21,26 @@
     <p class="title">那些非常值得记录的知识细节</p>
     <hr>
 
-    <p class="smallTitle">1. .与->访问方式</p>
+    <ul>
+        <li><a href="#dian">.与->访问方式</a> </li>
+        <li><a href="#isKindOfClass">isKindOfClass与isMemberOfClass</a> </li>
+        <li><a href="#selfSuper">self与super; class与superclass</a> </li>
+        <li><a href="#weak">__weak与__strong</a> </li>
+        <li><a href="#unsafe">__unsafe_unretained与__weak</a> </li>
+        <li><a href="#copy">NSArray/NSMutableArray等集合的copy与MutableCopy操作</a> </li>
+        <li><a href="#CACurrentMediaTime">NSDate 、CFAbsoluteTimeGetCurrent、CACurrentMediaTime 的差异</a> </li>
+        <li><a href="#locationInView">手势位置locationInView、velocityInView、translationInView的区别
+
+        </a> </li>
+    </ul>
+
+    <p class="smallTitle" id="dian">1. .与->访问方式</p>
     <pre>
 
         self.表示调用属性的setter或getter; self->用来访问实例变量
     </pre>
 
-    <p class="smallTitle">2. isKindOfClass与isMemberOfClass</p>
+    <p class="smallTitle" id="isKindOfClass">2. isKindOfClass与isMemberOfClass</p>
     <pre>
         /**
          　　isKindOfClass来确定一个对象是否是一个类的成员，或者是派生自该类的成员搜索
@@ -43,7 +56,7 @@
         2016-12-26 10:06:32.992 YYModelRead[4013:223341]  1  0
     </pre>
 
-    <p class="smallTitle">3.self与super; class与superclass</p>
+    <p class="smallTitle" id="selfSuper">3.self与super; class与superclass</p>
     <pre>
         /**
          class:获取方法调用类名
@@ -58,7 +71,7 @@
         2016-12-26 10:06:32.992 YYModelRead[4013:223341]  son, son people people
     </pre>
 
-    <p class="smallTitle">4. __weak与__strong</p>
+    <p class="smallTitle" id="weak">4. __weak与__strong</p>
     <pre>
 
         //__weak用来弱引用一个对象,这种现象非常常见,
@@ -101,7 +114,7 @@
         }
     </pre>
 
-    <p class="smallTitle">5. __unsafe_unretained与__weak</p>
+    <p class="smallTitle" id="unsafe">5. __unsafe_unretained与__weak</p>
     <pre>
 
         //__unsafe_unretained:和__weak 一样，唯一的区别便是，对象即使被销毁，指针也不会自动置空，
@@ -196,6 +209,42 @@
          <b>1.对可变数组的copy操作后的对象是不可变数组,mutableCopy操作可变数组</b>
          <b>2.对可变素组操作copy与mutableCopy都是深拷贝</b>
          */
+    </pre>
+
+    <p class="smallTitle" id="CACurrentMediaTime">7. NSDate 、CFAbsoluteTimeGetCurrent、CACurrentMediaTime 的差异</p>
+    <pre>
+
+        1.框架层
+        NSDate 属于Foundation
+        CFAbsoluteTimeGetCurrent() 属于 CoreFoundation
+        CACurrentMediaTime() 属于 QuartzCore
+
+        2.本质
+        NSDate 或 CFAbsoluteTimeGetCurrent() 返回的时钟时间将会和网络时间同步，
+        从时钟偏移量的角度，mach_absolute_time() 和 CACurrentMediaTime()
+        是基于内建时钟的，能够更精确更原子化地测量，并且不会因为外部时间变化而变化
+        （例如时区变化、夏时制、秒突变等）,但它和系统的uptime有关,
+        系统重启后CACurrentMediaTime()会被重置。
+
+        3.常见用法
+        NSDate、CFAbsoluteTimeGetCurrent（）常用于日常时间、时间戳的表示，与服务器之间的数据交互
+        其中 CFAbsoluteTimeGetCurrent() 相当于[[NSDate data] timeIntervalSinceReferenceDate];
+        CACurrentMediaTime() 常用于测试代码的效率
+    </pre>
+
+    <p class="smallTitle" id="locationInView">8. 手势位置locationInView、velocityInView、translationInView的区别</p>
+    <pre>
+
+        if (panGesture.state == UIGestureRecognizerStateChanged)
+        {
+            CGPoint p0 = [panGesture translationInView:self.view];
+            CGPoint p1 = [panGesture locationInView:self.view];
+            CGPoint p2 = [panGesture velocityInView:self.view];
+        }
+
+        translationInView : 手指在视图上移动的位置(移动了多少距离)（x,y）向下和向右为正，向上和向左为负。
+        locationInView ： 手指在视图上的位置（x,y）就是手指在视图本身坐标系的位置。
+        velocityInView： 手指在视图上移动的速度（x,y）, 正负也是代表方向，值得一体的是在绝对值上|x| > |y| 水平移动， |y|>|x| 竖直移动。
     </pre>
 
 </div>
