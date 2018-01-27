@@ -29,9 +29,8 @@
         <li><a href="#unsafe">__unsafe_unretained与__weak</a> </li>
         <li><a href="#copy">NSArray/NSMutableArray等集合的copy与MutableCopy操作</a> </li>
         <li><a href="#CACurrentMediaTime">NSDate 、CFAbsoluteTimeGetCurrent、CACurrentMediaTime 的差异</a> </li>
-        <li><a href="#locationInView">手势位置locationInView、velocityInView、translationInView的区别
-
-        </a> </li>
+        <li><a href="#locationInView">手势位置locationInView、velocityInView、translationInView的区别</a> </li>
+        <li><a href="#topViewController">UINavigationController 中的 visibleViewController 和 topViewController, presentedViewController 与 presentingViewController</a> </li>
     </ul>
 
     <p class="smallTitle" id="dian">1. .与->访问方式</p>
@@ -245,6 +244,26 @@
         translationInView : 手指在视图上移动的位置(移动了多少距离)（x,y）向下和向右为正，向上和向左为负。
         locationInView ： 手指在视图上的位置（x,y）就是手指在视图本身坐标系的位置。
         velocityInView： 手指在视图上移动的速度（x,y）, 正负也是代表方向，值得一体的是在绝对值上|x| > |y| 水平移动， |y|>|x| 竖直移动。
+    </pre>
+
+    <p class="smallTitle" id="topViewController">9. UINavigationController 中的 visibleViewController 和 topViewController,
+        presentedViewController 与  presentingViewController
+    </p>
+    <pre>
+
+        visibleViewController:当前显示的控制器,跟导航栈没有关系，只是当前显示的控制器，
+        也就是说任意一个导航的visibleViewController所返回的值应该是一样的,
+
+        topViewController:是某个导航栈的栈顶视图,是某个导航栈的栈顶视图，和导航控制器相关
+        换句话说如果在仅有一个导航栈上，visibleViewController和topViewController应该是没有区别得。
+
+        presentedViewController 和presentingViewController
+        假设从A控制器通过present的方式跳转到了B控制器，那么 A.presentedViewController 就是B控制器；
+        B.presentingViewController 就是A控制器。
+
+        当A弹出B
+        A.presentedViewController=B
+        B.presentingViewController=A
     </pre>
 
 </div>
