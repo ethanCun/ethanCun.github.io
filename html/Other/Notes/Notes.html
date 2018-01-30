@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我写的一些demo与库记录</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">我写的一些demo与库记录</span>
+</div>
+
+<div class="contentBgDiv">
+    <p class="title">我写的一些demo与库记录</p>
+    <hr>
+
+    <ul>
+        <li><a href="#modal">modal转场动画</a> </li>
+        <li><a href="#guoshanche">过山车刷新动画</a> </li>
+        <li><a href="#loader">15种加载视图集 持续添加</a> </li>
+        <li><a href="#taobao">仿淘宝购物订单逻辑</a> </li>
+        <li><a href="#ZYToolKit">加速开发之用点来写UI：链式封装的UI工具集，使用方法类似Masonry与SDAutolayout</a> </li>
+        <li><a href="#CzySharePanel">封装好的带逐个弹出逐个掉落动画的自定义分享面板 可自定义平台 字体颜色 点击可分享 适合常用的分享场合 使用前请替换各平台的AppKey和AppSecret</a> </li>
+        <li><a href="https://github.com/ethanCun">更多实例请移步我的github</a> </li>
+    </ul>
+
+    <p class="contents" id="modal"><b><a href="https://github.com/ethanCun/CzyCustomModalTransitionAnimation">modal转场动画</a> </b></p>
+    <p class="contents"><b><a href="https://github.com/ethanCun/CzyPushTransitionAnimation">push转场动画</a> </b></p>
+    <p class="contents"><b><a href="https://github.com/ethanCun/ZYGewara">格瓦拉·生活push与pop效果实例</a> </b></p>
+
+    <p class="contents">部分效果</p>
+    <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/modal.gif">
+    <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/custom-custom.gif">
+    <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/gewara.gif">
+
+    <p class="contents">
+
+        主要是重写UINavigationControllerDelegate:
+    </p>
+    <pre>
+        func navigationController(_ navigationController: UINavigationController, animationControllerFor
+        operation: UINavigationControllerOperation, from fromVC: UIViewController, to
+        toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+
+        }
+    </pre>
+    <p class="contents">
+        在UIViewControllerAnimatedTransitioning中添加自定义的效果:
+    </p>
+    <pre>
+
+        // MARK: - UIViewControllerAnimatedTransitioning
+        public func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval{
+
+            return 1.0
+        }
+
+        func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+
+            self.transitionContext = transitionContext
+
+            if self.isPush!{
+
+                self.pushAnimation()
+            }else{
+
+                self.popAnimation()
+            }
+        }
+
+    </pre>
+    <br><br>
+
+
+    <p class="contents" id="loader"><b><a href="https://github.com/ethanCun/ZYAnimatedLoader">15种加载视图集 持续添加</a></b></p>
+    <p class="contents">部分效果</p>
+    <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/ZYAnimateTypeCircleRipple.gif">
+    <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/ZYAnimateTypeLineY.gif">
+    <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/ZYAnimateTypeThreeDotRotate.gif">
+
+    <p class="contents">使用方法</p>
+    <pre>
+        1.手动拉入AnimatedLoaders文件夹
+        2.cocoapods: pod 'ZYAnimatedLoader', '~> 0.0.4'
+
+         ZYAnimator *animator = [[ZYAnimator alloc] initAnimateWithType:ZYAnimateTypeLineCenterY tintColor:[UIColor redColor]];
+         animator.frame = CGRectMake(0, 0, 100, 100);
+         [animator startAnimation];
+         [self.view addSubview:animator];
+    </pre>
+    <br><br>
+
+
+
+    <p class="contents" id="ZYToolKit"><b><a href="https://github.com/ethanCun/ZYToolKit">加速开发之用点来写UI：链式封装的UI工具集，使用方法类似Masonry与SDAutolayout</a> </b></p>
+    <p class="contents">部分效果</p>
+    <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/ZYTollKit.png">
+    <p class="contents">使用方法</p>
+    <pre>
+        ZYLabel *label = [ZYLabel createZYLabel:^(ZYLabel *label) {
+
+        label.frameBlock(CGRectMake(100, 200, 100, 30))
+        .textColorBlock([UIColor blackColor])
+        .fontBlock([UIFont systemFontOfSize:14])
+        .backGroundColorBlock([UIColor brownColor])
+        .textAlignmentBlock(NSTextAlignmentCenter)
+        .textBlock(@"this is a text")
+        .userEnableBlock(YES);
+        }];
+
+        label.singalTapBlock = ^(){
+
+            NSLog(@"singalTap");
+        };
+
+        label.doubleTapBlock = ^(){
+
+            NSLog(@"doubleTap");
+        };
+
+        label.center = self.view.center;
+
+        [self.view addSubview:label];
+    </pre>
+
+    <br><br><br>
+    <p class="contents" id="CzySharePanel"><b><a href="https://github.com/ethanCun/CzySharePanel">
+        封装好的带逐个弹出逐个掉落动画的自定义分享面板 可自定义平台 字体颜色 点击可分享 适合常用的分享场合 使用前请替换各平台的AppKey和AppSecret</a> </b></p>
+    <p class="contents">部分效果</p>
+    <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/sharePanel.gif">
+
+    <p class="contents">如何使用</p>
+    <pre>
+            /**显示分享面板
+     @param 分享平台名称
+     @param 分享平台图片
+     @param 文字颜色
+     @param 文字字体
+     */
+    [[CzyPopView shareManager] showSharePanelWithTitiles:self.titles
+                                           andImageNames:self.titles
+                                            andTextColor:[UIColor redColor]
+                                             andTextFont:[UIFont systemFontOfSize:12]];
+    </pre>
+    <br><br>
+
+    <p class="contents" id="taobao"><b><a href="https://github.com/ethanCun/CzyShoppingCar">仿淘宝购物订单逻辑</a> </b></p>
+    <p class="contents">部分效果</p>
+    <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/shoppingCar1.gif">
+    <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/shoppingCar2.gif">
+    <br><br><br>
+
+    <p class="contents" id="guoshanche"><b><a href="https://github.com/ethanCun/CzyRollerCoasterRefreshDemo">过山车刷新动画</a> </b></p>
+    <p class="contents">部分效果</p>
+    <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/guoshanche.gif">
+    <br><br>
+
+</div>
+
+</body>
+</html>
