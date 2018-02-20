@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>陈正英的简历</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="../../../CSS/MyResume.css">
+    <script type="text/javascript" src="../../../js/jquery-3.2.1.js"></script>
+
+
+</head>
+<body>
+
+    <script>
+
+
+        $(document).ready(function () {
+
+        })
+    </script>
+
+    <div>
+
+        <p class="Basic" onmousemove="mouseOver()" onclick="javascript:window.location.href='#Basic'"> Basic info. 基本信息</p>
+        <p class="Experience" onclick="javascript:window.location.href='#Experience'"> Experience. 项目与工作经验</p>
+        <p class="DIY" onclick="javascript:window.location.href='#DIY'"> DIY. 自己写的一些东西</p>
+        <p class="Skill" onclick="javascript:window.location.href='#Skill'"> Skill. 技能清单</p>
+
+
+    </div>
+
+    <div class="jumbotron">
+
+        <div class="left">
+
+            <img src="../../../Source/icon-img.jpeg" class="iicon">
+            <p class="personal">陈正英</p>
+            <p class="personal">ethanCun</p>
+            <p class="personal">技术栈:iOS, web</p>
+            <p class="personal">应聘职位: iOS开发</p>
+
+            <br>
+            <p class="intro">期望: <br>
+                一家管理规范充满前景的公司,<br>
+                一个活力的工作团队氛围,<br>
+                一份让人废寝忘食的事业,<br>
+                我在这里,<br>
+                快来...<br>
+            </p>
+
+            <br><br><br>
+
+            <p class="personal"><i class="fa fa-calendar"></i> Contact. 联系方式</p>
+            <p style="width: 90%; height: 1px; background: white; margin-left: 5%; margin-right: 5%">
+            <p class="personal" style="color: whitesmoke; cursor: pointer" onclick="javascript:window.location.href='https://juejin.im/user/596765b26fb9a06ba73d4fd4'">掘金</p>
+            <p class="personal" style="cursor:pointer;" onclick="javascript:window.location.href='https://github.com/ethanCun'"><i class="fa fa-github">:ethanCun</i> </p>
+            <p class="personal"><i class="fa fa-qq"> :511627807</i> </p>
+            <p class="personal"><i class="fa fa-phone">:17673647340</i> </p>
+            <p class="personal"><i class="fa fa-weixin">:wx15112348182</i> </p>
+            <p class="personal"><i class="fa fa-map-o"><a href="mailto:#">:zz511627807@163.com</a></i> </p>
+
+        </div>
+
+
+        <div class="right">
+
+
+            <!--Basic info. 基本信息-->
+           <div>
+
+               <p class="smallTitle" id="Basic"><i class="fa fa-calendar"></i> Basic info. 基本信息</p>
+               <hr>
+               <p class="info"><b>个人信息:</b> 陈正英/男/27/杭州/iOS,web</p>
+               <p class="info"><b>毕业院校:</b> 湖南工业大学统招本科</p>
+               <p class="info"><b>工作年限:</b> 3年</p>
+               <p class="info"><b>英文水平:</b> CET6</p>
+               <p class="info" onclick="javascript:window.location.href='http://www.chenzhengying.com'" style="cursor: pointer"><b>个人博客:</b> https://www.chenzhengying.com</p>
+               <p class="info" onclick="javascript:window.location.href='https://github.com/ethanCun'" style="cursor: pointer"><b>GitHub:</b> https://github.com/ethanCun</p>
+
+           </div>
+
+
+            <!--Experience. 项目与工作经验-->
+
+            <div>
+
+                <p class="smallTitle" id="Experience"><i class="fa fa-calendar"></i> Experience. 项目与工作经验</p>
+                <hr>
+
+                <img src="http://company.zhaopin.com/CompanyLogo/20170204/E66051C51D65C6D4F57F6F0FAEA16FF6.jpg" class="icon">
+                <p class="companyName"><b>湖南恒杭高科技有限公司(2017.1-2018.1)</b></p>
+
+                <p class="info"><b>1. 脸票通(TKFACE) 角色:iOS--主要开发+维护迭代</b> </p>
+                <p class="projectDetail">
+                       &nbsp;&nbsp;&nbsp;&nbsp;脸票通涵盖了旅游景点、电影、剧场演出、体育赛事、交通出行等多种票务资源，
+                    以人脸识别为技术支点，将检、验票流程极简化到“人脸”即“门票”的直观模式，
+                    提升检验票的通行效率及身份识别的安全性。
+                    用户使用脸票通注册成功并录入人脸信息，以后在脸票通上通过微信支付宝购买景区电影院门票；
+                    进去景区等场合时只需要使用公司安装在该场合的闸机就可以进入；在录入人脸信息时，
+                    需要进行活体检测（眨眼），
+                    脸票通使用的是OpenCV技术，必须活体本人人脸，比如使用相片是通不过的；
+                    同时脸票通还使用了socket技术用来定时上传用户在每个场合的实时位置，
+                    这个可以通过与导游端配合使用；同时，用户可以在订单中实时查看自己的订单信息；
+                    进行类似淘宝的编辑操作；在购买门票和取消门票时都会受到脸票通发送的通知信息，
+                    用户也可以在首页通知信息里查看；除此之外，脸票通还有的功能：目标省市区选择，
+                    二维码扫描，电话拨打、景点收藏等，脸票通还有一个特色功能就是，
+                    用户登陆过一次保存了userid后，下次退出登录就可以使用刷脸登录了；
+                </p>
+                <p class="info"><b>了解更多请移步AppStore下载体验:</b><a href="https://itunes.apple.com/cn/app/%E8%84%B8%E7%A5%A8%E9%80%9A/id1238633370?mt=8"> AppStore地址</a></p>
+
+
+                <p class="info"><b>2. 脸票通导游 角色:iOS--独立开发</b></p>
+                <p class="projectDetail">
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;用户在脸票通上买票后，进入景区、电影院等场合时可以直接通过刷脸进入；
+                    同时脸票通socket会定时传上传用户位置值后台保存；
+                    导游端的作用就是从后台获取用户的经纬度然后显示在地图上；
+                    同时还可以点击指定的同伴拨打电话；查看行程；增加日志等；
+                </p>
+                <p class="info"><b>了解更多请移步AppStore下载体验:</b><a href="https://itunes.apple.com/cn/app/%E8%84%B8%E7%A5%A8%E9%80%9A%E5%AF%BC%E6%B8%B8/id1275437287?mt=8"> AppStore地址</a></p>
+
+                <p class="info"><b>3. 脸票通广告 角色:iOS--独立开发</b></p>
+                <p class="projectDetail">
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;配合脸票通项目使用,同时也适合于安装了公司刷脸闸机的小区或者汽车站;
+                    脸票通广告是一款被用来处理客户在我们公司投放在景区和小区的闸机上播放广告的APP，客户可以在这个App上选择自己要播放的广告、投放景点、投放闸机、支付、充值、处理自己的订单等；
+                </p>
+                <p class="info"><b>了解更多请移步AppStore下载体验:</b><a href="https://itunes.apple.com/cn/app/%E8%84%B8%E7%A5%A8%E9%80%9A%E5%85%B1%E4%BA%AB%E5%B9%BF%E5%91%8A/id1275434687?mt=8"> AppStore地址</a></p>
+
+                <p class="info"><b>4. 恒杭访客系统 角色:iOS--独立开发</b></p>
+                <p class="projectDetail">
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;恒杭访客系统是一个公司内部用于访客登记的app;<br>
+                    用来处理处理与查看访客访问申请、查看访客访问记录、访客登记；
+                    适合范围：装了我们公司硬件设备的所有大厦；客户在此APP上登记，管理员同意后，客户来访时可以刷脸或者刷身份证进入；
+                </p>
+                <br><br>
+
+                &nbsp;&nbsp;&nbsp;&nbsp;<p class="companyName"><b>长沙盈旭电子科技有限公司	(2016.1-2016.12)</b></p>
+                <p class="info"><b>1. 汨水循环 角色:iOS--独立开发</b></p>
+                <p class="info">&nbsp;&nbsp;&nbsp;&nbsp;开发者账号到期,已下架</p>
+                <p class="projectDetail">
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;汨水循环面向的对象是废旧有色金属回收信息的展示与交易经销商;
+                    用来展示汨罗工业园区园区物料价格信息、处理物料订购与订单，以及园区动态新闻信息展现消息推送的App；
+                    包含首页,行情,资讯,购物车,个人中心五个界面;
+                    用户可以在这里动态查看铜铝等等有色金属价格的动态变化,接受最新的行内消息,
+                    同时关注汨罗工业园政府的最新消息等;
+                </p>
+
+                <p class="info"><b>2. 汨水之声 角色:iOS--独立开发</b></p>
+                <p class="projectDetail">
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;汨水之声面向的是关注汨罗有色金属工业园动态的政府办公人员以及
+                    汨罗相关电视台的听众,分为动态(汨罗概况,部门动态,乡镇快讯,美丽乡村等消息的展示与推送, 评论系统
+                    的展示与操作等),电视栏目(汨罗电视台直播,点播与广播),便民服务(天气预报,车票查询,动态航班等),
+                    以及个人中心的设置;
+                </p>
+
+                <p class="info"><b>3. 汨罗工业园区打卡系统 角色:iOS--独立开发</b></p>
+                <p class="projectDetail">
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;汨罗工业园区打卡系统是汨罗工业园区办公园区人员用来打卡的一个App端,
+                    主要包含的功能:办公人员勤务资料提交与审核,办公人员分类通讯录查询,园区最新消息推送,
+                    上下班打卡,电话拨打, 部门公告展示, 收藏与待办功能,个人设置等;
+
+                </p>
+
+                <br>
+
+                <p class="companyName"><b>&nbsp;&nbsp;&nbsp;&nbsp;深圳千峰教育(2015.7-2015.12)</b></p>
+                <p class="projectDetail">
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;iOS系统学习,包含C, Objective-C, Swift, H5等
+
+                </p>
+
+                <br>
+
+                <p class="companyName"><b>&nbsp;&nbsp;&nbsp;&nbsp;广东天元印刷有限公司(2015.1-2015.6) 角色: 淘宝美工</b></p>
+                <p class="projectDetail">
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;配合设计经理, 使用Photoshop负责公司包装制品(快递袋,文件封,纸箱等)线上淘宝,天猫,阿里巴巴产品详情页
+                    的设计制作,同时负责店铺的数据分析与运营等工作;
+
+                </p>
+
+                <br>
+
+                <p class="companyName"><b>&nbsp;&nbsp;&nbsp;&nbsp;惠州市和宏电线电缆有限公司(2014.7-2014.12) 角色: CAD制图员</b></p>
+                <p class="projectDetail">
+
+                    &nbsp;&nbsp;&nbsp;&nbsp; 参与公司影音信号传输连接产品、移动终端电子连接产品、PC周边连接产品、工程线缆等产品包装盒的
+                    CAD出图;
+                </p>
+
+                <br>
+
+            </div>
+
+
+            <!--自己写的一些东西-->
+            <p class="smallTitle" id="DIY"><i class="fa fa-calendar"></i> DIY. 自己写的一些东西</p>
+            <hr>
+
+            <p class="contents">部分效果</p>
+            <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/modal.gif">
+            <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/custom-custom.gif">
+            <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/gewara.gif">
+            <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/ZYAnimateTypeCircleRipple.gif">
+            <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/ZYAnimateTypeLineY.gif">
+            <img style="width: 30%; height: 20%; margin: 0; margin-left: 20px " src="../../../Source/ZYAnimateTypeThreeDotRotate.gif">
+
+            <p class="info"><a href="../../Other/Notes/Notes.html">&nbsp;&nbsp;具体的戳这里</a> </p>
+            <p class="info"><a href="https://github.com/ethanCun">&nbsp;&nbsp;更多请移步GitHub</a> </p>
+
+            <!--Skill. 技能清单-->
+            <p class="smallTitle" id="Skill"><i class="fa fa-calendar"> Skill. 技能清单</i> </p>
+            <hr>
+
+            <p class="info"><b>&nbsp;&nbsp;iOS部分技能列举</b></p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;1. UI界面: 对界面实现效果非常感冒,能独立完成较复杂的UI界面效果;
+            </p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;2. 上架等: 多个项目App上架经验(Certificates与App IDs下各类证书的生成,
+                测试设备Devices的添加,Provisioning Profiles的生成等; iTunes Connect下App
+                信息的填写与被拒情况的处理(<a href="../../iOS/AppCheckNotes/AppCheckNotes.html">这里记录了一些被拒过的情况</a>));</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;3. 极光推送: 多个项目使用经验(开发环境与生产环境下广播, 标签, 别名, Registration ID, 群推; p12的制作与上传);</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;4. 习惯: 使用纯代码编写项目,但也能玩StoryBoard、XIB编程;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;5. 支付: 多个项目微信与支付宝支付经验, 熟悉支付过程中的各种坑
+                , 包括签名规则, 后台对接签名编码问题, API证书等等;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;6. 设计模式: MVC/MVVM的个人理解, 代理、单例、观察者、工厂模式等;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;7. 协议: HTTP、TCP/IP、UDP等协议;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;8. 加密: base64, MD5, AES, RSA;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;9. 二维码:扫描与生成;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;10. 回调与传值: Block,delegate,属性传值等;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;11. 图片与视频的上传;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;12. OC与JS的交互;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;13. CocoaPods: 项目依赖管理与私有库的制作;(<a href="https://github.com/ethanCun/ZYAnimatedLoader">打个小广告)</a> </p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;14. 动画(Core Animation): UIView, CABasicAnimation, CAKeyframeAnimation, CAAnimationGroup等;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;15. 分享: ShareSDK，友盟;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;16. 内存管理机制与分析工具</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;....</p>
+
+            <p class="info"><b>&nbsp;&nbsp;web部分技能列举</b></p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;1. 熟悉原生JavaScript;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;2. HTML/CSS;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;3. Bootstrap;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;4. Jquery;</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;...</p>
+            <p class="projectDetail">  &nbsp;&nbsp;&nbsp;&nbsp;...</p>
+
+            <br>
+        </div>
+
+        <br>
+    </div>
+    <br> <br>
+</body>
+</html>
