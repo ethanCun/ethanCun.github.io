@@ -310,7 +310,7 @@
 
     <div class="codeAero">
 
-        <p>2. -bash: /usr/local/bin/pod: /System/Library/Frameworks/Ruby.framework/Versions/2.0/usr/bin/ruby: bad interpreter: No such file or directory</p>
+        <p>3. -bash: /usr/local/bin/pod: /System/Library/Frameworks/Ruby.framework/Versions/2.0/usr/bin/ruby: bad interpreter: No such file or directory</p>
 
         <p>解决办法:</p>
         <p>sudo gem install -n /usr/local/bin cocoapods</p>
@@ -318,6 +318,48 @@
         <p>如果不能解决, 试试:</p>
         <p>sudo gem install -n /usr/local/bin cocoapods  /</p>
         <p>sudo chmod +rx /usr/local/bin</p>
+    </div>
+    <br>
+
+    <div class="codeAero">
+
+        <p>4. [!] /usr/bin/git clone https://github.com/CocoaPods/Specs.git master --progress</p>
+
+        <p>Cloning into 'master'...</p>
+        <p>remote: Counting objects: 2003053, done.</p>
+        <p>remote: Compressing objects: 100% (292/292), done.</p>
+        <p>error: RPC failed; curl 18 transfer closed with outstanding read data remaining</p>
+        <p>fatal: The remote end hung up unexpectedly</p>
+        <p>fatal: early EOF</p>
+        <p>fatal: index-pack failed</p>
+
+        <p>解决办法：</p>
+        <p>上面错误主要是os10.11+和cocoapods1.0+版本升级的安全机制更改造成的。主要出现在pod setup过程中。且该过程等待时间非常长;</p>
+        <p>首先：$sudo gem install -n /usr/local/bin cocoapods</p>
+        <p>接着将repos/master克隆下来(该过程作用与 pod setup作用相同)：$git clone https://git.coding.net/CocoaPods/Specs.git ~/.cocoapods/repos/master </p>
+
+        <p>如果还不成功！！！！可以同样的方法安装正式版v0.39 然后在升级到v1.0版本;</p>
+        <p>gem update --system</p>
+        <p>sudo gem install -n /usr/local/bin cocoapods --pre</p>
+
+        <p>参考链接：<a href="https://www.cnblogs.com/chuange-Strongload/p/5891903.html">Cocoapods安装</a></p>
+
+    </div>
+    <br>
+
+    <div class="codeAero">
+
+        <p>5. iOS安装cocoapods卡在Creating search index for spec repo 'master'..</p>
+        <p>
+            iOS利用cocoapods导入三方时（如：pod search AFNetworking）;
+            1.卡在Creating search index for spec repo 'master'..,
+            千万别着急，这只是因为是你第一次安装使用cocoapods正常卡顿，具体是往~/.cocoapods文件里导库，耐心等待就好，时间不一定；
+            2.报“Unable to find a pod with name, author, summary, or descriptionmatching”错误，
+            请在终端执行“rm ~/Library/Caches/CocoaPods/search_index.json”命令，然后再“pod search AFNetworking”即可。
+        </p>
+
+        <p>参考链接：<a href="http://blog.csdn.net/crjtthrgt/article/details/73740074">iOS安装cocoapods卡在Creating search index for spec repo 'master'..</a> </p>
+
     </div>
 
     <br><br>
