@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>说一下AppIcon与LaunchImage</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">AppIcon设置与尺寸</span>
+    <span class="label label-warning">LaunchImage设置与尺寸</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">iOS中AppIcon与LaunchImage设置与相关尺寸</p>
+    <hr>
+
+    <p class="introduceText">
+        2018年的第一个项目快要接近尾声，项目之余在学习.net， vue等,后面打算写一系列全栈之路的文章来记录自己的学习过程，
+        今天先来记录一下iOS启动页中的AppIcon与LaunchImage的设置与尺寸，之所以记录这个，并不是因为这个东西难，只是为了
+        后面做开发的时候不必要继续去百度一些尺寸啥的，这次的相关尺寸基于Xcode9.3；
+    </p>
+
+    <p class="smallTitle"><b>一、 AppIcon的设置</b></p>
+    <div class="codeAero">
+        <p>
+            首先点击项目根目录，来到如下图位置，
+        </p>
+        <img src="../../../Source/AppIconLaunchImage/AppIconLaunchImage.png">
+        <p>
+            接着，将App Icons Source设置为AppIcon：
+        </p>
+        <p>
+            点击邮编的右箭头,来到下图位置：
+        </p>
+        <img src="../../../Source/AppIconLaunchImage/AppIncon.png">
+
+        <p>
+            如图：AppIcon分为4部分：Notification(来通知时显示), Spotlight(下拉搜索的时候显示)，App(App的Logo),
+            App Store(在应用商店中显示)
+        </p>
+        <p>
+            对应的尺寸分别为:40*40, 60*60; 58*58, 87*87; 80*80, 120*120; 120*120, 180*180; 1024*1024;
+        </p>
+        <p>
+            其中在Xcode9.3之后， 必须有的尺寸为120*120， 180*180， 1024*1024；
+        </p>
+    </div>
+
+    <p class="smallTitle"><b>二、 LaunchImage的设置</b></p>
+    <div class="codeAero">
+        <p>
+            首先点击项目根目录，来到如下图位置，
+        </p>
+        <img src="../../../Source/AppIconLaunchImage/AppIconLaunchImage.png">
+
+        <p>
+            接着，删除掉Launch Screen File中的LauchScreen.storyboard， 点击Launch Image Source， 增加一个LaunchImage；
+        </p>
+        <p>
+            点击邮编的右箭头,来到下图位置：
+        </p>
+        <img src="../../../Source/AppIconLaunchImage/LaunchImage.png">
+
+        <p>
+            如图，Iphone Portrait App启动页要求项分别为 :
+        </p>
+        <p>
+            iPhoneX : 1125*2436;<br>
+            iOS8+   : Retina HD 5.5: 1242*2208, Retina HD 4.7: 750*1334,<br>
+            iOS7+   : 2x: 640*960, Retina 4: 640*1136, <br>
+            iOS5,6  : 1x: 320*480, 2x: 640*960, Retina 4: 640*1136,
+        </p>
+        <p>
+            综上，Xcode9.3后iPhone Portrait需要的尺寸为：1125*2436， 1242*2208， 750*1334， 640*960， 640*1136， 320*480
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>

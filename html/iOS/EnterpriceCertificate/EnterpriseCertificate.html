@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iOS企业版开发者账号的申请与打包上架记录</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info" style="cursor: pointer" onclick="javascript:window.location.href='#ready'">准备工作</span>
+    <span class="label label-primary" style="cursor: pointer" onclick="javascript:window.location.href='#dengbaishi'">企业邓白氏申请</span>
+    <span class="label label-warning" style="cursor: pointer" onclick="javascript:window.location.href='#enterprise'">企业版开发者账号申请</span>
+    <span class="label label-danger" style="cursor: pointer" onclick="javascript:window.location.href='#enterprisemake'">企业版开发证书的制作</span>
+    <span class="label label-success" style="cursor: pointer" onclick="javascript:window.location.href='#package'">企业版开发者证书打包与plist下载文件制作</span>
+</div>
+
+<div class="contentBgDiv">
+
+
+    <p class="title">iOS企业开发者账号的申请与打包上架</p>
+    <hr>
+
+    <p class="introduceText">
+        2018年的工作的第一个任务就是申请公司的企业版开发者账号，在历时2个多月后，打了无数次开发者热线，终于申请下来了，
+        其中申请邓白氏编码花费2个礼拜, 剩余的时间基本都是在处理账号的申请；
+    </p>
+
+    <p class="smallTitle" id="ready">一、 准备工作</p>
+    <div class="codeAero">
+
+        <p>
+            1. 申请企业开发中账号，前提需要一个Apple ID， 最好在一开始确定下来你的Apple ID
+            账号， 对于企业版开发者账号来说, Apple ID对应的邮箱必须是企业邮箱， 并且后缀必须与官网域名一致， 否则后续不能通过审核，
+        </p>
+        <p>
+            2. 公司的营业执照， 公章， 或许会需要你的个人身份证或者在职证明；
+        </p>
+        <p>
+            3. 公司的座机号码， 这个一定要填你能够随时接到的电话， 后续苹果审核人员会打电话到这个号码确认身份； 乱报号码会导致核对失败
+            从而不能通过审核；
+        </p>
+        <p>
+            4. 你需要申请企业版开发者账号的动机， app的使用范围， 以及未来app的使用人数， app的使用范围一定是只能内部使用的， 使用人数太少,
+            他们会建议你不要使用企业版的开发者账号，建议在实际使用人数上稍微加一点；
+        </p>
+    </div>
+
+    <p class="smallTitle" id="dengbaishi">二、 企业邓白氏编码的申请</p>
+    <div class="codeAero">
+
+        <p>
+            1.打开苹果开发者网站， 登录你的Apple ID;
+        </p>
+        <p>
+            2.申请之前应该先查看公司是否申请过邓白氏编码， 查看地址：<a href="https://developer.apple.com/enroll/duns-lookup/">https://developer.apple.com/enroll/duns-lookup/</a>
+        </p>
+        <p>
+            3.如果没有申请到，可以点击下方的"submit your information"， 如下图：
+        </p>
+        <img src="../../../Source/EnterpriseCertificate/submitYourInformation.png">
+        <p>
+            4.提交申请之后，邮箱会受到邓白氏发来的信息确认邮件， 填写相关的公司资料， 正常情况下， 一个星期左右， 邓白氏会将邓白氏编码发送待你的邮箱；
+        </p>
+        <p>
+            5.如果存在问题，可以下这里拨打华夏邓白氏的联系方式：<a href="http://www.dnbchina.com/contact/index.html">http://www.dnbchina.com/contact/index.html</a>
+        </p>
+    </div>
+
+    <p class="smallTitle" id="enterprise">三、 企业版开发者账号的申请</p>
+    <div class="codeAero">
+
+        <p>
+            1. 企业版开发者账号申请链接：<a href="https://developer.apple.com/programs/enterprise/enroll/cn/">https://developer.apple.com/programs/enterprise/enroll/cn/</a><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;在这里你可以看到申请企业版开发者账号的条件：<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1): 适用于您员工的 App(组织内的员工); <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2): 法人实体状态; <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3): D-U-N-S® 编号; <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4): 法律约束授权； <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5): Apple ID(企业邮箱，后缀为公司域名); <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6): 企业有自己网站;
+        </p>
+        <p>
+            2. 点击开始注册， 选择实体类型：公司/组织；继续；
+        </p>
+        <p>
+            3. 填写企业信息后，点击申请;
+        </p>
+        <p>
+            4. 正常情况下， 一个礼拜左右就会有审核人员打电话确认申请的目的和确认公司的信息，这次一般会确定好下次拨打企业座机的时间，
+            座机电话一定要接到，这是他们用来确认你是否在这个单位工作；期间如果遇到有问题，可能还会要求上传个人的身份证，在职证明等；
+        </p>
+        <p>
+            5. 审核通过后就来到了付款环节，和公司版开发者账号一下，付款时存在的问题就是：付款的卡有限制，一般是用visa+银联， 单纯只有
+            银联标志的卡付款会出现授权失败的问题； 还有， 只能开普票；
+        </p>
+        <p>
+            6. 付款完成后，不能马上制作证书， 苹果会要求两个礼拜的时间用来录数据， 谨慎起见， 这一段时间最好不要操作证书；
+        </p>
+    </div>
+
+
+    <p class="smallTitle" id="enterprisemake">四、 企业版开发者证书的制作</p>
+    <div class="codeAero">
+
+        <p>
+            企业版证书的之后与公司版证书的制作基本一致，打开Certificates, IDs & Profiles, 点击Certificates/All:
+        </p>
+        <p>
+            1. 点击邮编的"+"， 选择 Production -> In-House and Ad Hoc -> Continue:
+        </p>
+        <img src="../../../Source/EnterpriseCertificate/1.png">
+        <p>
+            上传从钥匙串证书助理请求来的CSR文件:
+        </p>
+        <img src="../../../Source/EnterpriseCertificate/2.png">
+        <p>
+            2. 点击App ID， "+"，添加name(描述), 添加Bundle ID(必须与APP的bundleID完全一致)；
+        </p>
+        <img src="../../../Source/EnterpriseCertificate/3.png">
+        <p>
+            3. Devices: 企业版不需要device即iPhone的UDID，因此跳过；
+        </p>
+        <p>
+            4.选择Provisioning Profile->ALL，点击右上角加号，选择Distribution -> In House, 生成最终的Provisioning Profile并下载；
+        </p>
+
+
+    </div>
+
+    <p class="smallTitle" id="package">五、 企业版App的打包上架</p>
+    <div class="codeAero">
+
+        <p>
+            1.Xcode 中登录开发者账号Apple Id
+        </p>
+        <p>
+            2.点击PROJECT –> Build Settings –> 对应选择Profile和证书,账号
+        </p>
+        <p>
+            3.点击Project –> Edit Scheme –> 修改为Release, 把运行设备改为真机或者Generic iOS Deveice, 点击Project –> Archive ->Validate –> 右侧Export
+            -> 选择 Save for Enterprise Deployment -> 选择 Export one app for all compatible devices
+        </p>
+        <img src="../../../Source/EnterpriseCertificate/4.png">
+        <p>
+            4.设置ipa地址、icon地址， 这个的URl必须为https:
+        </p>
+        <img src="../../../Source/EnterpriseCertificate/5.png">
+        <p>
+            5.填写完成后，点击export。Xcode会生成一个.plist和ipa文件;
+            将ipa上传至之前填写的url地址上。
+            然后将.plist文件上传至https能够访问的服务器，如git或者公司自己的服务器, 能够实现https访问。
+        </p>
+        <p>
+            6. itms-services:///?action=download-manifest&url=xxxxx; xxxxx 填写的是你的plist文件存放的地址，
+            在Safari里面输入上面的地址，就可以下载app。
+            下载安装完成后，设置-通用-设备管理-“你公司的证书”-信任
+            之后就可以打开app进行测试了。
+        </p>
+        <br><br>
+    </div>
+    <br>
+</div>
+
+</body>
+</html>
