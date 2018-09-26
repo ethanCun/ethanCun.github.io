@@ -36,6 +36,14 @@
         <li><a href="#setget">swift中的set与get</a> </li>
         <li><a href="#range">swift中的Range</a> </li>
         <li><a href="#pi">swift中的M_PI</a> </li>
+        <li><a href="#weakStrongDanceInSwift">weak-Strong-In-Swift</a></li>
+        <li><a href="#AnyAnyObjectAnyClass">Any 与 AnyObject AnyClass的区别</a></li>
+        <li><a href="#as">Swift中as, as!, as? 的区别</a> </li>
+        <li><a href="#high-order-function">Swift中的高阶函数</a> </li>
+        <li><a href="#Optional">Swift中的Optional</a> </li>
+        <li><a href="#ClassOrStruct">Swift中的Class与Struct</a> </li>
+        <li><a href="#SwitchInSwift">Swift中的Switch</a></li>
+        <li><a href="#SearchAddressInSwift">Swift4查看对象地址</a></li>
     </ul>
 
     <p class="smallTitle" id="swift"><b>swift 调用oc库</b></p>
@@ -391,6 +399,570 @@
     <pre>
         M_PI_4相当于:CGFloat.pi/4
     </pre>
+
+    <p class="contents" id="weakStrongDanceInSwift"><b>Weak-Strong-In-Swift</b></p>
+    <pre>
+        在OC中处理循环引用：
+        弱引用一次:__weak typeof(self) weakSelf = self
+        防止子线程中调用block可能存在self提前释放进行一次retain：__strong(可缺省 默认) typeof(self) strongSelf = self
+
+        例子：
+        __weak typeof(self) weakSelf = self;
+        [self doSomeBlockJob:^{
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (strongSelf) {
+                ...
+            }
+        }];
+
+
+        在Swift中处理闭包循环引用：
+        弱引用一次,使用捕获列表[weak self]：
+        self.closure = {[weak self]() in
+            self.doSomeThing()
+
+            //防止闭包在子线程调用时，存在提前释放的情况，进行一次判断:
+            guard let `self` = self else {return}
+
+            `self`.doSomeThing()
+        }
+
+        例子：
+        @IBAction func toThird(_ sender: Any) {
+
+            self.third.back = {[weak self]() in
+
+                guard let `self` = self else {
+                    return
+                }
+
+                `self`.test()
+            }
+
+            self.navigationController?.pushViewController(third, animated: true)
+        }
+
+    </pre>
+
+    <p class="contents" id="AnyAnyObjectAnyClass"><b>Swift中Any与AnyObject、AnyClass的区别</b></p>
+    <pre>
+        1. 定义：
+        AnyObject：可以代表任何class类型的实例；
+        Any：可以代表任何类型，甚至包括方法(func)类型。
+
+        2.
+        public typealias Any = protocol<>
+        public protocol AnyObject{}
+        public typealias AnyClass = Swift.AnyObject.Type
+
+        3.
+        a.AnyObject是Any的子集
+        b.所有用class关键字定义的对象就是AnyObject
+        c.所有不是用class关键字定义的对象就不是AnyObject，而是Any
+        d.AnyClass是AnyObject的别名, Any是一个空协议集合的别名, 一个任何类型都遵守的协议，AnyObject是一个没有声明任何成员的空协议
+        e.Any和AnyObject都是协议而且，并且从Apple提供的注释中可以看出所有的type(类型)都隐式实现了Any协议，所有的class都隐式实现了AnyObject协议。
+
+        例子：
+        1.Any此处Alamofire请求的键值对值可以是任意值
+        parameters = ["appId":"123456", "timestamp":203428394820,
+                "version":"1.0", "appAuthToken":"7D8SF7D8VS8987D67687",
+                "bizContent":["pageStart":1, "pageSize": "10","isTrue":true]] as [String : Any]
+
+        2.AnyObject：由于value是JSON类型的实例，complicate(value as AnyObject)， 就是将value作为AnyObject传值出去
+        typealias Complicate = (AnyObject) ->Void
+        //请求回调
+        var complicate : Complicate?
+
+        func request(type:RequestType, URLString:String, parameters:[String : AnyObject], complicate:@escaping Complicate) -> Void {
+                CK().maskShow()
+                switch type {
+                case .requestTypeGet:
+                    Alamofire.request(URLString, method: .get, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+                        .validate()
+                        .responseJSON { response in
+                            CK().dismissMask()
+
+                            switch response.result{
+                            case .success:
+                                if let value = response.result.value{
+                                    //把得到的JSON数据转为字典
+                                    complicate(value as AnyObject)
+                                }
+                            case .failure: ()
+                                DMCAlertCenter.default().postAlert(withMessage: "网络请求失败")
+                                return
+                            }
+                    }
+
+    </pre>
+
+    <p class="contents" id="as"><b>Swift中as, as!, as? 的区别</b></p>
+    <pre>
+
+        1.as:仅当一个值的类型在运行时（runtime）和as模式右边的指定类型一致 - 或者是该类型的子类 - 的情况下，
+        才会匹配这个值。如果匹配成功，被匹配的值的类型被转换成as模式左边指定的模式。
+        class Father{}
+        class son{}
+
+        let s = son()
+        s as Father
+
+
+        2. as! 父类强转子类
+        class Father{}
+        class son{}
+
+        let f = Father()
+        //不加！编译报错 转换失败 会崩溃
+        f as! son
+
+
+        3. as? 转换失败返回nil
+        class Father{}
+        class son{}
+
+        let f = Father()
+        //不加！编译报错 转换失败 会返回nil
+        f as？ son
+
+        补充：变量声明时！与？的区别
+        a. var a:Int? 可选类型 后边不一定有值 没赋值时返回nil  赋值时返回Optional(xx)
+        b. var b:Int! 隐式拆包 表示后面一定不会nil  没赋值时返回none  赋值时返回some(xx)
+        c. Int?与Int! 都额外需要1个字节来保存信息
+
+        例子：
+            var a:Int? = 1
+            var b:Int! = 2
+
+            print(a)
+            print(b)
+
+            print(MemoryLayout&lt;Int?&gt;.self)
+            print(MemoryLayout&lt;Int!&gt;.self)
+
+            print("size = \(MemoryLayout&lt;Int?&gt;.size) align = \(MemoryLayout&lt;Int?&gt;.alignment) stride= \(MemoryLayout&lt;Int?&gt;.stride)")
+            print("size = \(MemoryLayout&lt;Int!&gt;.size) align = \(MemoryLayout&lt;Int!&gt;.alignment) stride= \(MemoryLayout&lt;Int!&gt;.stride)")
+
+            //输出结果
+            //没有赋值：
+            nil
+            none
+            //赋值：
+            Optional(1)
+            some(2)
+            MemoryLayout&lt;Optional&lt;Int&gt;&gt;
+            MemoryLayout&lt;ImplicitlyUnwrappedOptional&lt;Int&gt;&gt;
+            size = 9 align = 8 stride= 16
+            size = 9 align = 8 stride= 16
+
+    </pre>
+
+    <p class="contents" id="high-order-function"><b>Swift中的高阶函数</b></p>
+    <pre>
+        1.高阶函数定义：
+            a.接受一个或多个函数当作参数
+            b.把一个函数当作返回值
+
+        2.简单实例
+            //1. 从小到大排序
+            var nums = [1,323,41,451,14]
+            nums.sort(by: {$0<$1})
+
+            Swift 允许当函数的最后一个参数是闭包的时候，以紧跟 { } 的形式，将最后一个闭包的内容附加在函数后面。
+            所以可以简化为：
+            nums.sort{$0<$1}
+
+            //2.遍历输出
+            var nums = [1,2,4,12,45]
+            nums.forEach{print($0)}
+
+        3.map遍历：
+
+            public func map&lt;T&gt;(_ transform: (Element) throws -> T) rethrows -> [T]
+
+            //rethrows:
+            这个函数如果抛出异常，仅可能是因为传递给它的闭包的调用导致了异常。
+            如果闭包的调用没有导致异常，编译器就知道这个函数不会抛出异常。那么我们也就不用去处理异常了。
+
+            var arr1 = nums.map{$0+1}
+            var arr2 = nums.map{"NO."+String($0)}
+
+        4.flatMap:
+            flatMap与map的区别：
+
+            public func flatMap&lt;T&gt;(
+                @noescape transform: (${GElement}) throws -> T?
+                ) rethrows -> [T]
+
+            1.flatMap去空：
+                例子：
+                var nums = [1,2,3,nil]
+                var arr1 = nums.map{$0}
+                var arr2 = nums.flatMap{$0}
+
+                //输出：
+                arr1 = [Optional(1), Optional(2), Optional(3), nil]
+                arr2 = [1, 2, 3]
+
+            2.flatMap降维：
+                例子：
+                var nums = [[1,2,3], [4,5,6]]
+                var arr1 = nums.map{$0}
+                var arr2 = nums.flatMap{$0}
+
+                //输出
+                arr1 = [[1, 2, 3], [4, 5, 6]]
+                arr2 = [1, 2, 3, 4, 5, 6]
+
+            3. flatMap也能把两个不同的数组合并成一个数组 这个合并的数组元素个数是前面两个数组元素个数的乘积：
+                例子：
+                var nums1 = ["s1", "s2", "s3"]
+                var nums2 = [1,2]
+
+                let arr = nums1.flatMap{string in
+
+                    nums2.map{ num in
+
+                        //string + "\(num)"
+                        (string, num)
+                    }
+                }
+
+                //输出：
+                [("s1", 1), ("s1", 2), ("s2", 1), ("s2", 2), ("s3", 1), ("s3", 2)]
+
+        5. filter:
+
+            例子：
+            var nums = [1,2,3,4,5,6,7,8]
+            let arr1 = nums.filter{$0%2 == 0}
+
+            //输出：
+            [2, 4, 6, 8]
+
+        6. reduce:
+
+            public func reduce&lt;Result&gt;(_ initialResult: Result, _ nextPartialResult: (Result, Element) throws -> Result) rethrows -> Result
+
+            例子：用reduce求和：
+            let nums = [11,22,44,11,45,67]
+            let sum = nums.reduce(0) { (sum, element) -> Int in
+
+                return sum+element
+            }
+            //简化：
+            let sum = nums.reduce(0){$0+$1}
+
+            例子： 用reduce实现map的功能：
+            var nums = [11,22,33,22,55,33,99]
+            let arr1 = nums.reduce([]) { (a, element) -> [Int] in
+
+                var arr = [Int](a)
+                arr.append(element*2)
+
+                return arr
+            }
+
+            //输出：
+            [22, 44, 66, 44, 110, 66, 198]
+    </pre>
+
+    <p class="contents" id="Optional"><b>Swift中的Optional</b></p>
+    <pre>
+
+        OC中分为基本类型和引用类型， 基本类型如NSInteger, NSString
+        Swift中一切都是对象 如1.description
+
+        OC中可以向nil发送消息 Swift中这是严格不允许的 所以如何保证程序不向空指针调用方法 可选类型就产生了
+
+        1.Optional本质：枚举
+        public enum Optional&lt;Wrapped&gt; : _Reflectable, NilLiteralConvertible {
+            case None
+            case Some(Wrapped)
+
+            <b>//这个构造方法的存在使得Int, Int?？, nil等都可以复制给类型为Int？的变量</b>
+            public init(_ some: Wrapped)
+
+            public func map&lt;U&gt;(_ transform: (Wrapped) throws -> U) rethrows -> U?
+            public func flatMap&lt;U&gt;(_ transform: (Wrapped) throws -> U?) rethrows -> U?
+        }
+
+        2.Optional的嵌套
+        let a: Int? = 1
+        let b: Int?? = a
+        let c: Int??? = b
+
+        let a: Int? = 1
+        let b: Int?? = a
+        let c: Int??? = b
+
+        //输出:
+        a = Optional(1)
+        b = Optional(Optional(1))
+        c = Optional(Optional(Optional(1)))
+
+        //使用fr v -R a/b/c查看内存构成
+        (Swift.Optional&lt;Swift.Int&gt;) a = some {
+          some = {
+            _value = 1
+          }
+        }
+        (Swift.Optional&lt;Swift.Optional&gt;Swift.Int&gt;&gt;) b = some {
+          some = some {
+            some = {
+              _value = 1
+            }
+          }
+        }
+        (Swift.Optional&lt;Swift.Optional&lt;Swift.Optional&lt;Swift.Int&gt;&gt;&gt;) c = some {
+          some = some {
+            some = some {
+              some = {
+                _value = 1
+              }
+            }
+          }
+        }
+
+        3.那么问题来了：
+            let a: Int? = nil
+            let b: Int?? = a
+            let c: Int??? = b
+            let d: Int??? = nil
+
+            //输出结果
+            a = nil
+            b = Optional(nil)
+            c = Optional(Optional(nil))
+            d = nil
+
+            if let _ = b {
+                print("b is not nil")
+            }else{
+                print("b is nil")
+            }
+
+            //输出结果： b is not nil
+
+            var dict:[String:String?] = [:]
+
+            //对应输出：
+            [:]
+
+            dict = ["key":"value"]
+            dict["key"] = nil
+            dict
+
+            //对应输出：
+            ["key": "value"]
+            nil
+            [:]
+
+            dict = ["key":"value"]
+            dict["key"] = Optional&lt;String&gt;.none
+            dict
+
+            //对应输出：
+            ["key": "value"]
+            nil
+            ["key": nil]
+
+            dict = ["key":"value"]
+            dict["key"] = Optional&lt;Optional&lt;String&gt;&gt;.none  //双重Optional才置正确删除Dictionary中的元素
+            dict["key"]
+            dict
+
+            //对应输出：
+            ["key": "value"]
+            nil
+            nil
+            [:]
+
+            var s1:String? = nil
+            dict = ["key":"value"]
+            dict["key"] = s1
+            dict["key"]
+            dict
+
+            //对应输出
+            nil
+            ["key":"value"]
+            nil
+            nil
+            ["key":nil]
+
+            var s2:String?? = nil    //双重Optional才置正确删除Dictionary中的元素
+            dict = ["key":"value"]
+            dict["key"] = s2
+            dict["key"]
+            dict
+
+            //对应输出
+            nil
+            ["key":"value"]
+            nil
+            nil
+            [:]
+
+            //原因：查看赋值时Dictionary[index]源码：
+            public subscript(key: Key) -> Value? {
+              get {
+                return _variantStorage.maybeGet(key)
+              }
+              set(newValue) {
+                if let x = newValue {
+                  // FIXME(performance): this loads and discards the old value.
+                  _variantStorage.updateValue(x, forKey: key)
+                }
+                else {
+                  // FIXME(performance): this loads and discards the old value.
+                  removeValueForKey(key)
+                }
+              }
+            }
+
+            设置它的值，它接受的是一个 String? 类型的参数。
+            而上边例子中的 value 类型为 String?，所以正常情况下它需要的是一个 String?? 类型的参数
+    </pre>
+
+    <p class="contents" id="ClassOrStruct"><b>Swift中的Class与Struct</b></p>
+    <pre>
+        Swift中有三大类型：class:引用类型reference Struct/Enum:值类型 value type
+
+        区别:
+        1. 初始化方法不同：
+        struct ss1{
+
+            var a:Int!
+        }
+
+        // struct可直接在构造函数中初始化property
+        let sss1:ss1 = ss1(a: 1)
+
+        class ss2{
+
+            var a:Int?
+        }
+
+        // class不可直接在构造函数中初始化property
+        let sss2:ss2 = ss2()
+        sss2.a = 1
+
+        2.struct更方便在LLDB中查看数据，class要求实现description
+
+        3.变量赋值方式不同：
+            struct是值拷贝，会copy一份给新的变量， class只是地址引用
+
+            例子：
+            let a = A(a: 1)
+            let b = age
+
+            print("a = \(Unmanaged.passUnretained(a as AnyObject).toOpaque())")
+            print("b = \(Unmanaged.passUnretained(b as AnyObject).toOpaque())")
+
+            let c = B()
+            c.a = 1
+            let d = c
+            print("c = \(Unmanaged.passUnretained(c as AnyObject).toOpaque())")
+            print("d = \(Unmanaged.passUnretained(d as AnyObject).toOpaque())")
+
+            //输出:
+            a = 0x000060c00004e040
+            b = 0xb000000000000013
+            c = 0x000060c00002a980
+            d = 0x000060c00002a980
+
+        4.struct中在实例初始化方法中需要加上mutating才能改变外部变量，class不用
+
+        5.继承的区别
+
+        6.struct比class轻量， struct变量保存在栈上，class变量保存在堆上，struct类型在编译时已经确定，class在运行时确定，
+            因此struct能加快编译速度。
+
+        7.安全性
+            strcut是引用安全的，不采用引用计数
+
+        8.内存泄露
+            struct不存在因为循环引用导致的内存泄露问题
+
+        9.线程安全
+            struct是线程安全的
+
+        10.OC与Swift的互相调用
+            当你的项目是OC与Swift混编时，struct不能在OC中调用
+
+        11.序列化
+            Struct不能像类一样被序列化成NSData对象
+
+
+    </pre>
+
+    <p class="contents" id="SwitchInSwift"><b>Swift中的Switch</b></p>
+    <pre>
+        1.在Swift语言中的Switch中，你可以匹配数字，字符串，元组，字符区间等
+        Swift中的Switch是不需要使用break语句的，因为其默认执行完匹配项就跳出Switch语句了
+
+        例子：
+        //匹配区间 比写if要好👌
+        let a:(Int,Int) = (50,50)
+        switch a {
+            case (0..<50, 0..<50):
+                print("0..<50")
+            case (50..<100, 50..<100):
+                print("50..<100")
+            default:
+                print(100)
+        }
+
+        2.Swift中的Switch语句，可以进行数值绑定，以及在case中使用where子句
+
+            let a:String = "ABC"
+            switch a {
+                case let temp where temp > "A":
+
+                    print("> A")
+                case let temp where temp > "D":
+
+                    print("> D")
+                default:
+                    print("default")
+            }
+
+        3.fallthrough:加了fallthrough后，会直接运行【紧跟的后一个】case或default语句，不论条件是否满足都会执行
+            fallthrough和break可以依据两者的顺序可以相互打断执行
+
+            var age = 1
+            switch age {
+            case 0..<10:
+                print("小朋友")
+
+                fallthrough
+            case 10..<100:
+                print("成年人")
+
+                fallthrough
+            default:
+                print("")
+            }
+
+            //输出:
+                小朋友
+                成年人
+
+
+    </pre>
+
+    <p class="contents" id="SearchAddressInSwift">Swift4查看对象地址</p>
+    <pre>
+
+        Swift的&操作和C语言不同，Swift不允许直接获取对象的指针，比如下面的代码就会编译不通过。
+        var a:Int = 1
+        &a
+
+        //查询Swift中对象的地址
+        Unmanaged.passUnretained(对象 as AnyObject).toOpaque()
+    </pre>
+
 </div>
 
 </body>
