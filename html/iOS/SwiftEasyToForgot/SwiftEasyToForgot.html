@@ -44,6 +44,7 @@
         <li><a href="#ClassOrStruct">Swift中的Class与Struct</a> </li>
         <li><a href="#SwitchInSwift">Swift中的Switch</a></li>
         <li><a href="#SearchAddressInSwift">Swift4查看对象地址</a></li>
+        <li><a href="#Int">Swift中的Int,Int8,Int16,Int32,Int64</a></li>
     </ul>
 
     <p class="smallTitle" id="swift"><b>swift 调用oc库</b></p>
@@ -952,7 +953,7 @@
 
     </pre>
 
-    <p class="contents" id="SearchAddressInSwift">Swift4查看对象地址</p>
+    <p class="contents" id="SearchAddressInSwift"><b>Swift4查看对象地址</b></p>
     <pre>
 
         Swift的&操作和C语言不同，Swift不允许直接获取对象的指针，比如下面的代码就会编译不通过。
@@ -963,6 +964,15 @@
         Unmanaged.passUnretained(对象 as AnyObject).toOpaque()
     </pre>
 
+    <p class="contents" id="Int"><b>Swift中的Int,Int8,Int16,Int32,Int64</b></p>
+    <img src="../../../Source/swift/cswiftbasictype.png">
+    <pre>
+        Int16, 等于short, 占2个字节. -32768 32767
+        Int32, 等于int, 占4个字节. -2147483648 2147483647
+        Int64, 等于long, 占8个字节. -9223372036854775808 9223372036854775807
+        Int8 ,占用1个字节
+        Int的默认值是64bit 8字节
+    </pre>
 </div>
 
 </body>
