@@ -45,6 +45,17 @@
         <li><a href="#SwitchInSwift">Swift中的Switch</a></li>
         <li><a href="#SearchAddressInSwift">Swift4查看对象地址</a></li>
         <li><a href="#Int">Swift中的Int,Int8,Int16,Int32,Int64</a></li>
+        <li><a href="#Property">Swift中的属性</a></li>
+        <li><a href="#genericClass">Swift中的泛型</a></li>
+        <li><a href="#typealiasAndassociatedtype">Swift中typealias与associatedtype的区别</a></li>
+        <li><a href="#PATs">Swift中的PATs</a></li>
+        <li><a href="#ArrayInSwift">Swift中的数组</a></li>
+        <li><a href="#arrFilter">给Array扩展一个自定义的过滤器</a></li>
+        <li><a href="#dicFilter">给Dictionary添加一个过滤器</a></li>
+        <li><a href="#arrReduce">给Array添加自定义reduce</a></li>
+        <li><a href="#dicReduce">给Dictionary添加自定义reduce</a> </li>
+        <li><a href="#arrMap">给Array添加自定义map</a></li>
+        <li><a href="#dicMap">给Dictionary添加自定义map</a> </li>
     </ul>
 
     <p class="smallTitle" id="swift"><b>swift 调用oc库</b></p>
@@ -218,13 +229,19 @@
 
     <p class="contents">
         如：<br>
-        print(NSStrinwg(string:s).intValue+1)<br>
+        print(NSString(string:s).intValue+1)<br>
     </p>
 
     <p class="smallTitle" id="class"><b>获取对象类型</b></p>
     <pre>
-        object_getClass(&lt;#T##obj: AnyObject!##AnyObject!#&gt;)
+        1.
+        静态变量 object_getClass(&lt;#T##obj: AnyObject!##AnyObject!#&gt;)
         tableView.register(object_getClass(UITableViewCell()), forCellReuseIdentifier: "hehe")
+
+        2. 万物皆对象
+        UITableViewCell.self
+        Int.self
+        1.self
     </pre>
 
     <p class="smallTitle" id="after"><b>swift的延时操作</b></p>
@@ -291,7 +308,13 @@
 
     <p class="smallTitle" id="error1">
         <b>Property 'self.backgroundLabBgColor' not initialized at super.init - Delegate</b></p>
-    <p class="contents">解决:将backgroundLabBgColor设置为optional:<a href="https://stackoverflow.com/questions/36635896/property-self-mydelegate-not-initialized-at-super-init-delegate">stackoverflow</a></p>
+    <p class="contents">
+        <pre>
+        解决:
+            1.将backgroundLabBgColor设置为optional:<a href="https://stackoverflow.com/questions/36635896/property-self-mydelegate-not-initialized-at-super-init-delegate">stackoverflow</a>
+            2.在init中初始化
+        </pre>
+    </p>
 
     <p class="smallTitle" id="closure">
         <b>swift中的闭包</b>
@@ -398,7 +421,7 @@
 
     <p class="contents" id="pi"><b>swift中的M_PI</b></p>
     <pre>
-        M_PI_4相当于:CGFloat.pi/4
+        M_PI_4相当于:CGFloat.pi/4; Double.pi; Float.pi;
     </pre>
 
     <p class="contents" id="weakStrongDanceInSwift"><b>Weak-Strong-In-Swift</b></p>
@@ -824,6 +847,9 @@
 
             设置它的值，它接受的是一个 String? 类型的参数。
             而上边例子中的 value 类型为 String?，所以正常情况下它需要的是一个 String?? 类型的参数
+
+            Dictionary和Array不同的是，[]用在Dictionary的时候，会返回一个Optional类型来确保这种形式的访问安全。因此访问不存在的key，并不会导致运行时错误。
+            Swfit为Dictionary的索引查询操作，提供了optional保护。要么得到正确的结果，要么通过nil表示要查询的内容不存在。
     </pre>
 
     <p class="contents" id="ClassOrStruct"><b>Swift中的Class与Struct</b></p>
@@ -973,6 +999,572 @@
         Int8 ,占用1个字节
         Int的默认值是64bit 8字节
     </pre>
+
+    <p class="contents" id="Property"><b>Swift中的属性</b></p>
+    <pre>
+        class Circle: NSObject {
+
+            /**
+             <b>1.两种类型的属性：</b>
+             存储属性(普通属性)与计算属性。
+             存储属性将值（常量或者变量）保存为实例或类型的一部分，而计算属性没有存储值。
+
+             在 Swift 中有两种类型的属性观察者：一种在赋值之前调用，另一种在赋值之后调用。
+             */
+
+            <b>//age是一个存储属性 也叫普通属性</b>
+            var radius:Double = 10{
+
+                willSet{
+
+                    //willSet可以访问newValue 不能访问oldValue
+                    print("newValue = \(newValue)")
+                }
+
+                didSet{
+                    if radius < 10{
+
+                        //didSet可以访问oldValue 不能访问newValue
+                        print("oldValue = \(oldValue)")
+
+                        //oldValue 原来的值
+                        radius = oldValue
+                    }
+                }
+            }
+
+            <b>//aero是一个计算属性：因此在每次调用计算属性时，都要计算该值。</b>
+            //计算属性总是需要一个 getter。如果缺少 setter，则该属性被称为只读属性。
+            var aero:Double{
+
+                get{
+                    return radius * radius * Double(CGFloat.pi)
+                }
+
+                //set带一个将要被赋值的参数
+                set(newAero){
+                    radius = sqrt(newAero/Double.pi)
+                }
+            }
+
+
+            <b>//每个存储属性在它的对象实例化之后都必须有值, 否则代码无法通过编译；属性初始化有两种方法：</b>
+            //1.在 init 方法中初始化值
+            //2.给属性设置默认的值
+            var length:Double
+
+            <b>//懒加载属性</b>
+            //如果具有默认值的存储属性使用了关键字 lazy 标记，则其默认值不会立即初始化，而是在第一次访问该属性时初始化。
+            //因此，如果该属性从未被访问，它将永远不会被初始化。你可以将这种特性应用于一些特别耗费 CPU 或内存的初始化上。由于类型属性没有初始化方法，它总是需要一个默认值。
+            lazy var round1:Double? = 0
+
+            lazy var round2:Double = {
+
+                print("懒加载属性准备赋值")
+
+                return 200
+            }()
+
+            <b>//类型属性 类型属性是类的一部分，但不是实例的一部分，类型属性也被称为静态属性。</b>
+            存储属性和计算属性都可以是类型属性。类型属性的关键字是 static,它们使用类名而不是实例对象来访问它们。
+            由于类型属性没有初始化方法，它总是需要一个默认值。
+            static var round3:String?
+
+            <b>//拥有私有 Setter 的公共属性:提供一个私有的 setter, 只能在类内部访问setter</b>
+            public private(set) var diameter:Double?
+            //只内部使用
+            private var aa:Double = 200
+
+            override init() {
+
+                length = 0
+                self.diameter = 100
+
+                print(aa)
+            }
+
+        }
+    </pre>
+
+    <p class="contents" id="genericClass"><b>Swift中的泛型</b></p>
+    <pre>
+
+        <b>//交换两个数：</b>
+        func exchange&lt;T&gt;(a:inout T, b:inout T) -> Void {
+
+            let temp = a
+            a = b
+            b = temp
+        }
+
+        //类型参数:
+        在上面的泛型函数例子中，占位符T是类型参数的一个例子，T代表只是一个占位符。
+        类型参数指定并命名一个占位符类型，并用<>包裹，放在函数名后面。
+        在编译器的时候已经确定参数类型
+
+        <b>//数组泛型操作</b>
+        public struct heap&lt;T&gt;{
+
+            var items = [T]()
+
+            mutating func push(element:T) -> Void {
+
+                items.append(element)
+            }
+        }
+        <b>//给泛型类型添加扩展</b>
+        extension heap{
+
+            func topItem() -> T {
+
+                return (items.isEmpty ? nil : items[items.count-1])!
+            }
+        }
+
+        //测试:
+        var hp:heap = heap&lt;String&gt;()
+        hp.push(element: "ssss")
+        hp.push(element: "ddd")
+
+        print(hp.topItem()) //输出：ddd
+
+        <b>//泛型类型约束</b>
+        //实例：数组中是否存在某个数，遵循了Equatable协议的对象才能用来判断是否相等
+        func findIndex&lt;T:Equatable&gt;(arr:[T], t:T) -> Int? {
+
+            for (index, value) in arr.enumerated(){
+
+                if value == t{
+
+                     return index
+                }
+            }
+
+            return Optional.none
+        }
+
+        print(findIndex(arr: ["sss", "ddd", "ggg"], t: "ggg"))
+        print(findIndex(arr: [1,2,3,4], t: 1))
+        //输出：
+        Optional(2)
+        Optional(0)
+
+
+         <b>//泛型的where语句</b>
+        类型约束能够让我们为泛型类型添加一些约束和条件。为关联类型添加一些约束也是很有必要的。
+        可以在参数列表中使用where子句来为关联类型添加约束。
+
+        例子:
+        //MARK: -判断两个数组是否一模一样
+        func same&lt;c1:container, c2:container&gt;(container:c1, anotherContainer:c2) -> Bool where c1.itemType == c2.itemType, c1.itemType:Equatable {
+
+            guard container.count == anotherContainer.count else {
+
+                return false
+            }
+
+            for i in 0...container.count-1 {
+
+            //c1.itemType:Equatable保证是可以比较的
+            if container[i] == anotherContainer[i]
+            {
+                return false
+
+            }
+
+            return true
+        }
+
+    </pre>
+
+    <p class="contents" id="typealiasAndassociatedtype"><b>Swift中typealias与associatedtype的区别</b></p>
+    <pre>
+
+        <b>1.typealias:</b>
+            typealias 是用来为已经存在的类型重新定义名字的，通过命名，可以使代码变得更加清晰。
+            使用的语法也很简单，使用typealias 关键字像使用普通的赋值语句一样，可以将某个已经存在的类型赋值为新的名字。
+
+            例子：
+            typealiad Success:(_ model:XXModel) -> (void)
+
+            typealias 是单一的，也就是说你必须指定将某个特定的类型通过typealias赋值为新名字，而不能将整个泛型类型进行重命名。
+            class Person&lt;T&gt; {}
+            typealias Woker = Person
+            typealias Worker&lt;T&gt; = Person&lt;T&gt;
+            typealias Worker = Person&lt;WorkId&gt;
+
+        <b>2.某个类型同时实现多个协议的组合时。我们可以使用&符号连接几个协议，然后给它们一个新的更符合上下文的名字，来增强代码可读性:</b>
+            例子：
+            protocol Cat {}
+            protocol Dog {}
+            typealias Pat = Cat & Dog
+
+            例子：
+            public protocol p1 {
+
+                <b>//原生的 Swift protocol 里没有可选项，所有定义的方法都是必须实现的。</b>
+                <b>//给自定义的协议中添加extension,在extension中对可选方法进行默认实现,这样遵守协议的对象就可以不用实现可选方法.</b>
+                associatedtype itemType1
+
+                var item1:String?{get}
+
+                mutating func log1()
+            }
+
+            public protocol p2 {
+
+                associatedtype itemType2
+
+                var item2:String?{get}
+
+                mutating func log2()
+            }
+
+            extension p1{
+
+                var item1:String?{
+                    return item1
+                }
+            }
+
+            extension p2{
+
+                var item2:String?{
+                    return item2
+                }
+            }
+
+            struct class2:p1&p2 { //或者p1,p2 用逗号分开
+
+                typealias itemType1 = String
+                typealias itemType2 = String
+
+                mutating func log1() {
+
+                    print("log1")
+                }
+
+                mutating func log2() {
+
+                    print("log2")
+                }
+            }
+
+            //测试：
+            var cls2:class2 = class2()
+            cls2.log1()
+            cls2.log2()
+
+            //输出：
+            log1
+            log2
+
+        <b id="PATs">2.associatedtype关联类型/Swift中的PATs:Protocols with Associated Types带有关联类型的协议</b>
+            定义一个协议时，有的时候声明一个或多个关联类型作为协议定义的一部分将会非常有用。关联类型为协议中的某个类型提供了一个占位名（或者说别名），其代表的实际类型在协议被采纳时才会被指定。
+            你可以通过 associatedtype 关键字来指定关联类型。
+            关联类型 使得swift更加的面向协议
+
+            例子：
+            public protocol container {
+
+                //关联类型：用来声明一个抽象的协议 associatedtype
+                associatedtype itemType //声明一个关联类型
+
+                mutating func append(_ item:itemType)
+                //协议需要{get} {get set}
+                var count:Int{get}
+                subscript(i:Int) ->itemType {get}
+            }
+
+            //实现该协议：
+            struct genericStack&lt;T&gt; : container{
+
+                //实现container
+                typealias itemType = T
+
+                mutating func append(_ item: T) {
+
+                    items.append(item)
+                }
+
+                var count: Int{
+
+                    get{
+                        return self.items.count
+                    }
+                }
+
+                subscript(i: Int) -> T {
+
+                    return items[i] as T
+                }
+            }
+
+
+    </pre>
+
+    <p class="contents" id="ArrayInSwift"><b>Swift中的数组</b></p>
+    <pre>
+
+        var threeInts:Array&lt;Int&gt; = Array&lt;Int&gt;(repeating: 3, count: 3)
+
+        //+法
+        var sixInts:Array&lt;Int&gt; = threeInts+threeInts
+
+        //值
+        sixInts.last
+        sixInts.first
+        //下标
+        sixInts.endIndex
+        sixInts.startIndex
+        //是否为空
+        sixInts.isEmpty
+        //数量
+        sixInts.count
+        //添加
+        sixInts.append(7)
+        sixInts.append(contentsOf: [1,2])
+        sixInts += [10]
+        sixInts.insert(20, at: 0)
+        //删除
+        sixInts.remove(at: 0)
+        sixInts.removeFirst()
+        sixInts.removeLast()
+        sixInts.popLast()
+
+        <b>//元素类型：</b>
+        type(of: arr[1])
+
+        <b>//数组的拷贝</b>
+        var a = [1,2,3]
+        var b = a
+
+        print(getBufferAddress(of: a), getBufferAddress(of: b))
+        print("a = \(a) b = \(b)")
+
+        b += [4]
+
+        print(getBufferAddress(of: a), getBufferAddress(of: b))
+        print("a = \(a) b = \(b)")
+
+        //输出：
+        Optional(0x000060800026ad60) Optional(0x000060800026ad60)
+        a = [1, 2, 3] b = [1, 2, 3]
+        Optional(0x000060800026ad60) Optional(0x0000604000281bf0)
+        a = [1, 2, 3] b = [1, 2, 3, 4]
+
+        func getBufferAddress&lt;T&gt;(of array:[T]) -> String {
+
+            //withUnsafeBufferPointer是Array的一个方法，它可以把保存Array内容的地址，传递给它的closure参数。在我们的例子里，这个closure只是把Array的地址，变成了一个String对象。
+            return array.withUnsafeBufferPointer({ (buffer)  in
+
+                return String(describing: buffer.baseAddress)
+             })
+        }
+
+        <b>//可见，数组的拷贝只在拷贝的b赋值之后才会被重新分配内存地址。</b>
+
+        <b>//数组的遍历：</b>
+        arr.forEach { (element) in
+
+
+        }
+
+        for (index, value) in arr.enumerated(){
+
+
+        }
+
+        let array = arr.filter { (element) -> Bool in
+
+            return element > 5
+        }
+
+
+        let arr1 = [[1,2,4],[1,2]].map { (element) -> [Int] in
+
+            var ele:[Int] = [Int]()
+
+            for a in element{
+
+                guard a%2 == 0 else {continue}
+
+                ele.append(a)
+            }
+
+            return ele
+        }
+
+        //arr1 = [[2, 4], [2]]
+
+        let arr2 = [[1,2,4],[1,2]].flatMap { (element) -> [Int] in
+
+            var ele:[Int] = [Int]()
+
+            for a in element{
+
+                guard a%2 == 0 else {continue}
+
+                ele.append(a)
+            }
+
+            return ele
+        }
+
+        let sum = [1,2,4].reduce(0) { (sum, element) -> Int in
+
+            return sum+element
+        }
+        //简化：let sum = [1,2,4].reduce(0){$0+$1}
+        //再简化：let sum = [1,2,4].reduce(0, +)
+        //7
+
+        //arr2 = [2, 4, 2]
+
+
+        <b id="arrFilter">//给Array扩展一个自定义的过滤器</b>
+        extension Array{
+
+            func myFilter(_ predicate:(Element)->(Bool)) -> [Element] {
+
+                var temp:[Element] = []
+
+                for value in self where predicate(value) {
+
+                    temp.append(value)
+                }
+
+                return temp
+            }
+        }
+
+        //调用：
+        var arr = [1,2,4].myFilter { (element) -> (Bool) in
+
+            return (element%2 == 0)
+        }
+        //arr = [2,4]
+
+        <b id="arrMap">给Array扩展自定义map</b>
+        extension Array{
+
+            func myMap&lt;T&gt;(_ predicate:(Element)->T) -> [T] {
+
+                var temp:[T] = [T]()
+
+                for value in self {
+
+                    let t:T = predicate(value)
+                    temp.append(t)
+                }
+
+                return temp
+            }
+        }
+
+        //测试:
+        let arr = [1,2,4].myMap { (element) -> Int in
+
+            return element+10
+        }
+        //[11,12,14]
+
+        <b id="dicFilter">//给Dictionary添加一个过滤器</b>
+        extension Dictionary{
+
+            func myFilter(_ predicate:(Element) ->(Bool)) ->[String:Any] {
+
+                var kv:[String:Any] = [String:Any]()
+
+                for value in self where predicate(value){
+
+                    <b>字典添加数据</b>
+                    kv.updateValue(value.value, forKey: value.key as! String)
+                }
+
+                return kv
+            }
+        }
+
+        //测试:
+        var dic = ["1":1,"2":2].myFilter { (element) -> (Bool) in
+
+            return element.value >= 2
+        }
+        //["2": 2]
+
+        <b id="arrReduce">//给Array添加自定义Reduce</b>
+        extension Dictionary{
+
+            func myReduce&lt;T&gt;(_ initial:T, _ next:(T,Element)->T) -> T {
+
+                var temp = initial
+
+                for value in self {
+
+                    temp = next(temp, value)
+                }
+
+                return temp
+            }
+        }
+
+        //测试：
+        let arr2 = [1,2,3,4].myReduce(0) { (sum, ele) -> Int in
+
+            return sum+ele
+        }
+        //10
+
+        <b id="dicReduce">//给dic添加自定义Reduce</b>
+        extension Dictionary{
+
+            func myReduce&lt;T&gt;(_ initial:T, _ next:(T, Element)->T) -> T {
+
+                var temp:T = initial
+
+                for value in self{
+
+                    temp = next(temp, value)
+                }
+
+                return temp
+            }
+        }
+
+        //测试：
+        let arr2 = ["1":1, "2":2].myReduce(0) { (sum, ele) -> Int in
+
+            return sum+ele
+        }
+        //3
+
+        <b id="dicMap">//给dic添加自定义map</b>
+        extension Dictionary{
+
+            func myMap&lt;T&gt;(_ predicate:(Element)->(T)) -> [String:T] {
+
+                var temp:[String:T] = [String:T]()
+
+                for value in self {
+
+                    let t:T = predicate(value)
+                    temp.updateValue(t, forKey: value.key as! String)
+                }
+
+                return temp
+            }
+        }
+
+        //测试：
+        let dic = ["1":1,"2":2].myMap { (element) -> (Int) in
+
+            return element.value+10
+        }
+        //["2": 12, "1": 11]
+
+    </pre>
+
 </div>
 
 </body>
