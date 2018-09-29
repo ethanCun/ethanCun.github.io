@@ -20,6 +20,9 @@
     <hr>
 
     <ul>
+        <li><a href="https://swiftdoc.org/">Swift源库文档</a></li>
+        <li><a href="https://github.com/apple/swift">Swift源码</a></li>
+        <li><a href="https://blog.csdn.net/youshaoduo/article/details/77967391">Swift4新特性参考链接</a> </li>
         <li><a href="#mark">swift中的mark</a> </li>
         <li><a href="#swift">swift 调用oc库</a> </li>
         <li><a href="#swiftInOc">oc工程使用swift库</a></li>
@@ -1317,6 +1320,8 @@
         //下标
         sixInts.endIndex
         sixInts.startIndex
+        sixInts[0]
+        sixInts[0..<3] //subscript(_: Range&lt;Array&lt;Element&gt;.Index&gt;)
         //是否为空
         sixInts.isEmpty
         //数量
@@ -1375,6 +1380,11 @@
 
         }
 
+        var iterator = arr.makeIterator()
+        while let element = iterator.next(){
+            print(element)
+        }
+
         let array = arr.filter { (element) -> Bool in
 
             return element > 5
@@ -1394,7 +1404,6 @@
 
             return ele
         }
-
         //arr1 = [[2, 4], [2]]
 
         let arr2 = [[1,2,4],[1,2]].flatMap { (element) -> [Int] in
@@ -1410,6 +1419,7 @@
 
             return ele
         }
+        //arr2 = [1,2,4,1,2]
 
         let sum = [1,2,4].reduce(0) { (sum, element) -> Int in
 
