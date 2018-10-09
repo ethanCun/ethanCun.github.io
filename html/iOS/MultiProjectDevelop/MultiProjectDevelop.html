@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iOS多Project开发</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">iOS多Project开发</span>
+</div>
+
+<div class="contentBgDiv">
+    <p class="title">iOS多Project开发</p>
+    <hr>
+
+    <p class="smallTitle">
+        <b>
+            1. 简介
+        </b>
+    </p>
+    <div class="contents">
+        <p>
+            iOS的多Project开发是指在同一个workspace下操作多个project。将一些常用的第三方工具放在其他工程下，
+            并在主工程下引用。常见的例子是一个主工程+一个Pods工程。这会有很多好处：
+        </p>
+        <p>
+            1. 只需要打开一个工作环境，需要修改、同步代码，都不需要打开新的项目、新的文件，
+            在不同的项目里跳来跳去很容易打断思维的。
+        </p>
+        <p>
+            2. 可以像在同一个工程里一样，直接点击方法名查看引用库项目的代码，否则就要打开另一个项目，
+            然后找到对应文件再找到方法。
+        </p>
+        <p>
+            3.只要运行自己的项目就行，就会自动帮你编译库文件，就像Pods一样。
+        </p>
+    </div>
+
+    <p class="smallTitle">
+        <b>
+            2. Workspace下多project项目搭建与引用静态库
+        </b>
+    </p>
+    <div class="contents">
+        <p>
+            1. 在桌面上新建一个文件夹MyWorkSpace, 实际时用项目命名；
+        </p>
+        <p>
+            2. 打开Xcode，在MyWorkSpace文件下新建名为MyWorkSpace的Workspace文件;
+        </p>
+        <p>
+            3.在MyWorkSpace文件下,新建一个静态库Cocoa Touch Static Library，名为SupportLibrary;
+        </p>
+        <p>
+            4.在MyWorkSpace文件下,新建主项目，名为MainProject;
+        </p>
+        <p>
+            5.重新打开MyWorkspace.xcworkspace，在左侧的Project Navigator中引入新建的两个项目SupportProject.xcodeproj,
+            MainProject.xcodeproj; 如图：
+        </p>
+        <img src="../../../Source/MultiProject/1.png">
+        <p></p>
+        <p>
+            6.在SupportLibrary的静态库中添加一个测试方法, 然后在Target里面选择SupportLibrary进行编译，SupportLibrary.a变成黑色；
+        </p>
+        <pre>
+            + (void)sayHello
+            {
+                NSLog(@"hello");
+            }
+        </pre>
+        <p>
+            7.在MainProject的ViewController.m中导入:#import "SupportLibrary.h", 在Target中选择MainProject
+            编译，报错：'SupportLibrary.h' file not found
+        </p>
+        <p>
+            解决办法：点击MainProject -> Build settings -> Header Search Paths 中添加SupportLibrary的路径，
+            并设置为递归搜索： $(SRCROOT)/../SupportLibrary  递归：recursive ； 再选择主工程编译，错误解决
+        </p>
+        <p>
+            8.在MainProject的ViewController.m中，调用静态库中的方法, 运行报错如下图：
+        </p>
+        <pre>
+            - (void)viewDidLoad {
+                [super viewDidLoad];
+                // Do any additional setup after loading the view, typically from a nib.
+
+                [SupportLibrary sayHello];
+            }
+        </pre>
+        <img src="../../../Source/MultiProject/2.png">
+        <p>
+            解决办法：在主工程，TARGETS -> Build Phases -> Link Binary With Libraries中导入静态库
+        </p>
+    </div>
+
+    <p class="smallTitle"><b>3. 引用Framework</b></p>
+    <div class="contents">
+        <p>
+            1. 在WorkSpace下再新建一个Framework(Cocoa Touch Framework)，名为DynamicLibrary；
+        </p>
+        <P>
+            2.新建一个测试类TestClass, 并且将其加入.h文件中；
+        </P>
+        <img src="../../../Source/MultiProject/4.png">
+        <img src="../../../Source/MultiProject/5.png">
+        <p>
+            3.同样在主工程下，ViewController.m中个导入#import "DynamicLibrary.h"，报错：'DynamicLibrary.h' file not found
+        </p>
+        <p>
+            解决办法：<br>
+            1.在主工程Build Phases -> Link Binary With Libraries 中导入DynamicLibrary;<br>
+            2.在主工程TARGETS -> General -> Embedded Binaries中引入DynamicLibrary;<br>
+            3.在DymamicLibrary动态库， TARGETS -> Build Phase -> Header中可以设置文件的权限，如图;<br>
+        </p>
+        <img src="../../../Source/MultiProject/6.png">
+        <img src="../../../Source/MultiProject/7.png">
+        <img src="../../../Source/MultiProject/8.png">
+    </div>
+
+    <p class="smallTitle"><b>4.在Workspace下使用Cocoapods</b></p>
+    <div class="contents">
+        <p>
+            1. 在WorkSpace下再新建一个项目，名为Project2；
+        </p>
+        <p>
+            2. 在终端中cd到MyWorkspace文件夹下，Podfile与.xcworkspace在同一级目录； 
+        </p>
+        <p>
+            3.输入Vim Podfile并配置Podfile如下图:
+        </p>
+        <img src="../../../Source/MultiProject/3.png">
+    </div>
+
+</div>
+
+</body>
+</html>
