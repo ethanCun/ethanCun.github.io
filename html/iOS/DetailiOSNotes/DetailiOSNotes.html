@@ -352,90 +352,67 @@
         <p class="contents">
             想不通过自己服务器后台，而是直接比较本地和appStore版本大小做版本更新，但是用http://itunes.apple.com/lookup?id=%@（这里写appid，通过在itunes connect
             App信息里面获取）获取不到版本号？<br>
-            这个时候应该怎么办： 加上*/cn*(当然这只是针对只在中国玩玩的APP) https也可以
-            http://itunes.apple.com/cn/lookup?id=%@<br>
+            这个时候应该怎么办： 加上*/cn*(当然这只是针对只在中国玩玩的APP) https也可以<br>
+            <b>下载链接格式：</b>http://itunes.apple.com/cn/lookup?id=%@ (apple id可以在App Store Connect的app信息找到)<br>
+            <img src="../../../Source/iOSDetailNotes/1.png">
+            <b>跳转链接格式：</b>https://itunes.apple.com/cn/app/这里是app名称/id后面这里接app的apple id(apple id可以在App Store Connect的app信息
+            中找到)?mt=8
+            <img src="../../../Source/iOSDetailNotes/2.png">
         </p>
-        <br><p class="contents">附上代码：</p>
-        <p class="contents">
-            //获取最新版本号<br>
-            -(void)VersonUpdate{<br>
-            //定义的app的地址<br>
-            NSString *urld = [NSString stringWithFormat:@"https://itunes.apple.com/cn/lookup?id=%@",@"您的appId"];<br><br>
+        <p class="contents">附上代码：</p>
+        <pre>
+            func applicationDidBecomeActive(_ application: UIApplication) {
 
-            //网络请求app的信息，主要是取得我说需要的Version<br>
-            NSURL *url = [NSURL URLWithString:urld];<br>
-            NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url<br>
-            cachePolicy:NSURLRequestReloadIgnoringCacheData<br>
-            timeoutInterval:10];<br>
-            [request setHTTPMethod:@"POST"];<br><br>
+                  checkUpdateVersion()
+            }
 
-            NSURLSession *session = [NSURLSession sharedSession];<br><br>
+            func checkUpdateVersion() -> Void {
 
-            NSURLSessionDataTask *task = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data,
-            NSURLResponse * _Nullable response, NSError * _Nullable error) {<br><br>
+                let urlString:String = String(format: "https://itunes.apple.com/cn/lookup?id=%@", "1437731410")
+                let url:URL = URL(string: urlString)!
 
-            NSMutableDictionary *receiveStatusDic=[[NSMutableDictionary alloc]init];<br><br>
+                Alamofire.request(url, method: .post).responseJSON { (data) in
 
-            if (data) {<br><br>
+                    if let JSON:[String:Any] = data.result.value as? [String:Any]{
 
-            //data是有关于App所有的信息<br>
-            NSDictionary *receiveDic = [NSJSONSerialization JSONObjectWithData:data
-            options:NSJSONReadingMutableLeaves error:nil];<br><br>
+                        guard (JSON["resultCount"] as! Int) > 0  else {return}
 
-            if ([[receiveDic valueForKey:@"resultCount"] intValue]>0) {<br><br>
+                        let arr1:[[String:Any]] = JSON["results"] as! [[String:Any]]
 
-            [receiveStatusDic setValue:@"1" forKey:@"status"];<br>
-            [receiveStatusDic setValue:[[[receiveDic valueForKey:@"results"] objectAtIndex:0]
-            valueForKey:@"version"] forKey:@"version"];<br><br>
+                        guard arr1.count > 0 else {return}
 
-            //请求的有数据，进行版本比较<br>
-            [self performSelectorOnMainThread:@selector(receiveData:) withObject:receiveStatusDic waitUntilDone:NO];<br>
-            }else{<br><br>
+                        let dic1:[String:Any] = arr1.first as! [String:Any]
 
-            [receiveStatusDic setValue:@"-1" forKey:@"status"];<br>
-            }<br>
-            }else{<br>
-            [receiveStatusDic setValue:@"-1" forKey:@"status"];<br>
-            }<br>
-            }];<br><br>
+                        let appStoreVersion:String = dic1["version"] as! String
 
-            [task resume];<br>
-            }<br>
-        </p>
+                        self.compareVersion(appstoreVersion: appStoreVersion)
+                    }
+                }
+            }
 
-        <p class="contents">
-            //比较版本号大小 挨个比 我自己规定都是3位 0.0.0<br>
-            -(void)receiveData:(id)sender<br>
-            {<br>
-            //获取APP自身版本号<br>
-            NSString *localVersion = [[[NSBundle
-            mainBundle]infoDictionary]objectForKey:@"CFBundleShortVersionString"];<br><br>
+            func compareVersion(appstoreVersion:String) -> Void {
 
-            if ([localVersion compare:sender[@"version"] ] == NSOrderedAscending) {<br><br>
+                let localVersion:String = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
 
-            //判断有没有新版本 有则提示更新<br>
-            [self updateVersion];<br>
-            }<br>
-            }<br>
-        </p>
+                if localVersion < appstoreVersion {
 
-        <p class="contents">
-            // 弹出框
-            -(void)updateVersion{<br><br>
+                    self.updateVersion()
+                }
+            }
 
-            NSString *msg = [NSString stringWithFormat:@"更新最新版本，优惠信息提前知"];<br>
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"升级提示" message:msg
-            preferredStyle:UIAlertControllerStyleAlert];<br>
-            UIAlertAction *otherAction = [UIAlertAction actionWithTitle:@"现在升级"style:UIAlertActionStyleDestructive
-            handler:^(UIAlertAction*action) {<br><br>
 
-            NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"您的app在AppStore的下载地址"]];<br>
-            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];<br>
-            }];<br>
-            [alertController addAction:otherAction];<br>
-            [self.window.rootViewController presentViewController:alertController animated:YES completion:nil];<br>
-            }<br>
-        </p>
+            func updateVersion() -> Void {
+
+                ZLGAlertManager.manager.alert(title: "", message: "有新版本,请前往升级", sureTitle: "确定") { (action) -> (Void) in
+
+                    let url:URL = URL(string: "https://itunes.apple.com/cn/app/%E7%8C%AA%E4%B9%90%E7%AE%A1-%E8%AE%A9%E5%AE%A2%E6%88%B7%E5%BF%AB%E4%B9%90%E5%85%BB%E7%8C%AA/id1437731410?mt=8")!
+                    UIApplication.shared.open(url, options:[:], completionHandler: { (result) in
+
+                    })
+                }
+            }
+        </pre>
+
     </div>
 
     <br><br>
