@@ -21,15 +21,17 @@
     <hr>
 
     <ul>
-        <li><a href="#CustomStringConvertible">CustomStringConvertible,CustomDebugStringConvertible</a> </li>
-        <li><a href="#Equatable">Equatable</a> </li>
-        <li><a href="#Comparable">Comparable</a> </li>
-        <li><a href="#ExpressibleByArrayLiteral">ExpressibleByArrayLiteral，ExpressibleByDictionaryLiteral，ExpressibleByStringLiteral等</a> </li>
-        <li><a href="#Hashable">Hashable</a> </li>
-        <li><a href="#TextOutputStream">TextOutputStream与TextOutputStreamable</a> </li>
-        <li><a href="#IteratorProtocol">IteratorProtocol</a> </li>
-        <li><a href="#Sequence">Sequence</a> </li>
-        <li><a href="#Collection">Collection</a> </li>
+        <li><a href="#CustomStringConvertible">CustomStringConvertible,CustomDebugStringConvertible:A type with a customized textual representation.</a> </li>
+        <li><a href="#Equatable">Equatable：A type that can be compared for value equality. (== !=)</a> </li>
+        <li><a href="#Comparable">Comparable：A type that can be compared using the relational operators <, <=, >=, and >.</a> </li>
+        <li><a href="#ExpressibleByArrayLiteral">ExpressibleByArrayLiteral，ExpressibleByDictionaryLiteral，ExpressibleByStringLiteral等：提供用Array、Dictionary、String初始化一个类的能力</a> </li>
+        <li><a href="#Hashable">Hashable：A type that provides an integer hash value.</a> </li>
+        <li><a href="#TextOutputStream">TextOutputStream与TextOutputStreamable:A type that can be the target of text-streaming operations.(操作对象输出流)</a> </li>
+        <li><a href="#IteratorProtocol">IteratorProtocol：A type that supplies the values of a sequence one at a time.(迭代器:提供一个序列一次值的协议)</a> </li>
+        <li><a href="#Sequence">Sequence：A type that provides sequential(连续的), iterated(重复的) access to its elements.</a> </li>
+        <li><a href="#Collection">Collection：A sequence whose elements can be traversed multiple times, nondestructively, and accessed by an indexed subscript.</a> </li>
+        <li><a href="#BidirectionalCollection">BidirectionalCollection:A collection that supports backward as well as forward traversal.</a> </li>
+        <li><a href="#LosslessStringConvertible">LosslessStringConvertible:A type that can be represented as a string in a lossless, unambiguous way.(无损明确转换为String)</a> </li>
     </ul>
 
     <p class="smallTitle">
@@ -549,10 +551,153 @@
             Collections是一个序列, 它的元素可以多次遍历,无损,由索引下标访问。
         </p>
         <pre>
+
+            <b>Collection结构:</b>
+
             public protocol Collection : Sequence where Self.SubSequence : Collection {
 
+                associatedtype Index : Comparable where Self.Index == Self.Indices.Element,
+                        Self.Indices.Element == Self.Indices.Index, Self.Indices.Index == Self.SubSequence.Index,
+                        Self.SubSequence.Index == Self.Indices.Indices.Element, Self.Indices.Indices.Element == Self.Indices.Indices.Index,
+                        Self.Indices.Indices.Index == Self.SubSequence.Indices.Element,
+                        Self.SubSequence.Indices.Element == Self.SubSequence.Indices.Index,
+                        Self.SubSequence.Indices.Index == Self.SubSequence.Indices.Indices.Element,
+                        Self.SubSequence.Indices.Indices.Element == Self.SubSequence.Indices.Indices.Index
+
+                public var startIndex: Self.Index { get }
+                public var endIndex: Self.Index { get } //区间startIndex..&lt;endIndex
+
+                associatedtype Iterator = IndexingIterator&lt;Self&gt;
+
+                public func makeIterator() -> Self.Iterator
+
+                associatedtype SubSequence = Slice&lt;Self&gt;
+
+                public subscript(position: Self.Index) -> Self.Element { get }
+
+                //下标访问
+                public subscript(bounds: Range&lt;Self.Index&gt;) -> Self.SubSequence { get }
+
+                //这个属性在下标访问的时候非常有用，他会使下标自动升序(这个操作也可以用index(after:)方法来代替)；
+                //同时当在遍历一个集合的同时改变集合内容时，它会提供一个引用到集合本身，防止程序崩溃；
+                associatedtype Indices : Collection = DefaultIndices&lt;Self&gt; where Self.Indices == Self.Indices.SubSequence
+
+                var c = MyFancyCollection([10, 20, 30, 40, 50])
+                    var i = c.startIndex
+                    while i != c.endIndex {
+                        c[i] /= 5
+                        i = c.index(after: i)
+                    }
+                    // c == MyFancyCollection([2, 4, 6, 8, 10])
+                }
+
+                <b>//numbers[..&lt;i]</b>
+                public func prefix(upTo end: Self.Index) -> Self.SubSequence
+
+                <b>//numbers[i...]</b>
+                public func suffix(from start: Self.Index) -> Self.SubSequence
+
+                <b>//numbers[...i]</b>
+                public func prefix(through position: Self.Index) -> Self.SubSequence
+
+                public var isEmpty: Bool { get }
+                public var count: Int { get }
+                public var first: Self.Element? { get }
+
+                public func index(_ i: Self.Index, offsetBy n: Int) -> Self.Index
+                ///let s = "Swift"
+                ///let i = s.index(s.startIndex, offsetBy: 4)
+                ///print(s[i])
+                ///// Prints "t"
+
+                //加了一个限制条件
+                public func index(_ i: Self.Index, offsetBy n: Int, limitedBy limit: Self.Index) -> Self.Index?
+
+                //返回距离
+                public func distance(from start: Self.Index, to end: Self.Index) -> Int
+
+                //i之后的下标
+                public func index(after i: Self.Index) -> Self.Index
+
+                //i之后的集合
+                public func formIndex(after i: inout Self.Index)
+
+                public typealias IndexDistance = Int
+
+
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="BidirectionalCollection"><b><a target="_blank" href="https://swiftdoc.org/v4.2/protocol/bidirectionalcollection/">10.BidirectionalCollection</a> </b></p>
+    <div class="contents">
+        <pre>
+                <b>BidirectionalCollection结构:</b>
+
+                associatedtype Element
+                associatedtype Index
+                associatedtype SubSequence
+                associatedtype Indices
+
+                public func index(before i: Self.Index) -> Self.Index //i之前的下标
+                public func formIndex(before i: inout Self.Index) //从startIndex..&lt;i的区间
+                public var indices: Self.Indices { get } //访问时提供自加的下标，允许遍历的时候改变序列 var arr:[Int] = [1,2,4,5] //0..<4
+                public var last: Self.Element? { get } //最后一个
+                public subscript(bounds: Range&lt;Self.Index&gt;) -> Self.SubSequence { get } //自下标
+                public subscript(position: Self.Index) -> Self.Element { get } //指定下标元素
+                public var startIndex: Self.Index { get }
+                public var endIndex: Self.Index { get }
+
+                public func formIndex(before i: inout Self.Index)
+                public func index(_ i: Self.Index, offsetBy n: Int) -> Self.Index
+                public func index(_ i: Self.Index, offsetBy n: Int, limitedBy limit: Self.Index) -> Self.Index?
+                public func distance(from start: Self.Index, to end: Self.Index) -> Int
+
+                public func dropLast(_ n: Int) -> Self.SubSequence
+                public func suffix(_ maxLength: Int) -> Self.SubSequence //后面maxLength元素
+                public func prefix(upTo end: Int) -> ArraySlice&lt;Element&gt; <b>startIndex..&lt;end</b>
+                public func prefix(through position: Int) -> ArraySlice&lt;Element&gt; <b>startIndex...position</b>
+                public var last: Self.Element? { get }
+                public func reversed() -> ReversedCollection&lt;Self&gt;
+
+                //移除最后一个元素  <b>允许序列为空</b>
+                public mutating func popLast() -> Self.Element?
+                //移除最后一个元素  <b>不允许序列为空</b>
+                public mutating func removeLast() -> Self.Element
+                //移除最后的n个元素
+                public mutating func removeLast(_ n: Int)
+
+                public func joined() -> FlattenBidirectionalCollection&lt;Self&gt; //求几个序列的序列集
+
+                public var lazy: Self { get } //返回一个
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="LosslessStringConvertible"><b><a href="https://swiftdoc.org/v4.2/protocol/losslessstringconvertible/">11.LosslessStringConvertible:A type that can be represented as a string in a lossless, unambiguous way.(无损明确转换为String)</a> </b></p>
+    <div class="contents">
+        <pre>
+            A type that can be represented as a string in a lossless, unambiguous way. 将其他类型无损明确的转换为String
+
+            For example, the integer value 1050 can be represented in its entirety as the string "1050". 如整型的1050转换为"1050"
+
+            <b>LosslessStringConvertible的结构：</b>
+            实现了CustomStringConvertible协议：
+            public protocol LosslessStringConvertible : CustomStringConvertible {
+
+                /// Instantiates an instance of the conforming type from a string
+                /// representation.
+                public init?(_ description: String)
+            }
+
+            <b>Int结构体：</b>
+            public struct Int : FixedWidthInteger, SignedInteger {
                 ...
             }
+
+            public protocol FixedWidthInteger : BinaryInteger, LosslessStringConvertible, _BitwiseOperations where Self.Magnitude : FixedWidthInteger {
+                ...
+            }
+
+            Int能够无损明确地转换为String， 是因为它实现了LosslessStringConvertible协议
         </pre>
     </div>
 </div>
