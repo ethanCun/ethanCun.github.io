@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swift中的协议</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">Swift中的协议</span>
+</div>
+
+
+<div class="contentBgDiv">
+    <p class="title">Swift中的协议</p>
+    <hr>
+
+    <ul>
+        <li><a href="#CustomStringConvertible">CustomStringConvertible,CustomDebugStringConvertible</a> </li>
+        <li><a href="#Equatable">Equatable</a> </li>
+        <li><a href="#Comparable">Comparable</a> </li>
+        <li><a href="#ExpressibleByArrayLiteral">ExpressibleByArrayLiteral，ExpressibleByDictionaryLiteral，ExpressibleByStringLiteral等</a> </li>
+        <li><a href="#Hashable">Hashable</a> </li>
+        <li><a href="#TextOutputStream">TextOutputStream与TextOutputStreamable</a> </li>
+        <li><a href="#IteratorProtocol">IteratorProtocol</a> </li>
+        <li><a href="#Sequence">Sequence</a> </li>
+        <li><a href="#Collection">Collection</a> </li>
+    </ul>
+
+    <p class="smallTitle">
+        1. Swift中各大类型的数量对比图
+    </p>
+    <div class="contents">
+        <p>
+            Swift从一开始就被设计成是面向协议开发的语言，解决了类似"飞机能飞但是不属于鸟类"继承存在的问题，同时Swift多出
+            结构体和枚举两大类型，三大类型都可以遵守协议，使得更加的灵活
+        </p>
+    </div>
+
+    <img src="../../../Source/ProtocolsInSwift/1.png">
+
+    <p class="smallTitle">
+        2.Swift中的协议讲解
+    </p>
+    <p class="smallTitle" id="CustomStringConvertible"><b><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/customstringconvertible/">1. CustomStringConvertible,CustomDebugStringConvertible</a> </b></p>
+    <div class="contents">
+        <p>
+            这两个协议给Swift提供了优雅地打印对象的方法，类似于重写OC中的description方法；
+            CustomDebugStringConvertible与CustomStringConvertible的区别在于会识别debug或者release环境，
+            如果是release就不会打印.实例：</p>
+        <pre>
+            OC:
+            - (NSString *)description
+            {
+                return [NSString stringWithFormat:@"name = %@", self.name];
+            }
+
+            Swift:
+            struct Person:CustomStringConvertible, CustomDebugStringConvertible {
+
+                var age: Int
+                var name: String
+                var job: String
+
+                var description: String{
+
+                    return "age = \(age), name = \(name), job = \(job)"
+                }
+
+                var debugDescription: String{
+
+                    return "debug age = \(age), name = \(name), job = \(job)"
+                }
+            }
+        </pre>
+        <p>
+            未遵守协议之前的输出：
+        </p>
+        <pre>
+            print(p):
+            Person(age: 1, name: "1", job: "1")
+
+            debugPrint(p):
+            AlamofireRead.Person(age: 1, name: "1", job: "1")
+        </pre>
+        <p>遵守之后的输出：</p>
+        <pre>
+            print(p):
+            age = 1, name = 1, job = 1
+
+            debugPrint(p):
+            debug age = 1, name = 1, job = 1
+        </pre>
+        <p>摘自Alamofire的打印Request的重写：</p>
+        <img src="../../../Source/ProtocolsInSwift/2.png">
+    </div>
+
+
+    <p class="smallTitle" id="Equatable"><b><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/equatable/">2.Equatable</a> </b></p>
+    <div class="contents">
+        <p>
+            Equatable 是比较相关的协议，遵守协议表示实例能够用于相等的比价，需要重载==或者!=运算符
+        </p>
+    </div>
+    <pre>
+        //自定义对象实现Equatable
+        struct Student:Equatable{
+
+            var name:String?
+            var height:Float?
+
+            //重写方法
+            public static func == (lhs: Student, rhs: Student) -> Bool{
+
+                return lhs.name == rhs.name && lhs.height == lhs.height
+            }
+
+            public static func != (lhs: Student, rhs: Student) -> Bool{
+
+                return lhs.name != rhs.name || lhs.height != lhs.height
+            }
+        }
+
+        let s1:Student = Student(name: "1", height: 11)
+        let s2:Student = Student(name: "2", height: 22)
+
+        <b>//没实现Equatable协议前编译报错 实现后编译通过</b>
+        print(s1 == s2) //true
+        print(s1 != s2) //false
+    </pre>
+
+
+    <p class="smallTitle" id="Comparable"><b><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/comparable/">3. Comparable</a> </b></p>
+    <div class="contents">
+        <p>
+            Comparable是一个比较的协议，遵守Equatable协议, 包含< <= >= > ... ..<
+        </p>
+        <pre>
+            struct Student:Equatable, Comparable{
+
+            var name:String?
+            var height:Float?
+
+            public static func == (lhs: Student, rhs: Student) -> Bool{
+
+                return lhs.name == rhs.name && lhs.height == lhs.height
+            }
+
+            public static func != (lhs: Student, rhs: Student) -> Bool{
+
+                return lhs.name != rhs.name || lhs.height != rhs.height
+            }
+
+            //重载Comparable
+            public static func < (lhs:Student, rhs:Student) -> Bool{
+
+                return lhs.name! < rhs.name! && lhs.height! < rhs.height!
+            }
+
+            let s1:Student = Student(name: "1", height: 11)
+            let s2:Student = Student(name: "2", height: 22)
+
+            <b>//没实现Equatable协议前编译报错 实现后编译通过</b>
+            print(s1 < s2) //true
+
+            //实现了Comparable的对象还可以判断范围：
+            <b>...</b>
+            let miniStu = Student(name: "0", height: 0)
+            let maxStu = Student(name: "9999", height: 9999)
+
+            let range2 = miniStu...maxStu
+            print(range2) //Student(name: Optional("0"), height: Optional(0.0))...Student(name: Optional("9999"), height: Optional(9999.0))
+
+            <b>0...3  0..<3  3... ...3 </b>
+            let arr = [1,2,3,4,5,6,7,8]
+            print(arr[0...3], arr[0..<3], arr[3...], arr[...3])//[1, 2, 3, 4] [1, 2, 3] [4, 5, 6, 7, 8] [1, 2, 3, 4]
+
+        }
+        </pre>
+    </div>
+
+
+    <p class="smallTitle" id="ExpressibleByArrayLiteral"><b><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/expressiblebyarrayliteral/">4. ExpressibleByArrayLiteral，ExpressibleByDictionaryLiteral，ExpressibleByStringLiteral</a> </b></p>
+    <div class="contents">
+        <p>
+            ExpressibleByArrayLiteral（Literal：逐字的） 提供了使用数组文本初始化的类型的能力，具体来说使用逗号分隔的值、实例、字面值列表;
+            类似的还有ExpressibleByStringLiteral,ExpressibleByDictionaryLiteral等
+        </p>
+        <pre>
+        <b>ExpressibleByArrayLiteral结构</b>
+        public protocol ExpressibleByArrayLiteral {
+
+            /// The type of the elements of an array literal.
+            associatedtype ArrayLiteralElement <b>关联类型 可见要求类的属性类型一致</b>
+
+            /// Creates an instance initialized with the given elements.
+            public init(arrayLiteral elements: Self.ArrayLiteralElement...)
+        }
+
+        <b>ExpressibleByDictionaryLiteral结构</b>
+        public protocol ExpressibleByDictionaryLiteral {
+
+            /// The key type of a dictionary literal.
+            associatedtype Key
+
+            /// The value type of a dictionary literal.
+            associatedtype Value
+
+            /// Creates an instance initialized with the given key-value pairs.
+            public init(dictionaryLiteral elements: (Self.Key, Self.Value)...)
+        }
+
+        <b>ExpressibleByStringLiteral结构</b>
+        public protocol ExpressibleByStringLiteral : ExpressibleByExtendedGraphemeClusterLiteral {
+
+            /// A type that represents a string literal.
+            ///
+            /// Valid types for `StringLiteralType` are `String` and `StaticString`.
+            associatedtype StringLiteralType : _ExpressibleByBuiltinStringLiteral
+
+            /// Creates an instance initialized to the given string value.
+            ///
+            /// - Parameter value: The value of the new instance.
+            public init(stringLiteral value: Self.StringLiteralType)
+        }
+    </pre>
+        <pre>
+
+        <b>实例：</b>
+        struct Cat:ExpressibleByArrayLiteral, ExpressibleByDictionaryLiteral{
+
+            var name:String?
+            var age:String?
+            var height:Float?
+
+            typealias ArrayLiteralElement = String
+            init(arrayLiteral elements: String...) {
+
+                if elements.count == 2 {
+
+                    self.name = elements.first
+                    self.age = elements.last
+                }
+            }
+
+            typealias Key = String
+            typealias Value = Float
+            init(dictionaryLiteral elements: (Key, Value)...) {
+
+                if elements.count == 1{
+
+                    self.name = elements.first?.0
+                    self.height = elements.first?.1
+                }
+            }
+        }
+
+        //一般实例化方式
+        let cat1 = Cat(name: "1", age: 1)
+
+        <b>//实现ExpressibleByArrayLiteral协议之后用数组文本来初始化Cat类</b>
+        let cat2 = ["zhangsan", "20"] //["zhangsan", "20"]
+        let cat3 = Cat(arrayLiteral: "lisi", "10") //Cat(name: Optional("lisi"), age: Optional("10"))
+
+         <b>//实现ExpressibleByDictionaryLiteral协议之后用多个元祖文本来初始化Cat类</b>
+        let cat4 = [("wangwu", 30)] //[("wangwu", 30)]
+
+
+         <b>实例：用String类型赋值给Date</b>
+         extension Date : ExpressibleByStringLiteral{
+
+            public init(stringLiteral value: String) {
+
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd"
+                guard let date = dateFormatter.date(from: value) else {
+                    preconditionFailure("This date: \(value) is not invalid")
+                }
+
+                self = date
+            }
+        }
+
+        <b>//实现ExpressibleByStringLiteral协议之后用字符串来初始化Date类</b>
+        let date:Date = "1991-10-20"
+    </pre>
+    </div>
+
+    <p class="smallTitle" id="Hashable"><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/hashable/">5.Hashable</a> </p>
+    <div class="contents">
+        <p>
+            关于哈希值：一个类型为了存储在集合Array Dictionary Set中，该类型必须是可哈希化的-该类型必须提供一种方法计算它的哈希值，一个哈希值为Int类型，相等的对象哈希值必须相同
+        </p>
+        <pre>
+            <b>Hashable的结构：</b>
+            public protocol Hashable : Equatable {
+
+                /// The hash value.
+                ///
+                /// Hash values are not guaranteed to be equal across different executions of
+                /// your program. Do not save hash values to use during a future execution.
+                public var hashValue: Int { get }
+            }
+
+            可见，Hashable遵守了Equatable协议，并提供了一个可读的属性hashValue。
+
+            Swift中标准库中所有的基本数据类型都是遵守 Hashable 协议的，它们包括字符串，整数，浮点数以及布尔值。
+            不带有关联值得枚举类型也会自动遵守 Hashable。
+
+            <b>不带关联的枚举：</b>
+            enum Color {
+                case red
+                case blue
+            }
+
+            print(Color.red.hashValue, Color.blue.hashValue) // 0 1
+
+            Dictionary的key要求实现Hashable协议，如果需要自定义key，则必须遵守Hashable并实现hashValue。
+            实现必须保证哈希不变原则：两个同样的实例（由你实现的 == 定义相同），必须拥有同样的哈希值。不过反过来不必为真：两个相同的哈希值的实例不一定需要相等。
+
+            <b>例子：自定义带关联类型的枚举类型</b>
+            enum info : Hashable{
+
+                var hashValue: Int{
+
+                    switch self {
+                    case .name:
+
+                        return 100
+                    case .height:
+
+                        return 200
+                    }
+                }
+
+                case name(named:String?)
+                case height(heigth:String?)
+            }
+
+            //100 200
+            print(info.name(named: "zhangsan").hashValue, info.height(heigth: "11").hashValue)
+
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="TextOutputStream"><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/textoutputstream/">6.TextOutputStream与TextOutputStreamable</a> </p>
+    <div class="TextOutputStream">
+        <pre>
+            <b>TextOutputStream内容：</b>
+            public protocol TextOutputStream {
+
+                /// Appends the given string to the stream.
+                public mutating func write(_ string: String)
+            }
+
+            <b>TextOutputStreamable内容:</b>
+            public protocol TextOutputStreamable {
+
+                /// Writes a textual representation of this instance into the given output
+                /// stream.
+                public func write&lt;Target&gt;(to target: inout Target) where Target : TextOutputStream
+            }
+        </pre>
+        <pre>
+
+            //这是一段摘自print内部实现的方法：
+            internal func _print_unlocked&lt;T, TargetStream : TextOutputStream&gt;(_ value: T, _ target: inout TargetStream) {
+
+              // Optional has no representation suitable for display; therefore,
+              // values of optional type should be printed as a debug
+              // string. Check for Optional first, before checking protocol
+              // conformance below, because an Optional value is convertible to a
+              // protocol if its wrapped type conforms to that protocol.
+
+              if _isOptional(type(of: value)) {
+                let debugPrintable = value as! CustomDebugStringConvertible
+                debugPrintable.debugDescription.write(to: &target)
+                return
+              }
+
+              if case let streamableObject as TextOutputStreamable = value {
+                streamableObject.write(to: &target)
+                return
+              }
+
+              if case let printableObject as CustomStringConvertible = value {
+                printableObject.description.write(to: &target)
+                return
+              }
+
+              if case let debugPrintableObject as CustomDebugStringConvertible = value {
+                debugPrintableObject.debugDescription.write(to: &target)
+                return
+              }
+
+              let mirror = Mirror(reflecting: value)
+              _adHocPrint_unlocked(value, mirror, &target, isDebugPrint: false)
+            }
+
+            <b>输入的对象如果实现 TextOutputStreamable，则打印出来的是它的值，如果它实现的是 CustomStringConvertible 或者 CustomDebugStringConvertible 时，print 实际打印出来的 description 内容。</b>
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="IteratorProtocol"><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/iteratorprotocol/">7. IteratorProtocol</a> </p>
+    <div class="contents">
+
+        <pre>
+
+            <b>IteratorProtocol结构：</b>
+
+            迭代器（iterator）是一种对象，它能够用来遍历标准模板库容器中的部分或全部元素，每个迭代器对象代表容器中的确定的地址。
+
+            public protocol IteratorProtocol {
+
+                /// The type of element traversed by the iterator.
+                associatedtype Element
+
+                /// Advances to the next element and returns it, or `nil` if no next element
+                /// exists.
+                ///
+                /// Repeatedly calling this method returns, in order, all the elements of the
+                /// underlying sequence. As soon as the sequence has run out of elements, all
+                /// subsequent calls return `nil`.
+                ///
+                /// You must not call this method if any other copy of this iterator has been
+                /// advanced with a call to its `next()` method.
+                ///
+                /// The following example shows how an iterator can be used explicitly to
+                /// emulate a `for`-`in` loop. First, retrieve a sequence's iterator, and
+                /// then call the iterator's `next()` method until it returns `nil`.
+                ///
+                ///     let numbers = [2, 3, 5, 7]
+                ///     var numbersIterator = numbers.makeIterator()
+                ///
+                ///     while let num = numbersIterator.next() {
+                ///         print(num)
+                ///     }
+                ///     // Prints "2"
+                ///     // Prints "3"
+                ///     // Prints "5"
+                ///     // Prints "7"
+                ///
+                /// - Returns: The next element in the underlying sequence, if a next element
+                ///   exists; otherwise, `nil`.
+                public mutating func next() -> Self.Element?
+            }
+        </pre>
+
+        <pre>
+                <b>实例：一个泛型迭代器</b>
+                struct GenericInterator&lt;T&gt;:IteratorProtocol {
+
+                    typealias Element = T
+
+                    var contents:[T] = [T]()
+
+                    init(targetContents:[T]) {
+
+                        targetContents.map{contents.append($0)}
+                    }
+
+                    mutating func next() -> T? {
+
+                        //返回当前被移除的元素
+                        return contents.removeFirst()
+                    }
+                }
+
+                var ss:GenericInterator&lt;String&gt; = GenericInterator&lt;String&gt;(targetContents: ["a","b","c","d"])
+                print(ss.next()) //Optional("a")
+            </pre>
+    </div>
+
+    <p class="smallTitle" id="Sequence"><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/sequence/#func-drop-while_">8.Sequence</a> </p>
+    <div class="contents">
+
+        <p>
+            Sequence里面的方法不同于IteratorProtocol，不需要强制重载，因为在extension里面已经有了默认实现
+        </p>
+        <pre>
+            <b>Sequence结构：</b>
+
+            associatedtype Element where Self.Element == Self.Iterator.Element, Self.Iterator.Element == Self.SubSequence.Element, Self.SubSequence.Element == Self.SubSequence.Iterator.Element
+            associatedtype Iterator : IteratorProtocol
+            associatedtype SubSequence : Sequence = AnySequence&lt;Self.Element&gt; where Self.SubSequence == Self.SubSequence.SubSequence
+
+            public func makeIterator() -> Self.Iterator //创造一个迭代器
+            public var underestimatedCount: Int { get } //低估的数量 <=实际数量
+            public func map&lt;T&gt;(_ transform: (Self.Element) throws -> T) rethrows -> [T] //map
+            public func filter(_ isIncluded: (Self.Element) throws -> Bool) rethrows -> [Self.Element] //filter
+            public func forEach(_ body: (Self.Element) throws -> Swift.Void) rethrows //forEach
+            public func dropFirst(_ n: Int) -> Self.SubSequence //去掉前面n个元素,如果n大于实际数量则全部移除
+            public func dropLast(_ n: Int) -> Self.SubSequence  //去掉后面n个元素,如果n大于实际数量则全部移除
+            public func drop(while predicate: (Self.Element) throws -> Bool) rethrows -> Self.SubSequence //根据谓词条件移除元素
+            public func prefix(_ maxLength: Int) -> Self.SubSequence //获取前面maxLength个元素 如果maxLength大于实际数量则全部获取
+            public func prefix(while predicate: (Self.Element) throws -> Bool) rethrows -> Self.SubSequence //根据条件获取前面maxLength个元素 如果maxLength大于实际数量则全部获取
+            public func suffix(_ maxLength: Int) -> Self.SubSequence //获取后面maxLength个元素 如果maxLength大于实际数量则全部获取
+            //分离 maxSplits：分离几次 omittingEmptySubsequences：是否忽略空值  isSeparator：闭包，判断参数是否用来分割
+            public func split(maxSplits: Int, omittingEmptySubsequences: Bool, whereSeparator isSeparator: (Self.Element) throws -> Bool) rethrows -> [Self.SubSequence]
+
+            除了这些，还有很多的extension自带的方法，比如：
+            public func sorted() -> [Self.Element]
+            public func min() -> Self.Element?
+            public func max() -> Self.Element?
+            public func joined() -> FlattenSequence&lt;Self&gt;
+            public func joined&lt;Separator&gt;(separator: Separator) -> JoinedSequence&lt;Self&gt; where Separator : Sequence, Separator.Element == Self.Element.Element
+
+            <b>遵守了Sequence协议的对象可以当成序列来进行遍历:</b>
+            struct GenericInterator&lt;T&gt;:IteratorProtocol,Sequence {
+
+                typealias Element = T
+
+                var contents:[T] = [T]()
+
+                init(targetContents:[T]) {
+
+                    _ = targetContents.map{contents.append($0)}
+                }
+
+                mutating func next() -> T? {
+
+                    guard contents.count > 0 else {
+                        return nil
+                    }
+
+                    return contents.removeFirst()
+                }
+            }
+
+            var ss:GenericInterator&lt;String&gt; = GenericInterator&lt;String&gt;(targetContents: ["a","b","c","d"])
+
+            for s in ss{
+
+                print(s)
+            }
+
+            //a,b,c,d
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="Collection"><b><a target="_blank" href="https://swiftdoc.org/v4.2/protocol/collection/">9. Collection</a> </b></p>
+    <div class="contents">
+        <p>
+            Collections是一个序列, 它的元素可以多次遍历,无损,由索引下标访问。
+        </p>
+        <pre>
+            public protocol Collection : Sequence where Self.SubSequence : Collection {
+
+                ...
+            }
+        </pre>
+    </div>
+</div>
+
+</body>
+</html>

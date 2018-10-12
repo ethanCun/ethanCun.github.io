@@ -20,6 +20,7 @@
     <hr>
 
     <ul>
+        <li><a href="http://special.csdncms.csdn.net/the-swift-programming-language-in-chinese/Introduction.shtml">The Swift Programming Language 中文版</a> </li>
         <li><a href="https://swiftdoc.org/">Swift源库文档</a></li>
         <li><a href="https://github.com/apple/swift">Swift源码</a></li>
         <li><a href="https://blog.csdn.net/youshaoduo/article/details/77967391">Swift4新特性参考链接</a> </li>
@@ -59,6 +60,9 @@
         <li><a href="#dicReduce">给Dictionary添加自定义reduce</a> </li>
         <li><a href="#arrMap">给Array添加自定义map</a></li>
         <li><a href="#dicMap">给Dictionary添加自定义map</a> </li>
+        <li><a href="#swiftVersion">判断Swift版本</a> </li>
+        <li><a href="#discardableResult">使用@discardableResult来忽略函数返回值</a> </li>
+        <li><a href="#defer">Swift中的defer(延迟执行)</a> </li>
     </ul>
 
     <p class="smallTitle" id="swift"><b>swift 调用oc库</b></p>
@@ -1574,6 +1578,59 @@
         //["2": 12, "1": 11]
 
     </pre>
+    
+    <p class="smallTitle" id="swiftVersion"><b>判断Swift版本</b></p>
+    <img src="../../../Source/swift/1.png">
+
+    <p class="smallTitle" id="discardableResult"><b>使用@discardableResult来忽略函数返回值</b></p>
+    <pre>
+        extension ViewController{
+
+            @discardableResult
+            func sss() -> String {
+                return "ssss"
+            }
+        }
+
+        sss() //没有⚠️
+
+        或者使用通配符：
+        _ = sss()
+    </pre>
+
+    <p class="smallTitle" id="defer">Swift中的defer(延迟执行)</p>
+    <div class="contents">
+        <p>
+            Swift中的异常处理try-catch-finally，finally不管有没有异常都会执行，defer也是如此，而且更加方便。
+            简单来说，defer修饰的代码块都会在return之前调用，之一实在return之前，写在之后就没用了。
+        </p>
+        <pre>
+            <b>例子:</b>
+                func foo() {
+                    print("1")
+                    defer {
+                        print("6")
+                    }
+                    print("2")
+                    defer {
+                        print("5")
+                    }
+                    print("3")
+                    defer {
+                        print("4")
+                    }
+                }
+
+            foo()
+
+            //输出1，2，3，4，5，6
+            //多个 defer 的顺序是像栈一样倒着执行的：每遇到一个 defer 就像压进一个栈里，到结束的时候，后进栈的先执行。
+
+            <b>常见使用场合：1.在获取到api数据的时候，加载视图的移除操作可以写在这里面；2.清除内存等一些重置工作可以写在这里面；
+            </b>
+        </pre>
+    </div>
+
 
 </div>
 

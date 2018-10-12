@@ -49,6 +49,7 @@
         <li><a href="#ipadicon">二十二、4. Missing required icon file. The bundle does not contain an app icon for iPad of exactly '152x152' pixels, in .png format for iOS versions >= 10.0."</a> </li>
         <li><a href="#RequiredFullScreen">二十三、"Invalid Bundle. Your app supports Multitasking on iPad, so you must include the UILaunchStoryboardName key in your bundle, 'jianongzhenghe.zlgNew’.
         </a> </li>
+        <li><a href="#permission">二十四、 The file couldn’t be opened because you don’t have permission to view it.</a> </li>
     </ul>
 
     <p class="smallTitle" id="urlDetail"><b>一、如何输出超链接的各个组成部分</b></p>
@@ -618,6 +619,19 @@
         解决办法：Targets -> Deployment Info -> 勾选Required full screen
     </pre>
 
+    <p class="smallTitle" id="permission"><b>二十四、 The file couldn’t be opened because you don’t have permission to view it.</b></p>
+    <div class="contents">
+        <p>
+            问题：编译的时候弹出框显示：The file couldn’t be opened because you don’t have permission to view it.
+        </p>
+        <p>
+            产生原因：一般是导入第三方引起
+        </p>
+        <p>
+            解决：把info.plist的文件中的Executable.file中的文件修改为:$(PRODUCT_NAME);
+            如果以前就是这个，那就把value 值删掉设成空，build failed 一次，然后再粘贴上，build success.
+        </p>
+    </div>
 </div>
 </body>
 </html>
