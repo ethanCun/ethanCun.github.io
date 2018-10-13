@@ -7,8 +7,24 @@
     <link rel="stylesheet" href="../CSS/ArticleDetail.css">
     <link rel="stylesheet" href="../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
     <link rel="stylesheet" href="../font-awesome-4.7.0/css/font-awesome.css">
+    <script src="../js/jquery-3.2.1.js"></script>
 </head>
 <body>
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#ocArticleCount").html("(共" + $("#oc li").length + "篇)")
+        $("#swiftArticleCount").html("(共" + $("#swift li").length + "篇)")
+        $("#netArticleCount").html("(共" + $("#Net li").length + "篇)")
+        $("#webArticleCount").html("(共" + $("#web li").length + "篇)")
+        $("#rnArticleCount").html("(共" + $("#rn li").length + "篇)")
+        $("#otherArticleCount").html("(共" + $("#other li").length + "篇)")
+
+    })
+
+</script>
 
 <div class="labels">
 
@@ -18,8 +34,8 @@
 <p class="title">归档</p>
 <hr>
 
-<p class="smallTitle">Objective-C</p>
-<ul>
+<p class="smallTitle">Objective-C<spanp id="ocArticleCount"></spanp></p>
+<ul id="oc">
     <li><a href="Other/Notes/Notes.html">我写的一些demo与库记录</a></li>
     <li><a href="iOS/Null/Null.html">nil, Nil, NULL和NSNull的区别</a> </li>
     <li><a href="iOS/instruments.html">iOS内存检测与优化之Analyze静态分析与Instruments动态监测</a></li>
@@ -55,33 +71,33 @@
     <li><a href="iOS/MultiProjectDevelop/MultiProjectDevelop.html">iOS多Project开发</a> </li>
 </ul>
 
-<p class="smallTitle">Swift</p>
-<ul>
+<p class="smallTitle">Swift<span id="swiftArticleCount"></span></p>
+<ul id="swift">
     <li><a href="iOS/SwiftEasyToForgot/SwiftEasyToForgot.html">Swift那些搞过却又容易忘记的东东</a> </li>
     <li><a href="iOS/ProtocolsInSwift/ProtocolsInSwift.html">Swift中的协议</a> </li>
 </ul>
 
-<p class="smallTitle">.NET</p>
-<ul>
+<p class="smallTitle">.NET<span id="netArticleCount"></span></p>
+<ul id="Net">
     <li><a href=".Net/Interface/Interface.html">.Net中的接口, 抽象, 密封与继承</a> </li>
 </ul>
 
-<p class="smallTitle">web</p>
-<ul>
+<p class="smallTitle">web<span id="webArticleCount"></span></p>
+<ul id="web">
     <li><a href="HTML5/javaScript/javaScript.html">javaScript那些事</a> </li>
     <li><a href="HTML5/WebStormDetailNotes/WebStormDetailNotes.html">WebStorm细节记录</a> </li>
     <li><a href="HTML5/Font-awesome/Font-owesome.html">Font Awesome:一套绝佳的图标字体库和CSS框架</a> </li>
     <li><a href="HTML5/Bootstrap/Bootstrap.html">Bootstrap:基于 HTML、CSS、JAVASCRIPT 的前端框架</a> </li>
 </ul>
 
-<p class="smallTitle">React native</p>
-<ul>
+<p class="smallTitle">React native<span id="rnArticleCount"></span> </p>
+<ul id="rn">
     <li><a href="ReactNative/ReactNativeConfig/ReactNativeConfig.html">mac下配置React native开发环境</a> </li>
     <li><a href="ReactNative/ReactNativeRecord/ReactNativeRecord.html">ReactNative开发记录</a> </li>
 </ul>
 
-<p class="smallTitle">Other</p>
-<ul>
+<p class="smallTitle">Other<span id="otherArticleCount"></span> </p>
+<ul id="other">
     <li><a href="Other/FunQuestion/FunQuestion.html">趣味题</a> </li>
 </ul>
 
