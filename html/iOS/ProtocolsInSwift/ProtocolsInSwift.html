@@ -24,14 +24,21 @@
         <li><a href="#CustomStringConvertible">CustomStringConvertible,CustomDebugStringConvertible:A type with a customized textual representation.</a> </li>
         <li><a href="#Equatable">Equatable：A type that can be compared for value equality. (== !=)</a> </li>
         <li><a href="#Comparable">Comparable：A type that can be compared using the relational operators <, <=, >=, and >.</a> </li>
-        <li><a href="#ExpressibleByArrayLiteral">ExpressibleByArrayLiteral，ExpressibleByDictionaryLiteral，ExpressibleByStringLiteral等：提供用Array、Dictionary、String初始化一个类的能力</a> </li>
+        <li><a href="#ExpressibleByArrayLiteral">ExpressibleByArrayLiteral，ExpressibleByDictionaryLiteral，ExpressibleByStringLiteral,ExpressibleByBooleanLiteral等：提供用Array、Dictionary、String初始化一个类的能力</a> </li>
         <li><a href="#Hashable">Hashable：A type that provides an integer hash value.</a> </li>
         <li><a href="#TextOutputStream">TextOutputStream与TextOutputStreamable:A type that can be the target of text-streaming operations.(操作对象输出流)</a> </li>
         <li><a href="#IteratorProtocol">IteratorProtocol：A type that supplies the values of a sequence one at a time.(迭代器:提供一个序列一次值的协议)</a> </li>
         <li><a href="#Sequence">Sequence：A type that provides sequential(连续的), iterated(重复的) access to its elements.</a> </li>
-        <li><a href="#Collection">Collection：A sequence whose elements can be traversed multiple times, nondestructively, and accessed by an indexed subscript.</a> </li>
+        <li><a href="#Collection">Collection(MutableCollection)：A sequence whose elements can be traversed multiple times, nondestructively, and accessed by an indexed subscript.</a> </li>
         <li><a href="#BidirectionalCollection">BidirectionalCollection:A collection that supports backward as well as forward traversal.</a> </li>
         <li><a href="#LosslessStringConvertible">LosslessStringConvertible:A type that can be represented as a string in a lossless, unambiguous way.(无损明确转换为String)</a> </li>
+        <li><a href="#FixedWidthInteger">FixedWidthInteger:An integer type that uses a fixed size for every instance.(一个每个实例都固定大小的Integer类型)</a> </li>
+        <li><a href="#SignedInteger">SignedInteger/SignedNumeric：An integer type/type that can represent both positive and negative values.(可以表示正数和负数),
+            </a> </li>
+        <li><a href="#UnsignedInteger">UnsignedInteger:An integer type that can represent only nonnegative values.(只能表示正数)</a> </li>
+        <li><a href="#BinaryInteger">BinaryInteger</a>
+        <li><a href="#Numeric">Numeric</a> </li>
+        <li><a href="#CustomReflectable">CustomReflectable</a> </li>
     </ul>
 
     <p class="smallTitle">
@@ -49,7 +56,10 @@
     <p class="smallTitle">
         2.Swift中的协议讲解
     </p>
-    <p class="smallTitle" id="CustomStringConvertible"><b><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/customstringconvertible/">1. CustomStringConvertible,CustomDebugStringConvertible</a> </b></p>
+    <p class="smallTitle" id="CustomStringConvertible">
+        <b><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/customstringconvertible/">1. CustomStringConvertible, CustomDebugStringConvertible</a></b>
+    </p>
+
     <div class="contents">
         <p>
             这两个协议给Swift提供了优雅地打印对象的方法，类似于重写OC中的description方法；
@@ -103,7 +113,8 @@
     </div>
 
 
-    <p class="smallTitle" id="Equatable"><b><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/equatable/">2.Equatable</a> </b></p>
+    <p class="smallTitle" id="Equatable"><b>
+        <a target="_blank" href="https://swiftdoc.org/v3.1/protocol/equatable/">2. Equatable</a> </b></p>
     <div class="contents">
         <p>
             Equatable 是比较相关的协议，遵守协议表示实例能够用于相等的比价，需要重载==或者!=运算符
@@ -137,7 +148,8 @@
     </pre>
 
 
-    <p class="smallTitle" id="Comparable"><b><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/comparable/">3. Comparable</a> </b></p>
+    <p class="smallTitle" id="Comparable">
+        <b><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/comparable/">3. Comparable</a> </b></p>
     <div class="contents">
         <p>
             Comparable是一个比较的协议，遵守Equatable协议, 包含< <= >= > ... ..<
@@ -187,7 +199,8 @@
     </div>
 
 
-    <p class="smallTitle" id="ExpressibleByArrayLiteral"><b><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/expressiblebyarrayliteral/">4. ExpressibleByArrayLiteral，ExpressibleByDictionaryLiteral，ExpressibleByStringLiteral</a> </b></p>
+    <p class="smallTitle" id="ExpressibleByArrayLiteral">
+        <b><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/expressiblebyarrayliteral/">4. ExpressibleByArrayLiteral，ExpressibleByDictionaryLiteral，ExpressibleByStringLiteral</a> </b></p>
     <div class="contents">
         <p>
             ExpressibleByArrayLiteral（Literal：逐字的） 提供了使用数组文本初始化的类型的能力，具体来说使用逗号分隔的值、实例、字面值列表;
@@ -293,7 +306,8 @@
     </pre>
     </div>
 
-    <p class="smallTitle" id="Hashable"><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/hashable/">5.Hashable</a> </p>
+    <p class="smallTitle" id="Hashable">
+        <a target="_blank" href="https://swiftdoc.org/v3.1/protocol/hashable/">5. Hashable</a> </p>
     <div class="contents">
         <p>
             关于哈希值：一个类型为了存储在集合Array Dictionary Set中，该类型必须是可哈希化的-该类型必须提供一种方法计算它的哈希值，一个哈希值为Int类型，相等的对象哈希值必须相同
@@ -350,7 +364,8 @@
         </pre>
     </div>
 
-    <p class="smallTitle" id="TextOutputStream"><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/textoutputstream/">6.TextOutputStream与TextOutputStreamable</a> </p>
+    <p class="smallTitle" id="TextOutputStream">
+        <a target="_blank" href="https://swiftdoc.org/v3.1/protocol/textoutputstream/">6. TextOutputStream与TextOutputStreamable</a> </p>
     <div class="TextOutputStream">
         <pre>
             <b>TextOutputStream内容：</b>
@@ -408,7 +423,8 @@
         </pre>
     </div>
 
-    <p class="smallTitle" id="IteratorProtocol"><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/iteratorprotocol/">7. IteratorProtocol</a> </p>
+    <p class="smallTitle" id="IteratorProtocol">
+        <a target="_blank" href="https://swiftdoc.org/v3.1/protocol/iteratorprotocol/">7. IteratorProtocol</a> </p>
     <div class="contents">
 
         <pre>
@@ -478,7 +494,8 @@
             </pre>
     </div>
 
-    <p class="smallTitle" id="Sequence"><a target="_blank" href="https://swiftdoc.org/v3.1/protocol/sequence/#func-drop-while_">8.Sequence</a> </p>
+    <p class="smallTitle" id="Sequence">
+        】<a target="_blank" href="https://swiftdoc.org/v3.1/protocol/sequence/#func-drop-while_">8. Sequence</a> </p>
     <div class="contents">
 
         <p>
@@ -545,7 +562,8 @@
         </pre>
     </div>
 
-    <p class="smallTitle" id="Collection"><b><a target="_blank" href="https://swiftdoc.org/v4.2/protocol/collection/">9. Collection</a> </b></p>
+    <p class="smallTitle" id="Collection">
+        <b><a target="_blank" href="https://swiftdoc.org/v4.2/protocol/collection/">9. Collection、MutableCollection</a> </b></p>
     <div class="contents">
         <p>
             Collections是一个序列, 它的元素可以多次遍历,无损,由索引下标访问。
@@ -625,10 +643,31 @@
                 public typealias IndexDistance = Int
 
 
+            <b>MutableCollection结构</b>
+            public protocol MutableCollection : Collection where Self.SubSequence : MutableCollection {
+
+                associatedtype Element
+
+                associatedtype Index
+
+                associatedtype SubSequence
+
+                public subscript(position: Self.Index) -> Self.Element { get set }
+                public subscript(bounds: Range&lt;Self.Index&gt;) -> Self.SubSequence { get set }
+                //var numbers = [30, 40, 20, 30, 30, 60, 10] let p = numbers.partition(by: { $0 > 30 }) // p == 5 // numbers == [30, 10, 20, 30, 30, 60, 40]  p为numbers里面>30的元素的index
+                public mutating func partition(by belongsInSecondPartition: (Self.Element) throws -> Bool) rethrows -> Self.Index
+                //交换
+                public mutating func swapAt(_ i: Self.Index, _ j: Self.Index)
+
+                public func sorted(by areInIncreasingOrder: (Self.Element, Self.Element) throws -> Bool) rethrows -> [Self.Element]
+
+            }
         </pre>
     </div>
 
-    <p class="smallTitle" id="BidirectionalCollection"><b><a target="_blank" href="https://swiftdoc.org/v4.2/protocol/bidirectionalcollection/">10.BidirectionalCollection</a> </b></p>
+    <p class="smallTitle" id="BidirectionalCollection">
+        <b><a target="_blank" href="https://swiftdoc.org/v4.2/protocol/bidirectionalcollection/">
+            10.BidirectionalCollection</a> </b></p>
     <div class="contents">
         <pre>
                 <b>BidirectionalCollection结构:</b>
@@ -672,7 +711,8 @@
         </pre>
     </div>
 
-    <p class="smallTitle" id="LosslessStringConvertible"><b><a href="https://swiftdoc.org/v4.2/protocol/losslessstringconvertible/">11.LosslessStringConvertible:A type that can be represented as a string in a lossless, unambiguous way.(无损明确转换为String)</a> </b></p>
+    <p class="smallTitle" id="LosslessStringConvertible">
+        <b><a href="https://swiftdoc.org/v4.2/protocol/losslessstringconvertible/">11. LosslessStringConvertible:A type that can be represented as a string in a lossless, unambiguous way.(无损明确转换为String)</a> </b></p>
     <div class="contents">
         <pre>
             A type that can be represented as a string in a lossless, unambiguous way. 将其他类型无损明确的转换为String
@@ -698,6 +738,224 @@
             }
 
             Int能够无损明确地转换为String， 是因为它实现了LosslessStringConvertible协议
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="FixedWidthInteger">
+        <b><a target="_blank" href="https://swiftdoc.org/v4.2/protocol/fixedwidthinteger/">12. FixedWidthInteger</a> </b>
+    </p>
+    <div class="contents">
+
+        <pre>
+
+            <b>FixedWidthInteger结构：</b>
+            public protocol FixedWidthInteger : BinaryInteger, LosslessStringConvertible, _BitwiseOperations where Self.Magnitude : FixedWidthInteger{
+
+                public static var bitWidth: Int { get } //多少位 `-(2 ** (bitWidth - 1))` through `(2 ** (bitWidth - 1)) - 1`.
+                public static var max: Self { get } //(2 ** (bitWidth - 1)) - 1 **标识取幂次方
+                public static var min: Self { get } //`-(2 ** (bitWidth - 1))`
+                //返回一个元祖(第一个元素为和，第二个元素为bool值) 查看两个数之和是否溢出
+                public func addingReportingOverflow(_ rhs: Self) -> (partialValue: Self, overflow: Bool)
+                //返回一个元祖(第一个元素为差，第二个元素为bool值) 查看两数之差是否溢出
+                public func subtractingReportingOverflow(_ rhs: Self) -> (partialValue: Self, overflow: Bool)
+                //返回一个元祖(第一个元素为乘积，第二个元素为bool值) 查看两数之乘积是否溢出
+                public func multipliedReportingOverflow(by rhs: Self) -> (partialValue: Self, overflow: Bool)
+                //除
+                public func dividedReportingOverflow(by rhs: Self) -> (partialValue: Self, overflow: Bool)
+                public func remainderReportingOverflow(dividingBy rhs: Self) -> (partialValue: Self, overflow: Bool)
+
+                //let x: Int8 = 0b0001_1111 x.nonzeroBitCount == 5 后面不为0的位数
+                public var nonzeroBitCount: Int { get }
+                //let x: Int8 = 0b0001_1111 x.leadingZeroBitCount == 3 开头为0的位数
+                public var leadingZeroBitCount: Int { get }
+                //let x = Int8(bitPattern: 0b1111_1000) x.trailingZeroBitCount == 3 后面补0的位数
+                var trailingZeroBitCount: Int { get }
+                //值
+                var magnitude: Self.Magnitude { get }
+
+                //高位优先与低位优先
+                public init(bigEndian value: Self)
+                public init(littleEndian value: Self)
+                public var bigEndian: Self { get } //On a big-endian platform, for any integer `x`, `x == x.bigEndian`
+                public var littleEndian: Self { get }
+
+                public var byteSwapped: Self { get } //A representation of this integer with the byte order swapped.
+
+                //let x = Int("123") // x == 123  let y = Int("-123", radix: 8) // y == -83
+                public convenience init?&lt;S&gt;(_ text: S, radix: Int = default) where S : StringProtocol
+                public convenience init?(_ description: String)
+                public convenience init(littleEndian value: Self)
+                public convenience init(bigEndian value: Self)
+
+                <b>例子</b>
+                //bitwidth = 64 max = 9223372036854775807 min = -9223372036854775808 isSigned = truefalse
+                print("bitwidth = \(Int.bitWidth) max = \(Int.max) min = \(Int.min) isSigned = \(Int.isSigned)\(UInt.isSigned)")
+
+                let tuple = 100.addingReportingOverflow(1000)
+                //(partialValue: 1100, overflow: false)
+                print(tuple)
+            }
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="SignedInteger">
+        <b><a href="https://swiftdoc.org/v4.2/protocol/signedinteger/">13. SignedInteger，SignedNumeric</a> </b>
+    </p>
+    <div class="contents">
+        <pre>
+            SignedInteger结构:
+            public protocol SignedInteger : BinaryInteger, SignedNumeric {
+            }
+
+            extension SignedInteger {
+
+                public var description: String { get }
+
+                //是否区分正负
+                 public static var isSigned: Bool { get }
+            }
+
+            extension SignedInteger {
+
+                public convenience init&lt;T&gt;(_ source: T) where T : BinaryInteger
+                public convenience init?&lt;T&gt;(exactly source: T) where T : BinaryInteger //能精确转换的
+                public static var max: Self { get }
+                public static var min: Self { get }
+            }
+
+            SignedNumeric结构：
+            public protocol SignedNumeric : Numeric {
+
+                //变为负数 let x = 21 let y = -x // y == -21
+                prefix public static func - (operand: Self) -> Self
+
+                //var x = 21 x.negate() // x == -21
+                public mutating func negate()
+            }
+
+            //引申出来的求绝对值
+            public func abs&lt;T&gt;(_ x: T) -> T where T : SignedNumeric, T == T.Magnitude
+            public func abs&lt;T&gt;(_ x: T) -> T where T : Comparable, T : SignedNumeric
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="UnsignedInteger">
+        <b><a href="https://swiftdoc.org/v4.2/protocol/signedinteger/">14. UnsignedInteger</a> </b>
+    </p>
+    <div class="contents">
+        <pre>
+            结构:
+            public protocol SignedInteger : BinaryInteger, SignedNumeric {
+            }
+
+            extension SignedInteger {
+
+                public var magnitude: Self { get }
+
+                //是否区分正负
+                 public static var isSigned: Bool { get }
+
+                public var description: String { get }
+            }
+
+            extension SignedInteger {
+
+                public convenience init&lt;T&gt;(_ source: T) where T : BinaryInteger
+                public convenience init?&lt;T&gt;(exactly source: T) where T : BinaryInteger //能精确转换的
+                public static var max: Self { get }
+                public static var min: Self { get }
+            }
+        </pre>
+    </div>
+
+    <p class="smallTitle">
+        <b><a target="_blank" href="https://swiftdoc.org/v4.2/protocol/binaryinteger/">15. BinaryInteger:提供在Numeric Types之间的转换</a> </b>
+    </p>
+    <div class="contents">
+        <pre>
+            1. Converting Between Numeric Types
+                All of the standard library's integer types, such as `Int` and `UInt32`, conform to `BinaryInteger`.
+            2.Range-Checked Conversion
+                检查范围的转换
+            3.Exact Conversion：精确转换
+            4.Clamping Conversion：就近转换
+            等等
+
+            结构：
+            public protocol BinaryInteger : CustomStringConvertible, Hashable, Numeric, Strideable where Self.Magnitude : BinaryInteger, Self.Magnitude == Self.Magnitude.Magnitude {
+
+                public static var isSigned: Bool { get }
+                public init?&lt;T&gt;(exactly source: T) where T : BinaryFloatingPoint
+                ...
+            }
+
+            <b>例子：</b>
+            let x: Int = 500
+            let y = Int16(x)
+            // y == 500
+            let z = Int8(x)
+            // Error: Not enough bits to represent...
+
+
+            let x = Int16(exactly: 500)
+            // x == Optional(500)
+            let y = Int8(exactly: 500)
+            // y == nil
+
+
+            let e = Int8(exactly: 23.0)       // integral value, representable
+            // e == Optional(23)
+            let f = Int8(exactly: 23.75)      // fractional value, representable
+            // f == nil
+            let g = Int8(exactly: 500.0)      // integral value, nonrepresentable
+            // g == nil
+
+            let x = Int16(clamping: 500)
+            // x == 500
+            let y = Int8(clamping: 500)
+            // y == 127
+            let z = UInt8(clamping: -500)
+            // z == 0
+
+        </pre>
+    </div>
+
+    <p class="smallTitle">
+        <b><a target="_blank" href="https://swiftdoc.org/v4.2/protocol/numeric/">16.Numeric:Swift提供算数运算的能力</a> </b>
+    </p>
+    <div>
+        <pre>
+            <b>Numeric结构:</b>
+
+                public protocol Numeric : Equatable, ExpressibleByIntegerLiteral {
+
+                    public init?&lt;T&gt;(exactly source: T) where T : BinaryInteger
+                    associatedtype Magnitude : Comparable, Numeric
+                    public var magnitude: Self.Magnitude { get }
+
+                    public static func + (lhs: Self, rhs: Self) -> Self
+                    public static func += (lhs: inout Self, rhs: Self)
+                    public static func - (lhs: Self, rhs: Self) -> Self
+                    public static func -= (lhs: inout Self, rhs: Self)
+                    public static func * (lhs: Self, rhs: Self) -> Self
+                    public static func *= (lhs: inout Self, rhs: Self)
+                }
+
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="CustomReflectable">
+        <b><a target="_blank" href="https://swiftdoc.org/v4.2/protocol/customreflectable/">17. CustomReflectable</a> </b>
+    </p>
+    <div class="contents">
+        <pre>
+            <b>CustomReflectable结构:</b>
+
+            extension Bool : CustomReflectable {
+
+                /// A mirror that reflects the `Bool` instance.
+                public var customMirror: Mirror { get }
+            }}
         </pre>
     </div>
 </div>
