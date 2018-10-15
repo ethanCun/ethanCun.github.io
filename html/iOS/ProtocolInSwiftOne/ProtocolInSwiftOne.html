@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swift中的协议(一)</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">Swift中的协议(一)</span>
+</div>
+
+
+<div class="contentBgDiv">
+
+
+
+
+    <p class="title">Swift中的协议(一)</p>
+
+    <hr>
+
+    <ul>
+        <li><a href="#statement">协议的声明</a> </li>
+        <li><a href="#property">协议中的属性</a> </li>
+        <li><a href="#function">协议中的方法</a> </li>
+        <li><a href="#inherit">遵守协议(协议的继承)</a> </li>
+        <li><a href="#initialize">用协议构造类和结构体的便捷初始化器</a> </li>
+        <li><a href="#transfer">协议的类型转化</a> </li>
+        <li><a href="#realize">协议的默认实现</a> </li>
+        <li><a href="#polymer">协议的聚合(匿名协议聚合)</a> </li>
+        <li><a href="#check">检查是否继承某个协议</a> </li>
+        <li><a href="#association">协议的关联类型</a> </li>
+    </ul>
+
+    <p class="introduceText">
+        在OC中，对象可以遵守协议，然后设置代理，通过代理来做一些事情，OC也提供了关键词@Optional来是这些协议是不是可选的。Swift中，不仅类，枚举和结构体都可以遵守Protocol，也可以通过在extension里给出
+        Protocol的默认实现，而且在Swift中协议中属性的定义比OC中更加广泛；初次之外,Swift中的Protocol还支持继承、关联、聚合等；
+        Swift一开始就是被设计成更多地面向协议，在Swift标准库中提供了55个<a href="../ProtocolsInSwift/ProtocolsInSwift.html">协议</a> ，可见Protocol在Swift中的重要性。
+    </p>
+
+    <div class="contents">
+
+        <p class="smallTitle" id="statement">1.协议的声明</p>
+        <pre>
+
+            <b>//protocol关键字小写 Protocol表示protocol的类型 自定义协议名称首字母大写 协议可以看做一种类型</b>
+            protocol AProtocol {
+
+            }
+        </pre>
+
+        <p class="smallTitle" id="property">2.协议中的属性</p>
+        <pre>
+
+            <b>//只能声明成 var  并且要求说明读写权限 支持使用static来声明类型属性</b>
+            <b>//不能为他们赋上初始值</b>
+            protocol JSON {
+
+                var json:String?{get set}
+            }
+
+
+            <b>支持使用static来声明类型属性</b>
+            protocol Class {
+
+                static var stu:Student?{get}
+            }
+
+            class Student: NSObject {
+
+                var name:String?
+            }
+        </pre>
+
+        <p class="smallTitle" id="function">3.协议中的方法</p>
+        <pre>
+
+            protocol Class {
+
+                //类方法
+                static func aStaticFunc()
+
+                //实例化方法
+                func instanceFunc()
+
+                <b>1.protocols的方法不能有方法体{}</b>
+                <b>2.protocols如果在结构体中需要修改自己的属性时，也需要加上mutating，这样的方法叫做：异变方法</b>
+
+            }
+        </pre>
+
+        <p class="smallTitle" id="inherit">4.遵守协议(协议的继承)</p>
+        <div class="contents">
+            <pre>
+            <b>4.1 基本格式</b>
+            extension Substring : LosslessStringConvertible {
+
+                public init(_ content: String)
+            }
+
+            <b>4.2 遵守多个协议用逗号分开 同时应该将父类放在前面 子类放在后面</b>
+            public protocol StringProtocol : BidirectionalCollection, Comparable, ExpressibleByStringLiteral,
+                Hashable, LosslessStringConvertible, TextOutputStream,
+                TextOutputStreamable where Self.Element == Character, Self.SubSequence : StringProtocol{
+
+            }
+            </pre>
+
+        </div>
+
+        <p class="smallTitle" id="initialize">5. 用协议构造类和结构体的便捷初始化器</p>
+        <div class="contents">
+
+            <p>
+                Swift中可以在protocols里面构造一个类的便捷初始化器, 注意在类(Class)中一定得带上required关键字, 结构体(Struct)
+                中不必
+            </p>
+            <pre>
+                protocol Animal {
+
+                    init(name:String)
+                }
+
+                class Cat:Animal {
+
+                    var name:String
+
+                    //class中必须带上required
+                    required init(name: String) {
+
+                        self.name = name
+                    }
+                }
+
+                struct Cat:Animal {
+
+                    var name:String
+
+                    //struct中不带required
+                    init(name: String) {
+
+                        self.name = name
+                    }
+                }
+            </pre>
+        </div>
+
+
+        <p class="smallTitle" id="transfer">6. 协议的类型转化</p>
+        <div class="contents">
+
+            <pre>
+                <b>使用as来得到遵守某个协议的实例</b>
+                extension Optional:JSON{
+
+                    func toJSON() throws -> AnyObject? {
+
+                        if let x = self{
+
+                            //得到遵守某个协议的实例
+                            if let value = x as? JSON{
+                                return try! value.toJSON()
+                            }else{
+                                throw CouldNotSerializeError.NoImplementation(source: x, type: Mirror(reflecting: x))
+                            }
+                        }
+                        return nil
+                    }
+                }
+            </pre>
+
+        </div>
+
+        <p class="smallTitle" id="realize">7.协议的默认实现</p>
+        <div class="contents">
+
+            <pre>
+                <b>Swift中使用扩展extension来对protocols进行默认实现</b>
+                protocol defaultText {
+
+                    var defaultValue:String{get}
+                }
+
+                <b>可以这么写</b>
+                extension UILabel:defaultText{
+                    var defaultValue: String {
+                        return text ?? ""
+                    }
+                }
+
+                <b>也可以这么写</b>
+                extension defaultText where Self:UIButton{
+
+                    var defaultValue:String{
+                        return title(for: .normal) ?? ""
+                    }
+                }
+            </pre>
+        </div>
+
+        <p class="smallTitle" id="polymer">8.协议的聚合(匿名协议聚合)</p>
+        <div class="contents">
+            <pre>
+                <b>在Swift中一个类继承多个协议非常常见,除了使用继承，还可以使用聚合来体现，协议的聚合可以用&来连接</b>
+                protocol p1 {
+
+                    func say1()
+                }
+
+                protocol p2 {
+                    func say2()
+                }
+
+                extension p1 where Self:p1{
+
+                    func say1() {
+                        print("1")
+                    }
+                }
+
+                extension p2 where Self:p2{
+
+                    func say2() {
+                        print("2")
+                    }
+                }
+
+                <b>typealias p3 = p1 & p2</b>
+                struct sss : p3{
+
+                    func say1() {
+                        print("31")
+                    }
+
+                    func say2() {
+                        print("32")
+                    }
+                }
+
+                sss().say1() //31
+                sss().say2() //32
+
+            </pre>
+        </div>
+
+        <p class="smallTitle" id="check">9. 检查是否继承某个协议</p>
+        <div class="contents">
+        <pre>
+
+            <b>类似于OC的performToSelector，Swift在检查是否继承某个协议就简单一些</b>
+            //使用关键字 is 返回一个Bool值用于判断条件是否成立
+            var b = sss() is p1
+
+            print(b) //true
+        </pre>
+        </div>
+
+        <p class="smallTitle" id="association">10. 协议的关联类型</p>
+        <div class="contents">
+        <pre>
+
+            <b>协议的关联类型指的是根据使用场景的变化，如果协议中某些属性存在“逻辑相同的而类型不同”的情况，可以使用关键字associatedtype来为这些属性的类型声明“关联类型”。</b>
+            <b>协议的关联类型通常与泛型类一起使用，使得使用起来更加地灵(fu)活(za)</b>
+            protocol Item {
+
+                <b>//使用associatedtype声明一个关联类型</b>
+                associatedtype itemType
+
+                mutating func append(item:itemType)
+            }
+
+            struct Container&lt;T&gt; : Item {
+
+                <b>//使用typealias表明关联类型</b>
+                typealias itemType = T
+
+                var items:[T]?
+
+                mutating func append(item: T) {
+
+                    items?.append(item)
+                }
+            }
+
+            var item1:Container&lt;String&gt; = Container&lt;String&gt;(items: [])
+            item1.items = [String]()
+            item1.append(item: "s1")
+            item1.append(item: "s2")
+
+            //Container&lt;String&gt;(items: Optional(["s1", "s2"]))
+            print(item1)
+
+            var item2:Container&lt;Int&gt; = Container&lt;Int&gt;(items: [])
+            item2.items = [Int]()
+            item2.append(item: 11)
+            item2.append(item: 22)
+
+            //Container&lt;Int&gt;(items: Optional([11, 22]))
+            print(item2)
+        </pre>
+        </div>
+
+    </div>
+
+
+</div>
+
+</body>
+</html>
