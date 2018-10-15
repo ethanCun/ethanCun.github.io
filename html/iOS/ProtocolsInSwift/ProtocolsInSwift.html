@@ -963,11 +963,17 @@
         <pre>
             <b>CustomReflectable结构:</b>
 
-            extension Bool : CustomReflectable {
+            public protocol CustomReflectable {
 
-                /// A mirror that reflects the `Bool` instance.
+                /// The custom mirror for this instance.
+                ///
+                /// If this type has value semantics, the mirror should be unaffected by
+                /// subsequent mutations of the instance.
                 public var customMirror: Mirror { get }
-            }}
+            }
+
+            遵守了CustomReflectable的结构体，可以得到一个镜像customMirror, <b><a href="../Mirror/Mirror.html">关于Mirror</a></b>。
+
         </pre>
     </div>
 </div>

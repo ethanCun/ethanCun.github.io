@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swift中的Mirror</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">Swift中的Mirror</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Swift中的Mirror</p>
+    <hr>
+
+
+<p class="smallTitle">
+    1.Objc的运行时(Runtime)与Swift的反射机制(Reflect)
+</p>
+<div class="contents">
+
+    <p>
+        Objc可以在运行时遍历对象的属性列表，通过kvc进行赋值，许多第三方j2m库都是基于这样的原理来实现的，
+        比如<a target="_blank" href="https://github.com/ibireme/YYModel">YYModel</a>,<a target="_blank" href="https://github.com/jsonmodel/jsonmodel">JsonModel</a> 。
+        Swift中的反射机制则不如OC中的Runtime强大,Swift中的反射机制是基于Mirror类，
+        但是转化时性能比较差，一般的j2m框架都不会使用纯Mirror。 如<a target="_blank" href="https://github.com/Hearst-DD/ObjectMapper">ObjectMapper</a>是在调用mapping方法
+        的时候将对应的json映射到模型,而<a target="_blank" href="https://github.com/alibaba/HandyJSON">HandyJSON</a> 则是通过写内存的方式来进行赋值。
+    </p>
+</div>
+
+<p class="smallTitle">2.Mirror是什么</p>
+<div class="contents">
+    <p>
+        A representation of the substructure and display style of an instance of any type.<a href="https://swiftdoc.org/v4.2/type/mirror/">(来自文档)</a>
+    </p>
+    <p>
+        A mirror describes the parts that make up a particular instance, such as the instance's stored properties, collection or tuple elements, or its active enumeration case. Mirrors also provide a "display style" property that suggests how this mirror might be rendered.
+    </p>
+    <p>Playgrounds and the debugger use the Mirror type to display representations of values of any type. </p>
+    <p>操场和调试器用到了Mirror来展现实例的属性等</p>
+</div>
+<p class="smallTitle">3.Mirror的结构</p>
+<div>
+    <pre>
+        public struct Mirror {
+
+            <b>//用来定义被反射的对象的父类应该如何被反射 所以只应用于 class 类型的对象</b>
+            public enum AncestorRepresentation {
+
+                // 为所有 ancestor class 生成默认 mirror。
+                case generated
+
+                // 使用最近的 ancestor 的 customMirror() 实现来给它创建一个 mirror。
+                case customized(() -> Mirror)
+
+                // 禁用所有 ancestor class 的行为。Mirror 的 superclassMirror() 返回值为 nil。
+                case suppressed
+            }
+
+            <b>//实例化一个对象的镜像Mirror</b>
+            public init(reflecting subject: Any)
+
+            <b>//提供给 Mirror 的子节点使用的 typealias, Child 都包含一个可选的 label 和 Any 类型的 value</b>
+            <b>//struct 会以属性的名字做为 label，但是 Collection 只有下标，没有名字。Tuple 同样也可能没有给它们的条目指定名字。</b>
+            public typealias Child = (label: String?, value: Any)
+
+            <b>//子类的集合</b>
+            public typealias Children = AnyCollection&lt;Mirror.Child&gt;
+
+            <b>//反射对象展示类型</b>
+            public enum DisplayStyle {
+
+                case `struct`
+
+                case `class`
+
+                case `enum`
+
+                case tuple
+
+                case optional
+
+                case collection
+
+                case dictionary
+
+                case set
+            }
+
+            <b>//为Collection的初始化方法</b>
+            public init&lt;Subject, C&gt;(_ subject: Subject, children: C, displayStyle: Mirror.DisplayStyle? = default,
+                ancestorRepresentation: Mirror.AncestorRepresentation = default) where C : Collection, C.Element == Mirror.Child
+
+            <b>//为Collection的初始化方法</b>
+            public init&lt;Subject, C&gt;(_ subject: Subject, unlabeledChildren: C, displayStyle: Mirror.DisplayStyle? = default,
+                ancestorRepresentation: Mirror.AncestorRepresentation = default) where C : Collection
+
+            <b>//可以在 class 或者 struct 上使用  DictionaryLiteral&lt;String, Any&gt;遵守ExpressibleByDictionaryLiteral</b>
+            //即可用类似元祖的成员来实例化
+            /**
+            let bk:DictionaryLiteral&lt;String, Any&gt; = DictionaryLiteral(dictionaryLiteral: ("name", "zhangsan"))
+            mirror = Mirror.init(book.self, children: bk, displayStyle: Mirror.DisplayStyle.struct, ancestorRepresentation: .suppressed)
+            */
+            public init&lt;Subject&gt;(_ subject: Subject, children: DictionaryLiteral&lt;String, Any&gt;, displayStyle: Mirror.DisplayStyle? = default,
+                ancestorRepresentation: Mirror.AncestorRepresentation = default)
+
+            <b>//获取对象类型</b>
+            /**
+            let p = Person()
+            let mirror: Mirror = Mirror(reflecting:p)
+            (mirror.subjectType) // 打印出：Person
+            */
+            public let subjectType: Any.Type
+
+            <b>//反射对象的属性集合</b>
+            public let children: Mirror.Children
+
+            <b>//反射对象展示类型</b>
+            public let displayStyle: Mirror.DisplayStyle?
+
+            <b>//对象父类的 mirror。如果这个对象不是一个类，它会是一个空的 Optional 值。如果对象的类型是基于类的，会得到一个新的 Mirror：</b>
+            //print(Mirror(reflecting: aStruct).superclassMirror()) //nil
+            //print(Mirror(reflecting: aClass).superclassMirror()) //Optional(Mirror for aClass)
+            public var superclassMirror: Mirror? { get }
+
+            <b>//Returns a specific descendant of the reflected subject 映射对象的子代遍历</b>
+            //如果Child是String，则会根据Child的label来区分
+            public func descendant(_ first: MirrorPath, _ rest: MirrorPath...) -> Any?
+        }
+
+        <b>另外Mirror也遵守CustomReflectable和CustomStringConvertible协议</b>
+        extension Mirror : CustomStringConvertible {
+
+            public var description: String { get }
+        }
+
+        extension Mirror : CustomReflectable {
+
+            public var customMirror: Mirror { get }
+        }
+
+        <b>实例</b>
+        let bk:DictionaryLiteral&lt;String, Any&gt; = DictionaryLiteral(dictionaryLiteral: ("name", "zhangsan"))
+
+        let mirror = Mirror.init(book.self, children: bk, displayStyle: Mirror.DisplayStyle.struct, ancestorRepresentation: .suppressed)
+
+        print(mirror, mirror.subjectType, mirror.children.count, mirror.children, mirror.superclassMirror, mirror.displayStyle)
+
+        输出：
+        Mirror for book.Type
+        book.Type
+        1
+        AnyCollection<(label: Optional&lt;String&gt;, value: Any)>
+        (_box: Swift._RandomAccessCollectionBox&lt;Swift.LazyMapCollection&lt;Swift.DictionaryLiteral&lt;Swift.String, Any&gt;,
+        (label: Swift.Optional&lt;Swift.String&gt;, value: Any)&gt;&gt;)
+        nil
+        Optional(Swift.Mirror.DisplayStyle.struct)
+    </pre>
+</div>
+<p class="smallTitle">4.用Mirror来实现将自定义对象转化成json对象</p>
+<div>
+<pre>
+
+    <b>定义两个结构体</b>
+    struct Class {
+
+        var name:String?
+        var num:Int?
+        var access:Bool?
+        var stu:Student?
+    }
+
+    struct Student {
+
+        var name:String?
+    }
+
+    <b>//遵守JSON协议</b>
+    extension Int:JSON{}
+    extension Float:JSON{}
+    extension String:JSON{}
+    extension Bool:JSON{}
+
+    extension Class:JSON{}
+    extension Student:JSON{}
+
+    //Optional类型处理nil的情况
+    extension Optional:JSON{
+
+        func toJSON() throws -> AnyObject? {
+
+            if let x = self{
+
+                if let value = x as? JSON{
+                    return try! value.toJSON()
+                }else{
+                    throw CouldNotSerializeError.NoImplementation(source: x, type: Mirror(reflecting: x))
+                }
+            }
+            return nil
+        }
+    }
+
+    <b>//定义不能转换时出现的错误枚举</b>
+    enum CouldNotSerializeError:Error {
+        case NoImplementation(source:Any, type:Mirror)
+    }
+
+    <b>//转成JSON对象的接口</b>
+    protocol JSON {
+
+        func toJSON() throws -> AnyObject?
+    }
+
+    <b>//默认的JSON接口实现</b>
+    extension JSON{
+
+        func toJSON() throws -> AnyObject? {
+
+            let mirror = Mirror(reflecting: self)
+
+            guard mirror.children.count > 0 else {return self as AnyObject}
+
+            var result:[String:AnyObject] = [:]
+
+            <b>//mirror.children下面是元祖</b>
+            <b>mirror.children会遍历Class下每一个成员 接着遍历Student下每一个成员</b>
+            for case let (label?, value) in mirror.children {
+
+                if let value = value as? JSON{
+
+                    //递归到所有遵守JSON的属性对象
+                    result[label] = try value.toJSON()
+                }else{
+
+                    throw CouldNotSerializeError.NoImplementation(source: self, type: Mirror(reflecting: value))
+                }
+            }
+
+            return result as AnyObject
+        }
+    }
+
+    <b>//实例</b>
+    let cls:Class = Class(name: "class1", num: 45, access: true, stu: Student(name: "zhansgan"))
+
+    //Class(name: Optional("class1"), num: Optional(45), access: Optional(true), stu: Optional(Mirror.Student(name: Optional("zhansgan"))))
+    print(cls)
+
+    do{
+
+        /**
+        {
+            access = 1;
+            name = class1;
+            num = 45;
+            stu =     {
+                name = zhansgan;
+            };
+        }
+        */
+        print(try cls.toJSON() ?? "")
+
+    }catch{
+
+        print(error)
+    }
+
+</pre>
+</div>
+</div>
+</body>
+</html>
