@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swift中的高阶函数</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">Swift中的高阶函数</span>
+</div>
+
+
+<div class="contentBgDiv">
+    <p class="title">Swift中的高阶函数</p>
+    <hr>
+
+    <p class="smallTitle">1. 高阶函数定义</p>
+    <div class="contents">
+        <p>1. 接受一个或多个函数当作参数</p>
+        <p>2. 把一个函数当作返回值</p>
+    </div>
+
+    <p class="smallTitle">2. 简单实例</p>
+    <div class="contents">
+        <pre>
+            //1. 从小到大排序
+            var nums = [1,323,41,451,14]
+            nums.sort(by: {$0<$1})
+
+            <b>Swift 允许当函数的最后一个参数是闭包的时候，以紧跟 { } 的形式，将最后一个闭包的内容附加在函数后面。</b>
+            所以可以简化为：
+            nums.sort{$0<$1}
+
+            //2.遍历输出
+            var nums = [1,2,4,12,45]
+            nums.forEach{print($0)}
+        </pre>
+    </div>
+
+    <p class="smallTitle">3. map遍历</p>
+    <div class="contents">
+        <pre>
+            public func map&lt;T&gt;(_ transform: (Element) throws -> T) rethrows -> [T]
+
+            <b>//rethrows:</b>
+            这个函数如果抛出异常，仅可能是因为传递给它的闭包的调用导致了异常。
+            如果闭包的调用没有导致异常，编译器就知道这个函数不会抛出异常。那么我们也就不用去处理异常了。
+
+            var arr1 = nums.map{$0+1}
+            var arr2 = nums.map{"NO."+String($0)}
+        </pre>
+    </div>
+
+    <p class="smallTitle">4. flatMap</p>
+    <div>
+       <pre>
+       flatMap与map的区别：
+
+        public func flatMap&lt;T&gt;(
+        @noescape transform: (${GElement}) throws -> T?
+        ) rethrows -> [T]
+
+        <b>1.flatMap去空：</b>
+        例子：
+        var nums = [1,2,3,nil]
+        var arr1 = nums.map{$0}
+        var arr2 = nums.flatMap{$0}
+
+        //输出：
+        arr1 = [Optional(1), Optional(2), Optional(3), nil]
+        arr2 = [1, 2, 3]
+
+        <b>2.flatMap降维：</b>
+        例子：
+        var nums = [[1,2,3], [4,5,6]]
+        var arr1 = nums.map{$0}
+        var arr2 = nums.flatMap{$0}
+
+        //输出
+        arr1 = [[1, 2, 3], [4, 5, 6]]
+        arr2 = [1, 2, 3, 4, 5, 6]
+
+        <b>3. flatMap也能把两个不同的数组合并成一个数组 这个合并的数组元素个数是前面两个数组元素个数的乘积：</b>
+        例子：
+        var nums1 = ["s1", "s2", "s3"]
+        var nums2 = [1,2]
+
+        let arr = nums1.flatMap{string in
+
+            nums2.map{ num in
+
+                //string + "\(num)"
+                (string, num)
+            }
+        }
+
+        //输出：
+        [("s1", 1), ("s1", 2), ("s2", 1), ("s2", 2), ("s3", 1), ("s3", 2)]
+       </pre>
+    </div>
+
+    <p class="smallTitle">5. filter</p>
+    <div class="contents">
+        <pre>
+            例子：
+            var nums = [1,2,3,4,5,6,7,8]
+            let arr1 = nums.filter{$0%2 == 0}
+
+            //输出：
+            [2, 4, 6, 8]
+        </pre>
+    </div>
+
+    <p class="smallTitle">6. reduce</p>
+    <div class="contents">
+        <pre>
+            public func reduce&lt;Result&gt;(_ initialResult: Result, _ nextPartialResult: (Result, Element) throws -> Result) rethrows -> Result
+
+            例子：用reduce求和：
+            let nums = [11,22,44,11,45,67]
+            let sum = nums.reduce(0) { (sum, element) -> Int in
+
+                return sum+element
+            }
+            //简化：
+            let sum = nums.reduce(0){$0+$1}
+
+            例子： 用reduce实现map的功能：
+            var nums = [11,22,33,22,55,33,99]
+            let arr1 = nums.reduce([]) { (a, element) -> [Int] in
+
+                var arr = [Int](a)
+                arr.append(element*2)
+
+                return arr
+            }
+
+            //输出：
+            [22, 44, 66, 44, 110, 66, 198]
+        </pre>
+    </div>
+
+    <br><br>
+</div>
+
+</body>
+</html>

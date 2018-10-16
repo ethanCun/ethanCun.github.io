@@ -43,13 +43,11 @@
         <li><a href="#weakStrongDanceInSwift">weak-Strong-In-Swift</a></li>
         <li><a href="#AnyAnyObjectAnyClass">Any 与 AnyObject AnyClass的区别</a></li>
         <li><a href="#as">Swift中as, as!, as? 的区别</a> </li>
-        <li><a href="#high-order-function">Swift中的高阶函数</a> </li>
         <li><a href="#Optional">Swift中的Optional</a> </li>
         <li><a href="#ClassOrStruct">Swift中的Class与Struct</a> </li>
         <li><a href="#SwitchInSwift">Swift中的Switch</a></li>
         <li><a href="#SearchAddressInSwift">Swift4查看对象地址</a></li>
         <li><a href="#Int">Swift中的Int,Int8,Int16,Int32,Int64</a></li>
-        <li><a href="#Property">Swift中的属性</a></li>
         <li><a href="#genericClass">Swift中的泛型</a></li>
         <li><a href="#typealiasAndassociatedtype">Swift中typealias与associatedtype的区别</a></li>
         <li><a href="#PATs">Swift中的PATs</a></li>
@@ -588,115 +586,6 @@
 
     </pre>
 
-    <p class="contents" id="high-order-function"><b>Swift中的高阶函数</b></p>
-    <pre>
-        1.高阶函数定义：
-            a.接受一个或多个函数当作参数
-            b.把一个函数当作返回值
-
-        2.简单实例
-            //1. 从小到大排序
-            var nums = [1,323,41,451,14]
-            nums.sort(by: {$0<$1})
-
-            Swift 允许当函数的最后一个参数是闭包的时候，以紧跟 { } 的形式，将最后一个闭包的内容附加在函数后面。
-            所以可以简化为：
-            nums.sort{$0<$1}
-
-            //2.遍历输出
-            var nums = [1,2,4,12,45]
-            nums.forEach{print($0)}
-
-        3.map遍历：
-
-            public func map&lt;T&gt;(_ transform: (Element) throws -> T) rethrows -> [T]
-
-            //rethrows:
-            这个函数如果抛出异常，仅可能是因为传递给它的闭包的调用导致了异常。
-            如果闭包的调用没有导致异常，编译器就知道这个函数不会抛出异常。那么我们也就不用去处理异常了。
-
-            var arr1 = nums.map{$0+1}
-            var arr2 = nums.map{"NO."+String($0)}
-
-        4.flatMap:
-            flatMap与map的区别：
-
-            public func flatMap&lt;T&gt;(
-                @noescape transform: (${GElement}) throws -> T?
-                ) rethrows -> [T]
-
-            1.flatMap去空：
-                例子：
-                var nums = [1,2,3,nil]
-                var arr1 = nums.map{$0}
-                var arr2 = nums.flatMap{$0}
-
-                //输出：
-                arr1 = [Optional(1), Optional(2), Optional(3), nil]
-                arr2 = [1, 2, 3]
-
-            2.flatMap降维：
-                例子：
-                var nums = [[1,2,3], [4,5,6]]
-                var arr1 = nums.map{$0}
-                var arr2 = nums.flatMap{$0}
-
-                //输出
-                arr1 = [[1, 2, 3], [4, 5, 6]]
-                arr2 = [1, 2, 3, 4, 5, 6]
-
-            3. flatMap也能把两个不同的数组合并成一个数组 这个合并的数组元素个数是前面两个数组元素个数的乘积：
-                例子：
-                var nums1 = ["s1", "s2", "s3"]
-                var nums2 = [1,2]
-
-                let arr = nums1.flatMap{string in
-
-                    nums2.map{ num in
-
-                        //string + "\(num)"
-                        (string, num)
-                    }
-                }
-
-                //输出：
-                [("s1", 1), ("s1", 2), ("s2", 1), ("s2", 2), ("s3", 1), ("s3", 2)]
-
-        5. filter:
-
-            例子：
-            var nums = [1,2,3,4,5,6,7,8]
-            let arr1 = nums.filter{$0%2 == 0}
-
-            //输出：
-            [2, 4, 6, 8]
-
-        6. reduce:
-
-            public func reduce&lt;Result&gt;(_ initialResult: Result, _ nextPartialResult: (Result, Element) throws -> Result) rethrows -> Result
-
-            例子：用reduce求和：
-            let nums = [11,22,44,11,45,67]
-            let sum = nums.reduce(0) { (sum, element) -> Int in
-
-                return sum+element
-            }
-            //简化：
-            let sum = nums.reduce(0){$0+$1}
-
-            例子： 用reduce实现map的功能：
-            var nums = [11,22,33,22,55,33,99]
-            let arr1 = nums.reduce([]) { (a, element) -> [Int] in
-
-                var arr = [Int](a)
-                arr.append(element*2)
-
-                return arr
-            }
-
-            //输出：
-            [22, 44, 66, 44, 110, 66, 198]
-    </pre>
 
     <p class="contents" id="Optional"><b>Swift中的Optional</b></p>
     <pre>
@@ -1007,91 +896,6 @@
         Int的默认值是64bit 8字节
     </pre>
 
-    <p class="contents" id="Property"><b>Swift中的属性</b></p>
-    <pre>
-        class Circle: NSObject {
-
-            /**
-             <b>1.两种类型的属性：</b>
-             存储属性(普通属性)与计算属性。
-             存储属性将值（常量或者变量）保存为实例或类型的一部分，而计算属性没有存储值。
-
-             在 Swift 中有两种类型的属性观察者：一种在赋值之前调用，另一种在赋值之后调用。
-             */
-
-            <b>//age是一个存储属性 也叫普通属性</b>
-            var radius:Double = 10{
-
-                willSet{
-
-                    //willSet可以访问newValue 不能访问oldValue
-                    print("newValue = \(newValue)")
-                }
-
-                didSet{
-                    if radius < 10{
-
-                        //didSet可以访问oldValue 不能访问newValue
-                        print("oldValue = \(oldValue)")
-
-                        //oldValue 原来的值
-                        radius = oldValue
-                    }
-                }
-            }
-
-            <b>//aero是一个计算属性：因此在每次调用计算属性时，都要计算该值。</b>
-            //计算属性总是需要一个 getter。如果缺少 setter，则该属性被称为只读属性。
-            var aero:Double{
-
-                get{
-                    return radius * radius * Double(CGFloat.pi)
-                }
-
-                //set带一个将要被赋值的参数
-                set(newAero){
-                    radius = sqrt(newAero/Double.pi)
-                }
-            }
-
-
-            <b>//每个存储属性在它的对象实例化之后都必须有值, 否则代码无法通过编译；属性初始化有两种方法：</b>
-            //1.在 init 方法中初始化值
-            //2.给属性设置默认的值
-            var length:Double
-
-            <b>//懒加载属性</b>
-            //如果具有默认值的存储属性使用了关键字 lazy 标记，则其默认值不会立即初始化，而是在第一次访问该属性时初始化。
-            //因此，如果该属性从未被访问，它将永远不会被初始化。你可以将这种特性应用于一些特别耗费 CPU 或内存的初始化上。由于类型属性没有初始化方法，它总是需要一个默认值。
-            lazy var round1:Double? = 0
-
-            lazy var round2:Double = {
-
-                print("懒加载属性准备赋值")
-
-                return 200
-            }()
-
-            <b>//类型属性 类型属性是类的一部分，但不是实例的一部分，类型属性也被称为静态属性。</b>
-            存储属性和计算属性都可以是类型属性。类型属性的关键字是 static,它们使用类名而不是实例对象来访问它们。
-            由于类型属性没有初始化方法，它总是需要一个默认值。
-            static var round3:String?
-
-            <b>//拥有私有 Setter 的公共属性:提供一个私有的 setter, 只能在类内部访问setter</b>
-            public private(set) var diameter:Double?
-            //只内部使用
-            private var aa:Double = 200
-
-            override init() {
-
-                length = 0
-                self.diameter = 100
-
-                print(aa)
-            }
-
-        }
-    </pre>
 
     <p class="contents" id="genericClass"><b>Swift中的泛型</b></p>
     <pre>

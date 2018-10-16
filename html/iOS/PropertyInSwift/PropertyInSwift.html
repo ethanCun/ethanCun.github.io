@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swift中的属性</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">Swift中的属性</span>
+</div>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">Swift中的属性</p>
+    <hr>
+
+    <p class="smallTitle">1. Swift中的存储属性和计算属性</p>
+    <div class="contents">
+
+        <pre>
+            存储属性(普通属性)与计算属性。
+            存储属性将值（常量或者变量）保存为实例或类型的一部分，而计算属性没有存储值。
+
+            在 Swift 中有两种类型的属性观察者：一种在赋值之前调用，另一种在赋值之后调用。
+
+            //age是一个存储属性 也叫普通属性
+            var radius:Double = 10{
+
+                willSet{
+
+                    //willSet可以访问newValue 不能访问oldValue
+                    print("newValue = \(newValue)")
+                }
+
+                didSet{
+                    if radius < 10{
+
+                        //didSet可以访问oldValue 不能访问newValue
+                        print("oldValue = \(oldValue)")
+
+                        //oldValue 原来的值
+                        radius = oldValue
+                    }
+                }
+            }
+
+            //aero是一个计算属性：因此在每次调用计算属性时，都要计算该值。
+            //计算属性总是需要一个 getter。如果缺少 setter，则该属性被称为只读属性。
+            var aero:Double{
+
+                get{
+                    return radius * radius * Double(CGFloat.pi)
+                }
+
+                //set带一个将要被赋值的参数
+                set(newAero){
+                    radius = sqrt(newAero/Double.pi)
+                }
+            }
+        </pre>
+    </div>
+
+    <p class="smallTitle">2. 属性的初始化</p>
+    <div class="contents">
+        <pre>
+            <b>//每个存储属性在它的对象实例化之后都必须有值, 否则代码无法通过编译；属性初始化有两种方法：</b>
+
+            //1.在 init 方法中初始化值
+            //2.给属性设置默认的值
+            var length:Double
+        </pre>
+    </div>
+
+    <p class="smallTitle">3. 懒加载属性</p>
+    <div class="contents">
+        <pre>
+            //如果具有默认值的存储属性使用了关键字 <b>lazy</b> 标记，则其默认值不会立即初始化，而是在第一次访问该属性时初始化。
+            //因此，如果该属性从未被访问，它将永远不会被初始化。你可以将这种特性应用于一些特别耗费 CPU 或内存的初始化上。由于类型属性没有初始化方法，它总是需要一个默认值。
+            lazy var round1:Double? = 0
+
+            lazy var round2:Double = {
+
+                print("懒加载属性准备赋值")
+
+                return 200
+            }()
+        </pre>
+    </div>
+
+    <p class="smallTitle">4. 类型属性</p>
+    <div class="contents">
+        <pre>
+          <b>//类型属性 类型属性是类的一部分，但不是实例的一部分，类型属性也被称为静态属性。</b>
+          存储属性和计算属性都可以是类型属性。类型属性的关键字是 static,它们使用类名而不是实例对象来访问它们。
+          由于类型属性没有初始化方法，它总是需要一个默认值。
+          static var round3:String?
+    </pre>
+    </div>
+
+    <p class="smallTitle">5.拥有私有 Setter 的公共属性</p>
+    <div class="contents">
+        <pre>
+        //拥有私有 Setter 的公共属性:提供一个私有的 setter, 只能在类内部访问setter
+        public private(set) var
+
+        //只内部使用
+        private var aa:Double = 200
+
+        override init() {
+
+            length = 0
+            self.diameter = 100
+
+            print(aa)
+        }
+        </pre>
+    </div>
+
+    <br><br>
+</div>
+
+</body>
+</html>
