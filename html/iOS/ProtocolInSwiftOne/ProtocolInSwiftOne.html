@@ -151,7 +151,6 @@
             </pre>
         </div>
 
-
         <p class="smallTitle" id="transfer">6. 协议的类型转化</p>
         <div class="contents">
 
@@ -306,6 +305,14 @@
         </pre>
         </div>
 
+        <p class="smallTitle" id="propertyInSwift">11. OC中在协议里使用属性</p>
+        <div class="contents">
+            <p>OC语言的协议里面是支持定义属性的，而在协议中定义属性其实和在其中定义方法一样只是定义了getter和setter方法，
+                并没有具体实现，所以当这个协议属性修饰符为@required时，如果不实现编译器就会报出警告。</p>
+            <p>实现OC协议中属性的两种方式</p>
+            <p>1.@synthesize propertyName;</p>
+            <p>2.手动实现属性的setter和getter;</p>
+        </div>
     </div>
 
 
