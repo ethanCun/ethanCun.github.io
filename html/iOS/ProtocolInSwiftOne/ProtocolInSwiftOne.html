@@ -36,6 +36,7 @@
         <li><a href="#polymer">协议的聚合(匿名协议聚合)</a> </li>
         <li><a href="#check">检查是否继承某个协议</a> </li>
         <li><a href="#association">协议的关联类型</a> </li>
+        <li><a href="#propertyInOC">OC中在协议里使用属性</a> </li>
     </ul>
 
     <p class="introduceText">
@@ -305,13 +306,15 @@
         </pre>
         </div>
 
-        <p class="smallTitle" id="propertyInSwift">11. OC中在协议里使用属性</p>
+        <p class="smallTitle" id="propertyInOC">11. OC中在协议里使用属性</p>
         <div class="contents">
-            <p>OC语言的协议里面是支持定义属性的，而在协议中定义属性其实和在其中定义方法一样只是定义了getter和setter方法，
-                并没有具体实现，所以当这个协议属性修饰符为@required时，如果不实现编译器就会报出警告。</p>
-            <p>实现OC协议中属性的两种方式</p>
-            <p>1.@synthesize propertyName;</p>
-            <p>2.手动实现属性的setter和getter;</p>
+            <pre>
+                <b>OC语言的协议里面是支持定义属性的，而在协议中定义属性其实和在其中定义方法一样只是定义了getter和setter方法，
+                并没有具体实现，所以当这个协议属性修饰符为@required时，如果不实现编译器就会报出警告。</b>
+                <b>实现OC协议中属性的两种方式</b>
+                1.@synthesize propertyName;
+                2.手动实现属性的setter和getter;
+            </pre>
         </div>
     </div>
 
