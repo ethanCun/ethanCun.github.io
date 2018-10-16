@@ -20,6 +20,7 @@
     <hr>
 
     <ul>
+        <li><a href="http://www.hangge.com/">航歌:一个很好的学习Swift的平台</a> </li>
         <li><a href="http://special.csdncms.csdn.net/the-swift-programming-language-in-chinese/Introduction.shtml">The Swift Programming Language 中文版</a> </li>
         <li><a href="https://swiftdoc.org/">Swift源库文档</a></li>
         <li><a href="https://github.com/apple/swift">Swift源码</a></li>
@@ -61,6 +62,7 @@
         <li><a href="#swiftVersion">判断Swift版本</a> </li>
         <li><a href="#discardableResult">使用@discardableResult来忽略函数返回值</a> </li>
         <li><a href="#defer">Swift中的defer(延迟执行)</a> </li>
+        <li><a href="#private">Swift中的private与fileprivate</a> </li>
     </ul>
 
     <p class="smallTitle" id="swift"><b>swift 调用oc库</b></p>
@@ -585,7 +587,6 @@
             size = 9 align = 8 stride= 16
 
     </pre>
-
 
     <p class="contents" id="Optional"><b>Swift中的Optional</b></p>
     <pre>
@@ -1435,6 +1436,40 @@
         </pre>
     </div>
 
+    <p class="smallTitle" id="private">Swift中的private与fileprivate</p>
+    <div class="contents">
+        <pre>
+
+            <b>1.private 访问级别所修饰的属性或者方法只能在当前类里访问注意：Swift4 中，extension 里也可以访问 private 的属性。）。</b>
+            <b>2.fileprivate 访问级别所修饰的属性或者方法在当前的 Swift 源文件里可以访问。</b>
+
+            class CustomClass: NSObject {
+
+                private var sss:String?
+            
+                //fileprivate 访问级别所修饰的属性或者方法在当前的 Swift 源文件里可以访问。
+                //此处换成private报错
+                fileprivate func test() -> Void {
+                    print("test")
+                }
+            }
+
+            class A: CustomClass {
+
+                func show() -> Void {
+
+                    test()
+                }
+            }
+
+            extension CustomClass{
+
+                func ssss() -> String {
+                    return self.sss ?? ""
+                }
+            }
+        </pre>
+    </div>
 
 </div>
 
