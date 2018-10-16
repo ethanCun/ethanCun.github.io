@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swift中的枚举</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">Swift中的枚举</span>
+</div>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">Swift中的枚举</p>
+    <hr>
+
+    <ul>
+        <li><a href="#definition">枚举的定义</a> </li>
+        <li><a href="#rawValue">枚举的rawValue</a> </li>
+        <li><a href="#traverse">遍历枚举</a> </li>
+        <li><a href="#association">枚举的值关联</a> </li>
+        <li><a href="#nesting">枚举的嵌套</a> </li>
+        <li><a href="#property">枚举的属性</a> </li>
+        <li><a href="#protocol">枚举的协议</a> </li>
+        <li><a href="#extension">枚举的扩展</a> </li>
+        <li><a href="#generic">枚举中的泛型</a> </li>
+    </ul>
+
+    <p class="introduceText">
+        枚举是Swift中的三大类型之一，相比于OC中的枚举只能玩整形，Swift中的枚举可以是浮点型、字符串、布尔、函数等，Swift
+        中的枚举还可以嵌套，内部可以定义函数，同时通过枚举的值关联可以来进行值传递；除此之外，Swift中的枚举还支持继承协议、
+        支持扩展、支持泛型等等。
+    </p>
+
+    <p class="smallTitle" id="definition">1. 枚举的定义</p>
+    <div class="contents">
+
+        <pre>
+
+            <b>Swift中的枚举分为任意类型的枚举和指定类型的枚举</b>
+            <b>1.1 任意类型的枚举</b>
+            enum Direction{
+                case left
+                case right
+                case top
+                case bottom
+
+                //实例方法
+                func direction() -> String{
+
+                    switch self {
+                    case .left:
+
+                        return "left"
+                    case .right:
+
+                        return "right"
+                    case .top:
+
+                        return "top"
+
+                    case .bottom:
+
+                        return "bottom"
+                    }
+                }
+
+                print(Direction.left.direction()) //left
+
+                //静态方法
+                static func aStaticFunction(){
+
+                    print("a static func")
+                }
+            }
+
+         <b> 注意：</b>在具有任意枚举类型中，可以将其中的成员定位为不同的类型 //定位
+                在任意类型枚举中，可以不定义成员，从而形成一个空的枚举类型 //可空
+                在任意类型没居中，不能给case赋值 //赋值必须指定类型
+                任意类型的枚举没有rawValue
+
+            <b>1.2 指定类型的枚举</b>
+            enum enum2 :String{
+
+                case case1 = "1"
+            }
+
+            enum enum1:Int {
+                case aa
+                case bb
+            }
+
+            <b>注意：</b>在指定数据类型的枚举类型中，如果原始类型是整型，可以不指定原始值。如果指定的类型非整型，需指定原始值。
+                  在枚举类型指定数据类型后，其中的成员也都为此数据类型，不可以定义其他类型。 //类型一致
+                  在为成员指定原始值时，原始值必须为唯一标识的。 //Raw value不能一致
+                  在指定数据类型的枚举类型，如果没有定义成员的话将会报错。 //成员数量必须大于0
+                  在指定数据类型的枚举类型中，可以使用rawValue
+        </pre>
+    </div>
+
+
+    <p class="smallTitle" id="rawValue">2. 枚举的rawValue</p>
+    <div class="contents">
+
+        <pre>
+        <b>
+        在指定类型的枚举中可以使用rawValue来输出枚举case的值，
+        也可以使用rawVale来初始化，如果枚举中不存在该rawValue，则返回nil,这时应该用可选类型来接受该枚举值，强制拆包会导致崩溃。
+        </b>
+            enum enum1:Int {
+                case aa
+                case bb
+            }
+
+            enum enum2 :String{
+
+                case case1 = "1", case2 = "2"
+            }
+
+            print(enum1.aa.rawValue) //0
+
+            let enu:enum2 = .case1
+
+            print(enu.rawValue) //1
+
+            let eenu:enum2 = enum2(rawValue: "2")!
+
+            print(eenu) //case2
+
+            var eenu1:enum2? = enum2(rawValue: "3") //强制拆包会导致崩溃
+
+            print(eenu1)//nil
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="traverse">3. 遍历枚举</p>
+    <div class="contents">
+        <pre>
+            <b>枚举的遍历通常使用Swift语句</b>
+
+            <b>1. 只想打印想要的case时，使用default</b>
+
+            enum TestEnum {
+                case aa
+                case log(name:String, age:Int)
+                case test(s1:String, s2:String,s3:String)
+            }
+
+            var test:TestEnum = .log(name: "zhangsan", age: 20)
+
+            switch test {
+            case .log:
+
+                if case let .log(name,age) = test{
+
+                    print("name = \(name), age = \(age)") //zhangsan 20
+                }
+
+            default: break
+
+            }
+
+
+            <b>2. 不适用default时，必须写出所有的case情况，并最好添加break</b>
+            switch test {
+            case .aa:
+                break
+
+            case .log:
+
+                if case let .log(name,age) = test{
+
+                    print("name = \(name), age = \(age)")
+                }
+                break
+
+            case .test:
+                break
+            }
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="association">4. 枚举的值关联</p>
+    <div class="contents">
+
+        <pre>
+            <b>枚举的值关联在传值过程中通有非常重要的作用， 特别是在和泛型配合使用的时候</b>
+            enum ContainerOperation {
+                case push(itemName:String, itemWidth:Float, itemHeight:Float)
+                case pop(itemName:String)
+            }
+
+            var containerOperation = ContainerOperation.push(itemName: "box", itemWidth: 100, itemHeight: 100)
+
+            switch containerOperation {
+            case .push(let itemName, let itemWidth, let itemHeight):
+
+                //name = box, width = 100.0, height = 100.0
+                print("name = \(itemName), width = \(itemWidth), height = \(itemHeight)")
+
+            default:
+                break
+            }
+
+            <b>或者可以这么写:</b>
+            switch containerOperation {
+            case .push:
+
+                if case let .push(name, width, height) = containerOperation{
+
+                    //name = box, width = 100.0, height = 100.0
+                    print("name = \(name), width = \(width), height = \(height)")
+                }
+            default:
+                break
+            }
+
+        </pre>
+
+
+    </div>
+
+    <p class="smallTitle" id="nesting">5. 枚举的嵌套</p>
+    <div class="contents">
+        <pre>
+            <b>Swift中的枚举可以进行嵌套</b>
+            enum ContainerOperation {
+                case push(itemName:String, itemWidth:Float, itemHeight:Float)
+                case pop(itemName:String)
+
+                enum boxOperation {
+                    case push(boxName:String, boxWidth:Float, boxHeight:Float)
+                    case pop(boxName:String)
+
+                    enum rectangle : Int {
+                        case width
+                        case height
+
+                        func areo(width:Float, height:Float) -> Float {
+                            return width * height
+                        }
+                    }
+                }
+            }
+
+            print(ContainerOperation.boxOperation.rectangle.width.rawValue) //0
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="property">6. 枚举的属性</p>
+    <div class="contents">
+        <pre>
+            <b>Swift枚举中不能定义存储属性，但是可以定义计算属性</b>
+
+            enum ContainerOperation {
+                case push(itemName:String, itemWidth:Float, itemHeight:Float)
+                case pop(itemName:String)
+
+                enum boxOperation {
+                    case push(boxName:String, boxWidth:Float, boxHeight:Float)
+                    case pop(boxName:String)
+
+                    enum rectangle : Int {
+                        case width
+                        case height
+                    }
+
+                    <b>只能定义计算属性</b>
+                    var aero:Float?{
+
+                        switch self {
+                        case .push( _, let boxWidth, let boxHeight):
+
+                            return boxWidth * boxHeight
+                        default:
+                            return 0
+                        }
+                    }
+                }
+            }
+
+            let box = ContainerOperation.boxOperation.push(boxName: "", boxWidth: 100, boxHeight: 100)
+            print(box.aero ?? 0) // 10000.0
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="protocol">7. 枚举的协议</p>
+    <div>
+        <pre>
+            <b>在Swift中，枚举可以继承协议，比如实现一个自定义枚举的自定义打印</b>
+            enum Direction : CustomStringConvertible, CustomDebugStringConvertible{
+                case left
+                case right
+                case top
+                case bottom
+
+
+                var description: String{
+
+                    switch self {
+                        case .left:
+
+                        return "left"
+
+                        default:
+
+                        return "not left"
+                    }
+                }
+
+                var debugDescription: String{
+
+                    switch self {
+                        case .left:
+
+                        return "left"
+
+                        default:
+
+                        return "not left"
+                    }
+                }
+            }
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="extension">8. 枚举的扩展</p>
+    <div class="contents">
+        <pre>
+            <b>与protocols一样，枚举可以在extension里面扩展自己的成员方法和属性, 但是枚举不能将自己的case放到扩展里面</b>
+            <b>将枚举的属性和方法放到扩展里面的好处就是可以使case与方法属性协议分离，不至于太臃肿</b>
+
+            enum Direction {
+                case left
+                case right
+                case top
+                case bottom
+            }
+
+            extension Direction:CustomDebugStringConvertible, CustomStringConvertible{
+
+                static func direction() -> String{
+
+                    return "a static function"
+                }
+
+                var description: String{
+
+                    switch self {
+                    case .left:
+
+                        return "left"
+
+                    default:
+
+                        return "not left"
+                    }
+                }
+
+                var debugDescription: String{
+
+                    switch self {
+                    case .left:
+
+                        return "left"
+
+                    default:
+
+                        return "not left"
+                    }
+                }
+            }
+        </pre>
+    </div>
+
+    <p class="smallTitle" id="generic">9. 枚举中的泛型</p>
+    <div class="contents">
+        <pre>
+            <b>Swift中的枚举也和Protocols一样支持泛型, 而且使用起来更加的灵活多变</b>
+            protocol Geometry {
+
+                associatedtype geoType
+
+                var containers:[geoType]?{get set}
+
+                mutating func append(element:geoType)
+            }
+
+            struct Container : Geometry {
+
+                var containers: [Double]?
+
+                typealias geoType = Double
+
+                mutating func append(element:geoType) {
+
+                    containers?.append(element)
+                }
+            }
+
+            enum box&lt;T&gt; where T : Geometry {
+
+                case boxMaker(container:T)
+            }
+
+            var container:Container = Container()
+            container.containers = [Double]()
+            container.append(element: 0.1)
+            container.append(element: 0.2)
+
+            let bb:box&lt;Container&gt; = box&lt;Container&gt;.boxMaker(container: container)
+
+            //boxMaker(EnumInSwift.Container(containers: Optional([0.10000000000000001, 0.20000000000000001])))
+            print(bb)
+
+        </pre>
+    </div>
+
+    <br><br>
+</div>
+
+</body>
+</html>
