@@ -185,6 +185,24 @@
 
     <p class="contents">接来下就是等待CocoaPods团队审核,一般需要一到两个工作日.</p>
     <p class="contents">如果接下来一直没有审核结果变化,建议使用pod setup更新本地依赖库, 当然这会需要点时间</p>
+
+    <div id="container"></div>
+    <link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+    <script src="https://jjeejj.github.io/js/gitment.js"></script>
+
+    <script>
+        var gitment = new Gitment({
+            id: "PrivateRepo", // 可选。默认为 location.href; 但是issue的标签label有长度限制！labels的最大长度限制是50个字符。
+            owner: 'ethanCun',
+            repo: 'ethanCunGitment',
+            oauth: {
+                client_id: '4237aae44aca9081fc6f',
+                client_secret: 'e98d316dd292f6ce51c9a4c8333eb40fc7f506b1',
+            },
+        })
+        gitment.render('container')
+    </script>
+
     <br><br>
 
 </div>

@@ -102,6 +102,23 @@
         3.清理的过程涉及到遍历子路径，当缓存多的时候，会有很长的耗时操作，所以这时应该将遍历删除的过程全部写到新开辟的子线程中去，然后回到主线程刷新UI界面；<br>
     </p>
 
+    <div id="container"></div>
+    <link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+    <script src="https://jjeejj.github.io/js/gitment.js"></script>
+
+    <script>
+        var gitment = new Gitment({
+            id: "cacheHanddle", // 可选。默认为 location.href; 但是issue的标签label有长度限制！labels的最大长度限制是50个字符。
+            owner: 'ethanCun',
+            repo: 'ethanCunGitment',
+            oauth: {
+                client_id: '4237aae44aca9081fc6f',
+                client_secret: 'e98d316dd292f6ce51c9a4c8333eb40fc7f506b1',
+            },
+        })
+        gitment.render('container')
+    </script>
+
     <br><br>
 </div>
 </body>

@@ -311,6 +311,24 @@
     </div>
     <p class="contents">此时的__forwarding指向了外部变量aa, 后续操作的是__forwarding指针,
         因此这时在Block内部可以修改外部变量的值</p>
+
+    <div id="container"></div>
+    <link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+    <script src="https://jjeejj.github.io/js/gitment.js"></script>
+
+    <script>
+        var gitment = new Gitment({
+            id: "block", // 可选。默认为 location.href; 但是issue的标签label有长度限制！labels的最大长度限制是50个字符。
+            owner: 'ethanCun',
+            repo: 'ethanCunGitment',
+            oauth: {
+                client_id: '4237aae44aca9081fc6f',
+                client_secret: 'e98d316dd292f6ce51c9a4c8333eb40fc7f506b1',
+            },
+        })
+        gitment.render('container')
+    </script>
+
     <br><br>
 </div>
 
