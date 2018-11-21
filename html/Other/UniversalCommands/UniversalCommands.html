@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>常用的Git指令与终端指令</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">常用的Git指令与终端指令</span>
+</div>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">常用的Git指令与终端指令</p>
+    <hr>
+
+    <ul>
+        <li><a href="#git">常用的Git指令</a> </li>
+        <li><a href="#terminal">常用的终端指令</a> </li>
+    </ul>
+
+
+    <p class="smallTitle" id="git">1. Git操作指令大全</p>
+
+    <div class="contentBgDiv">
+
+        <b>
+            1. 在操作之间必须设置SSH将本地仓库与远程仓库关联,这样才能进行push等操作, 设置SSH:
+        </b>
+        <p>
+            看本机是否存在SSH keys: $cd ~/.ssh#
+        </p>
+        <p>
+            新建:$ssh-keygen -t rsa -C "your_email@example.com"  设置密码一直回车就可以 不设置密码
+        </p>
+        <p>
+            根据路径:Your public key has been saved in /c/Users/you/.ssh/id_rsa.pub. 找到密码, 在GitHub设置相关的地方填好。
+        </p>
+        <br>
+
+
+        <b>
+            2. 本地已创建的创库与远程仓库设置关联:
+        </b>
+        <p>
+            在本地仓库下运行:
+        </p>
+        <p>
+            $ git remote add 远程仓库名 Github仓库链接
+        </p>
+        <p>
+            把本地库的所有内容推送到远程库上:
+        </p>
+        <p>
+            $ git push -u 远程仓库名 master
+        </p>
+        <br>
+
+        <b>3. 从远程库克隆</b>
+        <p>
+            通常情况下是先建远程库,在通过克隆的方式到本地:
+        </p>
+        <p>
+            cd到本地仓库要从存储的位置,如桌面: $ git clone 远程仓库链接
+        </p>
+        <p>
+            $ ls 查看克隆下来的东西
+        </p>
+        <p>
+            本地仓库添加需要的文件: $ git add readme.txt 或者添加所有 $git add .   添加失败可以使用管理者权限$ sudo git add . 进行尝试
+        </p>
+        <p>
+            提交到本地仓库(不需要网络):$ git commit -m "注释"
+        </p>
+        <p>
+            提交到远程仓库: $ git push
+        </p>
+        <br>
+
+        <b>4. 创建与合并分支</b>
+        <p>
+            查看分支：$ git branch (绿色的*显示当前操作的分支)
+        </p>
+        <p>
+            创建分支：$ git branch 分支名称
+        </p>
+        <p>
+            切换分支：$ git checkout 分支名称
+        </p>
+        <p>
+            创建+切换分支：$ git checkout -b 分支名称
+        </p>
+        <p>
+            在分支中进行增删改,添加到分支本地仓库:$ git add .  $ git commit -m "注释"
+        </p>
+        <p>
+            合并某分支到当前分支：$ git merge 分支名称 (1. 合并之前先使用 git chekout master 切换到master; 2. 在合并之前不能分支内容不一致)
+        </p>
+        <p>
+            删除分支：$ git branch -d 分支名称(合并之后删除)
+        </p>
+        <p>
+            删除后可以使用$ git branch 查看分支
+        </p>
+
+    </div>
+
+    <p class="smallTitle" id="terminal">2. 终端操作指令大全</p>
+    <div class="contentBgDiv">
+
+        <p>
+            vi/vim: 访问文件, vi只能运行于unix中，而vim不仅可以运行于unix,windows ,mac等多操作平台。
+        </p>
+        <p>
+            :w       //保存文件
+        </p>
+        <p>
+            :q          //退出编辑器
+        </p>
+        <p>
+            :q!        //退出编辑器，且不保存
+        </p>
+        <p>
+            :wq         //退出编辑器，且保存文件
+        </p>
+        <p>
+            a      //在当前光标位置的右边添加文本
+        </p>
+        <p>
+            i       //在当前光标位置的左边添加文本
+        </p>
+        <p>
+            A     //在当前行的末尾位置添加文本
+        </p>
+        <p>
+            I      //在当前行的开始处添加文本(非空字符的行首)
+        </p>
+        <p>
+            O     //在当前行的上面新建一行
+        </p>
+        <p>
+            o     //在当前行的下面新建一行
+        </p>
+        <p>
+            R    //替换(覆盖)当前光标位置及后面的若干文本
+        </p>
+        <p>
+            J    //合并光标所在行及下一行为一行(依然在命令模式)
+        </p>
+        <p>
+            cat  //一次显示整个文件
+        </p>
+        <p>
+            ls   //显示当前目录的内容
+        </p>
+        <p>
+            pwd   //显示当前目录的路径名
+        </p>
+        <p>
+            cd   //改变当前目录
+        </p>
+        <p>
+            mkdir   //创建一个目录
+        </p>
+        <p>
+            rmdir  //删除一个目录
+        </p>
+        <p>
+            rm   //删除文件或目录
+        </p>
+        <p>
+            date  //显示系统的当前日期和时间
+        </p>
+        <p>
+            cal  //显示日历
+        </p>
+        <p>
+            telnet  //远程登录
+        </p>
+        <p>
+            ping   //给一个网络主机发送 回应请求
+        </p>
+        <p>
+            history   //列出最近执行过的 几条命令及编号
+        </p>
+        <p>
+            clear  //清除屏幕或窗口内容
+        </p>
+        <p>
+            显示影藏文件:$ defaults write com.apple.finder AppleShowAllFiles -bool true
+        </p>
+        <p>
+            cd ..  //回到上一级目录
+        </p>
+        <p>
+            cd /  //回到根目录
+        </p>
+        <p>
+            cd .  //当前目录
+        </p>
+    </div>
+
+</div>
+</body>
+</html>
