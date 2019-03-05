@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/html/Java/StringInSwiftAndJava/StringInSwiftAndJava.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/Java/StringInSwiftAndJava/StringInSwiftAndJava.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/Java/StringInSwiftAndJava/StringInSwiftAndJava.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/html/archive.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/archive.html" afterDir="false" />
     </list>
     <ignored path="newCZY.iws" />
@@ -95,8 +95,8 @@
       <file leaf-file-name="StringInSwiftAndJava.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/html/Java/StringInSwiftAndJava/StringInSwiftAndJava.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="453">
-              <caret line="19" column="21" lean-forward="true" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="54" />
+            <state relative-caret-position="108">
+              <caret line="4" column="43" selection-start-line="4" selection-start-column="43" selection-end-line="4" selection-end-column="43" />
             </state>
           </provider>
         </entry>
@@ -113,8 +113,8 @@
       <file leaf-file-name="archive.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/html/archive.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="245">
-              <caret line="88" column="103" selection-start-line="88" selection-start-column="103" selection-end-line="88" selection-end-column="103" />
+            <state relative-caret-position="380">
+              <caret line="95" column="5" lean-forward="true" selection-start-line="95" selection-start-column="5" selection-end-line="95" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -218,6 +218,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
@@ -276,7 +277,6 @@
         </subPane>
       </pane>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -399,12 +399,13 @@
       <workItem from="1545446984651" duration="3584000" />
       <workItem from="1551746595451" duration="501000" />
       <workItem from="1551747118144" duration="30000" />
-      <workItem from="1551747752657" duration="262000" />
+      <workItem from="1551747752657" duration="284000" />
+      <workItem from="1551748136706" duration="43000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="165703000" />
+    <option name="totallyTimeSpent" value="165768000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="977" extended-state="0" />
@@ -423,7 +424,7 @@
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18683083" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18897216" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.24959481" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -784,15 +785,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/StringInSwiftAndJava/StringInSwiftAndJava.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="453">
-          <caret line="19" column="21" lean-forward="true" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="54" />
+        <state relative-caret-position="108">
+          <caret line="4" column="43" selection-start-line="4" selection-start-column="43" selection-end-line="4" selection-end-column="43" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/html/archive.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="88" column="103" selection-start-line="88" selection-start-column="103" selection-end-line="88" selection-end-column="103" />
+        <state relative-caret-position="380">
+          <caret line="95" column="5" lean-forward="true" selection-start-line="95" selection-start-column="5" selection-end-line="95" selection-end-column="5" />
         </state>
       </provider>
     </entry>
