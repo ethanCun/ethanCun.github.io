@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>一个关于Java和Swift在String内存优化方面在的不同之处</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">一个关于Java和Swift在String内存优化方面在的不同之处</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">一个关于Java和Swift在String内存优化方面在的不同之处</p>
+    <hr>
+
+    <p class="smallTitle">在Swift中:</p>
+    <pre>
+            let a:String = "aa"
+            let b:String = "aa"
+            let c:String = String.init("aa")
+            let d:String = String.init("aa")
+
+            let addressA:String = String(format: "%p", a)
+            let addressB:String = String(format: "%p", b)
+            let addressC:String = String(format: "%p", b)
+            let addressD:String = String(format: "%p", d)
+
+            /**
+             true
+             true
+             true
+             0xca08655a1cabf4e8 0xca08655a1cabf4e8 0xca08655a1cabf4e8 0xca08655a1cabf4e8
+             */
+            print(a == b)
+            print(c == d)
+            print(a == c)
+            print(addressA, addressB, addressC, addressD)
+    </pre>
+
+    <p class="contents">在swift中，a/b/c/d四个地址，值都是一样的， 可见四个常量在栈区被优化成了一份。</p>
+
+    <p class="smallTitle">在Java中：</p>
+    <pre>
+
+        String a = "123";
+        String b = "123";
+        String c = new String("123");
+        String d = new String("123");
+
+        /**
+         * true
+         * false
+         * 355812185
+         * 355812185
+         * 468893583
+         * 533538857
+         * */
+        System.out.println(a == b);
+        System.out.println(c == d);
+
+        System.out.println(System.identityHashCode(a));
+        System.out.println(System.identityHashCode(b));
+        System.out.println(System.identityHashCode(c));
+        System.out.println(System.identityHashCode(d));
+
+    </pre>
+
+    <p class="contents"> == 表示两者引用的地址是否一致， 在Java中， c/d两者地址并不一致，说明是堆区两个不同的对象，
+    这时，如果需要判断两个的内容是否一致， 不能用== ， 只能用a,equals(b)来判断， 这时一个容易出错的地方。</p>
+
+</div>
+
+</body>
+</html>
