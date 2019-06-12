@@ -29,7 +29,7 @@
     <p class="smallTitle">2. 申请域名</p>
     <p class="smallTitle">3. 域名解析到云服务器公网ip</p>
     <div class="contents">
-        <p class="contents">对应域名->解析设置->添加记录->根据提示设置对应的记录类型(A:ipv4, CNAME:只想另一个域名,AAAA:ipv6);</p>
+        <p class="contents">对应域名->解析设置->添加记录->根据提示设置对应的记录类型(A:ipv4, CNAME:指向另一个域名,AAAA:ipv6);</p>
         <p class="contents">主机记录www：解析后的域名为www.aliyun.com。
             @：直接解析主域名 aliyun.com。
             *：泛解析，匹配其他所有域名 *.aliyun.com</p>
@@ -118,6 +118,7 @@
     <p class="smallTitle">8. 阿里云安全组里面添加配置规则，对应相应的端口号；
         同时确保防火墙包含Connector的http端口号和https端口号
     </p>
+    <p class="smallTitle"><a target="_blank" href="https://www.cnblogs.com/moxiaoan/p/5683743.html">CentOS7使用firewalld防火墙与端口操作命令</a> </p>
     <div class="introduceText">
         <p class="contents">常用命令如下：</p>
         <p class="contents">查看所有打开的端口： firewall-cmd --zone=public --list-ports</p>
@@ -129,6 +130,7 @@
         <p class="contents">lsof -i:端口号</p>
         <p class="contents">杀死对应端口号的进程</p>
         <p class="contents">kill -p 端口号对应的pid号</p>
+
     </div>
     <p class="smallTitle">9. 修改pom.xml:</p>
     <pre>
