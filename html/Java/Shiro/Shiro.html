@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>springboot shiro权限管理</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">shiro</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">springboot shiro权限管理</p>
+
+    <div class="contentBgDiv">
+
+        <p class="contents">1. pom.xml中引入shiro-spring</p>
+        <pre>
+            
+            &lt;dependency&gt;    
+                &lt;groupId&gt;org.apache.shiro&lt;/groupId&gt;
+                &lt;artifactId&gt;shiro-spring&lt;/artifactId&gt;
+                &lt;version&gt;1.4.0&lt;/version&gt;
+            &lt;/dependency&gt;
+        </pre>
+
+        <p class="contents">2. 配置shiro</p>
+        <pre>
+
+            //shiro 配置
+            @Configuration
+            public class ShiroConfig {
+            
+                @Bean
+                public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager){
+            
+                    ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
+            
+                    //设置 securityManager
+                    shiroFilterFactoryBean.setSecurityManager(securityManager);
+            
+                    //登录的 url
+                    shiroFilterFactoryBean.setLoginUrl(czyProperties.getShiroProperties().getLoginUrl());
+            
+                    //登录成功后跳转的 url
+                    shiroFilterFactoryBean.setSuccessUrl(czyProperties.getShiroProperties().getSuccessUrl());
+            
+                    //未授权 url
+                    shiroFilterFactoryBean.setUnauthorizedUrl(czyProperties.getShiroProperties().getUnauthorizedUrl());
+            
+                    LinkedHashMap&lt;String, String&gt; filterChainDefinitionMap = new LinkedHashMap&lt;&gt;();
+            
+                    //设置免认证 url
+                    String[] anonUrls = StringUtils.splitByWholeSeparatorPreserveAllTokens(czyProperties.getShiroProperties().getAnonUrl(), ",");
+                    for(String url : anonUrls){
+            
+                        filterChainDefinitionMap.put(url, "anon");
+                    }
+            
+                    //配置退出过滤器，其中具体的退出代码 Shiro 已经替我们实现了
+                    filterChainDefinitionMap.put(czyProperties.getShiroProperties().getLogoutUrl(), "logout");
+            
+                    //除上以外所有 url都必须认证通过才可以访问，未通过认证自动访问 LoginUrl
+                    filterChainDefinitionMap.put("/**", "user");
+            
+                    shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+            
+                    return shiroFilterFactoryBean;
+                }
+            
+                @Bean
+                public SecurityManager securityManager(){
+            
+                    DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
+            
+                    //配置 SecurityManager，并注入 shiroRealm
+                    defaultWebSecurityManager.setRealm(shiroRealm());
+                    //配置 rememberMeCookie
+                    //defaultWebSecurityManager.setRememberMeManager(cookieRememberMeManager());
+                    //配置 缓存管理类 cacheManager
+                    //defaultWebSecurityManager.setCacheManager(redisCacheManager());
+                    defaultWebSecurityManager.setSessionManager(sessionManager());
+            
+                    return defaultWebSecurityManager;
+                }
+            
+                @Bean
+                public ShiroRealm shiroRealm(){
+            
+                    return new ShiroRealm();
+                }
+            
+                //private SimpleCookie simpleCookie(){
+            
+                    //设置 cookie 名称，对应 login.html 页面的 &lt;input type="checkbox" name="rememberMe"/&gt;
+                    //SimpleCookie simpleCookie = new SimpleCookie("remeberme");
+                    //设置 cookie 的过期时间，单位为秒，这里为一天
+                    //simpleCookie.setMaxAge(czyProperties.getShiroProperties().getCookieTimeout());
+            
+                    //return simpleCookie;
+                //}
+            
+                //cookie管理对象
+                private CookieRememberMeManager cookieRememberMeManager(){
+            
+                    //CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
+                    //cookieRememberMeManager.setCookie(simpleCookie());
+                    //rememberMe cookie 加密的密钥
+                    //cookieRememberMeManager.setCipherKey(Base64.decode("4AvVhmFLUs0KTA3Kprsdag=="));
+                    //return cookieRememberMeManager;
+                //}
+            
+                /*
+                * 开启Shiro的注解(如@RequiresRoles, @RequiresPermissions),需借助SpringAOP扫描使用Shiro注解的类,并在必要时进行安全逻辑验证
+                * 配置以下两个bean(DefaultAdvisorAutoProxyCreator和AuthorizationAttributeSourceAdvisor)即可实现此功能
+                * @return
+                */
+                @Bean
+                public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator(){
+            
+                    DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+                    advisorAutoProxyCreator.setProxyTargetClass(true);
+                    return advisorAutoProxyCreator;
+                }
+            
+                //开启shiro aop注解支持
+                @Bean
+                public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
+            
+                    AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor
+                            = new AuthorizationAttributeSourceAdvisor();
+                    authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+                    return authorizationAttributeSourceAdvisor;
+                }
+            
+                /**
+                 * 用于开启 Thymeleaf 中的 shiro 标签的使用
+                 *
+                 * @return ShiroDialect shiro 方言对象
+                 */
+                //@Bean
+                //public ShiroDialect shiroDialect() {
+            
+                    //ShiroDialect shiroDialect = new ShiroDialect();
+            
+                    //return shiroDialect;
+                //}
+            
+                //@Bean
+                //public RedisSessionDAO redisSessionDAO() {
+                    //RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
+                    //redisSessionDAO.setRedisManager(redisManager());
+                    //return redisSessionDAO;
+                //}
+            
+                //session 管理对象
+                @Bean
+                public DefaultWebSessionManager sessionManager(){
+            
+                    DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+            
+                    //Collection&lt;SessionListener&gt; listeners = new ArrayList&lt;&gt;();
+                    //listeners.add(new ShiroSessionListener());
+                    //sessionManager.setSessionListeners(listeners);
+            
+                    // 设置session超时时间，单位为毫秒
+                    sessionManager.setGlobalSessionTimeout(czyProperties.getShiroProperties().getSessionTimeout());
+                    //sessionManager.setSessionDAO(redisSessionDAO());
+                    sessionManager.setSessionIdUrlRewritingEnabled(false);
+                    return sessionManager;
+                }
+            }
+
+        </pre>
+
+        <p class="contents">3. Realm</p>
+        <pre>
+            public class ShiroRealm extends AuthorizingRealm {
+
+                @Autowired
+                private UserService userService;
+
+                @Autowired
+                private RoleService roleService;
+
+                @Autowired
+                private MenuService menuService;
+
+                @Override
+                protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+
+                    System.out.println("----------------------------------------&gt;验证授权");
+
+                    //获取登录用户名
+                    String username = (String)principals.getPrimaryPrincipal();
+
+                    //查询用户名名称
+                    User user = this.userService.findByName(username);
+
+                    //添加角色权限
+                    SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
+
+                    List&lt;Role&gt; roles = roleService.findUserRole(username);
+                    //java8 新api: stream()
+                    Set&lt;String&gt; roleSet = roles.stream().map(Role::getRoleName).collect(Collectors.toSet());
+                    simpleAuthorizationInfo.setRoles(roleSet);
+
+                    List&lt;Menu&gt; menus = menuService.findUserPermissions(username);
+                    Set&lt;String&gt; perms = menus.stream().map(Menu::getPerms).collect(Collectors.toSet());
+                    simpleAuthorizationInfo.setStringPermissions(perms);
+
+                    return simpleAuthorizationInfo;
+                }
+
+                @Override
+                protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+
+                    //获取用户输入的用户名和密码
+                    String userName = (String) token.getPrincipal();
+                    String password = new String((char[])token.getCredentials());
+
+                    //通过用户名到数据库查询用户信息
+                    User user = this.userService.findByName(userName);
+
+                    if (user == null){
+
+                        throw new UnknownAccountException("用户名或密码错误");
+                    }
+
+                    if (!password.equals(user.getPassword()))
+
+                        throw new IncorrectCredentialsException("用户名或密码错误！");
+
+                    if (user.STATUS_LOCK.equals(user.getStatus()))
+
+                        throw new LockedAccountException("账号已被锁定,请联系管理员！");
+
+                    return new SimpleAuthenticationInfo(userName, password, getName());
+                }
+            }
+
+        </pre>
+
+        <p class="contents">4. 配置文件CzyProperties:</p>
+        <pre>
+
+            @Configuration
+            @ConfigurationProperties(prefix = "czy")
+            public class CzyProperties {
+
+                private ShiroProperties shiroProperties = new ShiroProperties();
+
+                //验证码
+
+                //时间格式
+                private String timeFormat = "yyyy-MM-dd HH:mm:ss";
+
+                //是否打开日志
+                private boolean openAopLog = true;
+
+                public ShiroProperties getShiroProperties() {
+                    return shiroProperties;
+                }
+
+                public void setShiroProperties(ShiroProperties shiroProperties) {
+                    this.shiroProperties = shiroProperties;
+                }
+
+                public String getTimeFormat() {
+                    return timeFormat;
+                }
+
+                public void setTimeFormat(String timeFormat) {
+                    this.timeFormat = timeFormat;
+                }
+
+                public boolean isOpenAopLog() {
+                    return openAopLog;
+                }
+
+                public void setOpenAopLog(boolean openAopLog) {
+                    this.openAopLog = openAopLog;
+                }
+            }
+
+        </pre>
+
+        <p class="contents">5. 配置文件ShiroProperties：</p>
+        <pre>
+
+            public class ShiroProperties {
+
+                // shiro redis缓存时长，默认值 1800 秒
+                private int expireIn = 1800;
+
+                //session 超时时间，默认 1800000毫秒
+                private long sessionTimeout = 1800000L;
+
+                //rememberMe 有效时长，默认为 86400 秒，即一天
+                private int cookieTimeout = 86400;
+
+                private String anonUrl;
+
+                private String loginUrl = "/login";
+
+                private String successUrl = "/index";
+
+                private String logoutUrl = "/logout";
+
+                private String unauthorizedUrl = "";
+
+                public int getExpireIn() {
+                    return expireIn;
+                }
+
+                public void setExpireIn(int expireIn) {
+                    this.expireIn = expireIn;
+                }
+
+                public long getSessionTimeout() {
+                    return sessionTimeout;
+                }
+
+                public void setSessionTimeout(long sessionTimeout) {
+                    this.sessionTimeout = sessionTimeout;
+                }
+
+                public int getCookieTimeout() {
+                    return cookieTimeout;
+                }
+
+                public void setCookieTimeout(int cookieTimeout) {
+                    this.cookieTimeout = cookieTimeout;
+                }
+
+                public String getAnonUrl() {
+                    return anonUrl;
+                }
+
+                public void setAnonUrl(String anonUrl) {
+                    this.anonUrl = anonUrl;
+                }
+
+                public String getLoginUrl() {
+                    return loginUrl;
+                }
+
+                public void setLoginUrl(String loginUrl) {
+                    this.loginUrl = loginUrl;
+                }
+
+                public String getSuccessUrl() {
+                    return successUrl;
+                }
+
+                public void setSuccessUrl(String successUrl) {
+                    this.successUrl = successUrl;
+                }
+
+                public String getLogoutUrl() {
+                    return logoutUrl;
+                }
+
+                public void setLogoutUrl(String logoutUrl) {
+                    this.logoutUrl = logoutUrl;
+                }
+
+                public String getUnauthorizedUrl() {
+                    return unauthorizedUrl;
+                }
+
+                public void setUnauthorizedUrl(String unauthorizedUrl) {
+                    this.unauthorizedUrl = unauthorizedUrl;
+                }
+            }
+
+        </pre>
+
+        <p class="contents">6. application.yml中自定义的属性：</p>
+        <pre>
+            #czy
+            czy:
+              # 是否在控制台打印 sql语句
+              showsql: false
+              # 时间类型参数在前端页面的展示格式，默认格式为 yyyy-MM-dd HH:mm:ss
+              timeFormat: yyyy-MM-dd HH:mm:ss
+              # 是否开启 AOP 日志，默认开启
+              openAopLog: true
+              shiroProperties:
+                # shiro redis缓存时长，默认1800秒
+                expireIn: 1800
+                # session 超时时间，默认 1800000毫秒
+                sessionTimeout: 1800000
+                # rememberMe 有效时长，默认为 86400 秒，即一天
+                cookieTimeout: 86400
+                # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
+                anonUrl: /css/**,/js/**,/fonts/**,/img/**,/druid/**,/user/regist, /gifCode, /actuator/**, /test/**
+                # 登录 url 方法mapping的url  并不是静态资源的url路径
+                loginUrl: /login
+                # 登录成功后跳转的 url
+                successUrl: /index
+                # 登出 url
+                logoutUrl: /logout
+                # 未授权跳转 url
+                unauthorizedUrl: /unauth
+
+        </pre>
+        
+        <p class="contents">7. 注意相关:</p>
+        <pre>
+            访问未授权的url时，如果要根据具体的HttpStatus error访问不同的自定义错误页面，则需要进行相关的全局配置：
+
+            //没有相关权限时：403
+
+            //@RestControllerAdvice：将相关的配置加入每一个@RequestMapping
+            @RestControllerAdvice
+            //最高优先级
+            @Order(value = Ordered.HIGHEST_PRECEDENCE)
+            public class GlobalExceptionHandler {
+
+                @ExceptionHandler(value = AuthorizationException.class)
+                public Object handleAuthorizationException(HttpServletRequest request){
+
+                    ModelAndView modelAndView = new ModelAndView();
+                    modelAndView.setViewName("403");
+
+                    return modelAndView;
+                }
+
+                @ExceptionHandler(value = ExpiredSessionException.class)
+                public String handlerExpiredSessionException(){
+
+                    return "login";
+                }
+            }
+
+        </pre>
+
+        <p class="contents">8. 也可以实现ErrorPageRegistrar, 根据不同的HttpStatus配置</p>
+        <pre>
+
+            //错误信息跳转页面
+            @Component
+            public class ErrorPageConfig implements ErrorPageRegistrar {
+
+                private static final Logger logger = LoggerFactory.getLogger(ErrorPageConfig.class);
+
+
+                @Override
+                public void registerErrorPages(ErrorPageRegistry registry) {
+
+                    //错误类型为404，找不到网页的，默认显示404.html网页
+                    ErrorPage error404 = new ErrorPage(HttpStatus.NOT_FOUND, "/notFound");
+
+                    //错误类型为500，表示服务器响应错误，默认显示500.html网页
+                    ErrorPage error500 = new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "/internal_error");
+
+                    registry.addErrorPages(error404, error500);
+                }
+            }
+        </pre>
+
+        <p class="contents">9. 登录:</p>
+        <pre>
+
+            @Controller
+            public class LoginController extends BaseController {
+
+                @GetMapping(value = {"/login"})
+                public String index(){
+
+                    return "login";
+                }
+
+                @PostMapping(value = "/login")
+                @ResponseBody
+                public ResponseBo login(String username, String password, Boolean remeberme){
+
+                    if (!StringUtils.isNotBlank(username)){
+
+                        return ResponseBo.warn("账号名不能为空");
+                    }
+
+                    if (!StringUtils.isNotBlank(password)){
+
+                        return ResponseBo.warn("密码不能为空");
+                    }
+
+                    //加密密码
+                    password = MD5Utils.encrypt(username.toLowerCase(), password);
+
+                    //生成一个认证token
+                    UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(username, password);
+
+                    try {
+
+                        Subject subject = getSubject();
+
+                        //如果存在 先退出
+                        if (subject != null){
+                            subject.logout();
+                        }
+
+                        //重新登录
+                        super.login(usernamePasswordToken);
+
+                        return ResponseBo.success();
+
+                    }catch (UnknownAccountException | IncorrectCredentialsException | LockedAccountException e){
+
+                        return ResponseBo.fail(e.getMessage());
+                    }catch (AuthenticationException e){
+
+                        return ResponseBo.fail("登录认证失败");
+                    }
+                }
+
+                //退出登录
+                @GetMapping(value = "/logout")
+                public String logout(){
+
+                    System.out.println("logout");
+
+                    SecurityUtils.getSubject().logout();
+
+                    return "/login";
+                }
+
+                //未授权
+                @GetMapping(value = "/unauth")
+                public String unauth(){
+
+                    return "403";
+                }
+
+                //找不到页面
+                @GetMapping(value = "/notFound")
+                public String notfound(){
+
+                    return "404";
+                }
+
+                //服务器内部错误
+                @GetMapping(value = "/internal_error")
+                public String internal_error(){
+
+                    return "500";
+                }
+
+                //一个测试500的方法
+                @GetMapping(value = "/test500")
+                public void test500(){
+
+                    int a = 10/0;
+                }
+            }
+
+        </pre>
+        
+        <p class="contents">10. 密码加密逻辑, 添加用户时和登录验证密码时必须一致:</p>
+        <pre>
+            public class MD5Utils {
+            
+                private static final String SALT="czy";
+            
+                private static final String ALGORITH_NAME="md5";
+            
+                private static final int HASH_ITERATIONS=2;
+            
+                public static String encrypt(String password){
+                    return new SimpleHash(ALGORITH_NAME, password, ByteSource.Util.bytes(SALT), HASH_ITERATIONS).toHex();
+                }
+            
+                public static String encrypt(String username, String password){
+                    return new SimpleHash(ALGORITH_NAME, password, ByteSource.Util.bytes(username.toLowerCase()+SALT),
+                            HASH_ITERATIONS).toHex();
+                }
+            }
+
+        </pre>
+        
+        <p class="contents">11. 权限验证:</p>
+        <pre>
+            
+            @Controller
+            @RequestMapping("/user")
+            public class UserController extends BaseController {
+            
+                @Autowired
+                private UserService userService;
+            
+                @ResponseBody
+                @GetMapping(value = "/findUserWithRole")
+                @RequiresPermissions(value = "user:lis1t")
+                public List&lt;UserWithRole&gt; findUserWithRole(Long userId){
+            
+                    return userService.findUserWithRole(userId);
+                }
+            
+                @ResponseBody
+                @GetMapping(value = "/findUserWithRole2")
+                public UserWithRole findUserWithRole2(Long userId){
+            
+                    return userService.findUserWithRole2(userId);
+                }
+            }
+
+        </pre>
+        
+        <p class="contents">12. 全局统一的json：</p>
+        <pre>
+            
+            public class ResponseBo extends HashMap&lt;String, Object&gt; {
+
+                private static final long serialVersionUID = -7126268227601641894L;
+
+                //成功
+                private static Integer SUCCESS = 0;
+                //警告
+                private static Integer WARN = 1;
+                //失败
+                private static Integer FAIL = 2;
+
+                public ResponseBo(){
+
+                    put("message", "success");
+                    put("code", 0);
+                }
+
+                public static ResponseBo success(){
+
+                    return new ResponseBo();
+                }
+
+                public static ResponseBo success(Object data){
+
+                    ResponseBo responseBo = new ResponseBo();
+                    responseBo.put("message", "success");
+                    responseBo.put("code", SUCCESS);
+                    responseBo.put("data", data);
+
+                    return responseBo;
+                }
+
+                public static ResponseBo warn(Object data){
+
+                    ResponseBo responseBo = new ResponseBo();
+                    responseBo.put("message", "warn");
+                    responseBo.put("code", WARN);
+                    responseBo.put("data", data);
+
+                    return responseBo;
+                }
+
+                public static ResponseBo fail(Object data){
+
+                    ResponseBo responseBo = new ResponseBo();
+                    responseBo.put("message", "fail");
+                    responseBo.put("code", FAIL);
+                    responseBo.put("data", data);
+
+                    return responseBo;
+                }
+
+                @Override
+                public ResponseBo put(String key, Object value) {
+                    super.put(key, value);
+                    return this;
+                }
+            }
+
+        </pre>
+    </div>
+</div>
+
+</body>
+</html>
