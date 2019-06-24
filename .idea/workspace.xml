@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/archive.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/archive.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html" afterDir="false" />
     </list>
     <ignored path="newCZY.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -60,11 +60,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="archive.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="archive.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/html/archive.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="534">
-              <caret line="92" column="60" selection-start-line="92" selection-start-column="60" selection-end-line="92" selection-end-column="60" />
+            <state relative-caret-position="1872">
+              <caret line="78" column="24" selection-start-line="78" selection-start-column="24" selection-end-line="78" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DetailiOSNotes.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="288">
+              <caret line="372" column="13" lean-forward="true" selection-start-line="372" selection-start-column="13" selection-end-line="372" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -72,7 +81,7 @@
       <file leaf-file-name="Shiro.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/html/Java/Shiro/Shiro.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="259">
+            <state relative-caret-position="456">
               <caret line="19" column="41" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="41" />
               <folding>
                 <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
@@ -94,8 +103,8 @@
       <file leaf-file-name="MapperGenerator.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/html/Java/Generator/MapperGenerator.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="438">
-              <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+            <state relative-caret-position="552">
+              <caret line="23" selection-start-line="23" selection-end-line="23" />
               <folding>
                 <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
@@ -146,7 +155,6 @@
         <option value="$PROJECT_DIR$/html/iOS/Clang/UseOfClang.html" />
         <option value="$PROJECT_DIR$/html/iOS/CocoaPods/CocoapodsNotes.html" />
         <option value="$PROJECT_DIR$/html/iOS/CzyWxAlipaySummarise/WxAlipaySummarise.html" />
-        <option value="$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html" />
         <option value="$PROJECT_DIR$/html/iOS/encrypt/encrypt.html" />
         <option value="$PROJECT_DIR$/html/iOS/GCDAndNSOperationQueue/GCDAndNSOperationQueue.html" />
         <option value="$PROJECT_DIR$/html/iOS/JPushSummarise/JPushSummarise.html" />
@@ -186,6 +194,7 @@
         <option value="$PROJECT_DIR$/html/Java/Tool/tool.html" />
         <option value="$PROJECT_DIR$/html/Java/Shiro/Shiro.html" />
         <option value="$PROJECT_DIR$/html/archive.html" />
+        <option value="$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html" />
       </list>
     </option>
   </component>
@@ -198,8 +207,9 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="y" value="103" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-16" />
+    <option name="y" value="48" />
     <option name="width" value="1920" />
     <option name="height" value="973" />
   </component>
@@ -212,6 +222,8 @@
     </navigator>
     <panes>
       <pane id="AndroidView" />
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -243,6 +255,19 @@
               <item name="html" type="462c0819:PsiDirectoryNode" />
               <item name="HTML5" type="462c0819:PsiDirectoryNode" />
               <item name="WebStormDetailNotes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
+              <item name="html" type="462c0819:PsiDirectoryNode" />
+              <item name="iOS" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
+              <item name="html" type="462c0819:PsiDirectoryNode" />
+              <item name="iOS" type="462c0819:PsiDirectoryNode" />
+              <item name="DetailiOSNotes" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
@@ -303,8 +328,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -437,15 +460,17 @@
       <workItem from="1560384816588" duration="1545000" />
       <workItem from="1560469937974" duration="1062000" />
       <workItem from="1560471077576" duration="2849000" />
-      <workItem from="1560733974812" duration="2233000" />
+      <workItem from="1560733974812" duration="2377000" />
+      <workItem from="1560937184617" duration="187000" />
+      <workItem from="1560989305231" duration="78000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="176989000" />
+    <option name="totallyTimeSpent" value="177398000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="103" width="1920" height="973" extended-state="0" />
+    <frame x="-16" y="48" width="1920" height="973" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
@@ -461,7 +486,7 @@
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="3" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22002141" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22537473" />
       <window_info anchor="bottom" id="Docker" order="10" show_stripe_button="false" />
       <window_info anchor="bottom" id="Alibaba Cloud View" order="10" />
       <window_info anchor="right" id="Database" order="7" />
@@ -529,13 +554,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
           <caret line="24" column="80" selection-start-line="24" selection-start-column="80" selection-end-line="24" selection-end-column="80" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="16" selection-start-line="16" selection-end-line="16" />
         </state>
       </provider>
     </entry>
@@ -809,11 +827,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="96">
           <caret line="4" column="60" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="60" />
-          <folding>
-            <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#6;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -826,8 +839,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/Generator/MapperGenerator.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="438">
-          <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+        <state relative-caret-position="552">
+          <caret line="23" selection-start-line="23" selection-end-line="23" />
           <folding>
             <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
             <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
@@ -839,7 +852,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/Shiro/Shiro.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
+        <state relative-caret-position="456">
           <caret line="19" column="41" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="41" />
           <folding>
             <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
@@ -859,8 +872,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/html/archive.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="534">
-          <caret line="92" column="60" selection-start-line="92" selection-start-column="60" selection-end-line="92" selection-end-column="60" />
+        <state relative-caret-position="1872">
+          <caret line="78" column="24" selection-start-line="78" selection-start-column="24" selection-end-line="78" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="372" column="13" lean-forward="true" selection-start-line="372" selection-start-column="13" selection-end-line="372" selection-end-column="13" />
         </state>
       </provider>
     </entry>
