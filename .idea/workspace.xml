@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/archive.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/archive.html" afterDir="false" />
     </list>
     <ignored path="newCZY.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -63,39 +63,8 @@
       <file leaf-file-name="archive.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/html/archive.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1872">
-              <caret line="78" column="24" selection-start-line="78" selection-start-column="24" selection-end-line="78" selection-end-column="24" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DetailiOSNotes.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="372" column="13" lean-forward="true" selection-start-line="372" selection-start-column="13" selection-end-line="372" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Shiro.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/html/Java/Shiro/Shiro.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="456">
-              <caret line="19" column="41" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="41" />
-              <folding>
-                <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-                <element signature="n#pre#2;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-                <element signature="n#pre#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-                <element signature="n#pre#4;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-                <element signature="n#pre#5;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-                <element signature="n#pre#6;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-                <element signature="n#pre#7;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-                <element signature="n#pre#8;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-                <element signature="n#pre#9;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-                <element signature="n#pre#10;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-                <element signature="n#pre#11;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-              </folding>
+            <state relative-caret-position="387">
+              <caret line="93" column="22" selection-start-line="93" selection-start-column="22" selection-end-line="93" selection-end-column="22" />
             </state>
           </provider>
         </entry>
@@ -103,13 +72,34 @@
       <file leaf-file-name="MapperGenerator.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/html/Java/Generator/MapperGenerator.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="552">
-              <caret line="23" selection-start-line="23" selection-end-line="23" />
+            <state relative-caret-position="48">
+              <caret line="2" selection-start-line="2" selection-end-line="22" selection-end-column="73" />
               <folding>
                 <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#pre#5;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#pre#6;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="layui.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/html/Java/layui.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="462">
+              <caret line="54" column="31" selection-start-line="54" selection-start-column="31" selection-end-line="54" selection-end-column="31" />
+              <folding>
+                <element signature="n#style#0;n#p#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#p#7;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#0;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#1;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#2;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#3;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#4;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#5;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#6;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#7;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
               </folding>
             </state>
           </provider>
@@ -144,7 +134,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/CSS/iOS/lldbSummarise/lldb.css" />
         <option value="$PROJECT_DIR$/js/MouseRunJs.js" />
         <option value="$PROJECT_DIR$/hehe.html" />
         <option value="$PROJECT_DIR$/CSS/iOS/Block/block.css" />
@@ -193,8 +182,9 @@
         <option value="$PROJECT_DIR$/html/Java/Generator/MybatisGenerator.html" />
         <option value="$PROJECT_DIR$/html/Java/Tool/tool.html" />
         <option value="$PROJECT_DIR$/html/Java/Shiro/Shiro.html" />
-        <option value="$PROJECT_DIR$/html/archive.html" />
         <option value="$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html" />
+        <option value="$PROJECT_DIR$/html/Java/layui.html" />
+        <option value="$PROJECT_DIR$/html/archive.html" />
       </list>
     </option>
   </component>
@@ -207,9 +197,9 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-16" />
-    <option name="y" value="48" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-71" />
+    <option name="y" value="37" />
     <option name="width" value="1920" />
     <option name="height" value="973" />
   </component>
@@ -221,8 +211,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView" />
-      <pane id="Scope" />
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
@@ -328,6 +316,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -463,15 +453,15 @@
       <workItem from="1560733974812" duration="2377000" />
       <workItem from="1560937184617" duration="187000" />
       <workItem from="1560989305231" duration="78000" />
+      <workItem from="1561431841958" duration="2900000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="177398000" />
+    <option name="totallyTimeSpent" value="180298000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-16" y="48" width="1920" height="973" extended-state="0" />
-    <editor active="true" />
+    <frame x="-71" y="37" width="1920" height="973" extended-state="0" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -486,7 +476,7 @@
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="3" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22537473" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2280514" />
       <window_info anchor="bottom" id="Docker" order="10" show_stripe_button="false" />
       <window_info anchor="bottom" id="Alibaba Cloud View" order="10" />
       <window_info anchor="right" id="Database" order="7" />
@@ -520,7 +510,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/CSS/iOS/Block/block.css" />
     <entry file="file://$PROJECT_DIR$/CSS/iOS/AppCheckNotes/AppCheckNotes.css" />
     <entry file="file://$PROJECT_DIR$/html/iOS/AppCheckNotes/AppCheckNotes.html">
       <provider selected="true" editor-type-id="text-editor">
@@ -837,19 +826,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/html/Java/Generator/MapperGenerator.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="552">
-          <caret line="23" selection-start-line="23" selection-end-line="23" />
-          <folding>
-            <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#5;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#6;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/Shiro/Shiro.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="456">
@@ -870,17 +846,49 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/html/archive.html">
+    <entry file="file://$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1872">
-          <caret line="78" column="24" selection-start-line="78" selection-start-column="24" selection-end-line="78" selection-end-column="24" />
+        <state relative-caret-position="504">
+          <caret line="21" column="18" selection-start-line="21" selection-start-column="18" selection-end-line="21" selection-end-column="18" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html">
+    <entry file="file://$PROJECT_DIR$/html/Java/Generator/MapperGenerator.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="372" column="13" lean-forward="true" selection-start-line="372" selection-start-column="13" selection-end-line="372" selection-end-column="13" />
+        <state relative-caret-position="48">
+          <caret line="2" selection-start-line="2" selection-end-line="22" selection-end-column="73" />
+          <folding>
+            <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#5;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#6;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/archive.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="387">
+          <caret line="93" column="22" selection-start-line="93" selection-start-column="22" selection-end-line="93" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/Java/layui.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="462">
+          <caret line="54" column="31" selection-start-line="54" selection-start-column="31" selection-end-line="54" selection-end-column="31" />
+          <folding>
+            <element signature="n#style#0;n#p#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#p#7;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#0;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#1;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#2;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#3;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#4;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#5;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#6;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#7;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+          </folding>
         </state>
       </provider>
     </entry>
