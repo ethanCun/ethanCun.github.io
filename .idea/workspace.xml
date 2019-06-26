@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/archive.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/archive.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/Java/Logback/Logback.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/Java/Logback/Logback.html" afterDir="false" />
     </list>
     <ignored path="newCZY.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -72,8 +71,8 @@
       <file leaf-file-name="Logback.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/html/Java/Logback/Logback.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="585">
-              <caret line="122" column="14" lean-forward="true" selection-start-line="122" selection-start-column="14" selection-end-line="122" selection-end-column="14" />
+            <state relative-caret-position="360">
+              <caret line="24" lean-forward="true" selection-start-line="24" selection-end-line="24" />
             </state>
           </provider>
         </entry>
@@ -458,15 +457,15 @@
       <workItem from="1561431841958" duration="3034000" />
       <workItem from="1561443952318" duration="2696000" />
       <workItem from="1561447200266" duration="7000" />
-      <workItem from="1561509715240" duration="1936000" />
+      <workItem from="1561509715240" duration="2110000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="185071000" />
+    <option name="totallyTimeSpent" value="185245000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-85" y="56" width="1920" height="973" extended-state="0" />
+    <frame x="-38" y="43" width="1920" height="973" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
@@ -862,8 +861,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/Logback/Logback.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="585">
-          <caret line="122" column="14" lean-forward="true" selection-start-line="122" selection-start-column="14" selection-end-line="122" selection-end-column="14" />
+        <state relative-caret-position="360">
+          <caret line="24" lean-forward="true" selection-start-line="24" selection-end-line="24" />
         </state>
       </provider>
     </entry>
