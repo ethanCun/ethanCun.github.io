@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>mysql中的count(*), count(1), count(列名)效率比较</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">InnoDB</span>
+    <span class="label label-danger">MyISAM</span>
+    <span class="label label-default">mysql</span>
+    <span class="label label-success">count</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">mysql中的count(*), count(1), count(列名)效率比较</p>
+
+    <div class="contentBgDiv">
+
+        <p class="contents">首先创建1个表, mysql引擎为InnoDB</p>
+        <pre>
+            CREATE TABLE `t_count` (
+              `img` varchar(255) DEFAULT NULL,
+              `del_flag` char(1) DEFAULT NULL,
+              `name` varchar(255) DEFAULT NULL,
+              `id` int(11) NOT NULL AUTO_INCREMENT,
+              `status` tinyint(4) DEFAULT NULL,
+              `start_time` datetime(6) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB AUTO_INCREMENT=796436 DEFAULT CHARSET=utf8;
+        </pre>
+
+        <p class="contents">插入约80万条数据:</p>
+        <pre>
+
+            DELETE FROM t_count;
+            SELECT * FROM t_count;
+
+            set global log_bin_trust_function_creators=TRUE;
+
+            -- 创建一个函数，用于生成随机字符串
+            CREATE FUNCTION `rand_string` (n INT) RETURNS VARCHAR(255)
+            BEGIN
+                DECLARE chars_str VARCHAR(100) DEFAULT
+                 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                DECLARE return_str VARCHAR(255) DEFAULT '';
+                DECLARE i INT DEFAULT 0;
+                WHILE  i < n DO
+                    SET return_str = CONCAT(return_str, SUBSTRING(chars_str, FLOOR(1+RAND()*62),1));
+                    SET i = i+1;
+                END WHILE;
+                RETURN return_str;
+            END
+
+            -- 	创建存储过程
+            DROP PROCEDURE IF EXISTS `add_data`;
+            CREATE PROCEDURE `add_data` (IN n int)
+            BEGIN
+             DECLARE i INT DEFAULT 1;
+             WHILE (i <= n) DO
+                #插入非空字段
+            -- 	INSERT INTO `t_count` (id, img, del_flag, name, status, start_time) VALUES (0, 'https://www.baidu.com/exapleImg',  1, rand_string(50), 1, NOW());
+                #插入空字段
+                INSERT INTO `t_count` (id, img, del_flag, name, status, start_time) VALUES (0, 'https://www.baidu.com/exapleImg',  1, NULL, 1, NOW());
+                SET i=i+1;
+            END WHILE;
+            END
+
+            CALL add_data(1000000);
+            CALL add_data(100);
+
+            -- 如何停止mysql正在进行的动作
+            -- 查看mysql正在进行的进程
+            -- SHOW PROCESSLIST;
+            -- 杀死对应的进程
+            -- KILL 132;
+        </pre>
+
+        <p class="contents">切换引擎InnoDB/MyiSAM, 测试得出的数据如下：</p>
+        <pre>
+
+            #0.783
+            SELECT * from t_count;
+
+            #InnoDB MyISAM 效率对比
+            #0.020 0.000
+            SELECT count(*) FROM `t_count`;
+            #0.020 0.000
+            SELECT COUNT(1) FROM `t_count`;
+            #0.020 0.000
+            SELECT COUNT(29999999) FROM t_count;  #29999999为任意数字
+            #0.020 0.000
+            SELECT COUNT('xwerwex') FROM t_count;  #xwerwex为任意数字
+            #0.021 0.000
+            SELECT COUNT(id) FROM t_count;
+
+            #0.148 3.164
+            SELECT COUNT(`img`) FROM t_count;
+            #0.141 3.225
+            SELECT COUNT(del_flag) FROM t_count;
+            #0.141 3.213
+            SELECT COUNT(name) FROM t_count;
+            #0.141 3.192
+            SELECT COUNT(`status`) FROM t_count;
+            #0.137 3.212
+            SELECT COUNT(start_time) FROM t_count;
+
+        </pre>
+
+        <p class="smallTitle">结论</p>
+        <p class="contents">关于count(1):</p>
+        <pre>
+
+            count(1)，其实就是计算一共有多少符合条件的行, 不会忽略空值。
+            -- 1并不是表示第一个字段，而是表示一个固定值。
+            -- 其实就可以想成表中有这么一个字段，这个字段就是固定值1，count(1)，就是计算一共有多少个1.
+            -- 同理，count(2)，也可以，得到的值完全一样，COUNT(29999999)，COUNT('xwerwex')都是可以的。一样的理解方式。在你这个语句理都可以使用，返回的值完全是一样的。就是计数。
+            -- count(*)，执行时会把星号翻译成字段的具体名字，效果也是一样的，不过多了一个翻译的动作，比固定值的方式效率稍微低一些。
+        </pre>
+        <p class="contents">关于效率：</p>
+        <pre>
+
+            # 结论：引擎为InnoDB效率： count(1) > 或者 ~= count(主键) > 或者 ~= count(*) > count(其他字段)
+            # 引擎为MyISAM效率： 数据多的情况下count(1)/count(*)/count(任意数字)的效率：明显高于InnoDB引擎  其他字段：明显高于InnoDB
+            # 总结论： 数据较大时，使用MyISAM； 尽量使用count(1)
+
+            #关于是否会忽略列中的null值： 只有count(列字段名) 会忽略null值，其他不忽略
+        </pre>
+
+    </div>
+</div>
+
+</body>
+</html>

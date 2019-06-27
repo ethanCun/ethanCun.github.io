@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/Java/druid/druid.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/Java/druid/druid.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/html/archive.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/archive.html" afterDir="false" />
     </list>
     <ignored path="newCZY.iws" />
@@ -62,8 +64,8 @@
       <file leaf-file-name="archive.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/html/archive.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="343">
-              <caret line="96" column="54" lean-forward="true" selection-start-line="96" selection-start-column="54" selection-end-line="96" selection-end-column="54" />
+            <state relative-caret-position="280">
+              <caret line="97" column="86" selection-start-line="97" selection-start-column="86" selection-end-line="97" selection-end-column="86" />
             </state>
           </provider>
         </entry>
@@ -71,8 +73,8 @@
       <file leaf-file-name="Logback.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/html/Java/Logback/Logback.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="504">
-              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+            <state relative-caret-position="48">
+              <caret line="2" selection-start-line="2" selection-end-line="28" selection-end-column="51" />
               <folding>
                 <element signature="n#pre#2;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#pre#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
@@ -83,17 +85,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="druid.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/html/Java/druid/druid.html">
+      <file leaf-file-name="mysqlCount.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/html/Java/mysqlCount/mysqlCount.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="137">
-              <caret line="6" column="37" selection-start-line="6" selection-start-column="15" selection-end-line="6" selection-end-column="37" />
-              <folding>
-                <element signature="n#style#0;n#p#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#p#2;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#p#3;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#p#4;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-              </folding>
+            <state relative-caret-position="144">
+              <caret line="6" column="51" lean-forward="true" selection-start-line="6" selection-start-column="15" selection-end-line="6" selection-end-column="51" />
             </state>
           </provider>
         </entry>
@@ -130,6 +126,7 @@
       <find>&lt;</find>
       <find>LogManager</find>
       <find>&gt;</find>
+      <find>&lt;br&gt;</find>
     </findStrings>
     <replaceStrings>
       <replace>czyProperties</replace>
@@ -143,7 +140,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/html/iOS/AppCheckNotes/AppCheckNotes.html" />
         <option value="$PROJECT_DIR$/html/iOS/Block/Block.html" />
         <option value="$PROJECT_DIR$/html/iOS/CacheHanddle/CacheHanddle.html" />
         <option value="$PROJECT_DIR$/html/iOS/Clang/UseOfClang.html" />
@@ -193,6 +189,7 @@
         <option value="$PROJECT_DIR$/html/Java/thymeleaf.html" />
         <option value="$PROJECT_DIR$/html/Java/Logback/Logback.html" />
         <option value="$PROJECT_DIR$/html/Java/druid/druid.html" />
+        <option value="$PROJECT_DIR$/html/Java/mysqlCount/mysqlCount.html" />
         <option value="$PROJECT_DIR$/html/archive.html" />
       </list>
     </option>
@@ -206,7 +203,7 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="62" />
     <option name="width" value="1920" />
     <option name="height" value="973" />
@@ -219,9 +216,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="AndroidView" />
       <pane id="Scope" />
+      <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -320,6 +316,13 @@
               <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
               <item name="html" type="462c0819:PsiDirectoryNode" />
               <item name="Java" type="462c0819:PsiDirectoryNode" />
+              <item name="mysqlCount" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
+              <item name="html" type="462c0819:PsiDirectoryNode" />
+              <item name="Java" type="462c0819:PsiDirectoryNode" />
               <item name="Shiro" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -360,6 +363,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -500,15 +504,16 @@
       <workItem from="1561447200266" duration="7000" />
       <workItem from="1561509715240" duration="2206000" />
       <workItem from="1561519259711" duration="1577000" />
-      <workItem from="1561539442351" duration="1494000" />
+      <workItem from="1561539442351" duration="1554000" />
+      <workItem from="1561624352367" duration="821000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="188412000" />
+    <option name="totallyTimeSpent" value="189293000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="62" width="1920" height="973" extended-state="0" />
+    <frame x="0" y="23" width="1920" height="973" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
@@ -519,12 +524,12 @@
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="3" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24304068" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24625267" />
       <window_info anchor="bottom" id="Docker" order="10" show_stripe_button="false" />
       <window_info anchor="bottom" id="Alibaba Cloud View" order="10" />
       <window_info anchor="right" id="Database" order="7" />
@@ -533,8 +538,8 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info id="UI Designer" order="4" />
       <window_info anchor="right" id="Theme Preview" order="8" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="5" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Messages" order="11" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
@@ -559,13 +564,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/html/iOS/CzyWxAlipaySummarise/WxAlipaySummarise.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="24" column="80" selection-start-line="24" selection-start-column="80" selection-end-line="24" selection-end-column="80" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/html/iOS/encrypt/encrypt.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
@@ -889,23 +887,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/html/Java/Logback/Logback.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
-          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
-          <folding>
-            <element signature="n#pre#2;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#4;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#5;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/druid/druid.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="6" column="37" selection-start-line="6" selection-start-column="15" selection-end-line="6" selection-end-column="37" />
+        <state relative-caret-position="671">
+          <caret line="28" column="19" selection-start-line="28" selection-start-column="19" selection-end-line="28" selection-end-column="19" />
           <folding>
             <element signature="n#style#0;n#p#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#p#2;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -915,10 +900,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/html/Java/Logback/Logback.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="48">
+          <caret line="2" selection-start-line="2" selection-end-line="28" selection-end-column="51" />
+          <folding>
+            <element signature="n#pre#2;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#4;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#5;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/Java/mysqlCount/mysqlCount.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="6" column="51" lean-forward="true" selection-start-line="6" selection-start-column="15" selection-end-line="6" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/html/archive.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="343">
-          <caret line="96" column="54" lean-forward="true" selection-start-line="96" selection-start-column="54" selection-end-line="96" selection-end-column="54" />
+        <state relative-caret-position="280">
+          <caret line="97" column="86" selection-start-line="97" selection-start-column="86" selection-end-line="97" selection-end-column="86" />
         </state>
       </provider>
     </entry>
