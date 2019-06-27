@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/html/Java/mysqlCount/mysqlCount.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/Java/mysqlCount/mysqlCount.html" afterDir="false" />
-    </list>
+    <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="" />
     <ignored path="newCZY.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -83,11 +81,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mysqlCount.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="mysqlCount.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/html/Java/mysqlCount/mysqlCount.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="587">
-              <caret line="47" column="104" selection-start-line="47" selection-start-column="104" selection-end-line="47" selection-end-column="104" />
+              <caret line="47" column="29" selection-start-line="47" selection-start-column="29" selection-end-line="47" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/index.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="888">
+              <caret line="45" selection-start-line="45" selection-end-line="45" />
             </state>
           </provider>
         </entry>
@@ -503,16 +510,15 @@
       <workItem from="1561509715240" duration="2206000" />
       <workItem from="1561519259711" duration="1577000" />
       <workItem from="1561539442351" duration="1554000" />
-      <workItem from="1561624352367" duration="1196000" />
+      <workItem from="1561624352367" duration="1534000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="189668000" />
+    <option name="totallyTimeSpent" value="190006000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="973" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -772,13 +778,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1080">
-          <caret line="45" selection-start-line="45" selection-end-line="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/html/HTML5/Bootstrap/Bootstrap.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="264">
@@ -921,7 +920,14 @@
     <entry file="file://$PROJECT_DIR$/html/Java/mysqlCount/mysqlCount.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="587">
-          <caret line="47" column="104" selection-start-line="47" selection-start-column="104" selection-end-line="47" selection-end-column="104" />
+          <caret line="47" column="29" selection-start-line="47" selection-start-column="29" selection-end-line="47" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="888">
+          <caret line="45" selection-start-line="45" selection-end-line="45" />
         </state>
       </provider>
     </entry>
