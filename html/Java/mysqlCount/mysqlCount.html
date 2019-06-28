@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <head>
         <meta charset="UTF-8">
-        <title>mysql中的count(*), count(1), count(列名)效率比较</title>
+        <title>mysql中的count(*), count(1), count(列名)效率比较等笔记记录</title>
         <link rel="icon" href="../../../Source/icon-img.jpeg">
         <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
         <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
@@ -17,14 +17,24 @@
     <span class="label label-info">InnoDB</span>
     <span class="label label-danger">MyISAM</span>
     <span class="label label-default">mysql</span>
-    <span class="label label-success">count</span>
+    <span class="label label-success">索引</span>
 </div>
 
 <div class="contentBgDiv">
 
-    <p class="title">mysql中的count(*), count(1), count(列名)效率比较</p>
+    <p class="title">mysql中的count(*), count(1), count(列名)效率比较等笔记记录</p>
 
+    <ul>
+        <li><a href="#mysql1">mysql中的count(*), count(1), count(列名)效率比较</a> </li>
+        <li><a href="#mysql2">mysql统计指定字段值的数量</a> </li>
+        <li><a href="#mysql3">mysql索引</a> </li>
+
+    </ul>
+
+    <hr>
     <div class="contentBgDiv">
+
+        <p class="smallTitle" id="mysql1">mysql中的count(*), count(1), count(列名)效率比较</p>
 
         <p class="contents">首先创建1个表, mysql引擎为InnoDB</p>
         <pre>
@@ -134,9 +144,84 @@
             # 引擎为MyISAM效率： 数据多的情况下count(1)/count(*)/count(任意数字)的效率：明显高于InnoDB引擎  其他字段：明显高于InnoDB
             # 总结论： 数据较大时，使用MyISAM； 尽量使用count(1)
 
-            #关于是否会忽略列中的null值： 只有count(列字段名) 会忽略null值，其他不忽略
+            #关于是否会忽略列中的null值：
+
+            count('任意内容')都会统计出所有记录数，因为count只有在遇见null时不计数，即count(null)==0，
+            因此count(列名）会忽略对应列空的值
+
+            #给字段添加索引会增加查询效率。
         </pre>
 
+        <p class="smallTitle" id="mysql2">mysql统计指定字段值的数量</p>
+        <pre>
+
+            #  因为mysql只会忽略null, 不会忽略false, 所以count('任意内容')都会统计出所有记录数
+            SELECT COUNT(username='zhangzzz') as count1, COUNT(user_sex='121') as count2
+            FROM users;
+
+            # count('任意内容' or null)都会统计出'任意内容'为true的所有记录数
+            # 因为'任意内容' 为false时，or语句 相当于统计null的数量，而null会被忽略
+            SELECT COUNT(username='zhangzzz' OR NULL) as count1, COUNT(user_sex='121' OR NULL) as count2
+            FROM users;
+
+        </pre>
+
+        <p class="smallTitle" id="mysql3">mysql索引</p>
+        <pre>
+
+            Navicat for mysql工具： 右键表 -》 设计 -》 索引：增加删除
+
+            SELECT * FROM `users`;
+
+            -- 添加INDEX(普通索引)
+            ALTER table users ADD INDEX index_name(userName);
+            -- 删除索引 注意索引名不是字段名 drop的不是索引名称时会报错：1091 - Can't DROP 'userName'; check that column/key exists, Time: 0.000000s
+            -- 方法1：
+            alter table users drop index userName;
+            -- 方法2：
+            DROP index userNam1e on users;
+
+            -- 添加UNIQUE(唯一索引)
+            ALTER TABLE users ADD UNIQUE(passWord);
+
+            -- 添加FULLTEXT(全文索引)
+            ALTER TABLE users ADD FULLTEXT(user_sex);
+
+            -- 看看结果
+            DESCRIBE users;
+
+            -- 1.添加PRIMARY KEY（主键索引）
+            -- mysql>ALTER TABLE `table_name` ADD PRIMARY KEY ( `column` )
+            -- 2.添加UNIQUE(唯一索引)
+            -- mysql>ALTER TABLE `table_name` ADD UNIQUE (
+            -- `column`
+            -- )
+            -- 3.添加INDEX(普通索引)
+            -- mysql>ALTER TABLE `table_name` ADD INDEX index_name ( `column` )
+            -- 4.添加FULLTEXT(全文索引)
+            -- mysql>ALTER TABLE `table_name` ADD FULLTEXT ( `column`)
+
+            -- 删除索引
+            -- drop index index_name on table_name ;
+            -- alter table table_name drop index index_name ;
+            -- alter table table_name drop primary key ;
+
+        </pre>
+
+        <p class="contents">
+            <a target="_blank"
+               href="https://blog.csdn.net/tongdanping/article/details/79878302#%E4%B8%80%E3%80%81MySQL%E4%B8%AD%E7%B4%A2%E5%BC%95%E7%9A%84%E8%AF%AD%E6%B3%95">
+                更多关于mysql索引的介绍
+            </a>
+        </p>
+        <p class="contents">
+            <a target="_blank"
+               href="https://www.jb51.net/article/158141.htm">
+                Mysql中SQL语句不使用索引的情况
+            </a>
+        </p>
+
+        <br>
     </div>
 </div>
 
