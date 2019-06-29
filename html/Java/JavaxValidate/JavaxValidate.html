@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>springboot后端对前端表单字段的验证</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">springboot验证</span>
+    <span class="label label-danger">jsr</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">springboot后端对前端表单字段的验证</p>
+    <p class="introduceText">后端对数据的校验是必不可少的，这样可以防止前端调试模式下修改html以及js,
+        或者使用其他调试工具发起的数据攻击。</p>
+    
+
+    <hr>
+    <div class="contentBgDiv">
+        
+        <p class="contents">验证功能依赖web核心包：</p>
+        <pre>
+            
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+            &lt;/dependency&gt;
+        </pre>
+        
+        <p class="contents">常用的验证注解：</p>
+        <pre>
+            
+            /**
+             * JSR提供的校验注解（Java Specification Requests的缩写，意思是Java 规范提案）:
+             * @Null 被注释的元素必须为 null
+             * @NotNull 被注释的元素必须不为 null
+             * @AssertTrue 被注释的元素必须为 true
+             * @AssertFalse 被注释的元素必须为 false
+             * @Min(value) 被注释的元素必须是一个数字，其值必须大于等于指定的最小值
+             * @Max(value) 被注释的元素必须是一个数字，其值必须小于等于指定的最大值
+             * @DecimalMin(value) 被注释的元素必须是一个数字，其值必须大于等于指定的最小值
+             * @DecimalMax(value) 被注释的元素必须是一个数字，其值必须小于等于指定的最大值
+             * @Size(max=, min=)   被注释的元素的大小必须在指定的范围内
+             * @Digits (integer, fraction)     被注释的元素必须是一个数字，其值必须在可接受的范围内
+             * @Past 被注释的元素必须是一个过去的日期
+             * @Future 被注释的元素必须是一个将来的日期
+             * @Pattern(regex=,flag=) 被注释的元素必须符合指定的正则表达式
+             * ---------------------
+             *
+             * Hibernate Validator提供的校验注解：
+             * @NotBlank(message =)   验证字符串非null，且长度必须大于0
+             * @Email 被注释的元素必须是电子邮箱地址
+             * @Length(min=,max=) 被注释的字符串的大小必须在指定的范围内
+             * @NotEmpty 被注释的字符串的必须非空
+             * @Range(min=,max=,message=) 被注释的元素必须在合适的范围内
+             *
+             * */
+        </pre>
+
+        <p class="contents">被验证的entity:</p>
+        <pre>
+            
+            public class User {
+
+                //-------- 基础校验 有分组校验的情况下需要指定群组groups
+                @NotBlank(message = "姓名不能为空", groups = {Student.class, Teacher.class})
+                @Length(min = 2, max = 5, message = "姓名长度为{min}-{max}个字符", groups = {Student.class, Teacher.class})
+                private String username;
+            
+                @NotBlank(message = "密码不能为空", groups = {Student.class, Teacher.class})
+                @Length(min = 6, max = 10, message = "密码长度在{min}-{max}之间", groups = {Student.class, Teacher.class})
+                private String password;
+
+                //age和score只有指定groups为Student.class的方法验证
+                //Integer Double类型为"",则在@InitBinder处理为0 String:@NotBlank
+                @Range(min = 3, max = 25, message = "学生年龄在{min}-{max}之间", groups = {Student.class})
+                private Integer age;
+            
+                @Min(groups = {Student.class}, value = 0, message = "成绩不能小于0")
+                private Double score;
+            
+                //@NotEmpty只能作用在集合上 string collection
+                @NotNull(message = "生日不能为空", groups = {Student.class, Teacher.class})
+                @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                private Date birthday;
+            
+                //-------- 模拟分组校验情景：用户有学生和老师群体，只有学生需要校验age 老师不要校验age
+                public interface Student{}
+                public interface Teacher{}
+            
+                @Override
+                public String toString() {
+                    return "User{" +
+                            "username='" + username + '\'' +
+                            ", password='" + password + '\'' +
+                            '}';
+                }
+            
+                public User(){}
+            
+                public User(@NotBlank(message = "姓名不能为空", groups = {Student.class, Teacher.class}) @Length(min = 2, max = 5, message = "姓名长度为{min}-{max}个字符", groups = {Student.class, Teacher.class}) String username, @NotBlank(message = "密码不能为空", groups = {Student.class, Teacher.class}) @Length(min = 6, max = 10, message = "密码长度在{min}-{max}之间", groups = {Student.class, Teacher.class}) String password, @NotNull(message = "年龄不能为空", groups = {Student.class}) @Range(min = 3, max = 25, message = "学生年龄在{min}-{max}之间", groups = {Student.class}) Integer age, @NotNull(message = "成绩不能为空", groups = {Student.class}) @Min(groups = {Student.class}, value = 0, message = "成绩不能小于0") Double score, Date birthday) {
+                    this.username = username;
+                    this.password = password;
+                    this.age = age;
+                    this.score = score;
+                    this.birthday = birthday;
+                }
+            
+                //setter getter
+             }
+        </pre>
+        
+        <p class="contents">不引入验证注解：</p>
+        <pre>
+
+            @PostMapping(value = "/adduser3")
+            public Map&lt;String, Object&gt; addUser3(String username, String password){
+        
+                if (username == null){
+                    throw new NullPointerException("姓名不能为空");
+                }
+                if (username.length() &lt; 2 || username.length() &gt; 5){
+                    throw  new RuntimeException("姓名长度在2-5之间");
+                }
+                if (password == null){
+                    throw new NullPointerException("密码不能为空");
+                }
+                if (password.length() &lt; 2 || password.length() &gt; 5){
+                    throw  new RuntimeException("密码长度在2-5之间");
+                }
+        
+                map.clear();
+        
+                map.put("username", username);
+                map.put("password", password);
+        
+                return map;
+            }
+
+            //返回结果：
+            {
+                "timestamp": "2019-06-29T02:18:07.657+0000",
+                "status": 500,
+                "error": "Internal Server Error",
+                "message": "姓名不能为空",
+                "path": "/adduser3"
+            }
+
+        </pre>
+        
+        <p class="contents">在参数上使用验证注解：</p>
+        <pre>
+            
+                @PostMapping(value = "/adduser2")
+                public Map&lt;String, Object&gt; addUser2(@NotBlank(message = "姓名不能为空")
+                                                    @Length(min = 2, max = 5, message = "姓名长度在{min}-{max}个字符之间")
+                                                            String username,
+                                                    @NotBlank(message = "密码不能为空")
+                                                    @Length(min = 6, max = 10, message = "密码长度在{min}-{max}个字符之间")
+                                                            String password){
+            
+                    map.clear();
+            
+                    map.put("username", username);
+                    map.put("password", password);
+            
+                    return map;
+                }
+
+            //返回结果：
+            {
+                "timestamp": "2019-06-29T02:22:02.173+0000",
+                "status": 500,
+                "error": "Internal Server Error",
+                "message": "addUser2.password: 密码不能为空, addUser2.username: 姓名不能为空",
+                "path": "/adduser2"
+            }
+        </pre>
+
+        <p class="contents">使用验证注解，不使用BindingResult接受验证结果：</p>
+        <pre>
+
+            //基础校验返回的数据 不使用BindingResult接受错误信息
+            @ResponseBody
+            @RequestMapping(value = "/adduser")
+            public BaseModel addUser(@Validated User user){
+
+                return BaseModel.success(user);
+            }
+
+            /**
+             * 不使用BindingResult接受数据时， 返回的数据：
+             *
+             * {
+             *     "timestamp": "2019-06-28T08:03:44.613+0000",
+             *     "status": 400,
+             *     "error": "Bad Request",
+             *     "errors": [
+             *         {
+             *             "codes": [
+             *                 "NotBlank.user.password",
+             *                 "NotBlank.password",
+             *                 "NotBlank.java.lang.String",
+             *                 "NotBlank"
+             *             ],
+             *             "arguments": [
+             *                 {
+             *                     "codes": [
+             *                         "user.password",
+             *                         "password"
+             *                     ],
+             *                     "arguments": null,
+             *                     "defaultMessage": "password",
+             *                     "code": "password"
+             *                 }
+             *             ],
+             *             "defaultMessage": "密码不能为空",
+             *             "objectName": "user",
+             *             "field": "password",
+             *             "rejectedValue": null,
+             *             "bindingFailure": false,
+             *             "code": "NotBlank"
+             *         },
+             *         {
+             *             "codes": [
+             *                 "NotBlank.user.username",
+             *                 "NotBlank.username",
+             *                 "NotBlank.java.lang.String",
+             *                 "NotBlank"
+             *             ],
+             *             "arguments": [
+             *                 {
+             *                     "codes": [
+             *                         "user.username",
+             *                         "username"
+             *                     ],
+             *                     "arguments": null,
+             *                     "defaultMessage": "username",
+             *                     "code": "username"
+             *                 }
+             *             ],
+             *             "defaultMessage": "姓名不能为空",
+             *             "objectName": "user",
+             *             "field": "username",
+             *             "rejectedValue": null,
+             *             "bindingFailure": false,
+             *             "code": "NotBlank"
+             *         }
+             *     ],
+             *     "message": "Validation failed for object='user'. Error count: 2",
+             *     "path": "/adduser"
+             * }
+             *
+             * */
+        </pre>
+
+        <p class="contents">使用验证注解，使用BindingResult接受验证结果：</p>
+        <pre>
+
+            @ResponseBody
+            @PostMapping(value = "/adduser1")
+            public BaseModel addUser1(@Validated User user, BindingResult bindingResult){
+
+                //接受校验结果
+                if (bindingResult.hasErrors()){
+
+                    return BaseModel.fail(ResultErrorInfo.getErrorMessage(bindingResult), null);
+
+                }else {
+
+                    return BaseModel.success(user);
+                }
+
+            }
+
+            //返回结果
+            {
+                "message": "密码不能为空,姓名不能为空",
+                "code": -1,
+                "data": null
+            }
+        </pre>
+
+        <p class="contents">封装注解验证返回的错误提示信息：</p>
+        <pre>
+            public class ResultErrorInfo{
+
+                //使用BindingResult接受验证报错的信息
+                public static String getErrorMessage(BindingResult bindingResult){
+
+                    StringBuilder stringBuilder = new StringBuilder();
+
+                    //字段报错信息拼接
+                    for(String s : bindingResult.getFieldErrors().stream().map(FieldError::getDefaultMessage).collect(Collectors.toSet())){
+
+                        stringBuilder.append(s + ",");
+                    }
+
+                    if (stringBuilder.length() == 0){
+
+                        return "";
+                    }
+
+                    return stringBuilder.substring(0, stringBuilder.length()-1);
+                }
+            }
+        </pre>
+
+        <p class="contents">分组校验:</p>
+        <pre>
+                //验证User中 groups指定相同的class的字段
+                @ResponseBody
+                @GetMapping(value = "/adduser5")
+                public BaseModel addUser5(@Validated({User.Student.class}) User user, BindingResult bindingResult){
+
+                    if (bindingResult.hasErrors()){
+
+                        return new BaseModel(ResultErrorInfo.getErrorMessage(bindingResult), BaseModel.constants.fail, null);
+                    }else {
+
+                        return new BaseModel(BaseModel.constants.successMsg, BaseModel.constants.success, user);
+                    }
+                }
+        </pre>
+
+        <p class="contents">绑定前端表单参数到后端的类型处理，空值处理， 如 空字符串-》Integer/Double/Date</p>
+        <pre>
+
+            // 让springboot注册， date验证时的类型转换
+            // 1: @Configuration @Autowired 扫描重写
+            // 2: 控制器注册： 公共控制器@InitBinder 见BaseController
+
+            //public class CustomDateWebBindingInitializer implements WebBindingInitializer {
+            //
+            //    @Override
+            //    public void initBinder(WebDataBinder binder) {
+            //
+            //        //转换日期
+            //        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            //
+            //        //yyyy-MM-dd HH:mm:ss 字符串 -> Date第二个参数控制是否允许为空
+            //        //binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+            //
+            //        //1488260000 时间戳字符串 -> Date
+            //        binder.registerCustomEditor(Date.class, new MyDateEditor());
+            //    }
+            //}
+
+            //@Configuration
+            //public class CustomDateEditorConfiguration {
+
+            //    @Configuration + @Autowired 让前端到后端的 string -》 date生效
+            //    @Autowired
+            //    public void setWebBindingInitializer(RequestMappingHandlerAdapter requestMappingHandlerAdapter) {
+            //
+            //        requestMappingHandlerAdapter.setWebBindingInitializer(new CustomDateWebBindingInitializer());
+            //    }
+            //}
+
+            public class BaseController {
+
+                //绑定前后端类型转换
+                @InitBinder
+                protected void init(HttpServletRequest request, ServletRequestDataBinder binder){
+
+                    //允许date为空
+                    binder.registerCustomEditor(Date.class, new MyDateEditor());
+                    binder.registerCustomEditor(Double.class, new MyDoubleEditor());
+                    binder.registerCustomEditor(Integer.class, new MyIntegerEdtor());
+                }
+            }
+
+        </pre>
+
+        <p class="contents">相关字段处理：</p>
+        <pre>
+
+            //Date
+            public class MyDateEditor extends PropertyEditorSupport {
+
+                @Override
+                public void setAsText(String text) throws IllegalArgumentException {
+
+                    if (text == null || text.equals("") || Long.decode(text) == 0){
+
+                        //set null 配合javax validate @NotNull验证
+                        setValue(null);
+                    }else {
+
+                        //string -> long -> date
+                        setValue(new Date(Long.decode(text)));
+                    }
+                }
+
+                @Override
+                public String getAsText() {
+
+                    //date -> long -> string
+                    Date date = (Date)getValue();
+
+                    return (date == null) ? "" : String.valueOf(TimeUnit.MILLISECONDS.toSeconds(date.getTime()));
+                }
+            }
+
+            //Double
+            public class MyDoubleEditor extends PropertyEditorSupport {
+
+                @Override
+                public void setAsText(String text) throws IllegalArgumentException {
+
+                    //string -> double
+                    if (text == null || text.equals("")){
+
+                        text = "0";
+                    }
+
+                    setValue(Double.parseDouble(text));
+                }
+
+                @Override
+                public String getAsText() {
+
+                    // double -> string
+                    return getValue().toString();
+                }
+            }
+
+            //Integer
+            public class MyIntegerEdtor extends PropertyEditorSupport {
+
+                @Override
+                public void setAsText(String text) throws IllegalArgumentException {
+
+                    // string -> Integer
+                    if (text == null || text.equals("")){
+
+                        text = "0";
+                    }
+
+                    setValue(Integer.parseInt(text));
+                }
+
+                @Override
+                public String getAsText() {
+
+                    return getValue().toString();
+                }
+            }
+
+
+        </pre>
+    </div>
+
+    <br>
+</div>
+
+</body>
+</html>
