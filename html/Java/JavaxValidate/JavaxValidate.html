@@ -73,27 +73,26 @@
             public class User {
 
                 //-------- 基础校验 有分组校验的情况下需要指定群组groups
-                @NotBlank(message = "姓名不能为空", groups = {Student.class, Teacher.class})
+                @NotBlank(message = "姓名不能为空")
                 @Length(min = 2, max = 5, message = "姓名长度为{min}-{max}个字符", groups = {Student.class, Teacher.class})
                 private String username;
-            
-                @NotBlank(message = "密码不能为空", groups = {Student.class, Teacher.class})
+
+                @NotBlank(message = "密码不能为空")
                 @Length(min = 6, max = 10, message = "密码长度在{min}-{max}之间", groups = {Student.class, Teacher.class})
                 private String password;
 
-                //age和score只有指定groups为Student.class的方法验证
                 //Integer Double类型为"",则在@InitBinder处理为0 String:@NotBlank
                 @Range(min = 3, max = 25, message = "学生年龄在{min}-{max}之间", groups = {Student.class})
                 private Integer age;
-            
-                @Min(groups = {Student.class}, value = 0, message = "成绩不能小于0")
+
+                @Min(value = 0, message = "成绩不能小于0", groups = {Student.class})
                 private Double score;
-            
+
                 //@NotEmpty只能作用在集合上 string collection
                 @NotNull(message = "生日不能为空", groups = {Student.class, Teacher.class})
                 @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                 private Date birthday;
-            
+
                 //-------- 模拟分组校验情景：用户有学生和老师群体，只有学生需要校验age 老师不要校验age
                 public interface Student{}
                 public interface Teacher{}
@@ -193,7 +192,8 @@
             //基础校验返回的数据 不使用BindingResult接受错误信息
             @ResponseBody
             @RequestMapping(value = "/adduser")
-            public BaseModel addUser(@Validated User user){
+            public BaseModel addUser(@Validated(value = {User.Teacher.class,
+                    User.Student.class}) User user){
 
                 return BaseModel.success(user);
             }
@@ -269,7 +269,8 @@
 
             @ResponseBody
             @PostMapping(value = "/adduser1")
-            public BaseModel addUser1(@Validated User user, BindingResult bindingResult){
+            public BaseModel addUser1(@Validated(value = {User.Teacher.class,
+                    User.Student.class}) User user, BindingResult bindingResult){
 
                 //接受校验结果
                 if (bindingResult.hasErrors()){
@@ -457,6 +458,83 @@
                 }
             }
 
+
+        </pre>
+
+        <p class="contents">封装的统一返回model：</p>
+        <pre>
+
+            public class BaseModel {
+
+                public static final class constants{
+
+                    public constants(){}
+
+                    public static int success=0;
+                    public static int fail=-1;
+
+                    public static String successMsg = "success";
+                    public static String failMsg = "fail";
+                }
+
+
+                public String message;
+                public int code;
+                public Object data;
+
+                public BaseModel(){}
+
+                public BaseModel(String message, int code, Object data){
+
+                    this.message = message;
+                    this.code = code;
+                    this.data = data;
+                }
+
+                public static BaseModel success(Object data){
+
+                    return new BaseModel(constants.successMsg, constants.success, data);
+                }
+
+                public static BaseModel success(String message, Object data){
+
+                    return new BaseModel(message, constants.success, data);
+                }
+
+                public static BaseModel fail(Object data){
+
+                    return new BaseModel(constants.failMsg, constants.fail, data);
+                }
+
+                public static BaseModel fail(String message, Object data){
+
+                    return new BaseModel(message, constants.fail, data);
+                }
+
+                public String getMessage() {
+                    return message;
+                }
+
+                public void setMessage(String message) {
+                    this.message = message;
+                }
+
+                public int getCode() {
+                    return code;
+                }
+
+                public void setCode(int code) {
+                    this.code = code;
+                }
+
+                public Object getData() {
+                    return data;
+                }
+
+                public void setData(Object data) {
+                    this.data = data;
+                }
+            }
 
         </pre>
     </div>
