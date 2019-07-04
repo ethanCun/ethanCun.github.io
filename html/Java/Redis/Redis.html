@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>springboot中redis的使用</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">redis</span>
+</div>
+
+<div class="contentBgDiv">
+
+
+    <p class="title">springboot中redis的使用</p>
+
+    <hr>
+    <div class="contentBgDiv">
+
+        <p class="contents"><a target="_blank" href="https://github.com/ethanCun/springboot/blob/master/demo/src/main/java/com/springboot/demo/base/utils/RedisUtil.java">
+            RedisTemplate常用操作，string/map/set/list存取操作
+        </a> </p>
+        <p class="contents"><a target="_blank" href="https://github.com/ethanCun/JavaCollection/blob/master/springboot/spring-boot-redis/src/main/java/com/neo/web/UserController.java">
+            springboot redis注解常用
+        </a> </p>
+
+        <p class="smallTitle">1. springboot给缓存添加过期时间配置：</p>
+        <p class="contents">pom.xml引入相关的包</p>
+        <pre>
+            
+            &lt;!--redis--&gt;
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;
+            &lt;/dependency&gt;
+            &lt;!-- 高版本redis的lettuce需要commons-pool2 --&gt;
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.apache.commons&lt;/groupId&gt;
+                &lt;artifactId&gt;commons-pool2&lt;/artifactId&gt;
+            &lt;/dependency&gt;
+        </pre>
+
+        <p class="contents">application.properties:</p>
+        <pre>
+
+            spring.datasource.url=jdbc:mysql://localhost:3306/jwt
+            spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+            spring.datasource.username=root
+            spring.datasource.password=xxx
+            spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
+
+            mybatis.mapper-locations=classpath:mapper/*.xml
+            mybatis.configuration.map-underscore-to-camel-case=true
+            mybatis.type-aliases-package=com.example.demo.app.entity
+
+            logging.level.root = info
+            logging.level.com.example.demo = debug
+            logging.file=/Users/cunethan/Desktop/Java/demo-redis-tokenValidate/logs/log.log
+
+            #redis
+            spring.redis.database=0
+            spring.redis.host=localhost
+            spring.redis.port=6379
+            spring.redis.password=czy
+            # 连接池最大连接数（使用负值表示没有限制） 默认 8
+            spring.redis.lettuce.pool.max-active=8
+            # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
+            spring.redis.lettuce.pool.max-wait=-1
+            # 连接池中的最大空闲连接 默认 8
+            spring.redis.lettuce.pool.max-idle=8
+            # 连接池中的最小空闲连接 默认 0
+            spring.redis.lettuce.pool.min-idle=0
+            # 超时时间
+            spring.redis.timeout=5000
+        </pre>
+
+        <p class="contents">配置Redis</p>
+        <pre>
+
+            package com.example.demo.common.Config;
+
+            import com.fasterxml.jackson.annotation.JsonAutoDetect;
+            import com.fasterxml.jackson.annotation.PropertyAccessor;
+            import com.fasterxml.jackson.databind.ObjectMapper;
+            import org.springframework.beans.factory.annotation.Value;
+            import org.springframework.cache.CacheManager;
+            import org.springframework.cache.annotation.*;
+            import org.springframework.cache.interceptor.KeyGenerator;
+            import org.springframework.context.annotation.Bean;
+            import org.springframework.context.annotation.Configuration;
+            import org.springframework.data.redis.cache.RedisCacheConfiguration;
+            import org.springframework.data.redis.cache.RedisCacheManager;
+            import org.springframework.data.redis.connection.RedisConnectionFactory;
+            import org.springframework.data.redis.core.RedisTemplate;
+            import org.springframework.data.redis.serializer.*;
+
+            import java.time.Duration;
+
+
+            //redis配置类
+            @Configuration
+            @EnableCaching
+            public class RedisConfig extends CachingConfigurerSupport {
+
+                @Value("${spring.redis.host}")
+                private String host;
+
+                @Value("${spring.redis.port}")
+                private Integer port;
+
+                @Value("${spring.redis.password}")
+                private String password;
+
+                //自定义的KeyGenerator
+                @Bean
+                public KeyGenerator keyGenerator(){
+
+                    return (target, method, params) ->{
+
+                        StringBuilder sb = new StringBuilder();
+
+                        String[] value = new String[1];
+
+                        Cacheable cacheable = method.getAnnotation(Cacheable.class);
+                        if (cacheable != null){
+                            value = cacheable.value();
+                        }
+
+                        CacheEvict cacheEvict = method.getAnnotation(CacheEvict.class);
+                        if (cacheEvict != null){
+                            value = cacheEvict.value();
+                        }
+
+                        CachePut cachePut = method.getAnnotation(CachePut.class);
+                        if (cachePut != null){
+                            value = cachePut.value();
+                        }
+
+                        sb.append(value[0]);
+
+                        for(Object obj : params){
+                            sb.append(":").append(obj.toString());
+                        }
+
+                        return sb.toString();
+                    };
+                }
+
+
+                @Bean(name = "redisTemplate")
+                public RedisTemplate&lt;Object, Object&gt; redisTemplate(RedisConnectionFactory redisConnectionFactory){
+
+                    RedisTemplate&lt;Object, Object&gt; template = new RedisTemplate&lt;&gt;();
+                    template.setConnectionFactory(redisConnectionFactory);
+
+                    //value值的序列化采用fastJsonRedisSerializer
+                    Jackson2JsonRedisSerializer serializer = createJacksonRedisSerializer();
+                    template.setValueSerializer(serializer);
+                    template.setHashValueSerializer(serializer);
+
+                    // key的序列化采用StringRedisSerializer
+                    StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+                    template.setKeySerializer(stringRedisSerializer);
+                    template.setHashValueSerializer(stringRedisSerializer);
+
+                    template.afterPropertiesSet();
+
+                    return template;
+                }
+
+                //springboot 2.x CacheManager自定义配置
+                @Bean
+                public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory){
+
+                    StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+                    Jackson2JsonRedisSerializer jsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+
+                    //解决查询缓存异常转换的问题
+                    ObjectMapper om = new ObjectMapper();
+                    om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+                    om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+                    jsonRedisSerializer.setObjectMapper(om);
+
+                    //设置10秒过期
+                    RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                            .entryTtl(Duration.ofSeconds(10))
+                            .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(stringRedisSerializer))
+                            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jsonRedisSerializer))
+                            .disableCachingNullValues();
+
+                    RedisCacheManager redisCacheManager = RedisCacheManager.builder(redisConnectionFactory)
+                            .cacheDefaults(redisCacheConfiguration)
+                            .build();
+
+                    return redisCacheManager;
+                }
+
+                //Jackson2JsonRedisSerializer
+                private Jackson2JsonRedisSerializer&lt;Object&gt; createJacksonRedisSerializer() {
+
+                    Jackson2JsonRedisSerializer&lt;Object&gt; jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer&lt;&gt;(Object.class);
+
+                    ObjectMapper om = new ObjectMapper();
+                    om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+                    om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+                    jackson2JsonRedisSerializer.setObjectMapper(om);
+                    return jackson2JsonRedisSerializer;
+                }
+            }
+        </pre>
+
+        <p class="contents">控制器：</p>
+        <pre>
+
+            @Controller
+            @RequestMapping(value = "/api/user")
+            @EnableCaching
+            public class UserController {
+
+                @Autowired
+                private StringRedisTemplate stringRedisTemplate;
+
+
+                @ResponseBody
+                @RequestMapping(value = "/testRedis")
+                @Cacheable(value = "test1", key = "#root.methodName")
+                public String testRedis(){
+
+                    //默认策略 @Cacheable value后面::返回值, 如test1：testRedis
+                    return "testRedis";
+                }
+
+                @ResponseBody
+                @RequestMapping(value = "/testRedisJson")
+                @Cacheable(value = "test11")
+                public JSONObject testRedis11(){
+
+                    User user = new User();
+                    user.setUsername("zhangsan");
+                    user.setPassword("111");
+
+                    return JSON.parseObject(JSON.toJSONString(user));
+                }
+
+            }
+
+        </pre>
+    </div>
+    <br>
+</div>
+
+</body>
+</html>
