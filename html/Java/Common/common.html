@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Java零碎笔记</title>
+</head>
+<link rel="icon" href="../../../Source/icon-img.jpeg">
+<link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+<link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+<link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+
+<body>
+
+<div class="contentBgDiv">
+
+
+    <p class="title">Java零碎笔记</p>
+    <hr>
+    <div class="contentBgDiv">
+
+        <ul>
+            <li><a href="#p1">获取当前方法的注解信息</a></li>
+            <li><a href="#p2">当前类名和当前方法名</a></li>
+        </ul>
+
+        <p class="contents" id="p1">获取当前方法的注解信息</p>
+        <pre>
+
+            Method[] methods = this.getClass().getMethods();
+
+            for (Method method : methods){
+
+                if (method.getName().equals("testRedis")){
+
+                    Annotation[] annotations = method.getAnnotations();
+
+                    for (Annotation annotation : annotations) {
+
+                        System.out.println(annotation.toString());
+                    }
+                }
+            }
+        </pre>
+
+        <p class="contents" id="p2">当前类名和当前方法名</p>
+        <pre>
+
+            //当前类名和当前方法名
+            String clazz = Thread.currentThread() .getStackTrace() [1].getClassName();
+            String method = Thread.currentThread() .getStackTrace()[1].getMethodName();
+            System.out.println("class name: " + clazz + " Method Name " + method);
+        </pre>
+
+
+        <br>
+    </div>
+
+
+</div>
+</body>
+</html>

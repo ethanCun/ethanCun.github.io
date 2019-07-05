@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/Java/Redis/Redis.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/Java/Redis/Redis.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/html/archive.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/archive.html" afterDir="false" />
     </list>
     <ignored path="newCZY.iws" />
@@ -63,8 +64,8 @@
       <file leaf-file-name="archive.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/html/archive.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="202">
-              <caret line="100" column="59" selection-start-line="100" selection-start-column="59" selection-end-line="100" selection-end-column="59" />
+            <state relative-caret-position="231">
+              <caret line="98" column="63" selection-start-line="98" selection-start-column="63" selection-end-line="98" selection-end-column="63" />
             </state>
           </provider>
         </entry>
@@ -72,12 +73,12 @@
       <file leaf-file-name="Redis.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/html/Java/Redis/Redis.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="201">
-              <caret line="22" column="8" lean-forward="true" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="8" />
+            <state relative-caret-position="347">
+              <caret line="49" column="12" selection-start-line="49" selection-start-column="12" selection-end-line="49" selection-end-column="12" />
               <folding>
                 <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-                <element signature="n#pre#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#2;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#pre#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
               </folding>
             </state>
@@ -87,8 +88,8 @@
       <file leaf-file-name="JWT.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/html/Java/JWT/JWT.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="40">
-              <caret line="5" selection-start-line="5" selection-end-line="34" selection-end-column="30" />
+            <state relative-caret-position="117">
+              <caret line="5" selection-start-line="5" selection-end-line="20" selection-end-column="50" />
               <folding>
                 <element signature="n#style#0;n#p#2;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
@@ -99,6 +100,25 @@
                 <element signature="n#pre#7;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#pre#8;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#pre#10;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RedisValidateToken.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/html/Java/RedisValidateToken/RedisValidateToken.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="264">
+              <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+              <folding>
+                <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#2;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#4;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#5;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#6;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#pre#7;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
               </folding>
             </state>
           </provider>
@@ -135,8 +155,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/html/iOS/CocoaPods/CocoapodsNotes.html" />
-        <option value="$PROJECT_DIR$/html/iOS/CzyWxAlipaySummarise/WxAlipaySummarise.html" />
         <option value="$PROJECT_DIR$/html/iOS/encrypt/encrypt.html" />
         <option value="$PROJECT_DIR$/html/iOS/GCDAndNSOperationQueue/GCDAndNSOperationQueue.html" />
         <option value="$PROJECT_DIR$/html/iOS/JPushSummarise/JPushSummarise.html" />
@@ -184,6 +202,8 @@
         <option value="$PROJECT_DIR$/html/Java/mysqlCount/mysqlCount.html" />
         <option value="$PROJECT_DIR$/html/Java/JavaxValidate/JavaxValidate.html" />
         <option value="$PROJECT_DIR$/html/Java/JWT/JWT.html" />
+        <option value="$PROJECT_DIR$/html/Java/Common/common.html" />
+        <option value="$PROJECT_DIR$/html/Java/RedisValidateToken/RedisValidateToken.html" />
         <option value="$PROJECT_DIR$/html/Java/Redis/Redis.html" />
         <option value="$PROJECT_DIR$/html/archive.html" />
       </list>
@@ -199,8 +219,8 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="16" />
-    <option name="y" value="126" />
+    <option name="x" value="68" />
+    <option name="y" value="69" />
     <option name="width" value="1920" />
     <option name="height" value="973" />
   </component>
@@ -262,6 +282,13 @@
               <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
               <item name="html" type="462c0819:PsiDirectoryNode" />
               <item name="Java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
+              <item name="html" type="462c0819:PsiDirectoryNode" />
+              <item name="Java" type="462c0819:PsiDirectoryNode" />
+              <item name="Common" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
@@ -332,6 +359,13 @@
               <item name="html" type="462c0819:PsiDirectoryNode" />
               <item name="Java" type="462c0819:PsiDirectoryNode" />
               <item name="Redis" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
+              <item name="html" type="462c0819:PsiDirectoryNode" />
+              <item name="Java" type="462c0819:PsiDirectoryNode" />
+              <item name="RedisValidateToken" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
@@ -535,14 +569,16 @@
       <workItem from="1561773960524" duration="3291000" />
       <workItem from="1562190013971" duration="3289000" />
       <workItem from="1562280494970" duration="1081000" />
+      <workItem from="1562282987223" duration="410000" />
+      <workItem from="1562364031402" duration="2900000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="200545000" />
+    <option name="totallyTimeSpent" value="203855000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="16" y="126" width="1920" height="973" extended-state="0" />
+    <frame x="68" y="69" width="1920" height="973" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
@@ -558,7 +594,7 @@
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="3" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25535333" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2617773" />
       <window_info anchor="bottom" id="Docker" order="10" show_stripe_button="false" />
       <window_info anchor="bottom" id="Alibaba Cloud View" order="10" />
       <window_info anchor="right" id="Database" order="7" />
@@ -593,20 +629,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/html/iOS/lldbSummarise/lldb.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="820">
-          <caret line="41" column="36" selection-start-line="41" selection-start-column="36" selection-end-line="41" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html/iOS/LocksIniOS/LocksIniOS.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1218">
-          <caret line="336" column="29" selection-start-line="336" selection-start-column="29" selection-end-line="336" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/html/iOS/navAndTabBarDetails/NavAndTabBar.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="100">
@@ -875,13 +897,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/html/Net/DotNetLearnSummarize/DotNetLearnSummarize.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="163">
-          <caret line="1608" column="18" selection-start-line="1608" selection-start-column="12" selection-end-line="1608" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/druid/druid.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="671">
@@ -907,12 +922,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="48">
           <caret line="2" selection-start-line="2" selection-end-line="28" selection-end-column="51" />
-          <folding>
-            <element signature="n#pre#2;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#4;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#5;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -920,8 +929,46 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="168">
           <caret line="7" column="2" selection-start-line="7" selection-start-column="2" selection-end-line="32" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/Java/Common/common.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="469">
+          <caret line="43" selection-start-line="43" selection-end-line="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/Net/DotNetLearnSummarize/DotNetLearnSummarize.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="163">
+          <caret line="1608" column="18" selection-start-line="1608" selection-start-column="12" selection-end-line="1608" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/Java/JWT/JWT.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="117">
+          <caret line="5" selection-start-line="5" selection-end-line="20" selection-end-column="50" />
           <folding>
             <element signature="n#style#0;n#p#2;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#4;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#6;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#7;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#8;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#10;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/Java/RedisValidateToken/RedisValidateToken.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+          <folding>
             <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
             <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
             <element signature="n#pre#2;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
@@ -930,40 +977,18 @@
             <element signature="n#pre#5;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
             <element signature="n#pre#6;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
             <element signature="n#pre#7;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#8;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#9;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#10;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#11;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html/Java/JWT/JWT.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="40">
-          <caret line="5" selection-start-line="5" selection-end-line="34" selection-end-column="30" />
-          <folding>
-            <element signature="n#style#0;n#p#2;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#4;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#6;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#7;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#8;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#10;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/Redis/Redis.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="22" column="8" lean-forward="true" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="8" />
+        <state relative-caret-position="347">
+          <caret line="49" column="12" selection-start-line="49" selection-start-column="12" selection-end-line="49" selection-end-column="12" />
           <folding>
             <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
             <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#pre#2;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
             <element signature="n#pre#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
           </folding>
         </state>
@@ -971,8 +996,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/html/archive.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="100" column="59" selection-start-line="100" selection-start-column="59" selection-end-line="100" selection-end-column="59" />
+        <state relative-caret-position="231">
+          <caret line="98" column="63" selection-start-line="98" selection-start-column="63" selection-end-line="98" selection-end-column="63" />
         </state>
       </provider>
     </entry>
