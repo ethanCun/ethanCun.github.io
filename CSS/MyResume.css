@@ -95,6 +95,7 @@ b{
     position: fixed;
     right: 20px;
     width: 100px;
+    height: 90px;
     background: #4ecdc4;
     border-radius: 5px;
     cursor: pointer;
@@ -109,20 +110,20 @@ b{
 
 .Experience{
 
-    top: 20% !important;
+    top: 25% !important;
 }
 
 .DIY{
 
-    top: 30% !important;
+    top: 40% !important;
 }
 
 .Skill{
 
-    top: 40% !important;
+    top: 55% !important;
 }
 
 .Certificate{
 
-    top: 45% !important;
+    top: 70% !important;
 }

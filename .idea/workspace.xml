@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/iOS/shoppinCar/ShoppingCar.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/iOS/shoppinCar/ShoppingCar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSS/MyResume.css" beforeDir="false" afterPath="$PROJECT_DIR$/CSS/MyResume.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/Other/Resume/MyResume.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/Other/Resume/MyResume.html" afterDir="false" />
     </list>
     <ignored path="newCZY.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -63,17 +64,41 @@
       <file leaf-file-name="archive.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/html/archive.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="381">
-              <caret line="53" column="41" lean-forward="true" selection-start-line="53" selection-start-column="41" selection-end-line="53" selection-end-column="41" />
+            <state relative-caret-position="1272">
+              <caret line="53" column="41" selection-start-line="53" selection-start-column="41" selection-end-line="53" selection-end-column="41" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DetailiOSNotes.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="DetailiOSNotes.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="383">
-              <caret line="16" column="6" selection-start-line="16" selection-start-column="6" selection-end-line="16" selection-end-column="6" />
+            <state relative-caret-position="551">
+              <caret line="23" column="8" lean-forward="true" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MyResume.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/html/Other/Resume/MyResume.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="224">
+              <caret line="26" column="20" lean-forward="true" selection-start-line="26" selection-start-column="20" selection-end-line="26" selection-end-column="20" />
+              <folding>
+                <element signature="e#3928#3951#0" expanded="true" />
+                <element signature="e#4556#5343#0" />
+                <element signature="e#5594#5866#0" />
+                <element signature="e#6134#6369#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MyResume.css" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/CSS/MyResume.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="673">
+              <caret line="125" column="9" lean-forward="true" selection-start-line="125" selection-start-column="9" selection-end-line="125" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -96,6 +121,7 @@
       <find>&lt;br&gt;</find>
       <find>&lt;</find>
       <find>&gt;</find>
+      <find>xperience. 项目与工作经验</find>
     </findStrings>
     <replaceStrings>
       <replace>czyProperties</replace>
@@ -109,7 +135,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/html/iOS/encrypt/encrypt.html" />
         <option value="$PROJECT_DIR$/html/iOS/GCDAndNSOperationQueue/GCDAndNSOperationQueue.html" />
         <option value="$PROJECT_DIR$/html/iOS/JPushSummarise/JPushSummarise.html" />
         <option value="$PROJECT_DIR$/html/iOS/lldbSummarise/lldb.html" />
@@ -134,7 +159,6 @@
         <option value="$PROJECT_DIR$/html/iOS/PraviteRepo/PraviteRepo.html" />
         <option value="$PROJECT_DIR$/html/iOS/PropertyInSwift/PropertyInSwift.html" />
         <option value="$PROJECT_DIR$/html/iOS/iOSArticleList.html" />
-        <option value="$PROJECT_DIR$/html/Other/Resume/MyResume.html" />
         <option value="$PROJECT_DIR$/html/Java/JdbcTemplate.html" />
         <option value="$PROJECT_DIR$/html/Java/JdbcTemplate/JdbcTemplate.html" />
         <option value="$PROJECT_DIR$/html/HTML5/WebStormDetailNotes/WebStormDetailNotes.html" />
@@ -160,6 +184,8 @@
         <option value="$PROJECT_DIR$/html/archive.html" />
         <option value="$PROJECT_DIR$/html/iOS/shoppinCar/ShoppingCar.html" />
         <option value="$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html" />
+        <option value="$PROJECT_DIR$/html/Other/Resume/MyResume.html" />
+        <option value="$PROJECT_DIR$/CSS/MyResume.css" />
       </list>
     </option>
   </component>
@@ -172,9 +198,8 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="68" />
-    <option name="y" value="69" />
+  <component name="ProjectFrameBounds">
+    <option name="y" value="23" />
     <option name="width" value="1920" />
     <option name="height" value="973" />
   </component>
@@ -186,8 +211,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -198,6 +221,11 @@
             <path>
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
               <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
+              <item name="CSS" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
               <item name="html" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -210,178 +238,32 @@
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
               <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
               <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="HTML5" type="462c0819:PsiDirectoryNode" />
-              <item name="Bootstrap" type="462c0819:PsiDirectoryNode" />
+              <item name="Other" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
               <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
               <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="HTML5" type="462c0819:PsiDirectoryNode" />
-              <item name="WebStormDetailNotes" type="462c0819:PsiDirectoryNode" />
+              <item name="Other" type="462c0819:PsiDirectoryNode" />
+              <item name="Resume" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
               <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="iOS" type="462c0819:PsiDirectoryNode" />
+              <item name="Source" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
               <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="iOS" type="462c0819:PsiDirectoryNode" />
-              <item name="DetailiOSNotes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="iOS" type="462c0819:PsiDirectoryNode" />
-              <item name="shoppinCar" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="Common" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="DevProdConfig" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="druid" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="Generator" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="JavaxValidate" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="JdbcTemplate" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="JWT" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="layui" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="Logback" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="mysqlCount" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="Redis" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="RedisValidateToken" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="Shiro" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="StringInSwiftAndJava" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="thymeleaf" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="TomcatPublish" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="Tool" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Net" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Net" type="462c0819:PsiDirectoryNode" />
-              <item name="DotNetLearnSummarize" type="462c0819:PsiDirectoryNode" />
+              <item name="Source" type="462c0819:PsiDirectoryNode" />
+              <item name="resume" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -532,40 +414,42 @@
       <workItem from="1562280494970" duration="1081000" />
       <workItem from="1562282987223" duration="410000" />
       <workItem from="1562364031402" duration="2900000" />
-      <workItem from="1562367964687" duration="429000" />
+      <workItem from="1562367964687" duration="661000" />
+      <workItem from="1562987581595" duration="3437000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="204284000" />
+    <option name="totallyTimeSpent" value="207953000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="973" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="right" id="Maven Projects" order="6" />
+      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+      <window_info id="Capture Tool" order="2" />
+      <window_info id="Designer" order="3" />
+      <window_info anchor="bottom" id="Docker" order="10" show_stripe_button="false" />
+      <window_info anchor="right" id="Database" order="7" />
+      <window_info anchor="right" id="Structure" order="9" side_tool="true" weight="0.24959481" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info id="UI Designer" order="4" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="4" />
       <window_info id="Image Layers" order="1" />
       <window_info anchor="right" id="Capture Analysis" order="5" />
-      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="right" id="Maven Projects" order="6" />
-      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Terminal" order="8" />
-      <window_info id="Capture Tool" order="2" />
-      <window_info id="Designer" order="3" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2649893" />
-      <window_info anchor="bottom" id="Docker" order="10" show_stripe_button="false" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2682013" />
       <window_info anchor="bottom" id="Alibaba Cloud View" order="10" />
-      <window_info anchor="right" id="Database" order="7" />
+      <window_info anchor="bottom" id="Find" order="1" />
       <window_info id="Alibaba Cloud Explorer" order="6" />
-      <window_info anchor="right" id="Structure" order="9" side_tool="true" weight="0.24959481" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info id="UI Designer" order="4" />
       <window_info anchor="right" id="Theme Preview" order="8" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Messages" order="11" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -573,7 +457,6 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -591,13 +474,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/html/iOS/navAndTabBarDetails/NavAndTabBar.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="5" selection-start-line="5" selection-end-line="17" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/html/iOS/RACSummarise/RACNormalUse.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="100">
@@ -728,13 +604,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
           <caret line="35" column="37" selection-start-line="35" selection-start-column="37" selection-end-line="35" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html/Other/Resume/MyResume.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="354">
-          <caret line="29" column="17" selection-start-line="29" selection-start-column="17" selection-end-line="29" selection-end-column="17" />
         </state>
       </provider>
     </entry>
@@ -898,17 +767,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="5" selection-start-line="5" selection-end-line="20" selection-end-column="50" />
-          <folding>
-            <element signature="n#style#0;n#p#2;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#4;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#6;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#7;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#8;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#10;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -916,12 +774,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="347">
           <caret line="49" column="12" selection-start-line="49" selection-start-column="12" selection-end-line="49" selection-end-column="12" />
-          <folding>
-            <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#2;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -929,17 +781,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="504">
           <caret line="21" column="67" selection-start-line="21" selection-start-column="67" selection-end-line="21" selection-end-column="67" />
-          <folding>
-            <element signature="n#style#0;n#p#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#pre#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#2;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#4;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#5;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#6;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#7;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -952,15 +793,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/html/archive.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="381">
-          <caret line="53" column="41" lean-forward="true" selection-start-line="53" selection-start-column="41" selection-end-line="53" selection-end-column="41" />
+        <state relative-caret-position="1272">
+          <caret line="53" column="41" selection-start-line="53" selection-start-column="41" selection-end-line="53" selection-end-column="41" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="383">
-          <caret line="16" column="6" selection-start-line="16" selection-start-column="6" selection-end-line="16" selection-end-column="6" />
+        <state relative-caret-position="551">
+          <caret line="23" column="8" lean-forward="true" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/Other/Resume/MyResume.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="26" column="20" lean-forward="true" selection-start-line="26" selection-start-column="20" selection-end-line="26" selection-end-column="20" />
+          <folding>
+            <element signature="e#3928#3951#0" expanded="true" />
+            <element signature="e#4556#5343#0" />
+            <element signature="e#5594#5866#0" />
+            <element signature="e#6134#6369#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CSS/MyResume.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="673">
+          <caret line="125" column="9" lean-forward="true" selection-start-line="125" selection-start-column="9" selection-end-line="125" selection-end-column="9" />
         </state>
       </provider>
     </entry>
