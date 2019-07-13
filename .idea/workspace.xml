@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSS/MyResume.css" beforeDir="false" afterPath="$PROJECT_DIR$/CSS/MyResume.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/Other/Resume/MyResume.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/Other/Resume/MyResume.html" afterDir="false" />
-    </list>
+    <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="" />
     <ignored path="newCZY.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -79,11 +75,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MyResume.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MyResume.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/html/Other/Resume/MyResume.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="26" column="20" lean-forward="true" selection-start-line="26" selection-start-column="20" selection-end-line="26" selection-end-column="20" />
+            <state relative-caret-position="427">
+              <caret line="42" column="46" selection-start-line="42" selection-start-column="46" selection-end-line="42" selection-end-column="46" />
               <folding>
                 <element signature="e#3928#3951#0" expanded="true" />
                 <element signature="e#4556#5343#0" />
@@ -94,11 +90,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MyResume.css" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MyResume.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/CSS/MyResume.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="673">
-              <caret line="125" column="9" lean-forward="true" selection-start-line="125" selection-start-column="9" selection-end-line="125" selection-end-column="9" />
+            <state relative-caret-position="653">
+              <caret line="128" column="1" lean-forward="true" selection-start-line="128" selection-start-column="1" selection-end-line="128" selection-end-column="1" />
             </state>
           </provider>
         </entry>
@@ -121,7 +117,7 @@
       <find>&lt;br&gt;</find>
       <find>&lt;</find>
       <find>&gt;</find>
-      <find>xperience. 项目与工作经验</find>
+      <find />
     </findStrings>
     <replaceStrings>
       <replace>czyProperties</replace>
@@ -184,8 +180,8 @@
         <option value="$PROJECT_DIR$/html/archive.html" />
         <option value="$PROJECT_DIR$/html/iOS/shoppinCar/ShoppingCar.html" />
         <option value="$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html" />
-        <option value="$PROJECT_DIR$/html/Other/Resume/MyResume.html" />
         <option value="$PROJECT_DIR$/CSS/MyResume.css" />
+        <option value="$PROJECT_DIR$/html/Other/Resume/MyResume.html" />
       </list>
     </option>
   </component>
@@ -415,12 +411,12 @@
       <workItem from="1562282987223" duration="410000" />
       <workItem from="1562364031402" duration="2900000" />
       <workItem from="1562367964687" duration="661000" />
-      <workItem from="1562987581595" duration="3437000" />
+      <workItem from="1562987581595" duration="3759000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="207953000" />
+    <option name="totallyTimeSpent" value="208275000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="973" extended-state="6" />
@@ -805,23 +801,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/CSS/MyResume.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="653">
+          <caret line="128" column="1" lean-forward="true" selection-start-line="128" selection-start-column="1" selection-end-line="128" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/html/Other/Resume/MyResume.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="26" column="20" lean-forward="true" selection-start-line="26" selection-start-column="20" selection-end-line="26" selection-end-column="20" />
+        <state relative-caret-position="427">
+          <caret line="42" column="46" selection-start-line="42" selection-start-column="46" selection-end-line="42" selection-end-column="46" />
           <folding>
             <element signature="e#3928#3951#0" expanded="true" />
             <element signature="e#4556#5343#0" />
             <element signature="e#5594#5866#0" />
             <element signature="e#6134#6369#0" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CSS/MyResume.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="673">
-          <caret line="125" column="9" lean-forward="true" selection-start-line="125" selection-start-column="9" selection-end-line="125" selection-end-column="9" />
         </state>
       </provider>
     </entry>
