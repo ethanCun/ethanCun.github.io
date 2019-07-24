@@ -50,6 +50,7 @@
         <li><a href="#RequiredFullScreen">二十三、"Invalid Bundle. Your app supports Multitasking on iPad, so you must include the UILaunchStoryboardName key in your bundle, 'jianongzhenghe.zlgNew’.
         </a> </li>
         <li><a href="#permission">二十四、 The file couldn’t be opened because you don’t have permission to view it.</a> </li>
+        <li><a href="#bundle">二十五、 使用NSbundle加载图片</a> </li>
     </ul>
 
     <p class="smallTitle" id="urlDetail"><b>一、如何输出超链接的各个组成部分</b></p>
@@ -636,6 +637,31 @@
             解决：把info.plist的文件中的Executable.file中的文件修改为:$(PRODUCT_NAME);
             如果以前就是这个，那就把value 值删掉设成空，build failed 一次，然后再粘贴上，build success.
         </p>
+    </div>
+
+    <p class="smallTitle" id="bundle">二十五、 使用NSBundle加载图片</p>
+    <div class="contents">
+
+        <p>新建setting.bundle文件，在他下面建一个images文件夹，将图片放到images文件夹下面</p>
+        <p>[NSBundle mainBundle]指的是项目路径下，主程序是一个Bundle，里面包含了nib文件、编译代码以及其它资源的目录等。</p>
+        <p>[UIImage imageNamed:]是从mainBundle下加载图片, 因此将图片直接放在项目路径下，或者放到Asset.xcassets下
+        都可以直接读出来，但是放到新建的bundle下是读不出来的。</p>
+        <pre>
+
+            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(50, 200, 150, 150)];
+            [self.view addSubview:imageView];
+
+            NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"bundle"];
+            NSBundle *bundle = [NSBundle bundleWithPath:[NSString stringWithFormat:@"%@/images", bundlePath]];
+            NSString *imgPath = [bundle pathForResource:@"1" ofType:@"png"];
+
+            imageView.image = [UIImage imageWithContentsOfFile:imgPath];
+
+            //imageView.image = [UIImage imageNamed:@"1.png" inBundle:bundle compatibleWithTraitCollection:nil];
+
+            //imageView.image = [UIImage imageNamed:@"Localizable3.png" inBundle:[NSBundle mainBundle] compatibleWithTraitCollection:nil];
+
+        </pre>
     </div>
 
     <div id="container"></div>
