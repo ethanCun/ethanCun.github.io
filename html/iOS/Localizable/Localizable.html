@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iOS国际化</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">InfoPlist.strings</span>
+    <span class="label label-warning">Localizable.strings</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">iOS国际化</p>
+    <hr>
+
+    <p class="smallTitle">1. 设置项目支持语言Localizations</p>
+    <pre>
+        project -> Info -> Localizations 添加语言
+    </pre>
+    <p class="contents">如下图:</p>
+    <img src="../../../Source/iOSLocalizable/Localizable1.png">
+
+    <p class="smallTitle">2. 普通组件国际化</p>
+    <pre>
+        新建Localizable.strings文件 -> 点击Localize -> 在Localization开面设置支持的语言
+    </pre>
+    <p class="contents">如下图:</p>
+    <img src="../../../Source/iOSLocalizable/新建strings文件.png">
+    <img src="../../../Source/iOSLocalizable/Localizable2.png">
+
+    <p class="smallTitle">3. LaunchScreen国际化</p>
+    <pre>
+        新建launchscreen_Hans.storyboard文件,对应中文下的启动页，多语言下对立建立多个 ->
+        新建InfoPlist文件 ->  点击Localize -> 在Localization开面设置支持的语言
+        在对应的.storyboard文件里设置，如：
+        中文： "UILaunchStoryboardName" = "LaunchScreen_Hans";
+        英文： "UILaunchStoryboardName" = "LaunchScreen";
+    </pre>
+    <p class="contents">如下图:</p>
+    <img src="../../../Source/iOSLocalizable/新建LaunchScreen文件.png">
+    <img src="../../../Source/iOSLocalizable/Localizable3.png">
+
+    <p class="smallTitle">4. icon图标国际化</p>
+    <pre>
+        如LaunchScreen一样，在新建InfoPlist.strings添加：
+        中文: "CFBundleDisplayName" = "环信";
+        英文: "CFBundleDisplayName" = "huanxin";
+    </pre>
+
+</div>
+
+</body>
+</html>
