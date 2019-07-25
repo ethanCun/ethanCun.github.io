@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>第一个springmvc项目</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">springmvc</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">第一个springmvc项目</p>
+    <hr>
+
+    <div class="contentBgDiv">
+
+        <p class="contents">
+            1. 在idea新建一个spring项目如下，勾选springmvc， 如下图：
+        </p>
+        <img src="../../../Source/springmvc/springmvc1.png">
+
+        <p class="contents">
+            2. 新建的项目结构, lib库， src空的项目结构, web下默认的applicationContext.xml， dispatcher-servlet.xml，
+            web.xml， 以及index.jsp
+        </p>
+        <p class="contents">web.xml</p>
+        <pre>
+            &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+                        &lt;web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+                                 version="4.0"&gt;
+                &lt;context-param&gt;
+                    &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+                    &lt;param-value&gt;/WEB-INF/applicationContext.xml&lt;/param-value&gt;
+                &lt;/context-param&gt;
+                &lt;listener&gt;
+                    &lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener&lt;/listener-class&gt;
+                &lt;/listener&gt;
+                &lt;servlet&gt;
+                    &lt;servlet-name&gt;<b>dispatcher</b>&lt;/servlet-name&gt;
+                    &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+                    &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+                &lt;/servlet&gt;
+                &lt;servlet-mapping&gt;
+                    &lt;servlet-name&gt;dispatcher&lt;/servlet-name&gt;
+                    &lt;url-pattern&gt;<b>/</b>&lt;/url-pattern&gt;
+                &lt;/servlet-mapping&gt;
+            
+            &lt;/web-app&gt;            
+        </pre>
+        <p class="contents">applicationContext.xml:</p>
+        <pre>
+            &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+            &lt;beans xmlns="http://www.springframework.org/schema/beans"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
+
+            &lt;/beans&gt;
+        </pre>
+        <p class="contents">dispatch-servlet.xml<b>(规则为servelet-name+ '-servlet.xml')</b></p>
+        <pre>
+            
+            &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+                        &lt;beans xmlns="http://www.springframework.org/schema/beans"
+                               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                               xmlns:context="http://www.springframework.org/schema/context"
+                               xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"&gt;
+                            
+                <b>&lt;!--配置需要扫描的包 不然项目找不到需要扫描的包类 项目结构如下面的图 --&gt;</b>
+                &lt;context:component-scan base-package="com.springmvcdemo.demo"&gt;&lt;/context:component-scan&gt;
+            
+                <b>&lt;!--视图解析器 没有配置 在控制器里面返回hello会报500错误--&gt;</b>
+                &lt;bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"&gt;
+            
+                    &lt;!--视图路径--&gt;
+                    &lt;property name="prefix" value="/WEB-INF/jsp/"&gt;&lt;/property&gt;
+            
+                    &lt;!--视图名称后缀--&gt;
+                    &lt;property name="suffix" value=".jsp"&gt;&lt;/property&gt;
+            
+                &lt;/bean&gt;
+            
+            &lt;/beans&gt;
+        </pre>
+
+        <img src="../../../Source/springmvc/springmvc5.png">
+        <img src="../../../Source/springmvc/springmvc4.png">
+
+        <p class="contents">
+            3.添加tomcat服务器: run -> Edit Configurations; 添加Artifacts:
+        </p>
+        <img src="../../../Source/springmvc/springmvc2.png">
+        <img src="../../../Source/springmvc/springmvc3.png">
+
+        <p class="contents">
+            4. run启动之后默认访问：http://localhost:8080/index.jsp
+        </p>
+        <p class="contents">
+            http://localhost:8080/hello 访问测试控制器
+        </p>
+
+        <br>
+    </div>
+</div>
+</body>
+</html>
