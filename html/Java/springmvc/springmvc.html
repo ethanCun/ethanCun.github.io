@@ -93,16 +93,36 @@
         </pre>
 
         <img src="../../../Source/springmvc/springmvc5.png">
+
+        <p class="contents">
+            3.编写controller代码，并配置扫描/视图解析，如上面的dispatch-servlet.xml:
+        </p>
+        <pre>
+            @Controller
+            public class Hello {
+
+                @RequestMapping(value = "/hello")
+                public String hello(Model model){
+
+                    <b>controller向model传值</b>
+                    model.addAttribute("message", "走到了这里");
+
+                    // /WEB-INF/jsp/hello.jsp
+                    return "hello";
+                }
+            }
+        </pre>
+
         <img src="../../../Source/springmvc/springmvc4.png">
 
         <p class="contents">
-            3.添加tomcat服务器: run -> Edit Configurations; 添加Artifacts:
+            4.添加tomcat服务器: run -> Edit Configurations; 添加Artifacts:
         </p>
         <img src="../../../Source/springmvc/springmvc2.png">
         <img src="../../../Source/springmvc/springmvc3.png">
 
         <p class="contents">
-            4. run启动之后默认访问：http://localhost:8080/index.jsp
+            5. run启动之后默认访问：http://localhost:8080/index.jsp
         </p>
         <p class="contents">
             http://localhost:8080/hello 访问测试控制器
