@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>让div水平垂直居中的方式</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">div水平居中</span>
+    <span class="label label-info">div垂直居中</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">让div水平垂直居中的方式</p>
+    <hr>
+
+    <div class="contentBgDiv">
+
+        <p class="contents">大概效果:</p>
+        <img src="../../../Source/DicCenter/divCenter.png">
+        
+        <p class="smallTitle">1. 使用弹性布局</p>
+        <p class="contents">下面使用uni-app代码演示：</p>
+        <p class="contents">相当于html：</p>
+        <pre>
+
+            &lt;!-- 导航栏开始 --&gt;
+            &lt;view class="navi"&gt;
+                &lt;view class="searchbar"&gt;
+                    &lt;image class="searchImage" src="../../../static/main/搜索.png"&gt;&lt;/image&gt;
+                    &lt;text class="searchText"&gt;商品名称&lt;/text&gt;
+                &lt;/view&gt;
+            &lt;/view&gt;
+            &lt;!-- 导航栏结束 --&gt;
+        </pre>
+        <p class="contents">css:</p>
+        <pre>
+
+            .navi{
+
+                background: #E12A25;
+                height: 128rpx;
+
+                <b>/* 使用flex弹性布局实现 垂直居中水平居中 */</b>
+                display: flex;
+                align-items: center;/*定义body的元素垂直居中*/
+                justify-content: center;/*定义body的里的元素水平居中*/
+            }
+
+            .searchbar{
+
+                background: white;
+                border-radius: 10rpx;
+                width: 60%;
+                height: 80rpx;
+
+                /* searchbar的子元素弹性布局 */
+                display: flex;
+                flex-direction: row;
+            }
+        </pre>
+
+        <p class="smallTitle">2. 使用非弹性布局</p>
+        <p class="contents">css：</p>
+        <pre>
+
+            ﻿.navi{
+
+                background: #E12A25;
+                height: 128rpx;
+            }
+
+            .searchbar{
+
+                background: white;
+                border-radius: 10rpx;
+                width: 60%;
+                height: 80rpx;
+                display: flex;
+                flex-direction: row;
+
+                <b>/* 水平居中 */</b>
+                margin: 0 auto;
+
+                <b>/* 垂直居中 */</b>
+                /* 默认情况下，由于position的值为static（静止的、不可以移动的）,
+                元素在文档流里是从上往下、从左到右紧密的布局的，我们不可以直接通过top、left等属性改变它的偏移。
+                所以，想要移动元素的位置，就要把position设置为不是static的其他值，如relative,absolute,fixed等。
+                然后，就可以通过top、bottom、right、left等属性使它在文档中发生位置偏移（
+                注意，relative是不会使元素脱离文档流的，absolute和fixed则会！也就是说，relative会占据着移动之前的位置，
+                但是absolute和fixed就不会 */
+                position: relative;
+                /* 向下偏移父元素高度的一半 */
+                top: 50%;
+                /* 再往上偏移子元素高度的一半就垂直居中了 */
+                transform: translateY(-50%);
+            }
+
+        </pre>
+
+        <br>
+    </div>
+</div>
+
+</body>
+</html>

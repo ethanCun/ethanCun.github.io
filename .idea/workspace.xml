@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="" />
+    <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/archive.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/archive.html" afterDir="false" />
+    </list>
     <ignored path="newCZY.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -57,44 +60,38 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="archive.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="archive.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/html/archive.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1272">
-              <caret line="53" column="41" selection-start-line="53" selection-start-column="41" selection-end-line="53" selection-end-column="41" />
+            <state relative-caret-position="537">
+              <caret line="117" lean-forward="true" selection-start-line="117" selection-end-line="117" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DetailiOSNotes.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html">
+      <file leaf-file-name="Shiro.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/html/Java/Shiro/Shiro.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="551">
-              <caret line="23" column="8" lean-forward="true" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
+            <state relative-caret-position="456">
+              <caret line="19" column="41" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="41" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MyResume.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/html/Other/Resume/MyResume.html">
+      <file leaf-file-name="springmvc.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/html/Java/springmvc/springmvc.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="427">
-              <caret line="42" column="46" selection-start-line="42" selection-start-column="46" selection-end-line="42" selection-end-column="46" />
-              <folding>
-                <element signature="e#3928#3951#0" expanded="true" />
-                <element signature="e#4556#5343#0" />
-                <element signature="e#5594#5866#0" />
-                <element signature="e#6134#6369#0" />
-              </folding>
+            <state relative-caret-position="528">
+              <caret line="22" column="23" selection-start-line="22" selection-start-column="23" selection-end-line="22" selection-end-column="23" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MyResume.css" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/CSS/MyResume.css">
+      <file leaf-file-name="DivCenter.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/html/HTML5/DivCenter/DivCenter.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="653">
-              <caret line="128" column="1" lean-forward="true" selection-start-line="128" selection-start-column="1" selection-end-line="128" selection-end-column="1" />
+            <state relative-caret-position="96">
+              <caret line="4" column="24" lean-forward="true" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -115,9 +112,9 @@
       <find>febsProperties</find>
       <find>LogManager</find>
       <find>&lt;br&gt;</find>
+      <find>xperience. 项目与工作经验</find>
       <find>&lt;</find>
       <find>&gt;</find>
-      <find />
     </findStrings>
     <replaceStrings>
       <replace>czyProperties</replace>
@@ -131,9 +128,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/html/iOS/GCDAndNSOperationQueue/GCDAndNSOperationQueue.html" />
-        <option value="$PROJECT_DIR$/html/iOS/JPushSummarise/JPushSummarise.html" />
-        <option value="$PROJECT_DIR$/html/iOS/lldbSummarise/lldb.html" />
         <option value="$PROJECT_DIR$/html/iOS/LocksIniOS/LocksIniOS.html" />
         <option value="$PROJECT_DIR$/html/iOS/navAndTabBarDetails/NavAndTabBar.html" />
         <option value="$PROJECT_DIR$/html/iOS/RACSummarise/RACNormalUse.html" />
@@ -146,7 +140,6 @@
         <option value="$PROJECT_DIR$/html/Other/PHPNotes/PhpNotes.html" />
         <option value="$PROJECT_DIR$/html/ReactNative/ReactNativeConfig/ReactNativeConfig.html" />
         <option value="$PROJECT_DIR$/html/ReactNative/ReactNativeRecord/ReactNativeRecord.html" />
-        <option value="$PROJECT_DIR$/CSS/iOS/newMain/newMain.css" />
         <option value="$PROJECT_DIR$/html/iOS/RACSummarise/RACSummarise.html" />
         <option value="$PROJECT_DIR$/CSS/ArcticleList.css" />
         <option value="$PROJECT_DIR$/html/Other/OtherArticleList.html" />
@@ -163,25 +156,29 @@
         <option value="$PROJECT_DIR$/html/Java/DevProdConfig/DevProdConfig.html" />
         <option value="$PROJECT_DIR$/html/Java/Generator/MapperGenerator.html" />
         <option value="$PROJECT_DIR$/html/Java/Generator/MybatisGenerator.html" />
-        <option value="$PROJECT_DIR$/html/Java/Tool/tool.html" />
         <option value="$PROJECT_DIR$/html/Java/Shiro/Shiro.html" />
         <option value="$PROJECT_DIR$/html/Java/layui.html" />
-        <option value="$PROJECT_DIR$/html/Java/layui/layui.html" />
         <option value="$PROJECT_DIR$/html/Java/thymeleaf.html" />
         <option value="$PROJECT_DIR$/html/Java/Logback/Logback.html" />
         <option value="$PROJECT_DIR$/html/Java/druid/druid.html" />
-        <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/html/Java/mysqlCount/mysqlCount.html" />
         <option value="$PROJECT_DIR$/html/Java/JavaxValidate/JavaxValidate.html" />
         <option value="$PROJECT_DIR$/html/Java/JWT/JWT.html" />
         <option value="$PROJECT_DIR$/html/Java/Common/common.html" />
         <option value="$PROJECT_DIR$/html/Java/Redis/Redis.html" />
         <option value="$PROJECT_DIR$/html/Java/RedisValidateToken/RedisValidateToken.html" />
-        <option value="$PROJECT_DIR$/html/archive.html" />
         <option value="$PROJECT_DIR$/html/iOS/shoppinCar/ShoppingCar.html" />
-        <option value="$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html" />
         <option value="$PROJECT_DIR$/CSS/MyResume.css" />
         <option value="$PROJECT_DIR$/html/Other/Resume/MyResume.html" />
+        <option value="$PROJECT_DIR$/html/Java/Tool/tool.html" />
+        <option value="$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html" />
+        <option value="$PROJECT_DIR$/html/iOS/Localizable/Localizable.html" />
+        <option value="$PROJECT_DIR$/html/Java/layui/layui.html" />
+        <option value="$PROJECT_DIR$/CSS/iOS/newMain/newMain.css" />
+        <option value="$PROJECT_DIR$/index.html" />
+        <option value="$PROJECT_DIR$/html/Java/springmvc/springmvc.html" />
+        <option value="$PROJECT_DIR$/html/HTML5/DivCenter/DivCenter.html" />
+        <option value="$PROJECT_DIR$/html/archive.html" />
       </list>
     </option>
   </component>
@@ -222,6 +219,19 @@
             <path>
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
               <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
+              <item name="CSS" type="462c0819:PsiDirectoryNode" />
+              <item name="iOS" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
+              <item name="CSS" type="462c0819:PsiDirectoryNode" />
+              <item name="iOS" type="462c0819:PsiDirectoryNode" />
+              <item name="newMain" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
               <item name="html" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -234,33 +244,48 @@
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
               <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
               <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Other" type="462c0819:PsiDirectoryNode" />
+              <item name="HTML5" type="462c0819:PsiDirectoryNode" />
+              <item name="DivCenter" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
               <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
               <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="Other" type="462c0819:PsiDirectoryNode" />
-              <item name="Resume" type="462c0819:PsiDirectoryNode" />
+              <item name="Java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
+              <item name="html" type="462c0819:PsiDirectoryNode" />
+              <item name="Java" type="462c0819:PsiDirectoryNode" />
+              <item name="layui" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
+              <item name="html" type="462c0819:PsiDirectoryNode" />
+              <item name="Java" type="462c0819:PsiDirectoryNode" />
+              <item name="Shiro" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
+              <item name="html" type="462c0819:PsiDirectoryNode" />
+              <item name="Java" type="462c0819:PsiDirectoryNode" />
+              <item name="springmvc" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
               <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
               <item name="Source" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="Source" type="462c0819:PsiDirectoryNode" />
-              <item name="resume" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="AndroidView" />
       <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -411,41 +436,48 @@
       <workItem from="1562282987223" duration="410000" />
       <workItem from="1562364031402" duration="2900000" />
       <workItem from="1562367964687" duration="661000" />
-      <workItem from="1562987581595" duration="3759000" />
+      <workItem from="1562987581595" duration="3772000" />
+      <workItem from="1563863859636" duration="88000" />
+      <workItem from="1563931711546" duration="955000" />
+      <workItem from="1563935423212" duration="895000" />
+      <workItem from="1564014552201" duration="534000" />
+      <workItem from="1564015230178" duration="365000" />
+      <workItem from="1564015747721" duration="1180000" />
+      <workItem from="1564039760261" duration="2223000" />
+      <workItem from="1564710746872" duration="843000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="208275000" />
+    <option name="totallyTimeSpent" value="215371000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="973" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
-      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="right" id="Maven Projects" order="6" />
-      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info id="Capture Tool" order="2" />
-      <window_info id="Designer" order="3" />
-      <window_info anchor="bottom" id="Docker" order="10" show_stripe_button="false" />
-      <window_info anchor="right" id="Database" order="7" />
-      <window_info anchor="right" id="Structure" order="9" side_tool="true" weight="0.24959481" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info id="UI Designer" order="4" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="4" />
       <window_info id="Image Layers" order="1" />
       <window_info anchor="right" id="Capture Analysis" order="5" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="right" id="Maven Projects" order="6" />
+      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Terminal" order="8" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2682013" />
+      <window_info id="Capture Tool" order="2" />
+      <window_info id="Designer" order="3" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2938972" />
+      <window_info anchor="bottom" id="Docker" order="10" show_stripe_button="false" />
       <window_info anchor="bottom" id="Alibaba Cloud View" order="10" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="right" id="Database" order="7" />
       <window_info id="Alibaba Cloud Explorer" order="6" />
+      <window_info anchor="right" id="Structure" order="9" side_tool="true" weight="0.24959481" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info id="UI Designer" order="4" />
       <window_info anchor="right" id="Theme Preview" order="8" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Messages" order="11" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -453,6 +485,7 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -470,73 +503,24 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/html/iOS/RACSummarise/RACNormalUse.html">
+    <entry file="file://$PROJECT_DIR$/html/archive.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="5" selection-start-line="5" selection-end-line="19" selection-end-column="6" />
+        <state relative-caret-position="2160">
+          <caret line="90" column="62" selection-start-line="90" selection-start-column="62" selection-end-line="90" selection-end-column="62" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/html/iOS/RACSummarise/RACSummariseTwo.html">
+    <entry file="file://$PROJECT_DIR$/html/Java/Shiro/Shiro.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="271" column="9" selection-start-line="271" selection-start-column="9" selection-end-line="271" selection-end-column="9" />
+        <state relative-caret-position="456">
+          <caret line="19" column="41" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="41" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/html/iOS/WexinDetailNotes/WeixinDetailNotes.html">
+    <entry file="file://$PROJECT_DIR$/html/Java/springmvc/springmvc.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="32" column="19" selection-start-line="32" selection-start-column="19" selection-end-line="32" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html/Other/Delete_DS_Store/Delete_DS_Store.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="5" selection-start-line="5" selection-end-line="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html/Other/PHPNotes/PhpNotes.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="15" column="42" selection-start-line="15" selection-start-column="42" selection-end-line="15" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html/HTML5/Font-awesome/Font-owesome.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="62">
-          <caret line="5" selection-start-line="5" selection-end-line="15" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html/ReactNative/ReactNativeRecord/ReactNativeRecord.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="232" column="4" selection-start-line="232" selection-start-column="4" selection-end-line="232" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html/iOS/Block/Block.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="5" selection-start-line="5" selection-end-line="17" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html/ReactNative/ReactNativeConfig/ReactNativeConfig.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="14" column="12" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CSS/iOS/newMain/newMain.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="360" selection-start-line="360" selection-end-line="360" />
+        <state relative-caret-position="2592">
+          <caret line="108" lean-forward="true" selection-start-line="108" selection-end-line="108" />
         </state>
       </provider>
     </entry>
@@ -603,13 +587,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/html/iOS/iOSArticleList.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="593">
-          <caret line="66" column="16" selection-start-line="66" selection-start-column="16" selection-end-line="66" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/html/iOS/SwiftEasyToForgot/SwiftEasyToForgot.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
@@ -659,13 +636,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/html/Java/DevProdConfig/DevProdConfig.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret selection-end-line="19" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/TomcatPublish/TomcatPublish.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="312">
@@ -680,29 +650,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/html/Java/Tool/tool.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="50" column="47" selection-start-line="50" selection-start-column="47" selection-end-line="50" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html/Java/Shiro/Shiro.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="19" column="41" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/layui.html" />
     <entry file="file://$PROJECT_DIR$/html/Java/thymeleaf.html" />
-    <entry file="file://$PROJECT_DIR$/html/Java/layui/layui.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
-          <caret line="21" column="57" selection-start-line="21" selection-start-column="57" selection-end-line="21" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/Generator/MapperGenerator.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="48">
@@ -714,13 +663,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="671">
           <caret line="28" column="19" selection-start-line="28" selection-start-column="19" selection-end-line="28" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="731">
-          <caret line="75" column="15" selection-start-line="75" selection-start-column="15" selection-end-line="75" selection-end-column="15" />
         </state>
       </provider>
     </entry>
@@ -742,13 +684,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="168">
           <caret line="7" column="2" selection-start-line="7" selection-start-column="2" selection-end-line="32" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html/Java/Common/common.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="469">
-          <caret line="43" selection-start-line="43" selection-end-line="43" />
         </state>
       </provider>
     </entry>
@@ -787,37 +722,122 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/html/archive.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1272">
-          <caret line="53" column="41" selection-start-line="53" selection-start-column="41" selection-end-line="53" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="551">
-          <caret line="23" column="8" lean-forward="true" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/CSS/MyResume.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="653">
-          <caret line="128" column="1" lean-forward="true" selection-start-line="128" selection-start-column="1" selection-end-line="128" selection-end-column="1" />
+        <state relative-caret-position="3072">
+          <caret line="128" column="1" selection-start-line="128" selection-start-column="1" selection-end-line="128" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/Java/DevProdConfig/DevProdConfig.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="19" column="26" selection-start-line="19" selection-start-column="26" selection-end-line="19" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/Java/Common/common.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1032">
+          <caret line="43" selection-start-line="43" selection-end-line="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/Java/Tool/tool.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="44" column="14" selection-start-line="44" selection-start-column="14" selection-end-line="44" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/lib/platform-impl.jar!/resources/html5-schema/html5/phrase.rnc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="9" column="16" selection-start-line="9" selection-start-column="16" selection-end-line="9" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/iOS/iOSArticleList.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="731">
+          <caret line="66" column="16" selection-start-line="66" selection-start-column="16" selection-end-line="66" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/iOS/navAndTabBarDetails/NavAndTabBar.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="48">
+          <caret line="2" selection-start-line="2" selection-end-line="22" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CSS/iOS/newMain/newMain.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="457">
+          <caret line="129" column="9" lean-forward="true" selection-start-line="129" selection-start-column="9" selection-end-line="129" selection-end-column="9" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/html/Other/Resume/MyResume.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="427">
-          <caret line="42" column="46" selection-start-line="42" selection-start-column="46" selection-end-line="42" selection-end-column="46" />
-          <folding>
-            <element signature="e#3928#3951#0" expanded="true" />
-            <element signature="e#4556#5343#0" />
-            <element signature="e#5594#5866#0" />
-            <element signature="e#6134#6369#0" />
-          </folding>
+        <state relative-caret-position="120">
+          <caret line="5" column="22" lean-forward="true" selection-start-line="5" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="18" column="15" selection-start-line="18" selection-start-column="15" selection-end-line="18" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/Java/layui/layui.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="731">
+          <caret line="808" selection-start-line="808" selection-end-line="808" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/iOS/Localizable/Localizable.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-98">
+          <caret line="4" selection-start-line="4" selection-end-line="21" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/iOS/DetailiOSNotes/DetailiOSNotes.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="674">
+          <caret line="657" column="41" selection-start-line="657" selection-start-column="41" selection-end-line="657" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/Java/Shiro/Shiro.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="19" column="41" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/Java/springmvc/springmvc.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="22" column="23" selection-start-line="22" selection-start-column="23" selection-end-line="22" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/HTML5/DivCenter/DivCenter.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="96">
+          <caret line="4" column="24" lean-forward="true" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/archive.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="537">
+          <caret line="117" lean-forward="true" selection-start-line="117" selection-end-line="117" />
         </state>
       </provider>
     </entry>
