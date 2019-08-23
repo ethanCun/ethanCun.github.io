@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>在springboot访问静态资源</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">WebMvcConfigurerAdapter</span>
+    <span class="label label-info">springboot访问静态资源</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">在springboot访问静态资源的方式</p>
+    <hr>
+
+    <p class="contents">
+        springboot项目中经常需要访问项目或者服务器其他文件下的资源，如加载static下的js、css、imgs文件，或者
+        做图片、视频的上传，上传成功后需要去指定的文件下加载资源进行显示.
+    </p>
+
+    <p class="smallTitle">一、重写WebMvcConfigurerAdapter，并配置加载</p>
+    <pre>
+
+        import org.springframework.context.annotation.Configuration;
+        import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+        import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+        @Configuration
+        public class webMvcConfigure extends WebMvcConfigurerAdapter {
+
+            @Override
+            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+
+                //加载指定位置的资源
+                registry.addResourceHandler("/image/**")
+                        .addResourceLocations("file:/Users/cunethan/Desktop/uploads/");
+                //加载resources目录下的资源
+                //registry.addResourceHandler("/uploads/images/**")
+                    //.addResourceLocations("classpath:/uploads/images/");
+                super.addResourceHandlers(registry);
+            }
+        }
+    </pre>
+
+    <p class="contents">
+        "/image/**" : 表示映射url为：localhost:8080/image/资源名称
+    </p>
+    <p class="contents">
+        "file:/Users/cunethan/Desktop/uploads/" : 是资源在本地(服务器)上的真实位置
+    </p>
+    <p class="contents">
+        需要注意的是: 因为是访问资源，所以需要加上file:
+    </p>
+
+    <p class="smallTitle">二、 配置application.properties:</p>
+    <pre>
+
+        spring.mvc.static-path-pattern=/image/**
+        spring.resources.static-locations=file:/Users/cunethan/Desktop/uploads/
+    </pre>
+
+    <p class="contents">同样需要加上file: </p>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
