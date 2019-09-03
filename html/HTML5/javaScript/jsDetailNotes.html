@@ -83,6 +83,7 @@
 
                 names.forEach(function (value) {
 
+                    //不能使用break;来跳出循环。 使用throw new Error()来终止遍历
                     console.log('value = ' + value);
                 })
             </pre>
@@ -186,12 +187,6 @@
     </div>
 </div>
 
-<script>
-
-
-
-
-</script>
 
 </body>
 </html>
