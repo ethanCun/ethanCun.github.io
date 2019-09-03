@@ -26,6 +26,7 @@
         <li><a href="#forin">js中数组遍历的遍历：forin for foreach区别</a></li>
         <li><a href="#clear">js清空数组的方式：[] length=0 splice</a></li>
         <li><a href="#duplicateRemoval">js去重</a></li>
+        <li><a href="#func">js两中定义函数方式的区别</a> </li>
     </ul>
 
     <div class="contentBgDiv">
@@ -126,10 +127,71 @@
             </pre>
         </div>
 
+        <p class="smallTitle" id="func">四、js两中定义函数方式的区别（函数声明是做了完全提升的，而声明变量则是做部分提升）</p>
+
+        <div class="contentBgDiv">
+
+            <p>1. 显式申明函数</p>
+            <pre>
+
+                //正常输出 原因：js的函数声明是完全提升，JavaScript引擎会将add函数的声明放到其作用域最前面。
+                //typeof(add): function
+                console.log(add(10, 20));
+
+                function add(a , b) {
+
+                    return a+b;
+                }
+
+                //正常输出
+                console.log(add(100, 200));
+
+                //函数声明提升后相当于:
+                function add(a , b) {
+
+                    return a+b;
+                }
+                console.log(add(10, 20));
+                console.log(add(100, 200));
+            </pre>
+
+            <p>2. 匿名函数</p>
+            <pre>
+
+                //报错：Uncaught TypeError: add is not a function
+                //typeof(add): undefined
+                //原因：使用var的定义也是会进行代码提升的，但是只对于声明有效，对于赋值过程是无效的，只有变量的定义被提升了。
+                console.log(add(10, 20));
+
+                var add = function(a , b) {
+
+                    return a+b;
+                }
+
+                console.log(add(100, 200));
+
+                //变量提升相当于
+                var add;
+                console.log(add(10, 20));
+                add = function(a , b) {
+
+                    return a+b;
+                }
+                console.log(add(100, 200));
+            </pre>
+
+        </div>
+
         <br>
     </div>
 </div>
 
+<script>
+
+
+
+
+</script>
 
 </body>
 </html>
