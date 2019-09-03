@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>js笔记</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+
+<div class="labels">
+
+    <span class="label label-primary">js</span>
+</div>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">js笔记</p>
+    <hr>
+
+    <ul>
+        <li><a href="#forin">js中数组遍历的遍历：forin for foreach区别</a></li>
+        <li><a href="#clear">js清空数组的方式：[] length=0 splice</a></li>
+        <li><a href="#duplicateRemoval">js去重</a></li>
+    </ul>
+
+    <div class="contentBgDiv">
+
+        <p class="smallTitle" id="forin">一、js中数组遍历的遍历：forin for foreach区别</p>
+
+        <div class="contentBgDiv">
+
+            <p class="success">for</p>
+            <pre>
+
+                var names = ['zhangsan', 'lisi', 'wangwu'];
+
+                for (var i = 0; i < names.length; i++) {
+
+                    //输出的是元素  使用break;终止循环
+                    console.log('for : ' + names[i]);
+                }
+            </pre>
+
+            <p class="detail">forin</p>
+            <pre>
+
+                for (var index in names){
+
+                    //输出的是下标key
+                    console.log('forin : ' + index);
+                }
+            </pre>
+
+            <p class="detail">forin有一个最大的坑：就是如果你对数组进行了扩展，那么在使用forin进行遍历的时候会走扩展，扩展中的输出会在forin中输出。</p>
+            <pre>
+
+                //定义一个Array的扩展:
+                Array.prototype.test = function () {
+
+                    console.log('test');
+                }
+
+                var names = new Array();
+                names.push('zhangsan');
+                names.push('lisi');
+
+                //输出zhangsanm lisi test
+                for (var value in names) {
+
+                    console.log('value = ' + value);
+                }
+
+            </pre>
+
+            <p class="detail">foreach</p>
+            <pre>
+
+                names.forEach(function (value) {
+
+                    console.log('value = ' + value);
+                })
+            </pre>
+        </div>
+
+        <p class="smallTitle" id="clear">二、js清空数组的方式：[] length=0 splice</p>
+
+        <div class="contentBgDiv">
+
+            <p>arr = [1,2,3]</p>
+            <p>方式1  [] = 0</p>
+            <p>方式2  arr.length = 0;</p>
+            <p>方式3  ary.splice(0,arr.length); 第一个参数起点，第二个删除的长度</p>
+        </div>
+
+        <p class="smallTitle" id="duplicateRemoval">三、js去重</p>
+
+        <div class="contentBgDiv">
+
+            <p>1. 利用indexOf()===-1; 表示不包含</p>
+            <pre>
+
+                function duplicateRemoval(targetArr) {
+
+                    if (targetArr === undefined || targetArr == null || targetArr.length === 0){
+                        return [];
+                    }
+
+                    var arr = [];
+
+                    for (var i=0&#59; i&#60;targetArr.length&#59; i++){
+
+                        //-1表示不包含
+                        if (arr.indexOf(targetArr[i]) === -1){
+
+                            arr.push(names[i]);
+                        }
+                    }
+
+                    return arr;
+                }
+            </pre>
+        </div>
+
+        <br>
+    </div>
+</div>
+
+
+</body>
+</html>

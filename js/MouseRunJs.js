@@ -16,7 +16,7 @@ $(document).ready(function () {
 
         $('.wheel').css('top', top)
 
-    }, 50)
+    }, 50);
 
     //导航栏渐变
     $(document).ready(function () {
