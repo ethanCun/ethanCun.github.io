@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="" />
+    <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/html/Java/springboot-aop/springboot-aop.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/Java/springboot-aop/springboot-aop.html" afterDir="false" />
+    </list>
     <ignored path="newCZY.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -60,8 +62,8 @@
       <file leaf-file-name="springboot-aop.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/html/Java/springboot-aop/springboot-aop.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="291">
-              <caret line="41" column="12" selection-start-line="41" selection-start-column="12" selection-end-line="41" selection-end-column="12" />
+            <state relative-caret-position="259">
+              <caret line="16" column="35" selection-start-line="16" selection-start-column="35" selection-end-line="16" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -476,12 +478,12 @@
       <workItem from="1566548749641" duration="142000" />
       <workItem from="1567475942993" duration="2405000" />
       <workItem from="1567478919268" duration="1494000" />
-      <workItem from="1568619831199" duration="3112000" />
+      <workItem from="1568619831199" duration="3375000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="225147000" />
+    <option name="totallyTimeSpent" value="225410000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="124" width="1920" height="969" extended-state="0" />
@@ -882,8 +884,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/springboot-aop/springboot-aop.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="41" column="12" selection-start-line="41" selection-start-column="12" selection-end-line="41" selection-end-column="12" />
+        <state relative-caret-position="259">
+          <caret line="16" column="35" selection-start-line="16" selection-start-column="35" selection-end-line="16" selection-end-column="35" />
         </state>
       </provider>
     </entry>
