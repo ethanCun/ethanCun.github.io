@@ -15,6 +15,7 @@
     <span class="label label-primary">aop</span>
     <span class="label label-info">切点表达式</span>
     <span class="label label-warning"><a target="_blank" href="https://github.com/ethanCun/springboot/tree/master/springboot-aop">demo</a> </span>
+    <span class="label label-info"><a target="_blank" href="https://segmentfault.com/a/1190000013290504">参考链接</a> </span>
 </div>
 
 <div class="contentBgDiv">
@@ -30,6 +31,11 @@
             发现spring.aop.auto属性默认是开启的，
             也就是说只要引入了AOP依赖后，默认已经增加了@EnableAspectJAutoProxy。
             因此，不需要在DemoApplication中加上这个注解。
+        </p>
+        <p class="introduceText">
+            在pom.xml中点击spring-boot-starter-aop, 发现它依赖了spring-boot-starter之外，
+            还依赖了spring-aop, aspectjweaver。Spring AOP提供的基本的AOP功能，
+            AspectJ提供的完整的AOP框架。
         </p>
         <pre>
             
