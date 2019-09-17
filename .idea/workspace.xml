@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/Java/schedule/schedule.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/Java/schedule/schedule.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/archive.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/archive.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/Java/JavaCollection/JavaCollection.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/Java/JavaCollection/JavaCollection.html" afterDir="false" />
     </list>
     <ignored path="newCZY.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -82,14 +80,15 @@
       <file leaf-file-name="JavaCollection.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/html/Java/JavaCollection/JavaCollection.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="192">
-              <caret line="542" column="16" lean-forward="true" selection-start-line="542" selection-start-column="16" selection-end-line="542" selection-end-column="16" />
+            <state relative-caret-position="165">
+              <caret line="637" column="6" selection-start-line="637" selection-start-column="6" selection-end-line="637" selection-end-column="6" />
               <folding>
                 <element signature="n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#div#5;n#div#0;n#body#0;n#html#0;n#!!top" />
               </folding>
             </state>
           </provider>
@@ -192,9 +191,8 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="22" />
-    <option name="y" value="138" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="y" value="134" />
     <option name="width" value="1920" />
     <option name="height" value="970" />
   </component>
@@ -453,15 +451,15 @@
       <workItem from="1568623332915" duration="1302000" />
       <workItem from="1568680144046" duration="145000" />
       <workItem from="1568681116451" duration="1241000" />
-      <workItem from="1568682376851" duration="5152000" />
+      <workItem from="1568682376851" duration="6318000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="233283000" />
+    <option name="totallyTimeSpent" value="234449000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="22" y="138" width="1920" height="970" extended-state="0" />
+    <frame x="0" y="134" width="1920" height="970" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
@@ -852,14 +850,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/JavaCollection/JavaCollection.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="542" column="16" lean-forward="true" selection-start-line="542" selection-start-column="16" selection-end-line="542" selection-end-column="16" />
+        <state relative-caret-position="165">
+          <caret line="637" column="6" selection-start-line="637" selection-start-column="6" selection-end-line="637" selection-end-column="6" />
           <folding>
             <element signature="n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
             <element signature="n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
             <element signature="n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" />
             <element signature="n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
             <element signature="n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#div#5;n#div#0;n#body#0;n#html#0;n#!!top" />
           </folding>
         </state>
       </provider>

@@ -28,6 +28,8 @@
         <li><a href="#superExtends">泛型super和extends区别</a> </li>
         <li><a href="#future">使用Future&lt;T&gt;来接受@Aysnc异步任务的返回值</a> </li>
         <li><a href="#functionInterface">Java中的函数式接口</a> </li>
+        <li><a target="_blank" href="https://www.cnblogs.com/mao2080/p/9460397.html">xss攻击</a> </li>
+        <li><a href="#lambda">Java中的Lambda表达式</a> </li>
     </ul>
 
     <div class="contentBgDiv" id="strategyPattern">
@@ -560,6 +562,92 @@
                 }
             </pre>
         </div>
+    </div>
+
+    <div class="contentBgDiv" id="lambda">
+
+        <p class="smallTitle"><a target="_blank" href="https://github.com/ethanCun/JavaCollection/tree/master/java%E5%9F%BA%E7%A1%80/src/main/java/com/example/demo/lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F">Java中的Lambda表达式</a> </p>
+
+        <div class="contentBgDiv">
+
+            <p class="introduceText">lambda表达式运算符分为两部分，左边指定输入参数，右边是lambda的主体，中间用
+                -> 连接。
+                1. lambda的参数可以不用申明  如果申明了就需要全部申明类型；
+                2. lambda的参数如果只有一个时， 可以省略参数的括号
+                3. ->：可理解为“被用于”的意思
+             </p>
+        </div>
+        <p class="introduceText">声明几个接口给lambda表达式调用:</p>
+        <pre>
+            
+            public interface ILambda {
+            
+                String iLamdba(String a, String b);
+            }
+            public interface IOneParam {
+                
+                String testOneParam(String elem);
+            }
+            //抽象接口
+            public interface IlambdaGeneric&lt;T&gt; {
+            
+                T iLambdaGeneric(T a, T b);
+            } 
+        </pre>
+        <p class="introduceText">带一个参数和两个参数的lambda表达式:</p>
+        <pre>
+            public static String testOneParam(IOneParam iLambda){
+        
+                return iLambda.testOneParam("12");
+            }
+            public static String testLambda(ILambda iLambda){
+
+                return iLambda.iLamdba("1", "2");
+            }
+        </pre>
+        <pre>
+                //匿名类 写接口实现
+                String eee = testOneParam(new IOneParam() {
+        
+                    @Override
+                    public String testOneParam(String elem) {
+                        return elem+elem+elem;
+                    }
+                });
+                System.out.println("eee = " + eee);
+        
+        
+                //使用lambda自定接口实现
+                String oneParamRes = testOneParam(a ->{
+        
+                    return a+a;
+                });
+                System.out.println("oneParamRes = " + oneParamRes);
+        
+        
+                String res = testLambda((a, b) -> {
+        
+                    return a+b;
+                });
+                System.out.println("res = " + res);
+        </pre>
+        <p class="introduceText">泛型lambda表达式:</p>
+        <pre>
+            //抽象接口 &lt;T&gt;申明这时一个抽象方法
+            public static &lt;T&gt; T testLambdaGeneric(IlambdaGeneric&lt;T&gt; ilambdaGeneric, T a, T b){
+        
+                return ilambdaGeneric.iLambdaGeneric(a, b);
+            }
+                
+            //使用lambda自定义接口实现
+            Integer c = testLambdaGeneric((a, b) -&gt; {
+    
+                return a+b;
+    
+            }, 100, 200);
+    
+            System.out.println("c = " + c);
+        </pre>
     </div>
 
     <br>
