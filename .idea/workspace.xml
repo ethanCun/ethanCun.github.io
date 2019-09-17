@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/Java/springboot-aop/springboot-aop.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/Java/springboot-aop/springboot-aop.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/Java/schedule/schedule.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/Java/schedule/schedule.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/archive.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/archive.html" afterDir="false" />
     </list>
     <ignored path="newCZY.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -60,20 +61,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="springboot-aop.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="springboot-aop.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/html/Java/springboot-aop/springboot-aop.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="73">
-              <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="archive.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/html/archive.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2472">
-              <caret line="103" column="44" selection-start-line="103" selection-start-column="44" selection-end-line="103" selection-end-column="44" />
+            <state relative-caret-position="24">
+              <caret line="23" column="8" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -87,11 +79,18 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="schedule.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/html/Java/schedule/schedule.html">
+      <file leaf-file-name="JavaCollection.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/html/Java/JavaCollection/JavaCollection.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret selection-end-line="22" />
+            <state relative-caret-position="192">
+              <caret line="542" column="16" lean-forward="true" selection-start-line="542" selection-start-column="16" selection-end-line="542" selection-end-column="16" />
+              <folding>
+                <element signature="n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+                <element signature="n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -118,9 +117,9 @@
     </findStrings>
     <replaceStrings>
       <replace>czyProperties</replace>
-      <replace>&amp;lt;</replace>
       <replace>&amp;lt;&amp;gt;</replace>
       <replace>&amp;</replace>
+      <replace>&amp;lt;</replace>
       <replace>&amp;gt;</replace>
     </replaceStrings>
   </component>
@@ -130,7 +129,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/html/HTML5/Font-awesome/Font-owesome.html" />
         <option value="$PROJECT_DIR$/html/Other/Delete_DS_Store/Delete_DS_Store.html" />
         <option value="$PROJECT_DIR$/html/Other/PHPNotes/PhpNotes.html" />
         <option value="$PROJECT_DIR$/html/ReactNative/ReactNativeConfig/ReactNativeConfig.html" />
@@ -173,14 +171,15 @@
         <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/html/Java/springmvc/springmvc.html" />
         <option value="$PROJECT_DIR$/html/HTML5/DivCenter/DivCenter.html" />
-        <option value="$PROJECT_DIR$/html/Java/schedule/schedule.html" />
         <option value="$PROJECT_DIR$/html/Java/thymeleaf/thymeleaf.html" />
         <option value="$PROJECT_DIR$/CSS/ArticleDetail.css" />
         <option value="$PROJECT_DIR$/html/Java/VisitResource/VisitResource.html" />
         <option value="$PROJECT_DIR$/js/MouseRunJs.js" />
         <option value="$PROJECT_DIR$/html/HTML5/javaScript/jsDetailNotes.html" />
-        <option value="$PROJECT_DIR$/html/archive.html" />
         <option value="$PROJECT_DIR$/html/Java/springboot-aop/springboot-aop.html" />
+        <option value="$PROJECT_DIR$/html/Java/schedule/schedule.html" />
+        <option value="$PROJECT_DIR$/html/archive.html" />
+        <option value="$PROJECT_DIR$/html/Java/JavaCollection/JavaCollection.html" />
       </list>
     </option>
   </component>
@@ -194,10 +193,10 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="28" />
-    <option name="y" value="199" />
+    <option name="x" value="22" />
+    <option name="y" value="138" />
     <option name="width" value="1920" />
-    <option name="height" value="969" />
+    <option name="height" value="970" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
@@ -207,9 +206,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="AndroidView" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -250,27 +246,7 @@
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
               <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
               <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="HTML5" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="HTML5" type="462c0819:PsiDirectoryNode" />
-              <item name="javaScript" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
               <item name="iOS" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="html" type="462c0819:PsiDirectoryNode" />
-              <item name="iOS" type="462c0819:PsiDirectoryNode" />
-              <item name="AppCheckNotes" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
@@ -290,7 +266,7 @@
               <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
               <item name="html" type="462c0819:PsiDirectoryNode" />
               <item name="Java" type="462c0819:PsiDirectoryNode" />
-              <item name="schedule" type="462c0819:PsiDirectoryNode" />
+              <item name="JavaCollection" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
@@ -299,20 +275,13 @@
               <item name="Java" type="462c0819:PsiDirectoryNode" />
               <item name="springboot-aop" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="js" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ethanCun.github.io" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ethanCun.github.io" type="462c0819:PsiDirectoryNode" />
-              <item name="Source" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -481,15 +450,18 @@
       <workItem from="1567475942993" duration="2405000" />
       <workItem from="1567478919268" duration="1494000" />
       <workItem from="1568619831199" duration="3408000" />
-      <workItem from="1568623332915" duration="310000" />
+      <workItem from="1568623332915" duration="1302000" />
+      <workItem from="1568680144046" duration="145000" />
+      <workItem from="1568681116451" duration="1241000" />
+      <workItem from="1568682376851" duration="5152000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="225753000" />
+    <option name="totallyTimeSpent" value="233283000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="28" y="199" width="1920" height="969" extended-state="0" />
+    <frame x="22" y="138" width="1920" height="970" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
@@ -497,7 +469,7 @@
       <window_info anchor="right" id="Palette&#9;" order="4" />
       <window_info id="Image Layers" order="1" />
       <window_info anchor="right" id="Capture Analysis" order="5" />
-      <window_info active="true" anchor="bottom" id="Event Log" order="9" side_tool="true" visible="true" weight="0.32902467" />
+      <window_info active="true" anchor="bottom" id="Event Log" order="9" side_tool="true" visible="true" weight="0.3286385" />
       <window_info anchor="right" id="Maven Projects" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -505,7 +477,7 @@
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="3" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.32119915" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.3340471" />
       <window_info anchor="bottom" id="Docker" order="10" show_stripe_button="false" />
       <window_info anchor="bottom" id="Alibaba Cloud View" order="10" />
       <window_info anchor="right" id="Database" order="7" />
@@ -540,13 +512,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/html/iOS/PropertyInSwift/PropertyInSwift.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="7" column="39" selection-start-line="7" selection-start-column="39" selection-end-line="7" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/html/iOS/ProtocolInSwiftOne/ProtocolInSwiftOne.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
@@ -840,20 +805,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="365">
           <caret line="83" column="7" selection-start-line="83" selection-start-column="7" selection-end-line="83" selection-end-column="7" />
-          <folding>
-            <element signature="n#pre#2;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#div#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#div#2;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#div#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-            <element signature="n#pre#0;n#div#3;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html/Java/schedule/schedule.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret selection-end-line="22" />
         </state>
       </provider>
     </entry>
@@ -864,13 +815,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/html/iOS/ZYPlayer/ZYPlayer.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="11" selection-start-line="11" selection-end-line="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/CSS/main/main.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="312">
@@ -878,17 +822,45 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/html/Java/schedule/schedule.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="143">
+          <caret line="19" column="26" lean-forward="true" selection-start-line="19" selection-start-column="26" selection-end-line="19" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/iOS/ZYPlayer/ZYPlayer.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="11" selection-start-line="11" selection-end-line="11" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/html/archive.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2472">
-          <caret line="103" column="44" selection-start-line="103" selection-start-column="44" selection-end-line="103" selection-end-column="44" />
+        <state relative-caret-position="166">
+          <caret line="88" column="68" selection-start-line="88" selection-start-column="68" selection-end-line="88" selection-end-column="68" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/springboot-aop/springboot-aop.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="73">
-          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+        <state relative-caret-position="24">
+          <caret line="23" column="8" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html/Java/JavaCollection/JavaCollection.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="542" column="16" lean-forward="true" selection-start-line="542" selection-start-column="16" selection-end-line="542" selection-end-column="16" />
+          <folding>
+            <element signature="n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" />
+            <element signature="n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" />
+          </folding>
         </state>
       </provider>
     </entry>

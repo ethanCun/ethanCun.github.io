@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>java知识记录大全</title>
+
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<!--<div class="labels">-->
+
+    <!--<span class="label label-info"><a target="_blank" href="https://github.com/ethanCun/JavaCollection/tree/master/java%E5%9F%BA%E7%A1%80/src/main/java/com/example/demo">demo</a> </span>-->
+<!--</div>-->
+
+<div class="contentBgDiv">
+
+    <p class="title">java知识记录大全</p>
+    <hr>
+
+    <ul>
+        <li><a href="#strategyPattern">Java的策略模式</a> </li>
+        <li><a href="#Integer">Java中的Integer</a> </li>
+        <li><a href="#String">java中的String</a> </li>
+        <li><a href="#superExtends">泛型super和extends区别</a> </li>
+        <li><a href="#future">使用Future&lt;T&gt;来接受@Aysnc异步任务的返回值</a> </li>
+        <li><a href="#functionInterface">Java中的函数式接口</a> </li>
+    </ul>
+
+    <div class="contentBgDiv" id="strategyPattern">
+
+        <p class="smallTitle"><a target="_blank" href="https://github.com/ethanCun/JavaCollection/tree/master/java基础/src/main/java/com/example/demo/策略模式">Java的策略模式</a> </p>
+
+        <div class="contentBgDiv">
+
+            <p class="introduceText">
+                策略模式：要查询某个业务，只需要把相关业务的接口实现传给这个主方法就行了。
+            </p>
+            <p class="introduceText">定义一个动作接口:</p>
+            <pre>
+                public interface PersonAction {
+
+                    void action();
+                }
+            </pre>
+            <p class="introduceText">
+                不同的实现:
+            </p>
+            <pre>
+                public class eat implements PersonAction {
+
+                    @Override
+                    public void action() {
+
+                        System.out.println("eat ...");
+                    }
+                }
+            </pre>
+            <pre>
+
+                public class say implements PersonAction {
+
+                    @Override
+                    public void action() {
+
+                        System.out.println("say haha");
+                    }
+                }
+            </pre>
+            <p class="introduceText">
+                普通使用:
+            </p>
+            <pre>
+                new say().action(); //say haha
+                new eat().action(); //eat ...
+            </pre>
+            <p class="introduceText">
+                策略模式(也就是匿名类)：
+            </p>
+            <pre>
+                new PersonAction(){
+
+                    @Override
+                    public void action() {
+
+                        System.out.println("do something");
+                    }
+                }.action();
+            </pre>
+            <p class="introduceText">匿名类当参数:</p>
+            <pre>
+
+                public static void persondo(PersonAction personAction){
+
+                    personAction.action();
+                }
+
+                //自定义业务实现 也就是匿名类
+                persondo(new PersonAction() {
+
+                    @Override
+                    public void action() {
+                        System.out.println("匿名类： 自定义的接口实现");
+                    }
+                });
+
+            </pre>
+        </div>
+    </div>
+
+    <div class="contentBgDiv" id="Integer">
+
+        <p class="smallTitle"><a target="_blank" href="https://github.com/ethanCun/JavaCollection/blob/master/java%E5%9F%BA%E7%A1%80/src/main/java/com/example/demo/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/javaTypez.java">Java中的Integer</a></p>
+
+        <div class="contentBgDiv">
+
+            <p class="introduceText">思考下面的输出结果</p>
+            <pre>
+
+                Integer i = 10;
+                Integer j = 10;
+                System.out.println(i == j); //true
+
+                Integer a = 128;
+                Integer b = 128;
+                //当Integer类之间==比较时, ==运算符能将隐含的将小范围的数据类型转换为大范围的数据类型，
+                    转换之后两边都是Integer, 但是超过128，直接new了一块新内存。
+                System.out.println(a == b); //false
+
+                int k = 10;
+                System.out.println(k == i); //true
+                int kk = 128;
+                System.out.println(kk == a); //true Integer拆箱比较value
+
+                Integer m = new Integer(10);
+                Integer n = new Integer(10);
+                System.out.println(m == n); //false new分配了新的内存
+            </pre>
+
+            <p class="introduceText">Integer类中有一个IntegerCache类：</p>
+            <pre>
+
+                private static class IntegerCache {
+                        static final int low = -128;
+                        static final int high;
+                        static final Integer cache[];
+
+                        static {
+                            // high value may be configured by property
+                            int h = 127;
+                            String integerCacheHighPropValue =
+                                sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
+                            if (integerCacheHighPropValue != null) {
+                                try {
+                                    int i = parseInt(integerCacheHighPropValue);
+                                    i = Math.max(i, 127);
+                                    // Maximum array size is Integer.MAX_VALUE
+                                    h = Math.min(i, Integer.MAX_VALUE - (-low) -1);
+                                } catch( NumberFormatException nfe) {
+                                    // If the property cannot be parsed into an int, ignore it.
+                                }
+                            }
+                            high = h;
+
+                            cache = new Integer[(high - low) + 1];
+                            int j = low;
+                            for(int k = 0; k < cache.length; k++)
+                                cache[k] = new Integer(j++);
+
+                            // range [-128, 127] must be interned (JLS7 5.1.7)
+                            assert IntegerCache.high >= 127;
+                        }
+
+                        private IntegerCache() {}
+                    }
+            </pre>
+            <p class="introduceText">装箱：</p>
+            <pre>
+
+                public static Integer valueOf(int i) {
+                    if (i >= IntegerCache.low && i <= IntegerCache.high)
+                        return IntegerCache.cache[i + (-IntegerCache.low)];
+                    return new Integer(i);
+                }
+            </pre>
+
+            <p class="introduceText">
+                大致可以看出，装箱的逻辑是判断传入的i是否大于等于-128，小于等于127， 符合条件的换从cache[]
+                这个数组中获取缓存的数据，不符合条件的new一个Integer。
+            </p>
+
+            <p class="introduceText">两个new Integer之间的比较，看Integer的源代码:</p>
+            <pre>
+
+                /**
+                 * 写的很清楚 是分配了新的内存
+                 * Constructs a newly allocated {@code Integer} object that
+                 * represents the specified {@code int} value.
+                 *
+                 * @param   value   the value to be represented by the
+                 *                  {@code Integer} object.
+                 */
+                public Integer(int value) {
+                    this.value = value;
+                }
+            </pre>
+
+            <p class="introduceText">关于equal比较:</p>
+            <pre>
+                //equals 运算符不会进行类型转换
+                public boolean equals(Object obj) {
+                    if (obj instanceof Integer) {
+                        return value == ((Integer)obj).intValue();
+                    }
+                    return false;
+                }
+            </pre>
+            <pre>
+
+                //关于equals:
+                Integer aa = 1;
+                Integer bb = 2;
+                Integer cc = 3;
+                Integer dd = 3;
+
+                Integer ee = 321;
+                Integer ff = 321;
+
+                Long gg = 3L;
+                Long hh = 2L;
+
+                System.out.println(cc == dd); //true
+                System.out.println(ee == ff); //false
+                System.out.println(cc == (aa + bb)); //true
+
+                Object obj = aa+bb;
+                System.out.println(obj.getClass().getName()); //java.lang.Integer
+
+                System.out.println(cc.equals((aa+bb))); //true
+
+                /**
+                首先计算 aa+bb,也是先调用各自的intValue方法，得到数值之后，由于前面的g是Long类型的，
+                也会自动拆箱为long，==运算符能将隐含的将小范围的数据类型转换为大范围的数据类型，
+                也就是int会被转换成long类型，两个long类型的数值进行比较。
+                */
+                System.out.println(gg == (aa+bb)); <b>//true</b>
+
+                /**
+                aa+bb会先自动拆箱，然后将结果自动装箱，需要说明的是 equals 运算符不会进行类型转换。
+                所以是Long.equals(Integer)，结果当然是false
+                */
+                System.out.println(gg.equals(aa+bb)); <b>//false</b>
+
+                System.out.println(gg.equals(aa+hh)); //aa+hh向上转型为Long  先比较类型 再比较value 返回true
+            </pre>
+
+        </div>
+    </div>
+
+    <div class="contentBgDiv" id="String">
+
+        <p class="smallTitle"><a target="_blank" href="https://github.com/ethanCun/JavaCollection/blob/master/java%E5%9F%BA%E7%A1%80/src/main/java/com/example/demo/%E5%AD%97%E7%AC%A6%E4%B8%B2/BaseString.java">java中的String</a></p>
+
+        <div class="contentBgDiv">
+
+            <p class="introduceText"></p>
+
+            <pre>
+
+                String str = new String("abc"); //初始化
+                String str1 = "abc"; //初始化
+                System.out.println("str == str1? 是否同一个对象：" + (str == str1)); //false
+                System.out.println("纯字符串比较：" + ("abc" == "abc")); //true
+                System.out.println("对象str1和字符串比较：" + (str1 == "abc")); //false
+                System.out.println("对象str和字符串比较：" + (str == "abc")); //true
+
+                System.out.println("str内存地址:" + System.identityHashCode(str)); //245257410
+                System.out.println("str1内存地址:" + System.identityHashCode(str1)); //1705736037
+                System.out.println("'abc'内存地址:" + System.identityHashCode("abc")); //1705736037
+
+                System.out.println("字符串长度：" + str.length());
+                System.out.println("字符c在字符串str中的位置(下标)：" + str.indexOf("c"));
+                System.out.println("字符串str第2个位置是什么字符：" + str.charAt(1));
+
+                str = "   |" + str + "|   ";
+                System.out.println("加上空格后的str：" + str);
+                System.out.println("去除str两头的空格后：" + str.trim());
+                System.out.println("把|都去除：" + str.replace("|", ""));
+                System.out.println("str的内容与str1的内容是否相同：" + str1.equals(str.trim().replace("|", "")));
+
+                char[] strchar = str.toCharArray();
+                String reverse = "";
+                for (int i=strchar.length-1; i>=0; i--){
+
+                    reverse += strchar[i];
+                }
+                System.out.println("str翻转1:" + reverse);
+
+                StringBuilder sb = new StringBuilder(str);
+                System.out.println("str翻转2:" + sb.reverse().toString());
+
+                StringBuffer sbf = new StringBuffer(str);
+                System.out.println("str翻转3：" + sbf.reverse().toString());
+
+                String s = "abcd,efgh,dddj";
+                String[] sArray = s.split(",");
+                System.out.println(s + " 分割后结果：");
+                for (String item : sArray) {
+                    System.out.println(item);
+                }
+            </pre>
+
+            <p class="introduceText">String构造方法:</p>
+            <pre>
+
+                /**
+                 * 每次new都是重新分配内存
+                 * Initializes a newly created {@code String} object so that it represents
+                 * the same sequence of characters as the argument; in other words, the
+                 * newly created string is a copy of the argument string. Unless an
+                 * explicit copy of {@code original} is needed, use of this constructor is
+                 * unnecessary since Strings are immutable.
+                 *
+                 * @param  original
+                 *         A {@code String}
+                 */
+                public String(String original) {
+                    this.value = original.value;
+                    this.hash = original.hash;
+                }
+            </pre>
+
+            <pre>
+
+                /** The value is used for character storage. */
+                private final char value[]; //final修饰 因此不可变
+
+                /** Cache the hash code for the string */
+                private int hash; // Default to 0 //hashcode默认是0
+            </pre>
+        </div>
+    </div>
+
+    <div class="contentBgDiv" id="superExtends">
+
+        <p class="smallTitle"><a target="_blank" href="https://github.com/ethanCun/JavaCollection/tree/master/java%E5%9F%BA%E7%A1%80/src/main/java/com/example/demo/%E6%B3%9B%E5%9E%8Bsuper%E5%92%8Cextends%E5%8C%BA%E5%88%AB">泛型super和extends区别</a></p>
+
+        <div class="contentBgDiv">
+
+            <p class="smallTitle">
+                extends:
+            </p>
+            <pre>
+                //extends: ? 是Number的子类
+                ArrayList&lt;? extends Number&gt; list1 = new ArrayList&lt;Integer&gt;();
+                list1 = new ArrayList&lt;Double&gt;();
+                list1 = new ArrayList&lt;Float&gt;();
+                
+                //插入元素会报错  因为这个时候不能确定list1的指向 可能是Double Float Integer
+                //只能保证读取到的是Number类型
+                list1.add(11);
+                list1.add(Float.valueOf(11));
+                list1.add(Double.valueOf(11));
+            </pre>
+            <p class="smallTitle">
+                super:
+            </p>
+            <pre>
+                //super: ?是Integer的父类
+                List&lt;? super Integer&gt; list2 = new ArrayList&lt;Number&gt;();
+                list2 = new ArrayList&lt;Object&gt;();
+                
+                //这个时候只能写入Integer类型的数据
+                //读取出来的数据不确定，有可能是Number, 也可能是Object
+                list2.add(11);
+            </pre>
+        </div>
+    </div>
+
+    <div class="contentBgDiv" id="future">
+
+        <p class="smallTitle"><a target="_blank" href="https://github.com/ethanCun/springboot/tree/master/springboot-async-future">使用Future&lt;T&gt;来接受@Aysnc异步任务的返回值</a> </p>
+
+        <div class="contentBgDiv">
+
+            <p class="introduceText">
+                在springboot中使用异步任务时，需要先加上允许异步注解@EnableAsync。
+            </p>
+            <pre>
+                @SpringBootApplication
+                @EnableAsync
+                public class DemoApplication {
+
+                    public static void main(String[] args) {
+                        SpringApplication.run(DemoApplication.class, args);
+                    }
+                }
+            </pre>
+            <p class="introduceText">由于是异步的,所以使用普通对象来接受异步任务的返回值会失败：</p>
+            <pre>
+                @Async
+                @Override
+                public String asyncTask11() throws Exception{
+
+                    return "asyncTask11";
+                }
+            </pre>
+            <pre>
+                @Test
+                public void testSync11() throws Exception{
+
+                    String res = async.asyncTask11();
+                    //res = null
+                    System.out.println("res = " + res);
+                }
+            </pre>
+            
+            <p class="introduceText">应该使用Future&lt;T&gt;来接受异步任务的返回值:</p>
+            <pre>
+                @Async
+                @Override
+                public Future&lt;String&gt; asyncTask1() throws Exception{
+            
+                    System.out.println("async1开始:");
+                    long start = System.currentTimeMillis();
+                    Thread.sleep(random.nextInt(10000));
+                    long end = System.currentTimeMillis();
+                    System.out.println("result1 = " + (end-start));
+            
+                    return new AsyncResult&lt;&gt;("async1结束,耗时:" + (end-start));
+                }
+                
+                @Async
+                @Override
+                public Future&lt;String&gt; asyncTask2() throws Exception{
+            
+                    System.out.println("async2开始:");
+                    long start = System.currentTimeMillis();
+                    Thread.sleep(random.nextInt(10000));
+                    long end = System.currentTimeMillis();
+                    System.out.println("result2 = " + (end-start));
+            
+                    return new AsyncResult&lt;&gt;("async2结束,耗时:" + (end-start));
+                }
+            
+                @Async
+                @Override
+                public Future&lt;String&gt; asyncTask3() throws Exception{
+            
+                    System.out.println("async3开始:");
+                    long start = System.currentTimeMillis();
+                    Thread.sleep(random.nextInt(10000));
+                    long end = System.currentTimeMillis();
+                    System.out.println("result3 = " + (end-start));
+            
+                    return new AsyncResult&lt;&gt;("async3结束,耗时:" + (end-start));
+                }
+            </pre>
+            <pre>
+                @Test
+                public void testAsync() throws Exception{
+            
+                    long start = System.currentTimeMillis();
+            
+                    Future&lt;String&gt; result1 = async.asyncTask1();
+                    Future&lt;String&gt; result2 = async.asyncTask2();
+                    Future&lt;String&gt; result3 = async.asyncTask3();
+            
+                    while (true){
+            
+                        if (result1.isDone() && result2.isDone() && result3.isDone()){
+            
+                            break;
+                        }
+            
+                        Thread.sleep(1000);
+                    }
+            
+                    long end = System.currentTimeMillis();
+            
+                    System.out.println("全部任务完成: " + (end-start));
+                }
+
+                //返回结果：
+                async1开始:
+                async2开始:
+                async3开始:
+                result2 = 5998
+                result3 = 6085
+                result1 = 9487
+                全部任务完成: 10039
+            </pre>
+        </div>
+
+    </div>
+
+    <div class="contentBgDiv" id="functionInterface">
+
+        <p class="smallTitle"><a href="https://github.com/ethanCun/JavaCollection/tree/master/java%E5%9F%BA%E7%A1%80/src/main/java/com/example/demo/%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3">Java中的函数式接口</a> </p>
+
+        <div class="contentBgDiv">
+
+            <p class="introduceText">
+                @FunctionalInterface标记在接口上，“函数式接口”是指仅仅只包含一个抽象方法的接口。可以省略，他只是一种说明。
+            </p>
+            <p class="introduceText">
+                如果一个接口中包含不止一个抽象方法，那么不能使用@FunctionalInterface，编译会报错。
+            </p>
+            <p class="introduceText">
+                接口中的方法定义默认为public abstract类型，接口中的成员变量类型默认为public static final。
+                <a target="_blank" href="https://www.cnblogs.com/songanwei/p/9389005.html">关于interface与abstract的区别</a>
+            </p>
+            <pre>
+                
+                //自定义一个函数式接口 用泛型表示从u转变成v
+                @FunctionalInterface
+                public interface IFunctionInterface&lt;U, V&gt; {
+                
+                    V convert(U u);
+                
+                    // 抽象方法
+                    //public void sub();
+                
+                    //接口默认继承java.lang.Object，所以如果接口显示声明覆盖了Object中方法，那么也不算抽象方法。
+                    // java.lang.Object中的方法不是抽象方法
+                    public boolean equals(Object var1);
+                
+                    // default不是抽象方法
+                    public default void defaultMethod() {
+                
+                    }
+                
+                    // static不是抽象方法
+                    public static void staticMethod() {
+                    }
+                }
+            </pre>
+            <p class="introduceText">实现这个函数接口：</p>
+            <pre>
+                
+                &lt;U, V&gt; 测试这是一个泛型方法
+                public static &lt;U, V&gt; V convert(U u, IFunctionInterface&lt;U, V&gt; iFunctionInterface){
+            
+                    return iFunctionInterface.convert(u);
+                }
+            
+                public static void main(String[] args) {
+            
+                    //函数式接口
+                    Integer res = convert("100", (String a) -&gt;{
+            
+                       return Integer.parseInt(a)*100;
+                    });
+
+                    //10000
+                    System.out.println(res);
+                }
+            </pre>
+        </div>
+    </div>
+
+    <br>
+</div>
+
+
+
+</body>
+</html>
