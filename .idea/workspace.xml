@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="048bf497-7962-41f4-ae72-f3b4290f821e" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/html/Java/JavaCollection/JavaCollection.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/Java/JavaCollection/JavaCollection.html" afterDir="false" />
     </list>
     <ignored path="newCZY.iws" />
@@ -81,8 +80,8 @@
       <file leaf-file-name="JavaCollection.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/html/Java/JavaCollection/JavaCollection.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="348">
-              <caret line="32" column="93" selection-start-line="32" selection-start-column="93" selection-end-line="32" selection-end-column="93" />
+            <state relative-caret-position="385">
+              <caret line="38" column="87" selection-start-line="38" selection-start-column="87" selection-end-line="38" selection-end-column="87" />
               <folding>
                 <element signature="n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#div#5;n#div#0;n#body#0;n#html#0;n#!!top" />
@@ -130,8 +129,8 @@
       <file leaf-file-name="CocoapodsNotes.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/html/iOS/CocoaPods/CocoapodsNotes.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="403">
-              <caret line="380" lean-forward="true" selection-start-line="380" selection-end-line="380" />
+            <state relative-caret-position="9120">
+              <caret line="380" selection-start-line="380" selection-end-line="380" />
             </state>
           </provider>
         </entry>
@@ -236,7 +235,7 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="23" />
     <option name="width" value="1920" />
     <option name="height" value="970" />
@@ -249,6 +248,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
@@ -309,7 +309,6 @@
         </subPane>
       </pane>
       <pane id="AndroidView" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -485,14 +484,15 @@
       <workItem from="1568688804842" duration="219000" />
       <workItem from="1568690592284" duration="8269000" />
       <workItem from="1568765041239" duration="195000" />
+      <workItem from="1568798319365" duration="477000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="243132000" />
+    <option name="totallyTimeSpent" value="243609000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1920" height="970" extended-state="0" />
+    <frame x="0" y="23" width="1920" height="969" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
@@ -500,7 +500,7 @@
       <window_info anchor="right" id="Palette&#9;" order="4" />
       <window_info id="Image Layers" order="1" />
       <window_info anchor="right" id="Capture Analysis" order="5" />
-      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" visible="true" weight="0.3286385" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" visible="true" weight="0.3278496" />
       <window_info anchor="right" id="Maven Projects" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -508,7 +508,7 @@
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="3" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.34689507" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.35171306" />
       <window_info anchor="bottom" id="Docker" order="10" show_stripe_button="false" />
       <window_info anchor="bottom" id="Alibaba Cloud View" order="10" />
       <window_info anchor="right" id="Database" order="7" />
@@ -876,15 +876,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/html/iOS/CocoaPods/CocoapodsNotes.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="403">
-          <caret line="380" lean-forward="true" selection-start-line="380" selection-end-line="380" />
+        <state relative-caret-position="9120">
+          <caret line="380" selection-start-line="380" selection-end-line="380" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/html/Java/JavaCollection/JavaCollection.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="348">
-          <caret line="32" column="93" selection-start-line="32" selection-start-column="93" selection-end-line="32" selection-end-column="93" />
+        <state relative-caret-position="385">
+          <caret line="38" column="87" selection-start-line="38" selection-start-column="87" selection-end-line="38" selection-end-column="87" />
           <folding>
             <element signature="n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" />
             <element signature="n#div#5;n#div#0;n#body#0;n#html#0;n#!!top" />
