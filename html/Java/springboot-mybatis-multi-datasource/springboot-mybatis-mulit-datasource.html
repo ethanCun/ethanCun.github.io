@@ -28,6 +28,11 @@
         DataSourceTransactionManager、SqlSessionTemplate， 指定扫描不同
         sqlSessionTemplateRef的对应包。
     </p>
+    <p class="introduceText">
+        当访问不同的url时，根据不同的service, 找到对应的mapper, 根据mapper
+        所在的包找到不同的sqlSessionTemplateRef, 对应不同的SqlSessionFactory,
+        从而加载不同的实例化出来的数据源。
+    </p>
 
     <p class="smallTitle">pom.xml</p>
     <pre>
