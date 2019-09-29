@@ -270,6 +270,22 @@
 
         </pre>
 
+        <p class="contents">指定数据库 用户名: catalog指定数据库名称 schema: 指定数据库的用户名 ，默认为当前配置的用户 root </p>
+        <pre>
+
+            &lt;table tableName="t_carousel"
+                   catalog="myyj"
+                   domainObjectName="Carousel"
+                   mapperName="CarouselMapper"
+                   sqlProviderName="CarouselDao"
+                   enableSelectByPrimaryKey="true" enableSelectByExample="true"
+                   enableDeleteByExample="true" enableUpdateByExample="true"
+                   enableCountByExample="true" enableDeleteByPrimaryKey="true"
+                   enableInsert="true" enableUpdateByPrimaryKey="true"&gt;
+                &lt;generatedKey column="id" sqlStatement="Mysql" identity="true"&gt;&lt;/generatedKey&gt;
+            &lt;/table&gt;
+        </pre>
+        
         <p class="contents">终端生成mapper dao domain命令</p>
         <pre>
             mvn mybatis-generator:generate
