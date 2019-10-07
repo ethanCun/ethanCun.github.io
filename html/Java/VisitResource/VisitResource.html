@@ -26,7 +26,7 @@
         做图片、视频的上传，上传成功后需要去指定的文件下加载资源进行显示.
     </p>
 
-    <p class="smallTitle">一、重写WebMvcConfigurerAdapter，并配置加载</p>
+    <p class="smallTitle">重写WebMvcConfigurerAdapter，并配置加载</p>
     <pre>
 
         import org.springframework.context.annotation.Configuration;
@@ -60,14 +60,22 @@
         需要注意的是: 因为是访问资源，所以需要加上file:
     </p>
 
-    <p class="smallTitle">二、 配置application.properties:</p>
+    <p class="smallTitle">关于spring.mvc.static-path-pattern与spring.resources.static-locations:</p>
+    <p>
+        <a target="_blank" href="https://www.cnblogs.com/hujunzheng/p/9682960.html">
+            Spring Boot(六)：如何配置静态资源的地址与访问路径
+        </a>
+    </p>
     <pre>
 
-        spring.mvc.static-path-pattern=/image/**
-        spring.resources.static-locations=file:/Users/cunethan/Desktop/uploads/
+        # 默认值为 /**
+        spring.mvc.static-path-pattern=
+        # 默认值为 classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
+        # 访问优先级从从高到低
+        spring.resources.static-locations=这里设置要指向的路径，多个使用英文逗号隔开，
     </pre>
 
-    <p class="contents">同样需要加上file: </p>
+    <p class="contents">访问外部资源时,同样需要加上file: </p>
 </div>
 
 </body>
