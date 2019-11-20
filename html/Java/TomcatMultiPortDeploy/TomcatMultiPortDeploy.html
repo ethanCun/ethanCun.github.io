@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>springboot在同一个tomcat下同时打包：dev,prod,test, 对应多个端口运行</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">tomcat部署多个端口</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">springboot在同一个tomcat下同时打包：dev,prod,test, 对应多个端口运行</p>
+
+
+    <div class="contentBgDiv">
+
+        <p class="contents">
+            <a target="_blank" href="https://blog.csdn.net/chaos_le/article/details/82760670">tomcat部署多个项目(不同端口)</a>
+        </p>
+        <p class="contents">
+            <a target="_blank" href="https://www.cnblogs.com/jingmoxukong/p/10151785.html">
+            参考链接:springboot之Profile的使用</a>
+        </p>
+    </div>
+
+    <div class="contentBgDiv">
+
+        <p class="smallTitle">1. springboot配置多种运行环境</p>
+        <p class="contents">
+            除了上一篇提到的在pom.xml中动态控制当前运行环境:<a target="_blank" href="../DevProdConfig/DevProdConfig.html">springboot项目多环境配置</a>,
+            还可以在applcation.properties中通过:spring.profiles.active=test(dev/prod/test)来控制当前项目的
+            运行环境：
+        </p>
+        <pre>
+            application.properties:
+            spring.profiles.active=test
+            
+            application-dev.properties:
+            server.port=8001
+            
+            application-prod.propertis:
+            server.port=8002
+            
+            application-test.properties:
+            server.port=8003
+            
+            如上:当前项目运行的端口就是8003, 可以通过@Profile("test")来控制那些类、方法
+            可以被访问到。
+        </pre>
+        
+        <b>注意：8003只是项目本地编译运行的端口，如需要根据端口部署三种环境到本地tomcat, 则需要
+        配置tomcat的server.xml文件</b>
+        
+        <p class="smallTitle">2. 不同环境部署不同端口的项目到tomcat</p>
+        <pre>
+            <b>1. pom.xml移除springboot web内嵌的tomcat, 并添加新的tomcat依赖, 设置为provided:</b>
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+                &lt;!--移除springboot自身嵌入的tomcat--&gt;
+                &lt;exclusions&gt;
+                    &lt;exclusion&gt;
+                        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                        &lt;artifactId&gt;spring-boot-starter-tomcat&lt;/artifactId&gt;
+                    &lt;/exclusion&gt;
+                &lt;/exclusions&gt;
+            &lt;/dependency&gt;
+    
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-starter-tomcat&lt;/artifactId&gt;
+                &lt;scope&gt;provided&lt;/scope&gt;
+            &lt;/dependency&gt;
+            
+            <b>2. 设置打包方式和包名，包名为ROOT时，访问链接可以省略包名:</b>
+            &lt;packaging&gt;war&lt;/packaging&gt;
+            &lt;build&gt;
+                &lt;finalName&gt;test&lt;/finalName&gt;
+                &lt;plugins&gt;
+                    &lt;plugin&gt;
+                        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                        &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+                    &lt;/plugin&gt;
+                &lt;/plugins&gt;
+            &lt;/build&gt;
+
+            <b>3. 初始化springboot tomcat容器:</b>
+            @EnableSwagger2
+            @SpringBootApplication
+            public class DemoApplication extends SpringBootServletInitializer {
+
+                public static void main(String[] args) {
+                    SpringApplication.run(DemoApplication.class, args);
+
+                }
+
+                @Override
+                protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+                    return builder.sources(DemoApplication.class);
+                }
+            }
+
+            <b>4. 用mvn clean, mvn package打包，将生成的包放入tomcat的webapps文件夹下。</b>
+
+            <b>5. 用同样的方式将dev，prod打包，并在tomcat目录下新建webapps2, webapps3，将dev和
+            prod包分别放入webapps2, webapps3中。</b>
+
+            <b>6. 配置server.xml如下:</b>
+
+            &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+            &lt;Server port="8005" shutdown="SHUTDOWN"&gt;
+              &lt;Listener className="org.apache.catalina.startup.VersionLoggerListener" /&gt;
+
+              &lt;Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" /&gt;
+
+              &lt;Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" /&gt;
+              &lt;Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" /&gt;
+              &lt;Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" /&gt;
+
+              &lt;GlobalNamingResources&gt;
+
+                &lt;Resource name="UserDatabase" auth="Container"
+                          type="org.apache.catalina.UserDatabase"
+                          description="User database that can be updated and saved"
+                          factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+                          pathname="conf/tomcat-users.xml" /&gt;
+              &lt;/GlobalNamingResources&gt;
+
+
+              &lt;Service name="Catalina"&gt;
+
+                <b>&lt;!-- 第一个项目 端口为8001  --&gt;</b>
+                &lt;Connector port="8001" protocol="HTTP/1.1"
+                           connectionTimeout="20000"
+                           redirectPort="8443" /&gt;
+
+                &lt;Engine name="Catalina" defaultHost="localhost"&gt;
+
+                  &lt;Realm className="org.apache.catalina.realm.LockOutRealm"&gt;
+
+                    &lt;Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+                           resourceName="UserDatabase"/&gt;
+                  &lt;/Realm&gt;
+
+                  &lt;Host name="localhost"  appBase="webapps"
+                        unpackWARs="true" autoDeploy="true"&gt;
+                    <b>第一个包放的位置为webapps，不用配置 context </b>
+                    &lt;Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+                           prefix="localhost_access_log_8001" suffix=".txt"
+                           pattern="%h %l %u %t &quot;%r&quot; %s %b" /&gt;
+
+                  &lt;/Host&gt;
+                &lt;/Engine&gt;
+              &lt;/Service&gt;
+
+              <b>&lt;!-- 第二个项目 --&gt;</b>
+              &lt;Service name="Catalina"&gt;
+                  &lt;!-- 此端口为8002，其他项目端口不能有冲突 --&gt;
+                  &lt;Connector port="8002" protocol="HTTP/1.1"
+                             connectionTimeout="20000"
+                             redirectPort="8443" /&gt;
+                  &lt;Engine name="Catalina" defaultHost="localhost"&gt;
+                      &lt;Realm className="org.apache.catalina.realm.LockOutRealm"&gt;
+                          &lt;Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+                                 resourceName="UserDatabase"/&gt;
+                      &lt;/Realm&gt;
+                      &lt;Host name="localhost"  appBase="webapps2" unpackWARs="true" autoDeploy="true"&gt;
+                          <b>&lt;!-- 配置：项目名，项目路径 --&gt;</b>
+                          &lt;Context path="" docBase="/Library/apache-tomcat-8.5.15/webapps2/prod" reloadable="false" /&gt;
+                          <b>&lt;!-- tomcat日志输出位置 以及对应端口的日志命名规则 前后缀等 --&gt;</b>
+                          &lt;Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+                                 prefix="localhost_access_log_8002." suffix=".txt"
+                                 pattern="%h %l %u %t &quot;%r&quot; %s %b" /&gt;
+                      &lt;/Host&gt;
+                  &lt;/Engine&gt;
+              &lt;/Service&gt;
+
+
+              <b>&lt;!-- 第三个项目 --&gt;</b>
+              &lt;Service name="Catalina"&gt;
+                  &lt;!-- 此端口为8003，其他项目端口不能有冲突 --&gt;
+                  &lt;Connector port="8003" protocol="HTTP/1.1"
+                             connectionTimeout="20000"
+                             redirectPort="8443" /&gt;
+                  &lt;Engine name="Catalina" defaultHost="localhost"&gt;
+                      &lt;Realm className="org.apache.catalina.realm.LockOutRealm"&gt;
+                          &lt;Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+                                 resourceName="UserDatabase"/&gt;
+                      &lt;/Realm&gt;
+                      &lt;Host name="localhost"  appBase="webapps3" unpackWARs="true" autoDeploy="true"&gt;
+                          <b>&lt;!-- 配置：项目名，项目路径 --&gt;</b>
+                          &lt;Context path="" docBase="/Library/apache-tomcat-8.5.15/webapps3/test" reloadable="false" /&gt;
+                          &lt;Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+                                 prefix="localhost_access_log_8003." suffix=".txt"
+                                 pattern="%h %l %u %t &quot;%r&quot; %s %b" /&gt;
+                      &lt;/Host&gt;
+                  &lt;/Engine&gt;
+              &lt;/Service&gt;
+
+            &lt;/Server&gt;
+
+            <b>7. 如上: 此例中访问链接分别为: localhost:8001/dev/dev, localhost:8002/prod/prod,
+            localhost:8003/test/atest</b>
+
+            <b>8. 使用./startup.sh启动./shutdown.sh关闭tomcat, 遇到莫名其妙的问题时：
+            先杀死端口在重启tomcat测试: lsof -i:端口 kill -p pid</b>
+        </pre>
+        <br>
+        
+    </div>
+
+    <br>
+</div>
+
+</body>
+</html>
