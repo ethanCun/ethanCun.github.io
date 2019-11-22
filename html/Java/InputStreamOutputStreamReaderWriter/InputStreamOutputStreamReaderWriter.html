@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Java中的字节流与字符流</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info"><a target="_blank" href="https://github.com/ethanCun/JavaCollection/tree/master/demo-file-stream-bytes">
+        demo-InputStream/OutputStream-Reader/Writer
+    </a> </span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Java中的字节流与字符流</p>
+    <hr>
+
+    <div class="contentBgDiv">
+
+        <p class="smallTitle">1. InputStream/OutputStream: Java中的字节流</p>
+        <p class="introduceText">
+            1.1 InputStream: 使用read()方法将外设文件读成二进制byte[]:
+        </p>
+        <pre>
+
+             * (1)从流中读取数据
+             *    int read() 读取一个字节，返回值为所读得字节
+             *    int read(byte b[]) 读取多个字节，放置到字节数组b中，通常读取的字节数量为b的长度，返回值为实际独取的
+             *                       字节的数量。
+             *    int read(byte b[] ,int off,int len)读取len个字节，放置到以下标off开始字节数组b中，返回值为实际
+             *                                        读取的字节的数量。
+             *    int available() 返回值为流中尚未读取的字节的数量。
+             *    long skip(long n);读指针跳过n个字节不读，返回值为实际跳过的字节数量
+             * (2)关闭流
+             *    close() 流操作完毕后必须关闭
+             * (3)使用输入流中的标记
+             *    void mark(int readlimit)纪录当前指针的所在位置.readlimit表示读指针读出的readlimit个字节后
+             *                            所标记的指针位置才实效。
+             *    void reset() 把读指针重新指向用mark方法所记录的位置
+             *    boolean markSupported() 当前的流是否支持读指针的记录功能。
+             *
+        </pre>
+
+        <p class="introduceText">1.2 OutputStream: 使用write()方法将二进制byte[]写入外设文件:</p>
+        <pre>
+
+             * (1)输出数据
+             *    void write(int b)往流中写一个字节b
+             *    void write(byte b[])往流中写一个字节数组b
+             *    void write(byte b[],int off,int len)把字节数组b中从下标off开始，长度为len的字节写入流中
+             * (2)
+             *    flush()刷空输出流，并输出所有被缓存的字节
+             *            由于某些流(BufferedOutputStream)支持缓存功能，该方法将把缓存中所有内容强制输出到流中。
+             * (3)关闭流
+             *    close()流操作完毕后必须关闭。 字节流是直接操作文件，不会缓冲到缓存区，
+             *    因此不关闭时也会将内容输出。
+        </pre>
+
+        <p class="introduceText">1.3 常见的字节流:</p>
+        <pre>
+
+             * 基于字节流的stream：
+             * DataOutputStream----DataInputStream:
+             * FileOutputStream-----FileInputStream:
+        </pre>
+
+        <p class="introduceText">1.4 字节流使用实例:</p>
+        <pre>
+
+               public static void main(String[] args) {
+
+                    //File转成Bytes
+                    File file1 = new File("/Users/macofethan/Desktop/2.jpeg");
+                    try (InputStream file1IS = new FileInputStream(file1)) {
+
+                        //file1IS.available():预估的流的大小(剩余未读的大小)
+                        byte[] bytes1 = new byte[file1IS.available()];
+
+                        //读取:返回实际写入的长度
+                        int realLength = file1IS.read(bytes1);
+
+                        System.out.println("bytes1 = " + bytes1 + " length = " + bytes1.length);
+                        System.out.println("realLength = " + realLength);
+
+                        //将生成的二进制转换为InputStream
+                        InputStream is2 = new ByteArrayInputStream(bytes1);
+
+                        //将生成的二进制转换为File，并保存到桌面
+                        File file2 = new File("/Users/macofethan/Desktop/3.jpeg");
+                        OutputStream os = new FileOutputStream(file2);
+                        BufferedOutputStream bos = new BufferedOutputStream(os);
+                        bos.write(bytes1);
+                        //当OutputStream是BufferedOutputStream时,调用flush()触发磁盘写入完成写入操作
+                        //bos.flush();
+
+                        //关闭流  关闭流或者调用flush()都可以强制性将缓存区中的内容写入文件
+                        file1IS.close();
+                        is2.close();
+                        bos.close();
+
+                    }catch (IOException e){
+
+                    }
+
+                }
+        </pre>
+
+        <p class="smallTitle">2. Reader/Writer: Java中的字符流</p>
+        <p class="introduceText">1.1 Reader: 从外设文件中读取字符</p>
+        <p class="introduceText">1.2 Writer: 将字节流写入外设文件中</p>
+        <pre>
+
+            /**
+             * 字符流操作:
+             *
+             * 字符流操作时使用了缓冲区，而在关闭字符流时会强制性地将缓冲区中的内容进行输出，
+             * 但是如果程序没有关闭，则缓冲区中的内容是无法输出的，
+             *
+             * 除了关闭字节流close()，也可以调用flush()方法来讲缓冲区中的内容强制性输出
+             *
+             * 字符流使用了缓冲区，而字节流没有使用缓冲区。
+             */
+        </pre>
+        <p class="introduceText">1.3 常见的字符流：</p>
+        <pre>
+
+             * 基于字符流的stream（典型的以write和reader来标识的）：
+             * FileWriter---FileReader:
+             * StringWriter---StringReader:
+             *
+        </pre>
+
+        <p class="introduceText">1.4 字符流使用实例:</p>
+        <pre>
+
+             public static void main(String[] args) {
+
+                File file1 = new File("/Users/macofethan/Desktop/name.txt");
+
+                //将输入写入外设文件
+                try {
+
+                    Writer writer = new FileWriter(file1);
+
+                    writer.write("czy\nczy\nczy\n张三\n李四");
+
+                    //调用close() 或者 flush()强制性将缓冲区中的内容写入文件
+                    writer.flush();
+
+                    //读取文件中的内容
+                    FileReader fileReader = new FileReader(file1);
+
+                    //挨个读取
+                    int read = fileReader.read();
+                    while (read != -1){
+
+                        System.out.println((char)read);
+
+                        //继续读取
+                        read = fileReader.read();
+                    }
+
+                    //读取文件中的内容第二种方式
+                    char[] res = new char[20];
+                    int length;
+                    //将内容读取后存入一个char数组 再由char[]数组构建字符串
+                    while ((length = fileReader.read(res)) != -1){
+
+                        System.out.println(new String(res, 0, length));
+                    }
+
+                    //读取文件的第三种方式：BufferedReader按行读取文件
+                    BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+                    String line = null;
+                    while ((line = bufferedReader.readLine()) != null){
+                        System.out.println(line);
+                    }
+
+                    fileReader.close();
+
+                }catch (IOException e){
+
+                }
+
+            }
+        </pre>
+
+    </div>
+
+    <br>
+</div>
+
+</body>
+</html>
