@@ -45,6 +45,7 @@
         <li><a target="_blank" href="https://m.imooc.com/article/252889?block_id=tuijian_wz">@PropertySource</a> </li>
 
         <li><a href="#pathInTomcat">本地运行环境和tomcat运行下路径的区别</a> </li>
+        <li><a href="#IPPortInTomcat">获取tomcat运行状态下的IP和端口</a> </li>
     </ul>
 
     <p class="introduceText">博客列表</p>
@@ -692,6 +693,43 @@
                 public String contextPath(HttpServletRequest request){
 
                     return request.getSession().getServletContext().getRealPath("/");
+                }
+        </pre>
+
+        <p class="smallTitle" id="IPPortInTomcat">获取tomcat运行状态下的IP和端口</p>
+        <pre>
+                @ResponseBody
+                @GetMapping(value = "/getIP")
+                public String getIP(){
+                    String ip =null;
+                    InetAddress address;
+                    try {
+                        address = InetAddress.getLocalHost();
+                        ip = address.getHostAddress();
+                    } catch (Exception e) {
+                    }
+                    return ip;
+                }
+
+                /***
+                 * 当获取端口号时，一定得是在容器中运行时才能获取,因为获取端口号是通过查找容器自身的MBean来获取的，离开容器就获取不到对应的MBean，会报空指针异常，同时此思路还能获取容器中所有的应用名、sevlet名等容器运行信息
+                 *
+                 * @return
+                 * @throws Exception
+                 */
+                @ResponseBody
+                @GetMapping(value = "/getPort")
+                public String getPort() throws Exception{
+
+                    MBeanServer beanServer = ManagementFactory.getPlatformMBeanServer();
+
+                    Set&lt;ObjectName&gt; objectNames = beanServer.queryNames(new ObjectName("*:type=Connector,*"),
+                            Query.match(Query.attr("protocol"),
+                                    Query.value("HTTP/1.1")));
+
+                    String port = objectNames.iterator().next().getKeyProperty("port");
+
+                    return port;
                 }
         </pre>
     </div>
