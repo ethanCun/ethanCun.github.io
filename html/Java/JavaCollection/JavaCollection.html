@@ -44,8 +44,7 @@
         <li><a target="_blank" href="https://blog.csdn.net/yaomingyang/article/details/82894188">@Value</a> </li>
         <li><a target="_blank" href="https://m.imooc.com/article/252889?block_id=tuijian_wz">@PropertySource</a> </li>
 
-        <li><a href="#pathInTomcat">本地运行环境和tomcat运行下路径的区别</a> </li>
-        <li><a href="#IPPortInTomcat">获取tomcat运行状态下的IP和端口</a> </li>
+
     </ul>
 
     <p class="introduceText">博客列表</p>
@@ -674,64 +673,6 @@
             System.out.println("c = " + c);
         </pre>
 
-        <p class="smallTitle" id="pathInTomcat">本地运行环境和tomcat运行下路径的区别</p>
-        <pre>
-
-                //在tomcat运行下 获取到的是tomcat的bin目录:/Library/apache-tomcat-8.5.15/bin
-                //在本地运行下，获取到的是项目的根目录：/Users/macofethan/Desktop/springboot-demos/demo-photo-in-tomcat
-                @ResponseBody
-                @GetMapping(value = "/userDir")
-                public String userDir(){
-
-                    return System.getProperty("user.dir");
-                }
-
-                //在tomcat运行下, 获取到的是项目的真实运行目录:/Library/apache-tomcat-8.5.15/webapps/photosInTomcat/
-                //在本地运行下：/private/var/folders/tl/t_bq19kn6_g9y_3886ljxsgh0000gn/T/tomcat-docbase.1818733780640352669.8080/
-                @ResponseBody
-                @GetMapping(value = "/getContextPath")
-                public String contextPath(HttpServletRequest request){
-
-                    return request.getSession().getServletContext().getRealPath("/");
-                }
-        </pre>
-
-        <p class="smallTitle" id="IPPortInTomcat">获取tomcat运行状态下的IP和端口</p>
-        <pre>
-                @ResponseBody
-                @GetMapping(value = "/getIP")
-                public String getIP(){
-                    String ip =null;
-                    InetAddress address;
-                    try {
-                        address = InetAddress.getLocalHost();
-                        ip = address.getHostAddress();
-                    } catch (Exception e) {
-                    }
-                    return ip;
-                }
-
-                /***
-                 * 当获取端口号时，一定得是在容器中运行时才能获取,因为获取端口号是通过查找容器自身的MBean来获取的，离开容器就获取不到对应的MBean，会报空指针异常，同时此思路还能获取容器中所有的应用名、sevlet名等容器运行信息
-                 *
-                 * @return
-                 * @throws Exception
-                 */
-                @ResponseBody
-                @GetMapping(value = "/getPort")
-                public String getPort() throws Exception{
-
-                    MBeanServer beanServer = ManagementFactory.getPlatformMBeanServer();
-
-                    Set&lt;ObjectName&gt; objectNames = beanServer.queryNames(new ObjectName("*:type=Connector,*"),
-                            Query.match(Query.attr("protocol"),
-                                    Query.value("HTTP/1.1")));
-
-                    String port = objectNames.iterator().next().getKeyProperty("port");
-
-                    return port;
-                }
-        </pre>
     </div>
 
     <br>
