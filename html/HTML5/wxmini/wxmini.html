@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>微信小程序开发记录</title>
+		<link rel="icon" href="../../../Source/icon-img.jpeg">
+		<link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+		<link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+		<link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+	</head>
+	<body>
+
+		<div class="labels">
+
+			<span class="label label-success">微信小程序开发记录</span>
+		</div>
+
+		<div class="contentBgDiv">
+
+			<p class="title">微信小程序开发记录</p>
+			<hr>
+
+			<p class="smallTitle">1. 使用高德地理编码或者逆地理编码</p>
+			<pre>
+				
+				//根据经纬度获取地址字符串
+				function loadAddress(longitude, latitude, callback){
+				
+				  wx.request({
+				    url: 'https://restapi.amap.com/v3/geocode/regeo',
+				    data: {
+				      key: '68adbe1bb90f120ef20ade49878cab54',
+				      location: longitude + "," + latitude,
+				      extensions: "all",
+				      s: "rsx",
+				      sdkversion: "sdkversion",
+				      logversion: "logversion"
+				    },
+				    success: function (res) {
+				      
+				      callback(res.data.regeocode.addressComponent);
+				    },
+				    fail: function (res) {
+				      console.log('获取地理位置失败')
+				    }
+				  })
+				}
+				
+				//根据地址字符串获取经纬度 web api 服务
+				function loadLongtiLati(address, callback) {
+				
+				  wx.request({
+				    url: 'https://restapi.amap.com/v3/geocode/geo',
+				    method: 'GET',
+				    data: {
+				      key: 'd7b466deae3d9b5d0ab4b25fb02bd21d',
+				      address: address
+				    },
+				    success: function (res) {
+				
+				      console.log('根据地址查经纬度结果: ' + JSON.stringify(res))
+				
+				      callback(res.data.geocodes[0].location);
+				    },
+				    fail: function (res) {
+				      console.log('获取地理位置失败')
+				    }
+				  })
+				}
+				
+				//导出
+				module.exports = {
+				
+				  loadAddress: loadAddress,
+				  loadLongtiLati: loadLongtiLati
+				}
+				
+				//外部引用
+				//const map = require('../../tools/latilongtiConvertAddressName.js')
+			</pre>
+			
+			<p class="smallTitle">2. base64相互转换</p>
+			<pre>
+				
+				function base64_encode(str) { // 编码，配合encodeURIComponent使用
+				  var c1, c2, c3;
+				  var base64EncodeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+				  var i = 0, len = str.length, strin = '';
+				  while (i &lt; len) {
+				    c1 = str.charCodeAt(i++) & 0xff;
+				    if (i == len) {
+				      strin += base64EncodeChars.charAt(c1 &gt;&gt; 2);
+				      strin += base64EncodeChars.charAt((c1 & 0x3) &lt;&lt; 4);
+				      strin += "==";
+				      break;
+				    }
+				    c2 = str.charCodeAt(i++);
+				    if (i == len) {
+				      strin += base64EncodeChars.charAt(c1 &gt;&gt; 2);
+				      strin += base64EncodeChars.charAt(((c1 & 0x3) &lt;&lt; 4) | ((c2 & 0xF0) &gt;&gt; 4));
+				      strin += base64EncodeChars.charAt((c2 & 0xF) &lt;&lt; 2);
+				      strin += "=";
+				      break;
+				    }
+				    c3 = str.charCodeAt(i++);
+				    strin += base64EncodeChars.charAt(c1 &gt;&gt; 2);
+				    strin += base64EncodeChars.charAt(((c1 & 0x3) &lt;&lt; 4) | ((c2 & 0xF0) &gt;&gt; 4));
+				    strin += base64EncodeChars.charAt(((c2 & 0xF) &lt;&lt; 2) | ((c3 & 0xC0) &gt;&gt; 6));
+				    strin += base64EncodeChars.charAt(c3 & 0x3F)
+				  }
+				  return strin
+				}
+				
+				function base64_decode(input) { // 解码，配合decodeURIComponent使用
+				  var base64EncodeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+				  var output = "";
+				  var chr1, chr2, chr3;
+				  var enc1, enc2, enc3, enc4;
+				  var i = 0;
+				  input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+				  while (i &lt; input.length) {
+				    enc1 = base64EncodeChars.indexOf(input.charAt(i++));
+				    enc2 = base64EncodeChars.indexOf(input.charAt(i++));
+				    enc3 = base64EncodeChars.indexOf(input.charAt(i++));
+				    enc4 = base64EncodeChars.indexOf(input.charAt(i++));
+				    chr1 = (enc1 &lt;&lt; 2) | (enc2 &gt;&gt; 4);
+				    chr2 = ((enc2 & 15) &lt;&lt; 4) | (enc3 &gt;&gt; 2);
+				    chr3 = ((enc3 & 3) &lt;&lt; 6) | enc4;
+				    output = output + String.fromCharCode(chr1);
+				    if (enc3 != 64) {
+				      output = output + String.fromCharCode(chr2);
+				    }
+				    if (enc4 != 64) {
+				      output = output + String.fromCharCode(chr3);
+				    }
+				  }
+				  return utf8_decode(output);
+				}
+				
+				
+				function utf8_decode(utftext) { // utf-8解码
+				  var string = '';
+				  let i = 0;
+				  let c = 0;
+				  let c1 = 0;
+				  let c2 = 0;
+				  while (i &lt; utftext.length) {
+				    c = utftext.charCodeAt(i);
+				    if (c &lt; 128) {
+				      string += String.fromCharCode(c);
+				      i++;
+				    } else if ((c &gt; 191) && (c &lt; 224)) {
+				      c1 = utftext.charCodeAt(i + 1);
+				      string += String.fromCharCode(((c & 31) &lt;&lt; 6) | (c1 & 63));
+				      i += 2;
+				    } else {
+				      c1 = utftext.charCodeAt(i + 1);
+				      c2 = utftext.charCodeAt(i + 2);
+				      string += String.fromCharCode(((c & 15) &lt;&lt; 12) | ((c1 & 63) &lt;&lt; 6) | (c2 & 63));
+				      i += 3;
+				    }
+				  }
+				  return string;
+				}
+				
+				module.exports = {
+				
+				  base64_encode: base64_encode,
+				  base64_decode: base64_decode,
+				  utf8_decode: utf8_decode
+				}
+
+			</pre>
+		
+			<p class="smallTitle">3. date, time对象与字符串的转换</p>
+			<pre>
+				
+				const formatTime = date =&gt; {
+				
+				  const year = date.getFullYear()
+				  const month = date.getMonth() + 1
+				  const day = date.getDate()
+				  const hour = date.getHours()
+				  const minute = date.getMinutes()
+				  const second = date.getSeconds()
+				
+				  return [year, month, day].map(formatNumber).join('-') + ' ' + [hour, minute, second].map(formatNumber).join(':')
+				}
+				
+				const formatDate = date =&gt; {
+				
+				  const year = date.getFullYear()
+				  const month = date.getMonth() + 1
+				  const day = date.getDate()
+				
+				  return [year, month, day].map(formatNumber).join('-')
+				}
+				
+				const formatNumber = n =&gt; {
+				
+				  n = n.toString()
+				  return n[1] ? n : '0' + n
+				}
+				
+				const formatTimeNew = date =&gt; {
+				  
+				  const year = date.getFullYear()
+				  const month = date.getMonth() + 1
+				  const day = date.getDate()
+				  const hour = date.getHours()
+				  const minute = date.getMinutes()
+				  const second = date.getSeconds()
+				  return [hour, minute].map(formatNumber).join(':')
+				}
+				
+				module.exports = {
+				
+				  formatTime: formatTime,
+				  formatDate: formatDate,
+				  formatTimeNew: formatTimeNew
+				}
+			</pre>
+		
+			<p class="smallTitle">4. 封装加载视图工具</p>
+			<pre>
+				
+				function startLoading(title) {
+				
+				    wx.showLoading({
+				        title: title,
+				    })
+				}
+				
+				function startLoading2(title, success, fail, complete) {
+				
+				    wx.showLoading({
+				        title: title,
+				        success: function () {
+				            success()
+				        },
+				        fail: function () {
+				            fail()
+				        },
+				        complete: function () {
+				            complete()
+				        }
+				    })
+				}
+				
+				function endLoading() {
+				
+				    wx.hideLoading()
+				}
+				
+				function endLoading2(title, success, fail, complete) {
+				
+				    wx.hideLoading({
+				        success: function () {
+				            success()
+				        },
+				        fail: function () {
+				            fail()
+				        },
+				        complete: function () {
+				            complete()
+				        }
+				    })
+				}
+				
+				function showToast1(title) {
+				
+				  wx.showToast({
+				    title: title,
+				    duration: 2000,
+				    icon: "none",
+				    success: function () {
+				      
+				    },
+				    fail: function () {
+				      
+				    }
+				  })
+				}
+				
+				function showToast2(title, duration) {
+				
+				  wx.showToast({
+				    title: title,
+				    duration: duration,
+				    icon: "none",
+				    success: function () {
+				
+				    },
+				    fail: function () {
+				
+				    }
+				  })
+				}
+				
+				function showToast3(title, success, fail) {
+				
+				  wx.showToast({
+				    title: title,
+				    duration: 2000,
+				    icon: "none",
+				    success: function () {
+				      success()
+				    },
+				    fail: function () {
+				      fail()
+				    }
+				  })
+				}
+				
+				function showToast4(title, duration, success, fail){
+				
+				  wx.showToast({
+				    title: title,
+				    duration: duration,
+				    icon: "none",
+				    success: function(){
+				      success()
+				    },
+				    fail:function(){
+				      fail()
+				    }
+				  })
+				}
+				
+				module.exports = {
+				
+				    startLoading: startLoading,
+				    startLoading2: startLoading2,
+				    endLoading: endLoading,
+				    endLoading2: endLoading2,
+				    showToast1: showToast1,
+				    showToast2: showToast2,
+				    showToast3: showToast3,
+				    showToast4: showToast4
+				
+				}
+
+			</pre>
+		
+			<br />
+		</div>
+	</body>
+</html>
