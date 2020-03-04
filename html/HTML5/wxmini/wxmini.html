@@ -342,6 +342,32 @@
 
 			</pre>
 		
+			<p class="smallTitle"><b>5. showModel弹框弹不出来？</b></p>
+			<pre>
+				
+				    wx.showModal({
+				      title: '欢迎使用nncrm小程序',
+				      content: '为了您的账户安全与信息准确, 在正式使用之前需要您进行一个简单的注册/登录',
+				      showCancel: true,
+				      cancelText: '好的，去注册',
+				      confirmText: '好的，去登录',
+				      success(res) {
+				
+				        console.log('res: ' + JSON.stringify(res))
+				        if (res.cancel === true) {
+				
+				          wx.navigateTo({
+				            url: '../forgotPassword/forgotPassword',
+				          })
+				        }
+				      },
+				      fail(err) {
+				
+				      }
+				    })
+			</pre>
+			<p class="contents">注意， cancelText、confirmText最多只能4个字符，不然弹不出来。</p>
+		
 			<br />
 		</div>
 	</body>

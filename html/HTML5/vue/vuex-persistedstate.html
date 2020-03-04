@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>使用vue-persistedstate插件持久化保存数据</title>
+		<link rel="icon" href="../../../Source/icon-img.jpeg">
+		<link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+		<link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+		<link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+	</head>
+	<body>
+
+		<div class="labels">
+
+			<span class="label label-success">使用vue-persistedstate插件持久化保存数据</span>
+		</div>
+
+		<div class="contentBgDiv">
+
+			<p class="title">使用vue-persistedstate插件持久化保存数据</p>
+
+			<p><b>一、 将数据保存在state中:</b></p>
+			<pre>
+				import vue from 'vue'
+				import vuex from 'vuex'
+				
+				vue.use(vuex);
+				
+				const store = new vuex.Store({
+				
+				  //默认刷新后vuex state中的数据会丢失
+				  state: {
+				    activeIdx: []
+				  },
+				  mutations: {
+				   
+				  }
+				})
+				
+				export default store;
+				
+			</pre>
+			<p class="contents">1. 数据保存在vuex state中刷新后丢失, 在watch监听path变化， 保存在store的state中：</p>
+			<pre>
+
+				//监听路由变化
+				watch: {
+				
+				  '$route'(to, from) {
+				
+						//保存到vuex
+				        this.$store.state.activeIdx.push(to.path)
+				  }
+				}
+			</pre>
+
+			<p class="contents">2. 刷新网页， 打印state中的update_activeIdx， 为空</p>
+			<pre>
+				mounted() {
+				
+				  //[]
+				  console.log('mounted: ' + JSON.stringify(this.$store.state.activeIdx))
+				}
+			</pre>
+
+			<hr>
+
+
+			<p class="contents"><b>二、实现持久化存储的方式： 使用vue-persistedstate插件</b></p>
+			<p class="contents">1. 在index.js中引入vuex-persistedstate:</p>
+			<pre>
+				import vue from 'vue'
+				import vuex from 'vuex'
+				
+				import createPersistedState from 'vuex-persistedstate'
+				
+				vue.use(vuex);
+				
+				const store = new vuex.Store({
+				
+				  //默认刷新后vuex state中的数据会丢失
+				  state: {
+				    activeIdx: []
+				  },
+				  mutations: {
+				    update_activeIdx(state, payload) {
+				      state.activeIdx.push(payload)
+				    },
+				  },
+				  plugins: [createPersistedState()],
+				})
+				
+				export default store;
+				
+			</pre>
+
+			<p class="contents">2. 调用update_activeIdx保存数据:</p>
+			<pre>
+				//保存到vuex
+				this.$store.commit('update_activeIdx', to.path)
+			</pre>
+
+			<p class="contents">3. 刷新网页，在mounted中输出保存在插件中的数据， 不为空,
+				打开调试模式Application，发现数据默认保存在localStorage中，如何设置数据保存在sessionStorage中: </p>
+			<pre>
+
+				//设置后再次刷新， 发现数据保存在sessionStorage中
+				plugins: [
+				    persistedState({ storage: window.sessionStorage })
+				]
+			</pre>
+
+			<br />
+		</div>
+
+
+	</body>
+</html>
