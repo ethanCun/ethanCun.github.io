@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>vue引入外部css, js, ttf文件</title>
+		<link rel="icon" href="../../../Source/icon-img.jpeg">
+		<link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+		<link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+		<link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+	</head>
+	<body>
+
+		<div class="labels">
+
+			<span class="label label-success">vue引入外部css, js, ttf文件</span>
+		</div>
+
+		<div class="contentBgDiv">
+
+			<p class="title">vue引入外部css, js, ttf文件</p>
+			<hr>
+			
+			<p class="contents"><b>1. 引入外部css文件</b></p>
+			<p>1.1 在assets下新建css文件夹, 新建一个common.css：</p>
+			<pre>
+				.red{
+				  color: red;
+				}
+			</pre>
+			<p>1.2 在main.js中引入:</p>
+			<pre>
+				//引入css
+				import './assets/css/common.css'
+			</pre>
+			<p>1.3 在需要使用的地方直接使用即可:</p>
+			<pre>
+				&lt;;span class="red"&gt;&lt;;/span&gt;
+			</pre>
+
+			<p class="contents"><b>2. 引入外部js文件</b></p>
+			<p>2.1  在assets下新建js文件夹, 新建一个dateFormat.js：</p>
+			<pre>
+				
+				function dateFormatNow(format){
+				
+				  const date = new Date();
+				
+				  let year = date.getFullYear();
+				  let month = date.getMonth();
+				  let day = date.getDate();
+				  let hour = date.getHours();
+				  let minute = date.getMinutes();
+				  let seconds = date.getSeconds();
+				
+				  if (!format || format === ''){
+				    return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + seconds;
+				  }else if(format === 'yyyy-mm-dd'){
+				    return year + '-' + month + '-' + day;
+				  }
+				}
+				
+				function dateFormat(datee, format){
+				
+				  let date = new Date(datee)
+				  
+				  let year = date.getFullYear();
+				  let month = date.getMonth();
+				  let day = date.getDate();
+				  let hour = date.getHours();
+				  let minute = date.getMinutes();
+				  let seconds = date.getSeconds();
+				
+				  if (!format || format === ''){
+				    return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + seconds;
+				  }else if(format === 'yyyy-mm-dd'){
+				    return year + '-' + month + '-' + day;
+				  }
+				}
+				
+				export default{
+				  dateFormatNow: dateFormatNow,
+				  dateFormat: dateFormat
+				}
+				
+			</pre>	
+			<p>2.2 在main.js中引入:</p>	
+			<pre>
+				//1. 引入js
+				import dateUtil from './assets/js/DateFormat.js'
+				
+				//2. 挂载js到vue上
+				Vue.prototype.dateUtil = dateUtil
+			</pre>
+			<p>2.3 在需要的地方使用</p>	
+			<pre>
+				&lt;p&gt;{{dateUtil.dateFormat('2020-2-4 18:50:48')}}&lt;/p&gt;
+				&lt;p&gt;{{dateUtil.dateFormat(1583376769000)}}&lt;/p&gt;
+				&lt;p&gt;{{dateUtil.dateFormat('Wed Mar 04 2020 18:54:13 GMT-0800 (北美太平洋标准时间)')}}&lt;/p&gt;
+			</pre>
+			
+			<p class="contents"><b>3. 引入外部ttf文件</b></p>
+			<p>2.1  在assets下新建fonts文件夹, 将下载好的ttf文件放到fonts文件夹下，在同级目录新建一个font.css：</p>
+			<pre>
+				@font-face {
+				  font-family: "monaco";
+				  src: url('monaco.ttf');
+				  font-weight: normal;
+				  font-style: normal;
+				}
+			</pre>
+			<p>2.2 在app.vue的style中引入font.css:</p>
+			<pre>
+				&lt;style rel="stylesheet/less"&gt;
+					
+				  @import "./assets/fonts/font.css";
+				
+				  #app {
+				    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+				    -webkit-font-smoothing: antialiased;
+				    -moz-osx-font-smoothing: grayscale;
+				    text-align: center;
+				    color: #2c3e50;
+				    margin-top: 60px;
+				  }
+				&lt;/style&gt;
+			</pre>
+			<p>2.3 让webpack能够转化ttf，在build->webpack.base.conf.js->module->rules中添加一个rule:</p>
+			<pre>
+				{
+				  test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+				  loader: 'url-loader',
+				  options: {
+				    limit: 10000,
+				    name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
+				  }
+				}
+			</pre>
+			<p>2.4 使用该字体，在需要使用的地方设置font-family为第1步中设置的font-family:</p>
+			<pre>
+				.ttf{
+				  font-family: monaco;
+				}
+			</pre>
+			
+			<br />
+		</div>
+		
+	</body>
+</html>
