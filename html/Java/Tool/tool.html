@@ -102,6 +102,19 @@
         <pre>
             迅捷转换：<a target="_blank" href="https://app.xunjiepdf.com/video2gif/">https://app.xunjiepdf.com/video2gif/</a>
         </pre>
+		
+		<p class="contents">14. cornerstone svn管理客户端 xiazai 下载以及安装遇到的问题解决</p>
+		<pre>
+			
+			cornerstone: <a target="_blank" href="https://545c.com/file/23053880-413858868">下载链接</a>
+			
+			解决点击不能打开的问题：
+				1. 在设置中安全性隐私选择任何来源，如果没显示任何来源（最新系统默认不显示），则打开终端：sudo spctl --master-disable，再打开安全性隐私
+				2. 如果已经勾选“允许任何来源”，还是提示“文件已损坏”
+					sudo xattr -r -d com.apple.quarantine app地址
+					比如：Sketch的命令是 sudo xattr -r -d com.apple.quarantine /Applications/Sketch.app
+	
+		</pre>
 
         <br>
     </div>
