@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>springboot打jar包， 部署到linux，相关细节和命令</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">linux</span>
+    <span class="label label-danger">jar</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">springboot打jar包， 部署到linux，相关细节和命令</p>
+    <hr />
+
+    <p class="smallTitle">1. springboot 打jar包</p>
+    <p class="introduceText">springboot新建工程的时候可以选择打包方式，默认是jar， 可以选择
+    运行在springboot默认的tomcat中，也可以根据容器来选择tomcat:</p>
+    <p class="introduceText">选择外部容器的tomcat:</p>
+    <pre>
+        
+         &lt;packaging&gt;jar&lt;/packaging&gt;
+            
+         &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+            &lt;exclusions&gt;
+                &lt;exclusion&gt;
+                    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                    &lt;artifactId&gt;spring-boot-starter-tomcat&lt;/artifactId&gt;
+                &lt;/exclusion&gt;
+            &lt;/exclusions&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-tomcat&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+    </pre>
+    <p class="introduceText">选择springboot内置容器：</p>
+    <pre>
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+    </pre>
+    <p class="introduceText">可以选择修改build里的finalName来确定包名，不需要像war包一样重写容器的configure方法</p>
+    <p class="introduceText">maven常用打包命令:</p>
+    <pre>
+
+        //跳过测试阶段
+        mvn clean package -DskipTests=true
+
+        //在本地Repository中安装jar：
+        mvn install
+
+        //组合使用goal命令，如只打包不测试：
+        mvn -Dtest package
+
+        //只打jar包:
+        mvn jar:jar
+
+        //查看当前项目已被解析的依赖：
+        mvn dependency:list
+
+        mvn compile与mvn install、mvn deploy的区别
+        mvn compile，编译类文件
+        mvn install，包含mvn compile，mvn package，然后上传到本地仓库
+        mvn deploy,包含mvn install,然后，上传到私服
+
+    </pre>
+
+    <p class="smallTitle">2. 包部署到linux</p>
+    <p class="introduceText">将第一步打的jar包通过Cyberduck部署到linux的/jars文件下：</p>
+    <p class="introduceText">注意端口不要占用已用的端口</p>
+    <p class="introduceText">在linux下cd到jars文件夹下，运行java -jar xxx.jar运行</p>
+    <p class="introduceText">关闭linux窗口后发现服务停止运行, 使用nohup命令解决不能后台运行的问题:</p>
+    <pre>
+
+        //没有开启后台运行 关掉窗口服务关闭
+        Java -jar xxx.jar
+
+        //后台运行 日志默认输出到nohup.out
+        nohup java -jar xxx.jar
+
+        //0: 标准输入 1： 代表标准输出 2：代表标准错误输出 >：代表替换 >>: 代表追加到后面
+        //下面的命令表示启用后台运行，日志默认输出到nohup.out中，将错误输出追加到标准输出后面
+        //& 代表非阻塞方式操作文件，如果不加& 则必须等到执行完该指令后才能执行后来的指令
+        nohup java -jar xxx.jar > nohup.out 2>>&1 &
+    </pre>
+    <p class="introduceText">jar包一直在后台运行，如何关掉：</p>
+    <pre>
+
+        //查看某一个进程的信息
+        ps -ef|grep xxx.jar
+        ps aux|grep xxx.jar
+
+        //查看某一个端口占用信息
+        lsof -i:8080
+
+        //根据进程pid杀死进程
+        kill -9 进程号
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>
