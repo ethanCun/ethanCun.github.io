@@ -54,7 +54,24 @@
 
     <p class="contents">1.5, 编译：make, 接着安装make install</p>
 
-    <p class="contents">1.6, 启动： cd /usr/local/nginx-1.17.7/sbin,  ./nginx启动</p>
+    <p class="contents">1.6, 配置环境变量， 不然会报错: -bash: nginx: 未找到命令</p>
+    <pre>
+
+        cd .../path to nginx
+
+        vim /etc/profile
+
+        在最下面加上：
+        #nginx
+        PATH=$PATH:/usr/local/nginx-1.17.7/sbin
+        export PATH
+
+        然后杀死nginx重启
+
+    </pre>
+
+    <p class="contents">1.7, 启动： cd /usr/local/nginx-1.17.7/sbin,  ./nginx启动</p>
+
 
     <p class="smallTitle">2. linux相关命令</p>
     <pre>
