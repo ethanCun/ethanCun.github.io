@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>nginx负载均衡与动静分离配置</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">redis</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">nginx负载均衡与动静分离配置</p>
+    <hr>
+
+    <p class="smallTitle">1. linux安装nginx</p>
+
+    <p class="contents">1.1, nginx下载地址：<a target="_blank" href="https://nginx.org/download/">https://nginx.org/download/</a> </p>
+
+    <p class="contents">1.2, 下载nginx-1.17.7.tar.gz， 通过Cyberduck上传到云服务器的/usr/local下面，并解压</p>
+    <p class="contents">或者使用上传命令: tar -zxvf nginx-1.17.7.tar.gz</p>
+
+    <p class="contents">1.3, 安装前检查:</p>
+    <pre>
+
+        在安装nginx前首先要确认系统中安装了gcc、pcre-devel、zlib-devel、openssl-devel。
+
+        Linux下检查是否安装过某软件包：<a target="_blank" href="http://www.cnblogs.com/xxoome/p/5866553.html">http://www.cnblogs.com/xxoome/p/5866553.html</a>
+
+
+        没有安装先安装:
+        安装命令：
+        yum -y install gcc pcre-devel zlib-devel openssl openssl-devel
+
+
+    </pre>
+
+    <p class="contents">1.4, 生成MakeFile文件供编译:</p>
+    <pre>
+
+        //后面街上--con-path=.... 解决cp: `conf/koi-win’ and `/usr/local/nginx/conf/koi-win’ 为同一文件这个问题
+        ./configure --prefix=/usr/local/nginx --conf-path=/usr/local/nginx-1.17.7/nginx.conf
+
+        //解决安装时权限不够:
+        chmod +x configure
+    </pre>
+
+    <p class="contents">1.5, 编译：make, 接着安装make install</p>
+
+    <p class="contents">1.6, 启动： cd /usr/local/nginx-1.17.7/sbin,  ./nginx启动</p>
+
+    <p class="smallTitle">2. linux相关命令</p>
+    <pre>
+
+        启动nginx: cd /usr/local/nginx/sbin/   ./nginx
+
+        nginx -s reload ：修改配置后重新加载生效
+
+        nginx -t -c /path/to/nginx.conf 测试nginx配置文件是否正确
+
+        nginx -s reopen ：重新打开日志文件
+
+        nginx -s stop :快速停止nginx
+        quit ：完整有序的停止nginx
+        ps -ef | grep nginx
+        kill -QUIT 主进程号 ：从容停止Nginx
+        kill -TERM 主进程号 ：快速停止Nginx
+        kill -9 nginx ：强制停止Nginx
+
+    </pre>
+
+    <p class="smallTitle">3. nginx负载均衡策略</p>
+    <pre>
+
+        1.轮询方式是Nginx负载默认的方式，顾名思义，所有请求都按照时间顺序分配到不同的服务上，如果服务Down掉，可以自动剔除
+
+        2. ip_hash:每个请求按访问ip的hash结果分配，这样每个访客固定访问一个后端服务器，可以解决session的问题
+
+        3. 权重:指定每个服务的权重比例，weight和访问比率成正比，通常用于后端服务机器性能不统一，将性能好的分配权重高来发挥服务器最大性能
+
+        4. 最少连接:将请求分配到连接数最少的服务上
+
+        5. 响应时间最短fair:按后端服务器的响应时间来分配请求，响应时间短的优先分配
+
+        6. url_hash:url分配方式，按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，
+        要配合缓存命中来使用。同一个资源多次请求可能会到达不同的服务器上，导致不必要的多次下载，
+        缓存命中率不高，以及一些资源时间的浪费。而使用url_hash，可以使得同一个url（也就是同一个资源请求）会到达同一台服务器，
+        一旦缓存住了资源，再次收到请求，就可以在缓存中读取。
+
+         upstream nostatic{
+
+            # 使用多个端口模块多台机器
+            server localhost:8001 weight=1;
+            server localhost:8002 weight=2;
+            #server localhost:8003 down;
+            #server localhost:8004 backup;
+            #server 172.20.1.201:80 max_fails=3 fail_timeout=30s;
+            #ip_hash;
+            #least_conn;
+            #fair;
+            #hash $request_uri;
+        }
+
+        其中：
+        backup:标记该服务器为备用服务器。当主服务器停止时，请求会被发送到它这里;
+        down:标记服务器永久停机;
+        fail_timeout:与max_fails结合使用,max_fails:在fail_timeout参数设置的时间内最大失败次数。
+        如果在这个时间内，所有该服务器的请求都失败了，那么认为该服务器停机;
+
+    </pre>
+
+    <p class="smallTitle">4. location匹配规则</p>
+    <p class="contents">4.1, 参考链接1： <a target="_blank" href="https://www.cnblogs.com/fyy-hhzzj/p/7844961.html">https://www.cnblogs.com/fyy-hhzzj/p/7844961.html</a> </p>
+
+
+    <p class="smallTitle">5. nginx配置动静分离</p>
+    <p class="contents">在使用nginx进行分流时，一般会配置多台nginx服务器，用专门的服务器
+    访问静态资源，当然也可以在一台机器上使用nginx动静分流</p>
+    <pre>
+
+        #配置访问动态资源
+        upstream nostatic{
+
+            # 使用多个端口模块多台机器
+            server localhost:8001 weight=1;
+            server localhost:8002 weight=2;
+            #server localhost:8003 down;
+            #server localhost:8004 backup;
+            #server 172.20.1.201:80 max_fails=3 fail_timeout=30s;
+            #ip_hash;
+            #least_conn;
+            #fair;
+            #hash $request_uri;
+        }
+
+        #配置访问静态资源
+        upstream static{
+
+            server localhost:8001 weight=1;
+            #server localhost:8002 weight=2;
+            #server localhost:8003 down;
+            #server localhost:8004 backup;
+            #server 172.20.1.201:80 max_fails=3 fail_timeout=30s;
+            #ip_hash;
+            #least_conn;
+            #fair;
+            #hash $request_uri;
+        }
+
+        # 同一台server下面的静态资源 location：由上到下，上面的生效了，下面的就不会生效
+        location ~ .*\.(html|htm|txt|ico|js|css|png|jpg|jpeg|gif)?$ {
+
+            #静态资源 也可以放在nginx的html下面或者直接映射tomcat里面的静态资源
+            root html;
+	        #定义首页索引文件的名称
+            index  index.html index.htm;
+
+		    # 转发到nostatic这个服务器
+            proxy_pass http://static;
+
+            #保证分流后在tomcat中可以拿到客户端信息
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+            # 设置静态资源缓存时间
+            expires 30d;
+        }
+
+        location ~*^.+$ {
+
+            #静态资源 指定资源位置
+            root html;
+	        #定义首页索引文件的名称
+            index  index.html index.htm;
+
+		    # 转发到nostatic这个服务器
+            proxy_pass http://nostatic;
+
+            #保证分流后在tomcat中可以拿到客户端信息
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+
+        也可以放在不同的server下面：
+        server {
+
+               listen      4444;
+               server_name  localhost  alias  local;
+
+               location ~ .*\.(js|css|png|jpg|jpeg|gif)?$ {
+                   root   html;
+                   index  index.html index.htm;
+                   proxy_pass http://static;
+                }
+        }
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>
