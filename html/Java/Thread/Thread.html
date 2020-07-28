@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Java多线程编程与锁</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">Java多线程编程与锁</p>
+    <hr>
+
+    <ul>
+        <li><a href="#thread">1. 继承Thread的方式创建线程</a> </li>
+        <li><a href="#runnable">2. 实现Runnable接口的方式创建线程</a> </li>
+        <li><a href="#callable">3. 实现Callable接口的方式创建线程</a> </li>
+        <li><a href="#daemon">4. 关于守护线程与用户线程:</a> </li>
+        <li><a href="#join">5. 关于join()阻塞线程，与notify()、notifyAll()唤醒线程</a> </li>
+        <li><a href="#executors">6. 使用线程池来管理线程</a> </li>
+        <li><a href="#synchronized">7. synchronized在非静态方法、静态方法以及代码块上的应用:</a> </li>
+        <li><a href="#singleton">8. 如何写一个安全真正的Java单例</a> </li>
+
+    </ul>
+
+    <p class="smallTitle" id="thread">1. 继承Thread的方式创建线程</p>
+    <p class="introduceText">
+        用继承方式的方式创建线程好处是方便传参，你可以在子类里面添加成员变量，通过set方法设置参数或者通过构造函数进行传递。
+    </p>
+    <pre>
+        public class Thread1 extends Thread{
+
+        @Override
+        public void run() {
+
+            System.out.println("id: " + this.getId() + " name: " + this.getName());
+
+            try {
+                sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    </pre>
+
+    <p class="smallTitle" id="runnable">2. 实现Runnable接口的方式创建线程</p>
+    <p class="introduceText">
+        用实现Runnable接口的方式创建线程，相比继承，好处是解决了Java只能单继承的问题，使用起来更加灵活。
+    </p>
+    <pre>
+        public class Thread2 implements Runnable{
+
+        @Override
+        public void run() {
+
+            System.out.println("id: " + Thread.currentThread().getId() + " name: " + Thread.currentThread().getName());
+        }
+    }
+    </pre>
+
+    <p class="smallTitle" id="callable">3. 实现Callable接口的方式创建线程</p>
+    <p class="smallTitle">
+        相比前两中方式，callable的好处在于可以获取到返回值FutureTask, 通过调用get()方法，来获取任务的返回值,
+        同时也解决了单继承的问题。
+    </p>
+    <pre>
+        public class Thread3 implements Callable {
+
+            @Override
+            public Object call() throws Exception {
+
+                Thread.sleep(3000);
+
+                return "线程3";
+            }
+        }
+    </pre>
+
+    <p class="smallTitle">测试这三种创建线程的方式</p>
+    <p class="introduceText">1. 继承Thread:</p>
+    <pre>
+
+        //继承Thread
+        Thread1 thread1 = new Thread1();
+        thread1.setName("线程1");
+        thread1.start();
+
+        //RUNNABLE
+        System.out.println(thread1.getState());
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //TIMED_WAITING
+        System.out.println(thread1.getState());
+
+    </pre>
+
+    <p class="introduceText">2. 实现runnable:</p>
+    <pre>
+
+        //实现Runnable
+        Runnable runnable = new Thread2();
+        Thread thread22 = new Thread(runnable);
+        thread22.setName("线程2");
+        thread22.start();
+    </pre>
+
+    <p class="introduceText">3. 实现callable:</p>
+    <pre>
+
+        //实现Callable
+        FutureTask&lt;String&gt; futureTask = new FutureTask<>(new Thread3());
+        Thread thread33 = new Thread(futureTask);
+        thread33.start();
+        try {
+            String result = futureTask.get();
+            System.out.println("callable形式返回数据: " + result + " isDone: " + futureTask.isDone());
+        }catch (InterruptedException | ExecutionException e){
+            e.printStackTrace();
+        }
+
+    </pre>
+
+
+    <p class="smallTitle" id="daemon">4. 关于守护线程与用户线程:</p>
+    <p class="introduceText">
+        守护线程: 拥有自我结束任务能力的线程； 用户线程： 对应非守护线程，线程一直在那里运行。
+        Java将线程设置为守护线程的方式：调用setDaemon(true)
+    </p>
+    <pre>
+
+        //演示守护线程与非守护线程的区别
+        Runnable runnable4 = new Thread4();
+        Thread thread44 = new Thread(runnable4);
+        //设置为守护线程 这个方法必须在start之前调用
+        thread44.setDaemon(true);
+        thread44.start();
+
+        //监听JVM是否退出
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> System.out.println("JVM已经退出")));
+
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("主线程: " + Thread.currentThread().getName() + "结束！");
+    </pre>
+
+    <p class="introduceText">Thread4:</p>
+    <pre>
+
+        //演示守护线程与普通非守护线程的区别
+        public class Thread4 implements Runnable{
+
+            @Override
+            public void run() {
+
+                while (true){
+
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                        System.out.println("演示守护线程与非守护线程的区别");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+    </pre>
+
+    <p class="introduceText">测试结果:</p>
+    <p class="introduceText">在没有设置为守护线程时，Thread4里面会while循环一直输出， 设置为守护线程后, 2s后打印下面的
+    主线程结束， 然后打印JVM退出。</p>
+
+    <p class="smallTitle" id="join">5. 关于join()阻塞线程，与notify()、notifyAll()唤醒线程</p>
+    <p class="introduceText">
+        join()会阻塞当前线程，底层是通过加锁的Object对象的wait()方法来实现，阻塞结束后，JVM会在合适
+        的时机调用notify()、notifyAll()来唤醒线程继续做其他的事情。
+    </p>
+    <pre>
+
+        //演示join阻塞线程
+        Thread thread = new Thread1();
+        thread.start();
+
+        try {
+            //join会阻塞当前线程 之后在线程完成之后才会输出后面的结束
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("结束");
+    }
+    </pre>
+    <p class="introduceText">测试结果:</p>
+    <p class="introduceText">由于Thread1的run中沉睡了3s，又调用了thread.join()方法，因此会在3s
+    后输出'结束', 如果不适应joiin()来阻塞的话，会立即输出'结束'。</p>
+
+    <p class="smallTitle">join()的底层实现:</p>
+    <pre>
+
+        //加锁synchronized
+        public final synchronized void join(long millis)
+        throws InterruptedException {
+            long base = System.currentTimeMillis();
+            long now = 0;
+
+            if (millis < 0) {
+                throw new IllegalArgumentException("timeout value is negative");
+            }
+
+            if (millis == 0) {
+                while (isAlive()) {
+                    //wait()等待
+                    wait(0);
+                }
+            } else {
+                while (isAlive()) {
+                    long delay = millis - now;
+                    if (delay <= 0) {
+                        break;
+                    }
+                    wait(delay);
+                    now = System.currentTimeMillis() - base;
+                }
+            }
+        }
+
+    </pre>
+
+    <p class="smallTitle" id="executors">6. 使用线程池来管理线程</p>
+    <p class="introduceText">
+        线程池的好处在于通过通知线程数量，空闲时间等，提高线程复用率，减小线程频繁创建、切换带来的消耗。
+    </p>
+    <p class="introduceText">1. 通过Executors来创建线程池：</p>
+    <pre>
+
+        //演示Executors创建线程池
+        public static void executors(){
+
+            //Executors是一个线程池工厂，提供了很多的工厂方法
+            ExecutorService executorService;
+
+            // 创建固定数量的线程池
+            //1. 如果线程的数量未达到指定数量，则创建线程来执行任务
+            //2. 如果线程池的数量达到了指定数量，并且有线程是空闲的，则取出空闲线程执行任务
+            //3. 如果没有线程是空闲的，则将任务缓存到队列（队列长度为Integer.MAX_VALUE）。
+            // 当线程空闲的时候，按照FIFO的方式进行处理
+            executorService = Executors.newFixedThreadPool(5);
+
+            //创建单一线程的线程池 这个线程池只有一个线程。
+            //若多个任务被提交到此线程池，那么会被缓存到队列（队列长度为Integer.MAX_VALUE）。
+            //当线程空闲的时候，按照FIFO的方式进行处理。
+            executorService = Executors.newSingleThreadExecutor();
+
+            //创建带缓存的线程池
+            //核心线程池的长度为0，线程池最大长度为Integer.MAX_VALUE。
+            // 由于本身使用SynchronousQueue作为等待队列的缘故，导致往队列里面每插入一个元素，
+            // 必须等待另一个线程从这个队列删除一个元素。
+            executorService = Executors.newCachedThreadPool();
+
+            //创建定时调度的线程池
+            executorService = Executors.newScheduledThreadPool(5);
+
+            //创建流式（fork-join）线程池
+            executorService = Executors.newWorkStealingPool();
+
+            for (int i=0; i<10; i++){
+
+                executorService.submit(() -> {
+
+                    //System.out.println("thread id is : " + Thread.currentThread().getId());
+
+                    try {
+                         Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                         e.printStackTrace();
+                    }
+                });
+            }
+
+            //定时调度任务
+            <b>执行多次，固定时间间隔为两秒，任务时间长于2s，则取任务时间长</b>
+            ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+            executor.scheduleAtFixedRate(() -> {
+
+                //System.out.println("延迟0， 每过2s调用一次");
+            }, 0, 2, TimeUnit.SECONDS);
+
+            <b>执行多次，第二个任务的时间=第一个任务的时间+delay</b>
+            executor.scheduleWithFixedDelay(() ->{
+
+                //System.out.println("第二个任务的时间=第一个任务的时间+delay");
+            }, 0, 2, TimeUnit.SECONDS);
+
+            <b>只执行一次，不返回结果</b>
+            executor.schedule(() -> {
+
+                //System.out.println("2s后执行，只执行一次");
+            }, 2, TimeUnit.SECONDS);
+
+            <b>只执行一次，并返回结果</b>
+            ScheduledFuture scheduledFuture = executor.schedule(() -> {
+                return "2s后执行，只执行一次，返回结果";
+            }, 2, TimeUnit.SECONDS);
+
+            System.out.println(scheduledFuture.getDelay(TimeUnit.SECONDS));
+
+            try {
+                System.out.println(scheduledFuture.get().toString());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+    </pre>
+
+    <p class="introduceText">2. 手动创建线程池:</p>
+    <p class="introduceText">推荐使用手动的方式来创建线程池，因为可以尽可能地控制各个参数。</p>
+    <pre>
+
+         //演示手动创建线程池
+        public static void threadPoolService(){
+
+            ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(),
+                    10, 10, TimeUnit.SECONDS, new SynchronousQueue<>()){
+
+                @Override
+                protected void beforeExecute(Thread t, Runnable r) {
+                    System.out.println("执行前: " + Thread.currentThread().getId());
+                }
+
+                @Override
+                protected void afterExecute(Runnable r, Throwable t) {
+                    System.out.println("执行后: " + Thread.currentThread().getId());
+                }
+
+                @Override
+                protected void terminated() {
+                    System.out.println("terminated:" + Thread.currentThread().getId());
+                }
+
+                @Override
+                public void shutdown() {
+                    System.out.println("shutdown: " + Thread.currentThread().getId());
+                }
+            };
+
+            for (int i=0; i<10; i++){
+                threadPoolExecutor.execute(() -> {
+                    System.out.println("线程池执行任务, 线程id: " + Thread.currentThread().getId());
+                });
+            }
+
+            //获取cpu数量
+            System.out.println(Runtime.getRuntime().availableProcessors());
+
+            //线程池监控
+            //获取已经执行或正在执行的任务数
+            System.out.println("任务数: " + threadPoolExecutor.getTaskCount());
+            System.out.println("完成的任务数: " + threadPoolExecutor.getCompletedTaskCount());
+            //获取线程池曾经创建过的最大线程数，根据这个参数，我们可以知道线程池是否满过
+            System.out.println("线程池创建过的最大线程数: " + threadPoolExecutor.getLargestPoolSize());
+            //获取线程池线程数
+            System.out.println("线程池线程数：" + threadPoolExecutor.getPoolSize());
+            System.out.println("核心线程池线程数：" + threadPoolExecutor.getCorePoolSize());
+            System.out.println("活跃线程数: " + threadPoolExecutor.getActiveCount());
+
+            //终止线程池
+            threadPoolExecutor.shutdown();
+            threadPoolExecutor.shutdownNow();
+        }
+    </pre>
+
+    <p class="introduceText">3. submit与execute执行任务的区别:</p>
+    <p class="introduceText">submit异常可能会被会略, 可以通过获取返回值Future，并调用get()方法来获取异常，
+    execute不会存在这个问题。</p>
+    <pre>
+
+            ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5, 10, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1));
+
+            for (int i=0; i<5; i++){
+
+                //在使用submit()的时候一定要注意它的返回对象Future，为了避免任务执行异常被吞掉的问题，
+                // 我们需要调用Future.get()方法。
+    //            Future<?> future = threadPoolExecutor.submit(new Thread5(100, i));
+    //            try {
+    //                future.get();
+    //            } catch (InterruptedException e) {
+    //                e.printStackTrace();
+    //            } catch (ExecutionException e) {
+    //                e.printStackTrace();
+    //            }
+
+                //另外，使用execute()将不会出现这种问题。
+                threadPoolExecutor.execute(new Thread5(100, i));
+            }
+    </pre>
+
+    <p class="smallTitle" id="synchronized">7. synchronized在非静态方法、静态方法以及代码块上的应用:</p>
+    <p class="introduceText">1. 非静态方法的加锁:</p>
+    <pre>
+        public synchronized void add(){
+
+            for (int i=0; i<5; i++){
+
+                a++;
+
+                try {
+                    Thread.sleep(1000);
+                    System.out.println("线程: " + Thread.currentThread().getId() + " a = " + a);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    </pre>
+
+    <p class="introduceText">2. 代码块的加锁:</p>
+    <pre>
+
+        public void minus(){
+
+            //this表示当前对象实例 不同实例对象锁相互独立
+            synchronized (this){
+
+                for (int i=0; i<5; i++){
+
+                    b--;
+                    try {
+                        Thread.sleep(1000);
+                        System.out.println("线程: " + Thread.currentThread().getId() + " b = " + b);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    </pre>
+
+    <p class="introduceText">3. 静态方法上的加锁:</p>
+    <pre>
+
+        //用在静态方法上
+        public static synchronized void add2(){
+
+            for (int i=0; i<5; i++){
+
+                c--;
+                try {
+                    Thread.sleep(1000);
+                    System.out.println("线程: " + Thread.currentThread().getId() + " c = " + c);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    </pre>
+
+    <p class="introduceText">4. 测试这三种加锁方式的区别:</p>
+    <pre>
+        //1. 类锁和对象锁其实是一样的，由于静态方法是类所有对象共用的, 也就是说类锁和对象锁访问是安全的。
+        //2. synchronized同时加载费静态方法和静态方法上时，两个线程是交替进行的，也就是说类锁和对象锁是不一样的锁，是互相独立的。
+        //类锁的方法1
+        new Thread(Synchronized1::add2).start();
+        //类锁的方法2
+        new Thread(Synchronized1::minus2).start();
+        //对象锁的方法3
+        new Thread(synchronized1::add).start();
+        //对象锁的方法4
+        new Thread(synchronized1::minus).start();
+        //对象锁的方法5
+        new Thread(synchronized1::minus).start();
+    </pre>
+    <p class="introduceText">测试结果:</p>
+    <pre>
+        1. 方法1和方法2都是类锁，锁生效，是线程安全的；
+        2. 方法3和其他方法不是同一种锁可以同时输出，不是线程安全的。
+        3. 方法3，4，5都是同一个对象的锁，因此是线程安全的。
+    </pre>
+
+    <p class="smallTitle" id="singleton">8. 如何写一个安全真正的Java单例</p>
+    <p class="introduceText">1. 饿汉式单例:</p>
+    <p class="introduceText">很饿，早早地就创建好了在哪里等着用:</p>
+    <pre>
+
+        private static Synchronized1 synchronized2 = new Synchronized1();
+
+        private static synchronized Synchronized1 singletion1(){
+            return synchronized2;
+        }
+    </pre>
+
+    <p class="introduceText">2. 懒汉式单例(双重检查加锁):</p>
+    <p class="introduceText">很懒，在需要用的时候再去创建:</p>
+    <p class="introduceText">方式1：直接将锁加载创建方法上，这种方式每次都要进入方法体，非常耗性能，因此不推荐</p>
+    <pre>
+
+        //方式1： synchronized方法静态方法上 影响性能
+        public static synchronized  Synchronized1 singletion2(){
+
+            if (synchronized1 == null){
+
+                synchronized1 = new Synchronized1();
+            }
+
+            return synchronized1;
+        }
+    </pre>
+
+    <p class="introduceText">方式2: 将锁加在方法体上，配合两次非空检查，相比最为合理:</p>
+    <pre>
+
+        //方式2： synchronized放到代码块上 双重检查加锁
+        public static Synchronized1 singletion3(){
+
+            //第一层检查用来提高效率 没有这一层每次都会进入下面的加锁代码区
+            if (synchronized1 == null){
+
+                //保证一次只有一个线程访问
+                synchronized (Synchronized1.class){
+
+                    //没有这个非空判断可能会创建多个实例
+                    //这样会存在线程安全问题，假如线程一刚好执行完if (synchronized1 == null)的判断语句（还未加锁），
+                    //调度至线程二也执行这条判断语句，也是true，也进入了if的语句块中，这样就会产生两个实例，而非单实例了。
+                    if (synchronized1 == null){
+
+                        synchronized1 = new Synchronized1();
+                    }
+                }
+            }
+
+            return synchronized1;
+        }
+    </pre>
+
+    <p class="introduceText">不知道你有没有发现:方式1的创建方式就相当于方式2没有第一层非空判断。</p>
+
+    <br>
+</div>
+
+</body>
+</html>

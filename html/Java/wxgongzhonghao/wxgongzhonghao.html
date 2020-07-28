@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>springboot微信公众号授权获取用户信息</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">微信公众号</span>
+    <span class="label label-danger">网页授权</span>
+
+</div>
+
+<p style="width: 100%; text-align: right"><a target="_blank" href="https://github.com/ethanCun/wxgongzhonghao-getuserinfo">代码demo</a> </p>
+
+<div class="contentBgDiv">
+
+    <p class="title">使用springboot微信公众号授权获取用户信息</p>
+    <hr />
+
+    <p class="smallTitle">1. 申请微信公众号测试号信息</p>
+    <p class="introduceText"><a target="_blank" href="https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Requesting_an_API_Test_Account.html">
+        申请链接
+    </a> </p>
+    <p class="introduceText">申请成功后可以获得测试号信息appID、appsecret，接着关注测试号二维码，在体验接口权限表中
+        网页服务-网页账户修改授权回调页面域名，注意：沙盒号回调地址支持域名和ip，正式公众号回调地址只支持域名。</p>
+    <br>
+
+    <p class="smallTitle">2. 参考<a target="_blank" href="https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html">
+        网页授权开发文档
+    </a> 根据用户同意授权，获取code：</p>
+    <pre>
+
+        //跳转到用户授权页面 如果用户同意授权，页面将跳转至 redirect_uri/?code=CODE&state=czy
+        //code说明 ： code作为换取access_token的票据，每次用户授权带上的code将不一样，code只能使用一次，5分钟未被使用自动过期
+        @GetMapping(value = "/login")
+        public String wxgongzhonghao(){
+
+            String ss = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+
+                    "&redirect_uri=" + URLUtil.encode("https://test.com:8888/wxzhongzhonghao/wx/index") +
+                    "&response_type=code&scope=snsapi_userinfo&state=czy#wechat_redirect";
+
+            System.out.println(ss);
+
+            //重定向到弹框授权页面
+            return "redirect:"+ss;
+        }
+    </pre>
+
+    <p class="smallTitle">3. 用户同意授权之后跳转到https://test.com:8888/wxzhongzhonghao/wx/index?code=CODE&state=czy(wxzhongzhonghao为包名，本地调试时不需要),
+        在index页面通过jquery.params.js获取code，并根据code换取access_token：</p>
+    <p class="introduceText">后台代码:</p>
+    <pre>
+            //用户授权之后跳转到这个页面
+            @GetMapping(value = "/index")
+            public String index(){
+
+                return "index";
+            }
+        
+           //通过code换取网页授权access_token
+            @ResponseBody
+            @GetMapping(value = "/getAccessTokenWithCode")
+            public String getAccessTokenWithCode(String code){
+        
+                String baseUrl = "https://api.weixin.qq.com/sns/oauth2/access_token";
+        
+                Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();
+                map.put("appid", appId);
+                map.put("secret", appSecret);
+                map.put("code", code);
+                map.put("grant_type", "authorization_code");
+        
+                String res = HttpUtil.get(baseUrl, map);
+        
+                return res;
+            }
+    </pre>
+    <p class="introduceText">前段代码:</p>
+    <pre>
+
+        &lt;html lang="en" xmlns:th="http://www.thymeleaf.org"&gt;
+        &lt;meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" /&gt;
+        &lt;script src="./../static/jquery-3.3.1.min.js" th:src="@{/jquery-3.3.1.min.js}"&gt;&lt;/script&gt;
+        &lt;script src="./../static/jquery.params.js" th:src="@{/jquery.params.js}"&gt;&lt;/script&gt;
+        &lt;style&gt;
+
+            &lt;!-- 解决p标签动态数据innerHTML不换行的问题 --&gt;
+            p{
+                width: 100%;
+                word-break: break-all;
+            }
+        &lt;/style&gt;
+        
+        //获取用户同意授权之后返回的code和state(自定义数据)
+        var code =  $.query.get("code");
+        var state = $.query.get("state");
+        var access_token = '';
+        var openid = '';
+
+        document.getElementById("code").innerHTML = code;
+        document.getElementById("state").innerHTML = state;
+
+        getAccessTokenWithCode()
+
+        //根据code获取access_token和openid
+        function getAccessTokenWithCode() {
+
+            //本地测试时，url去掉/wxgongzhonghao
+            $.ajax({
+                url: '/wxzhongzhonghao/wx/getAccessTokenWithCode',
+                type: 'GET',
+                data: {"code":code},
+                success: function (res) {
+
+                    console.log('获取成功: ' + JSON.stringify(res))
+
+                    this.access_token = JSON.parse(res).access_token;
+                    this.openid = JSON.parse(res).openid;
+
+                    document.getElementById("accessToken").innerHTML = this.access_token;
+                    document.getElementById("openid").innerHTML = this.openid;
+
+                    //获取用户信息
+                    getUserInfo(this.access_token, this.openid)
+                },
+                error: function (err) {
+                    console.log('获取失败: ' + JSON.stringify(err))
+                }
+            })
+
+    </pre>
+
+    <p class="smallTitle">4. 根据第3步返回的access_token和openid获取用户信息:</p>
+    <p class="introduceText">后台代码：</p>
+    <pre>
+        
+            //根据openid和access_token获取用户信息
+            @ResponseBody
+            @GetMapping(value = "/getUserInfo")
+            public String getUserInfo(String openid, String access_token){
+        
+                String baseUrl = "https://api.weixin.qq.com/sns/userinfo";
+        
+                Map&lt;String, Object&gt; params = new HashMap&lt;&gt;();
+                params.put("access_token", access_token);
+                params.put("openid", openid);
+                params.put("lang", "zh_CN");
+        
+                return HttpUtil.get(baseUrl, params);
+            }
+    </pre>
+    <p class="introduceText">前段代码:</p>
+    <pre>
+        
+        //根据access_token和openid获取用户信息
+        function getUserInfo(access_token, openid) {
+
+            // this.access_token = "33_9Jg_5MDPML6jCOWxScZ9cG_m2_aJIP5CQyx5Buk7sTXi9QfEPBKqsY3YfbyCIYP07K1lPVhmUF4JzWZK775QoGanRSwKW69NfUrfzrmEbmg"
+            // this.openid = 'otI3VvxGDuqfXRBYiUYbdVS7fJlw'
+
+            $.ajax({
+                url: '/wxzhongzhonghao/wx/getUserInfo',
+                type: 'GET',
+                data: {"access_token":access_token, "openid": openid},
+                success: function (res) {
+                    console.log('获取用户信息成功: ' + JSON.stringify(res))
+                    document.getElementById("userInfo").innerHTML = res
+                },
+                error: function (err) {
+                    console.log('获取用户信息失败: ' + JSON.stringify(err))
+                }
+            })
+        }
+    </pre>
+
+    <p class="smallTitle">5. 添加跳转入口：</p>
+    <p class="introduceText">登录微信公众平台，在菜单管理中添加一项，跳转到网页: https://test.com:8888/wxzhongzhonghao/wx/admin</p>
+
+    <br>
+</div>
+</body>
+</html>
