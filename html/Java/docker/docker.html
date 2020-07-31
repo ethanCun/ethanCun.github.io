@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>linux下docker使用与docker常用命令</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">linux下docker使用与docker最常用命令</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">linux下docker使用与docker最常用命令</p>
+    <hr>
+
+    <p class="smallTitle">1. docker简介</p>
+    <pre>
+        docker是一种虚拟化技术，相比于vmware等传统虚拟化技术，它的主要优势是：
+        1. 解决了机械化对宿主机硬盘内存的"虚拟分割"；
+        2. 可以实现多个容器对宿主机的内存共享；
+        3. 比起传统虚拟机，启动速度更快；
+        4. "面向对象"的思想， 使用更加方便快捷， 继承镜像更容易扩展；
+        5. 部署更加方便，一次构建，在安装了docker的系统上都可以运行;
+    </pre>
+    <p class="contents">docker大概组成与原理：</p>
+    <pre>
+
+        1. docker主要组成为镜像image, 容器container；
+
+        2. docker运行是用户在CLI，docker通过调用rest api在server进行处理；
+           docker自建镜像时，docker CLI也会调用rest api将Dockerfile路径下的
+            文件一次打包发送到docker server，server处理后的文件路径称之为上下文路径
+
+    </pre>
+    <p class="contents">docker简介图:</p>
+    <img src="../../../Source/docker/docker.png">
+
+
+    <p class="smallTitle">2. linux下安装docker</p>
+    <pre>
+
+        1. 操作系统为CentOS7, 可以使用uname -r查看系统内核版本
+
+        2. 检查是否安装了docker: yum list installed | grep docker
+
+        3. 安装docker: yum -y install docker
+
+        4. 启动docker: systemctl start docker
+
+        5. 查看docker运行状态: systemctl status docker
+    </pre>
+
+
+    <p class="smallTitle">3. docker常用命令</p>
+    <p class="contents">3.1, 镜像常用命令</p>
+    <pre>
+
+        -i: 打开交互模式，后续可以继续在终端操作
+        -t: 新起一个终端
+        -p: 指定固定端口: -p 8888:8080
+        -P: 随机端口
+        -d: 关闭终端后继续可以在终端运行
+
+        1. 镜像列表
+        docker images
+        docker image ls
+
+        2. 构建镜像
+        . 表示docker server解析cli上传之后包的Dockerdile所在的文件路径
+        docker build -t imageName .
+
+        3. 删除镜像
+        docker rmi 镜像id
+
+        4. 运行一个镜像创建一个容器
+        docker run -p 8888:8080 -it 镜像名称:镜像版本
+        docker run -p 8888:8080 -it 镜像id
+        docker run -P -d -it 镜像id
+
+        5. 指定镜像名称
+        docker run -p 8888:8080 -i -t --name 镜像名称  镜像id
+
+
+    </pre>
+
+    <p class="contents">3.2, 容器常用命令</p>
+    <pre>
+
+        1. 容器列表
+        docker container ls  //所有正在运行的容器
+        docker container ls -a //所有容器
+        docker ps //所有正在运行的容器
+        docker ps -a //所有容器
+
+        2. 删除容器
+        docker rm 容器id
+
+        3. 停止重启容器
+        docker restart 容器id
+        docker stop 容器id
+
+        4. 在删除镜像之前，最好先停止容器， 删除容器， 然后再删除镜像
+    </pre>
+
+
+    <br>
+</div>
+
+</body>
+</html>
