@@ -95,9 +95,9 @@
 
         1. 容器列表
         docker container ls  //所有正在运行的容器
-        docker container ls -a //所有容器
-        docker ps //所有正在运行的容器
-        docker ps -a //所有容器
+        docker container ls -a  //所有容器
+        docker ps  //所有正在运行的容器
+        docker ps -a  //所有容器
 
         2. 删除容器
         docker rm 容器id
@@ -107,6 +107,13 @@
         docker stop 容器id
 
         4. 在删除镜像之前，最好先停止容器， 删除容器， 然后再删除镜像
+
+        5. 进入容器内执行 /bin/bash 脚本
+        docker exec -it 容器id /bin/bash
+
+        6. 退出容器
+        exit
+
     </pre>
 
 
