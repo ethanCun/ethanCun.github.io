@@ -20,7 +20,17 @@
     <p class="title">linux下docker使用与docker最常用命令</p>
     <hr>
 
-    <p class="smallTitle">1. docker简介</p>
+    <ul>
+        <li><a href="#introduce">1. docker简介</a> </li>
+        <li><a href="#install">2. linux下安装docker</a> </li>
+        <li><a href="#command">3. docker常用命令</a> </li>
+        <li><a href="#dockertomcat">4. docker部署tomcat</a> </li>
+        <li><a href="#dockermysql">5. docker部署mysql</a> </li>
+        <li><a href="#dockercomposetomcat">6. docker-compose部署tomcat</a> </li>
+        <li><a href="#dockercomposemysql">7. docker-compose部署mysql</a> </li>
+    </ul>
+
+    <p class="smallTitle" id="introduce">1. docker简介</p>
     <pre>
         docker是一种虚拟化技术，相比于vmware等传统虚拟化技术，它的主要优势是：
         1. 解决了机械化对宿主机硬盘内存的"物理分割",可以用数据卷共享宿主机数据；
@@ -43,7 +53,7 @@
     <img src="../../../Source/docker/docker.png">
 
 
-    <p class="smallTitle">2. linux下安装docker</p>
+    <p class="smallTitle" id="install">2. linux下安装docker</p>
     <pre>
 
         1. 操作系统为CentOS7, 可以使用uname -r查看系统内核版本
@@ -58,7 +68,7 @@
     </pre>
 
 
-    <p class="smallTitle">3. docker常用命令</p>
+    <p class="smallTitle" id="command">3. docker常用命令</p>
     <p class="contents">3.1, 镜像常用命令</p>
     <pre>
 
@@ -118,6 +128,10 @@
         6. 退出容器
         exit
 
+        7. 容器安装vim
+        apt-get update
+        apt-get install vim
+
     </pre>
 
     <p class="contents">3.3, 数据卷Data volumes: docker数据持久化</p>
@@ -138,7 +152,104 @@
 
     </pre>
 
-    <br>
+
+    <p class="smallTitle" id="dockertomcat">4. linux上使用docker部署项目到tomcat</p>
+    <pre>
+
+        # --name 指定容器名称
+        # -v /usr/local/docker/docker.war:/usr/local/tomcat/webapps/docker.war 宿主机war包路径:容器war包路径  不存在会自动创建，容器内tomcat会自动解压缩
+        docker run -p 8086:8080 --name tomcat80211 -v /usr/local/docker/docker.war:/usr/local/tomcat/webapps/docker.war -d b3ceae42d270
+
+    </pre>
+
+
+    <p class="smallTitle" id="dockermysql">5. linux上使用docker部署mysql</p>
+    <pre>
+
+        #宿主机下有三个文件conf、db、log, 分别对应mysql的配置信息，数据库数据，数据库日志
+         docker run -p 3322:3306 --name mysql3322 -d
+          -v /usr/local/docker/mysql/conf:/etc/mysql
+          -v /usr/local/docker/mysql/db:/var/lib/mysql
+          -v /usr/local/docker/mysql/log:/var/log/mysql
+          -e MYSQL_ROOT_PASSWORD=123456
+          mysql:8.0.21
+
+
+        #注意：
+        1. 使用这种方式在docker部署mysql相对麻烦，部署时应注意端口是否占用；
+        2. 遇到报错：Failed to access directory for --secure-file-priv. Please make sure that directory exists and is accessible by MySQL Server. Supplied value : /var/lib/mysql-files
+            解决办法：在宿主机下conf文件夹下新建my.cnf，加上这个配置:
+            [mysqld]
+            secure_file_priv=/var/lib/mysql
+            之后创建的容器都会有这个配置
+    </pre>
+
+    <p class="smallTitle" id="dockercomposetomcat">6. 使用docker-compose在linux上部署tomcat</p>
+    <p class="introduceText">
+        docker是go编写的，docker-compose是用python编写的，docker-compose的作用
+        就是用来解决docker创建容器要写一大堆shell麻烦的问题，想象一下，如果要部署一个集群，
+        光用docker去一个个创建容器的话，根本没法玩，docker-compose就是用来解决这个问题的。
+    </p>
+    <pre>
+
+        # 新建tomcat-docker-compose文件夹，在这个文件加下新建文件docker-compose.yml, 内容如下:
+        version: '3'
+        services:
+          dockerdemo:
+            image: 'tomcat:8.0.21'
+            volumes:
+              - '/usr/local/docker/tomcat-docker-compose/docker.war:/usr/local/tomcat/webapps/docker.war'
+            ports:
+              - '8077:8080'
+            entrypoint:
+              - 'catalina.sh'
+              - 'run'
+
+        # 将war包docker.war拷贝到tomcat-docker-compose文件夹下
+
+        # cd到tomcat-docker-compose文件夹下，运行命令：
+         docker-compose up -d
+
+        # 停止移除
+         docker-compose down
+
+        # 查看docker-compose运行日志
+         docker-compose logs
+        # 监控室查看运行日志
+         docker-compose logs -f
+
+    </pre>
+
+    <p class="smallTitle" id="dockercomposemysql">7. 使用docker-compose部署tomcat和mysql项目</p>
+    <pre>
+
+        # $PWD环境变量：表示tomcat-docker-compose所在的路径
+        version: '3'
+        services:
+          dockerdemo:
+            image: 'tomcat:8.0.21'
+            volumes:
+              - '/usr/local/docker/tomcat-docker-compose/docker.war:/usr/local/tomcat/webapps/docker.war'
+            ports:
+              - '8077:8080'
+            entrypoint:
+              - 'catalina.sh'
+              - 'run'
+          mysql:
+            image: 'mysql:8.0.21'
+            environment:
+              - MYSQL_ROOT_PASSWORD=123456
+            volumes:
+              - $PWD/conf:/etc/mysql/conf.d
+              - $PWD/logs:/logs
+              - $PWD/data:/var/lib/mysql
+            container_name: db
+            ports:
+              - "3305:3306"
+
+    </pre>
+
+    <br><br>
 </div>
 
 </body>
