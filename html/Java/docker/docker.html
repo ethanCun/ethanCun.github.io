@@ -288,11 +288,17 @@
               - 'catalina.sh'
               - 'run'
     </pre>
+    <p class="contents">6.4, 在tomcat容器中安装unzip解压缩工具</p>
+    <pre>
+        apt-get install unzip
+    </pre>
+
 
     <p class="smallTitle" id="dockercomposemysql">7. 使用docker-compose部署tomcat和mysql项目</p>
     <pre>
 
         # $PWD环境变量：表示tomcat-docker-compose所在的路径
+        # env可以查看linux的所有环境变量
         # 注意：docker部署war包有时不会自动解压缩(重启tomcat也一样)，所以可以上传解压缩之后的
         #     文件夹；  在多个docker上部署时，最好确报tomcat版本一致，否则可能会引起一些版本
         #     原因造成的错误
