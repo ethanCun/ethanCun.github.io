@@ -237,7 +237,7 @@
           dockerdemo:
             image: 'tomcat:8.5.57'
             volumes:
-              - '/usr/local/docker/tomcat-docker-compose/docker:/usr/local/tomcat/webapps/docker'
+              - '$PWD/docker:/usr/local/tomcat/webapps/docker'
             ports:
               - '8166:8080'
             entrypoint:
