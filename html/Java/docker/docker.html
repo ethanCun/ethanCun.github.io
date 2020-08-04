@@ -281,6 +281,7 @@
             image: 'tomcat:8.5.57'
             volumes:
               - '$PWD/docker:/usr/local/tomcat/webapps/docker'
+              - '$PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml' #自定义的server.xml数据卷映射
             ports:
               - '8166:7080'  #相应的容器的端口更改为7080
             entrypoint:
