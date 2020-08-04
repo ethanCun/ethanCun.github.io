@@ -193,9 +193,14 @@
     <pre>
 
         # 新建tomcat-docker-compose文件夹，在这个文件加下新建文件docker-compose.yml, 内容如下:
+        # 标明docker-compose的yml版本，其中2为普通docker-compose的yml版本，3为集群版本。
         version: '3'
+        # 即多个service服务的节点。每个service有自己的服务名。
         services:
           dockerdemo:
+            # 当docker重启，此服务也跟着重启。
+            restart: always
+            # 当前服务使用的镜像，此镜像必须存在于当前宿主机上，或者宿主机可连的镜像仓库，或者docker的官方镜像仓库中。
             image: 'tomcat:8.0.21'
             volumes:
               - '/usr/local/docker/tomcat-docker-compose/docker.war:/usr/local/tomcat/webapps/docker.war'
@@ -216,7 +221,7 @@
         # 查看docker-compose运行日志
          docker-compose logs
         # 监控室查看运行日志
-         docker-compose logs -f
+         docker-compose logs -f dockerdemo
 
     </pre>
 
@@ -224,14 +229,17 @@
     <pre>
 
         # $PWD环境变量：表示tomcat-docker-compose所在的路径
+        # 注意：docker部署war包有时不会自动解压缩(重启tomcat也一样)，所以可以上传解压缩之后的
+        #     文件夹；  在多个docker上部署时，最好确报tomcat版本一致，否则可能会引起一些版本
+        #     原因造成的错误
         version: '3'
         services:
           dockerdemo:
-            image: 'tomcat:8.0.21'
+            image: 'tomcat:8.5.57'
             volumes:
-              - '/usr/local/docker/tomcat-docker-compose/docker.war:/usr/local/tomcat/webapps/docker.war'
+              - '/usr/local/docker/tomcat-docker-compose/docker:/usr/local/tomcat/webapps/docker'
             ports:
-              - '8077:8080'
+              - '8166:8080'
             entrypoint:
               - 'catalina.sh'
               - 'run'
@@ -239,13 +247,19 @@
             image: 'mysql:8.0.21'
             environment:
               - MYSQL_ROOT_PASSWORD=123456
+            command:
+              --character-set-server=utf8mb4
+              --collation-server=utf8mb4_general_ci
+              --explicit_defaults_for_timestamp=true
+              --max_allowed_packet=128M
             volumes:
               - $PWD/conf:/etc/mysql/
               - $PWD/logs:/var/log/mysql
               - $PWD/data:/var/lib/mysql
-            container_name: db
+            container_name: ddbbddbb
             ports:
               - "3305:3306"
+
 
     </pre>
 
