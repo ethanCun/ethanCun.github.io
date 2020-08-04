@@ -196,6 +196,7 @@
         # 标明docker-compose的yml版本，其中2为普通docker-compose的yml版本，3为集群版本。
         version: '3'
         # 即多个service服务的节点。每个service有自己的服务名。
+        # 注意yml格式前面必须为空格，不能为tab
         services:
           dockerdemo:
             # 当docker重启，此服务也跟着重启。
@@ -220,9 +221,71 @@
 
         # 查看docker-compose运行日志
          docker-compose logs
-        # 监控室查看运行日志
+        # 监控式查看运行日志
          docker-compose logs -f dockerdemo
 
+    </pre>
+    <p class="contents">6.2, 自定义tomcat的server.xml, 并使用docker-compose.yml
+    部署tomcat</p>
+    <pre>
+
+        # 在tomcat-docker-compose文件夹下新建一个tomcat文件夹用来放自定义的server.xml, 如下(仅修改端口为7080):
+        &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+        &lt;Server port="8005" shutdown="SHUTDOWN"&gt;
+
+          &lt;Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" /&gt;
+          &lt;Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" /&gt;
+          &lt;Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" /&gt;
+
+          &lt;GlobalNamingResources&gt;
+            &lt;Resource name="UserDatabase" auth="Container"
+                      type="org.apache.catalina.UserDatabase"
+                      description="User database that can be updated and saved"
+                      factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+                      pathname="conf/tomcat-users.xml" /&gt;
+          &lt;/GlobalNamingResources&gt;
+
+          &lt;Service name="Catalina"&gt;
+
+            &lt;Connector port="7080" protocol="HTTP/1.1"
+                       connectionTimeout="20000"
+                       redirectPort="8443" /&gt;
+
+            &lt;Engine name="Catalina" defaultHost="localhost"&gt;
+
+              &lt;Realm className="org.apache.catalina.realm.LockOutRealm"&gt;
+                &lt;Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+                       resourceName="UserDatabase"/&gt;
+              &lt;/Realm&gt;
+
+              &lt;Host name="localhost"  appBase="webapps"
+                    unpackWARs="true" autoDeploy="true"&gt;
+
+                &lt;Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+                       prefix="localhost_access_log" suffix=".txt"
+                       pattern="%h %l %u %t &quot;%r&quot; %s %b" /&gt;
+
+              &lt;/Host&gt;
+            &lt;/Engine&gt;
+          &lt;/Service&gt;
+        &lt;/Server&gt;
+
+
+    </pre>
+    <p class="contents">6.3, 修改docker-compose.yml中的数据卷映射:</p>
+    <pre>
+
+        version: '3'
+        services:
+          dockerdemo:
+            image: 'tomcat:8.5.57'
+            volumes:
+              - '$PWD/docker:/usr/local/tomcat/webapps/docker'
+            ports:
+              - '8166:7080'  #相应的容器的端口更改为7080
+            entrypoint:
+              - 'catalina.sh'
+              - 'run'
     </pre>
 
     <p class="smallTitle" id="dockercomposemysql">7. 使用docker-compose部署tomcat和mysql项目</p>
