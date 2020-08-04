@@ -240,8 +240,8 @@
             environment:
               - MYSQL_ROOT_PASSWORD=123456
             volumes:
-              - $PWD/conf:/etc/mysql/conf.d
-              - $PWD/logs:/logs
+              - $PWD/conf:/etc/mysql/
+              - $PWD/logs:/var/log/mysql
               - $PWD/data:/var/lib/mysql
             container_name: db
             ports:
