@@ -260,6 +260,15 @@
         <p>
             firewall-cmd --reload //reload防火墙配置
         </p>
+        <p>
+            netstat -ntlp //查看当前所有tcp端口 State为Listen表示端口被占用
+        </p>
+        <p>
+            netstat -nultp //查看服务器所有的tcp，udp端口占用情况
+        </p>
+        <p>
+            netstat -ntulp | grep 80   //查看所有80端口使用情况
+        </p>
 
     </div>
 
