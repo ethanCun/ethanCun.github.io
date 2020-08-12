@@ -255,7 +255,10 @@
             firewall-cmd --list-ports //查看防火墙开放的端口
         </p>
         <p>
-            firewall-cmd --zone=public --add-port=9404/tcp --permanent //防火墙开放端口 注意需要reload一下
+            firewall-cmd --zone=public --add-port=80/tcp --permanent //防火墙开放端口 注意需要reload一下
+        </p>
+        <p>
+            firewall-cmd --zone=public --remove-port=80/tcp --permanent //防火墙删除端口 注意需要reload一下
         </p>
         <p>
             firewall-cmd --reload //reload防火墙配置
