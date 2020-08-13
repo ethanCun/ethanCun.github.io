@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mysql常规操作</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">mysql</span>
+</div>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">mysql常规操作</p>
+    <hr>
+
+    <p class="smallTitle">1 界面操作</p>
+    <pre>
+
+        # mysql登录
+        mysql -u root -p
+        # 退出登录
+        exit; 获取 quit;
+
+        # mysql修改密码
+        1. mysqladmin -u root -p password 然后输入旧密码， 新密码， 确认新密码
+        2. mysql5.6修改密码： UPDATE mysql.user SET Password = PASSWORD('新密码') WHERE user = 'root';
+        3. mysql5.7修改密码： update mysql.user set authentication_string=password('新密码') where user='root';
+          注意： 2和3修改密码之后都需要刷新权限： flush privileges;
+        4. linux 丢失root密码，解决方案:
+          vim /etc/my.cnf
+          添加:
+            # mysql启动时不对密码进行验证
+            skip-grant-tables=1
+          然后mysql -uroot登录进去， 进行2或者3的操作
+
+        # 清除之前的操作命令
+        command + l
+
+        # mysql版本
+        select version();
+
+        # 时间
+        select current_date();
+        select current_time();
+
+    </pre>
+    <p class="smallTitle">2, 数据库操作</p>
+    <pre>
+
+        # 创建数据库，并制定字符集
+        CREATE DATABASE `test` DEFAULT CHARACTER SET utf8;
+        # 查看数据库创建渔具
+        show create database 数据库名;
+
+        # 查看所有数据库
+        show database;
+
+        # 选择数据库
+        use 数据库名称；
+
+        # 查看当前数据库
+        select database();
+        # 查看数据库具体信息
+        status;
+
+        # 查看当前用户
+        select user();
+
+        # 删除数据库
+        drop database 数据库名;
+
+        # 修改数据库字符集
+        alter database character set utf8;
+
+
+    </pre>
+    <p class="smallTitle">3, 表操作</p>
+    <p class="contents">3.1, 常用命令</p>
+    <pre>
+
+        # 查看所有表
+        show tables;
+
+        # 查看创表语句
+        show create table 表名;
+
+        # 查看表结构
+        desc 表名;
+        describe 表名;
+
+        # 复制表结构
+        create table 新表名 like 原表名;
+        # 复制表数据
+        insert into 新表名 select * from 原表名;
+
+        # 修改表名
+        rename table 原表名 to 新表名;
+
+        # 删除表
+        drop table 表名;
+
+    </pre>
+    <p class="contents">3.2, 表的创建修改查询删除等操作</p>
+    <pre>
+
+        # 创建表
+        create table &lt;表名&gt; (&lt;字段名1&gt; &lt;类型1&gt; [,..&lt;字段名n&gt; &lt;类型n&gt;]);
+
+        # 数据的类型之后还可以包含：数据宽度 + 是否为空 + 是否主键 + 自动增加 + 默认值，
+        # 它们书写时不限顺序。但是字段名和字段类型必须是第一和第二位。
+        create table t_user (id int(4) not null primary key auto_increment, name varchar(20) not null default '');
+
+        # 插入数据
+        INSERT INTO &lt;表名&gt; [ &lt;列名1&gt; [ , … &lt;列名n&gt;] ]VALUES (值1) [… , (值n) ];
+        insert into tablename (colname1, colname2, colname3) values (val1, val2, val3);
+        insert into tablename values (val1, val2, val3);
+
+        # 修改数据
+        UPDATE &lt;表名&gt; SET 字段 1=值 1 [,字段 2=值 2… ] [WHERE 子句 ][ORDER BY 子句] [LIMIT 子句]
+        update tablename SET colname1=val1;
+
+        # 删除数据
+        DELETE FROM &lt;表名&gt; [WHERE 子句] [ORDER BY 子句] [LIMIT 子句]
+        delete from tablename where colname1=val1;
+
+        # 清空数据
+        truncate table tablename;
+
+        # 查询数据
+        # select colname1, colname2, colname3 from tablename; //查找字段 尽量不要用*， 效率低
+        # select distinct colname1 from tablename; //去重
+
+        # 表取别名
+        &lt;表名&gt; [AS] &lt;别名&gt; as 可以省略，省略后需要将表名和别名用空格隔开。
+        select id, name from t_user as user;
+
+        # 字段取别名
+        &lt;字段名&gt; [AS] &lt;别名&gt;
+        select id as sid, name as sname from t_user;
+
+        # 限制查询结果的条数
+        1. 指定初始位置:  LIMIT 初始位置，记录数
+        select id, name form t_user limit 0, 2;
+        2. 不指定初始位置： LIMIT 记录数
+        select id, name from t_user limit 2;
+        3. limit和offset结合使用： LIMIT 记录数 OFFSET 初始位置
+        select id, name from t_user limit 2, offset 0;
+
+        # 条件查询 and or xor
+         注意xor: 满足其中一个条件，并且不满足另一个条件时，才会被查询出来。
+
+        # 模糊查询
+         [NOT] LIKE  '字符串'
+         通配符： %：代表任何长度的字符串，字符串的长度可以为 0
+                 _: 只能代表单个字符，字符的长度不能为 0
+
+    </pre>
+
+
+    <p class="smallTitle">4, mysql的备份与恢复</p>
+    <pre>
+
+        ## 注意： 数据库备份的相关命令并不是在mysql的CLI里面操作的，而是在linux的CLI下操作
+
+        # 备份数据库数据结构和数据 -uroot -pxxx 中间不要带空格
+        mysqldump -uroot -pxxx dbname > db.sql
+
+        # 备份数据库结构， 不备份数据库数据
+        mysqldump -uroot -pxxx -d dbname > db.sql
+
+        # 备份数据库中某一张表的数据和结构
+        mysqldump -uroot -pxxx dbname tablename > table.sql
+
+        # 备份数据库中牟一张表的结构，不备份数据
+        mysqldump -uroot -pxxx -d dbname tablename > table.sql
+
+        # 备份多张表数据和结构
+        mysqldump -uroot -pxxx dbname tablename1 tablename2 > table.sql
+        mysqldump -uroot -pxxx -d dbname tablename2 tablename2 > table.sql
+
+
+
+        # mysql数据恢复与导入
+        1. 创建需要导入数据的数据库： mysqladmin -u root -p create dbname
+        2. 导入数据: mysql -uroot -pxxx dbname < db.sql
+    </pre>
+
+    <p class="smallTitle">5, mysql用户与权限管理</p>
+    <p class="introduceText">
+        mysql默认有个root用户，这个用户拥有所有的操作权限，在有些情况下，我们需要创建多个用户给于不同的操作权限，
+        创建用户，进入mysql CLI执行：
+    </p>
+    <pre>
+
+        # 创建用户
+        create user "用户名"@"ip地址" identified by '密码';
+
+        # 删除用户
+        1. drop user "用户名"@"ip地址";
+
+        2. delete from mysql.user where user='用户名' and host='ip';
+        flush privileges;
+
+    </pre>
+    <p class="introduceText">分配权限语句：</p>
+    <pre>
+
+        #权限可以是：all、select、insert、delete、update、drop等值。
+        GRANT 权限 ON 数据库名.表名 TO "用户名"@"登录主机" IDENTIFIED BY '密码' with grant option;
+        flush privileges;
+
+         例子：
+            grant select on *.* to "zz"@"%" identified by '123456' with grant option;
+            grant all on *.* to "zz"@"%" identified by '123456' with grant option;
+
+        # 查看用户的所有权限, \G:分行展示
+        1. select * from mysql.user where user='zz' \G;
+        2. show grants for 'zz'@'%'; //结果: GRANT SELECT, UPDATE ON *.* TO 'zz'@'%' WITH GRANT OPTION |
+
+        # 删除用户的权限
+        revoke all on *.* from "zz"@"%";
+    </pre>
+
+
+    <br>
+</div>
+
+</body>
+</html>
