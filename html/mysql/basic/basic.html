@@ -21,7 +21,15 @@
     <p class="title">mysql常规操作</p>
     <hr>
 
-    <p class="smallTitle">1 界面操作</p>
+    <ul>
+        <li><a href="#one">1, 界面命令操作</a></li>
+        <li><a href="#two">2, 数据库操作</a> </li>
+        <li><a href="#third">3, 表操作</a> </li>
+        <li><a href="#fourth">4, mysql的备份与恢复</a> </li>
+        <li><a href="#fivth">5, mysql用户与权限管理</a> </li>
+    </ul>
+
+    <p class="smallTitle" id="one">1, 界面命令操作</p>
     <pre>
 
         # mysql登录
@@ -52,7 +60,7 @@
         select current_time();
 
     </pre>
-    <p class="smallTitle">2, 数据库操作</p>
+    <p class="smallTitle" id="two">2, 数据库操作</p>
     <pre>
 
         # 创建数据库，并制定字符集
@@ -82,7 +90,7 @@
 
 
     </pre>
-    <p class="smallTitle">3, 表操作</p>
+    <p class="smallTitle" id="third">3, 表操作</p>
     <p class="contents">3.1, 常用命令</p>
     <pre>
 
@@ -163,9 +171,25 @@
                  _: 只能代表单个字符，字符的长度不能为 0
 
     </pre>
+    <p class="contents">3.3, 表结构操作</p>
+    <pre>
+
+        1. 增加列
+        alter table t_user add column age int(5) default 0;
+
+        2. 删除列
+        alter table t_user drop age;
+
+        3. 改变列名
+        alter table t_user change sex ss varchar(255) default '';
+
+        4. 修改列类型
+        alter table t_user modify sex char(2);
+
+    </pre>
 
 
-    <p class="smallTitle">4, mysql的备份与恢复</p>
+    <p class="smallTitle" id="fourth">4, mysql的备份与恢复</p>
     <pre>
 
         ## 注意： 数据库备份的相关命令并不是在mysql的CLI里面操作的，而是在linux的CLI下操作
@@ -193,7 +217,7 @@
         2. 导入数据: mysql -uroot -pxxx dbname < db.sql
     </pre>
 
-    <p class="smallTitle">5, mysql用户与权限管理</p>
+    <p class="smallTitle" id="fivth">5, mysql用户与权限管理</p>
     <p class="introduceText">
         mysql默认有个root用户，这个用户拥有所有的操作权限，在有些情况下，我们需要创建多个用户给于不同的操作权限，
         创建用户，进入mysql CLI执行：
