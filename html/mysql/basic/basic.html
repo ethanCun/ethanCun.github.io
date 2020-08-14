@@ -59,6 +59,22 @@
         select current_date();
         select current_time();
 
+        # 查看mysql引擎
+        show engines;
+
+        # 查看当前默认引擎
+        show variables like '%storage_engine%';
+
+        # linux设置默认引擎
+        cd /etc/; vim my.cnf;
+        在[mysqld]下添加： default-storage-engine=INNODB
+        添加后重启mysqld
+
+        # linux mysql服务关闭开启重启
+        service mysqld stop
+        service mysqld start
+        service mysqld restart
+
     </pre>
     <p class="smallTitle" id="two">2, 数据库操作</p>
     <pre>
