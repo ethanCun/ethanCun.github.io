@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>mysql中的存储过程</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">存储过程</span>
+    <span class="label label-danger">procedure</span>
+</div>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">mysql中的存储过程</p>
+    <hr>
+
+    <p class="introduceText">
+        mysql是在5.0版本之后才支持存储过程的，
+        存储过程可以将多条sql语句封装在一个sql语句集合里，一次具有较好的封装性；
+        存储过程是在服务器端运行的，且执行速度快； 当存储过程被成功编译后，就存储在数据库服务器里了，以后客户端可以直接调用，这样所有的 SQL 语句将从服务器执行，从而提高性能；
+        外部程序无法直接操作数据库表，只能通过存储过程来操作对应的表，因此在一定程度上，安全性是可以得到提高的；
+    </p>
+
+    <p class="smallTitle">1. 存储过程的创建</p>
+    <pre>
+        CREATE PROCEDURE &lt;过程&gt; ( [过程参数[,…] ] ) &lt;过程体&gt;
+
+        1. 过程参数格式： [ IN | OUT | INOUT ] &lt;参数名&gt; &lt;类型&gt;
+         IN | OUT | INOUT: 输入参数、输出参数和输入/输出参数
+
+        2. 过程体: 以BEGIN开头， END结尾， 存储过程只有一行sql语句时，可以省略BEGIN/END;
+
+        3. DELIMITER: 用于指定结束符； DELIMITER $$
+
+        #例子1： 创建不带参数的存储过程
+        mysql> delimiter //
+        mysql> create procedure pc1(in name varchar(255)
+            -> begin
+            -> select * from t_user where username=name;
+            -> end //
+        mysql> delimiter ;
+        mysql> call pc1();
+
+        #例子2： 创建带输入参数的存储过程
+        mysql> delimiter //
+        mysql> create procedure pc2(IN name varchar(255))
+            -> begin
+            -> select * from t_user where username=name;
+            -> en //
+        mysql> delimiter ;
+        mysql> call pc2('lisi');
+
+        #例子3： 创建带输出参数的存储过程
+        mysql> delimiter //
+        mysql> create procedure pc3(OUT count int(5))
+            -> begin
+            -> select count(1) from t_user into count;
+            -> end //
+        mysql> delimiter ;
+        mysql> set @count=0;
+        mysql> call pc3(@count);
+        mysql> select @count;
+
+        #例子4： 创建带输入/输出参数的存储过程
+        mysql> delimiter //
+        mysql> create procedure pc4(INOUT count int(5))
+            -> begin
+            -> declare cc int(5);
+            -> set cc=count+10;
+            -> select cc into count;
+            -> end //
+        mysql> delimiter ;
+        mysql> set @count=20;
+        mysql> call pc4(@count); //每调用一次加10
+        mysql> select @count; //30
+
+        #例子5： 创建多个参数的存储过程
+        mysql> delimiter //
+        mysql> create procedure pc5(IN mid int(5), OUT mage int(5), OUT msex varchar(255))
+            -> begin
+            -> select age, sex into mage, msex from t_user where id=mid;
+            -> end //
+        mysql> delimiter ;
+        mysql> set @mage=0; //定义接受变量
+        mysql> set @msex='';
+        mysql> call pc5(11, @mage, @msex); //调用
+        mysql> select @mage; //27
+        mysql> select @msex; //'man'
+
+    </pre>
+
+    <p class="smallTitle">2. 查看存储过程</p>
+    <pre>
+
+        #1. 查看存储过程的状态
+        mysql> show procedure status like '存储过程名' //注意带引号，这里是like查询
+        例子： show procedure status like 'pc1' \G;
+        显示了存储过程的创建时间、修改时间和字符集等信息
+        *************************** 1. row ***************************
+                          Db: jackson
+                        Name: pc1
+                        Type: PROCEDURE
+                     Definer: root@%
+                    Modified: 2019-08-17 10:32:41
+                     Created: 2019-08-17 10:32:41
+               Security_type: DEFINER
+                     Comment:
+        character_set_client: utf8mb4
+        collation_connection: utf8mb4_0900_ai_ci
+          Database Collation: utf8mb4_0900_ai_ci
+        1 row in set (0.00 sec)
+
+
+        #2. 查看存储过程的定义
+        show create procedure 存储过程名  //注意这个就是存储过程名， 不带引号
+        例子： show create procedure pc1 \G;
+                           Procedure: pc1
+                            sql_mode: STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+                    Create Procedure: CREATE DEFINER=`root`@`%` PROCEDURE `pc1`()
+                begin
+                select * from t_user;
+                end
+                character_set_client: utf8mb4
+                collation_connection: utf8mb4_0900_ai_ci
+                  Database Collation: utf8mb4_0900_ai_ci
+                1 row in set (0.00 sec)
+
+    </pre>
+
+    <p class="smallTitle">3. 修改存储过程</p>
+    <pre>
+
+        ALTER PROCEDURE 存储过程名 [ 特征 ... ]
+
+        1. 特征：
+        CONTAINS SQL 表示子程序包含 SQL 语句，但不包含读或写数据的语句。
+        NO SQL 表示子程序中不包含 SQL 语句。
+        READS SQL DATA 表示子程序中包含读数据的语句。
+        MODIFIES SQL DATA 表示子程序中包含写数据的语句。
+        SQL SECURITY { DEFINER |INVOKER } 指明谁有权限来执行。
+        DEFINER 表示只有定义者自己才能够执行。
+        INVOKER 表示调用者可以执行。
+        COMMENT 'string' 表示注释信息。
+
+        2. alter procedure只支持修改存储过程的特征， 如果需要修改存储过程过程提的sql语句或者修改存储过程名称，
+        可以先删除原存储过程，再创建新的存储过程；
+
+
+
+    </pre>
+
+    <p class="smallTitle">4. 删除存储过程</p>
+    <pre>
+
+        DROP PROCEDURE [ IF EXISTS ] &lt;过程名&gt;
+
+        #例子：
+        drop procedure if exists pc1;
+
+    </pre>
+
+    </br>
+
+</div>
+
+
+</body>
+</html>
