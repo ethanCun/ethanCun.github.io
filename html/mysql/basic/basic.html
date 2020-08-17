@@ -74,6 +74,7 @@
         service mysqld stop
         service mysqld start
         service mysqld restart
+        状态： service mysqld status
 
     </pre>
     <p class="smallTitle" id="two">2, 数据库操作</p>
@@ -186,6 +187,24 @@
          通配符： %：代表任何长度的字符串，字符串的长度可以为 0
                  _: 只能代表单个字符，字符的长度不能为 0
 
+        # 分组
+         GROUP BY  &lt;字段名&gt;
+         GROUP BY 关键字可以和 GROUP_CONCAT() 函数一起使用。GROUP_CONCAT() 函数会把每个分组的字段值都显示出来;
+         GROUP BY 与聚合函数: SELECT sex,COUNT(sex) FROM t_user GROUP BY sex;
+
+        # where与having过滤的区别:
+         1. where在查询的时候就根据字段进行过滤, having是将结果查询出来之后再进行过滤;
+
+         2. where查询添加中不可跟聚合函数，不然会报错， having则可以；
+            select group_concat(username), age from t_user where avg(age)>10 group by username; //报错
+
+         3. where在分组前进行过滤，having在分组后进行过滤；
+            select group_concat(username), age from t_user group by username having avg(age)>10;
+            select group_concat(username), age from t_user where age>10 group by username;
+
+         4. where查询添加中不可使用别名， having查询添加中可以使用别名;
+            select age as myage from t_user having myage > 10; //正常运行
+            select age as myage from t_user where myage > 10; //报错：没有这个列名
     </pre>
     <p class="contents">3.3, 表结构操作</p>
     <pre>
