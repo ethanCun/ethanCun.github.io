@@ -76,6 +76,19 @@
         service mysqld restart
         状态： service mysqld status
 
+        # 查看执行结果警告
+        show warnings;
+
+        # 查看mysql处理无效数据的严格模式
+        select @@sql_mode;
+        1. ERROR_FOR_DIVISION_BY_ZERO：在严格模式下，如果遇到以零为除数的情况，它会阻止数值进入数据库。如果不在严格模式下，则会产生一条警告消息，并插入 NULL。
+        2. NO_ZERO_DATE：在严格模式下，它会阻止“零”日期值进入数据库。
+        3. NO_ZERO_IN_DATE：在严格模式下，它会阻止月或日部分为零的不完整日期值进入数据库。
+        #设置严格模式:
+        SET sql_mode ‘STRICT_ALL_TABLES, ERROR_FOR_DIVISION_BY_ZERO' ;
+
+
+
     </pre>
     <p class="smallTitle" id="two">2, 数据库操作</p>
     <pre>
@@ -205,6 +218,49 @@
          4. where查询添加中不可使用别名， having查询添加中可以使用别名;
             select age as myage from t_user having myage > 10; //正常运行
             select age as myage from t_user where myage > 10; //报错：没有这个列名
+
+
+        # 表连接
+          1. 交叉连接： 返回结果数量就是两个表的数据行相乘(笛卡尔积)
+          SELECT &lt;字段名&gt; FROM &lt;表1&gt; CROSS JOIN &lt;表2&gt; [WHERE子句]
+          或者
+          SELECT &lt;字段名&gt; FROM &lt;表1&gt;, &lt;表2&gt; [WHERE子句]
+          例如： 带条件的查询语句：
+          select * from t_user user, t_student student where user.username=student.name;
+          注意：交叉连接会返回多张表的笛卡尔积，然后再选择满足 WHERE 条件的记录。因此查询量大，影响效率，不推荐使用。
+
+          2. 内连接：ON 子句：用来设置内连接的连接条件
+          SELECT &lt;字段名&gt; FROM &lt;表1&gt; INNER JOIN &lt;表2&gt; [ON子句]
+          或者省略INNER
+          SELECT &lt;字段名&gt; FROM &lt;表1&gt; JOIN &lt;表2&gt; [ON子句]
+          例如： 带条件的查询语句：
+          select * from t_user a join t_student b on a.username=b.name;
+          不带条件时， 相当于交叉连接。
+
+          3. 外连接：外连接会先将连接的表分为基表和参考表，再以基表为依据返回满足和不满足条件的记录。
+          3.1， 左外链接： “表1”为基表，“表2”为参考表，可以查询出“表1”中的所有记录和“表2”中匹配连接条件的记录。
+          SELECT &lt;字段名&gt; FROM &lt;表1&gt; LEFT OUTER JOIN &lt;表2&gt; &lt;ON子句&gt;
+          或者省略OUTER
+          SELECT &lt;字段名&gt; FROM &lt;表1&gt; LEFT JOIN &lt;表2&gt; &lt;ON子句&gt;
+
+          3.2, 右外连接： “表2”为基表，“表1”为参考表， 可以查询出“表2”中的所有记录和“表1”中匹配连接条件的记录。
+          SELECT &lt;字段名&gt; FROM &lt;表1&gt; RIGHT OUTER JOIN &lt;表2&gt; &lt;ON子句&gt;
+          或者省略OUTER
+          SELECT &lt;字段名&gt; FROM &lt;表1&gt; RIGHT JOIN &lt;表2&gt; &lt;ON子句&gt;
+
+          例如:
+          select * from t_user a left join t_student b on a.username=b.name; //找出a的所有数据，b填充null
+          select * from t_user a right join t_student b on a.username=b.name; //找出b的所有数据，a填充null
+
+          4. mysql实现全连接
+            mysql不支持全连接，可以使用union来实现相同效果:
+            select * from t_user a left join t_student b on a.username=b.name union select * from t_user a right join t_student b on a.username=b.name;
+
+        # 子查询
+        SELECT * FROM (子查询) AS 表的别名;
+        例如：
+        select *  from (select a.username as username, a.age as aage, a.sex as asex, a.birthday as abirthday, b.name as bname, b.age as bage from t_user a join t_student b on a.username=b.name) as myuser;
+
     </pre>
     <p class="contents">3.3, 表结构操作</p>
     <pre>
@@ -220,6 +276,23 @@
 
         4. 修改列类型
         alter table t_user modify sex char(2);
+
+    </pre>
+    <p class="contents">3.4, 正则查询</p>
+    <pre>
+
+        查询格式： 属性名 REGEXP '匹配方式'
+
+        1. ^	匹配文本的开始字符	'^b' 匹配以字母 b 开头的字符串	book、big、banana、bike
+        2. $	匹配文本的结束字符	'st$' 匹配以 st 结尾的字符串	test、resist、persist
+        3. .	匹配任何单个字符	'b.t' 匹配任何 b 和 t 之间有一个字符	bit、bat、but、bite
+        4. *	匹配零个或多个在它前面的字符	'f*n' 匹配字符 n 前面有任意个字符 f	fn、fan、faan、abcn
+        5. +	匹配前面的字符 1 次或多次	'ba+' 匹配以 b 开头，后面至少紧跟一个 a	ba、bay、bare、battle
+        6. 字符串 匹配包含指定字符的文本	'fa' 匹配包含‘fa’的文本	fan、afa、faad
+        7. [字符集合]	匹配字符集合中的任何一个字符	'[xz]' 匹配 x 或者 z	dizzy、zebra、x-ray、extra
+        8. [^]	匹配不在括号中的任何字符	'[^abc]' 匹配任何不包含 a、b 或 c 的字符串	desk、fox、f8ke
+        9. 字符串{n,}	匹配前面的字符串至少 n 次	'b{2}' 匹配 2 个或更多的 b	bbb、bbbb、bbbbbbb
+        10. 字符串{n,m}	匹配前面的字符串至少 n 次， 至多 m 次	'b{2,4}' 匹配最少 2 个，最多 4 个 b	bbb、bbbb
 
     </pre>
 
@@ -287,6 +360,9 @@
         # 删除用户的权限
         revoke all on *.* from "zz"@"%";
     </pre>
+
+
+
 
 
     <br>
