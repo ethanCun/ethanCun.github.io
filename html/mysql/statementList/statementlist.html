@@ -43,10 +43,10 @@
         msyql> create procedure pc(IN a1 int(5), OUT res int(5))
         msyql> begin
         mysql> set @a=10, @b=20, @c=30;
-        mysql> IF a1=1 THEN select @a into res;
-        msyql> ELSEIF a1=2 THEN select @b into res;
-        mysql> ELSE select @c into res;
-        mysql> END IF;
+        mysql> if a1=1 then select @a into res;
+        msyql> elseif a1=2 then select @b into res;
+        mysql> else select @c into res;
+        mysql> end id;
         mysql> end //
 
         mysql> call pc(1, @res1);
@@ -74,7 +74,7 @@
          mysql> delimiter //
          mysql> drop function if exists fc;
             -> create function fc(sex int) returns varchar(255)
-            ->  comment '性别描述'
+            -> comment '性别描述'
             -> begin
             -> declare sexdesc varchar(255);
             -> case sex
