@@ -102,6 +102,8 @@
 
         #1. 查看存储过程的状态
         mysql> show procedure status like '存储过程名' //注意带引号，这里是like查询
+        # 查看某个数据库下所有的存储过程
+        mysql> show procedure status where db='数据库名';
         例子： show procedure status like 'pc1' \G;
         显示了存储过程的创建时间、修改时间和字符集等信息
         *************************** 1. row ***************************
@@ -133,6 +135,8 @@
                   Database Collation: utf8mb4_0900_ai_ci
                 1 row in set (0.00 sec)
 
+        #3. 从information_schema库Routines表中查询
+        SELECT * FROM information_schema.Routines WHERE ROUTINE_NAME=存储函数名;
     </pre>
 
     <p class="smallTitle">3. 修改存储过程</p>

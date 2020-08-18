@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mysql中的存储函数</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">存储函数</span>
+    <span class="label label-danger">function</span>
+</div>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">mysql中的存储函数</p>
+    <hr>
+
+    <p class="introduceText">
+        存储函数和存储过程统称为存储例程(store routine)；
+        存储函数的限制比较多,例如不能用临时表,只能用表变量,
+        而存储过程的限制较少,存储过程的实现功能要复杂些,而函数的实现功能针对性比较强。
+    </p>
+
+    <p class="smallTitle">1. 存储函数的创建</p>
+    <pre>
+
+        CREATE FUNCTION func_name ([func_parameter[...]])
+        RETURNS type
+        [characteristic ...] routine_body
+
+        1. func_name: 函数名；
+        2. func_parameter：param_name type;表示存储函数的参数列表，默认是如数参数, 但不能像存储过程一样在创建语句中添加IN，否则会报错；
+        3.  characteristic： 特征， 没有开启bin-log， 且没有声明时DETERMINISTIC, NO SQL, or READS SQL DATA这三项特征的任意一项时，报错：
+        This function has none of DETERMINISTIC, NO SQL, or READS SQL DATA in its declaration and binary logging is enabled (you *might* want to use the less safe log_bin_trust_function_creators variable)
+           解决办法：
+            set global log_bin_trust_function_creators=true;
+            select @@log_bin_trust_function_creators;
+        4. routine_body: 表示 SQL 代码的内容，可以用 BEGIN...END 来标示 SQL 代码的开始和结束;
+        5. 存储函数要求必须有返回值，且仅返回一个结果值;
+
+        # 例子1： 创建不带参数的存储函数
+        mysql> delimiter //
+        mysql> create function fc1()
+            -> returns int
+            -> comment '查询用户数量'
+            -> begin
+            -> return (select count(1) from t_user);
+            -> end //
+        mysql> select fc1(); //调用
+
+        #例子2： 创建带参数的存储函数
+        mysql> delimiter //
+        mysql> create function fc2(name varchar(255)) returns int
+            -> begin
+            -> declare mage int(5);
+            -> select age into mage from t_user where username=name;
+            -> return mage;
+            -> end //
+        mysql> select fc2('wangwu');
+
+        #例子3： 创建带多个参数的存储函数
+        mysql> delimiter //
+        mysql> create function fc3(name varchar(255), ssex varchar(255)) returns int(5)
+            -> comment '根据年龄和性别查找年龄'
+            -> begin
+            -> declare mage int(5) default 0;
+            -> select age into mage from t_user where username=name and sex=ssex;
+            -> return mage;
+            -> end //
+        mysql> select fc3('wangwu', '0');
+
+    </pre>
+
+    <p class="smallTitle">2. 调用存储函数</p>
+    <pre>
+
+        mysql的存储函数和mysql的系统函数一样， 使用select调用: select 存储函数名(参数值)
+    </pre>
+
+    <p class="smallTitle">3. 查看存储函数</p>
+    <pre>
+
+        1. 模糊查询存储函数信息
+        show function status like '存储函数名';
+        # 例子： show function status like 'fc1';
+        +---------+------+----------+---------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
+        | Db      | Name | Type     | Definer | Modified            | Created             | Security_type | Comment | character_set_client | collation_connection | Database Collation |
+        +---------+------+----------+---------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
+        | jackson | fc1  | FUNCTION | root@%  | 2019-08-18 08:50:31 | 2019-08-18 08:50:31 | DEFINER       |         | utf8mb4              | utf8mb4_0900_ai_ci   | utf8mb4_0900_ai_ci |
+        +---------+------+----------+---------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
+
+        2. 查看数据库下的所有存储函数
+        show function status where db='数据库名'；
+        # 例子： show function status whejackson';
+
+        3. 查看存储函数的创建信息
+        show create funtion 存储函数名;
+        # 例子: show create funtion fc1;
+        mysql> mysql> show create function fc1 \G;
+                    *************************** 1. row ***************************
+                                Function: fc1
+                                sql_mode: STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+                         Create Function: CREATE DEFINER=`root`@`%` FUNCTION `fc1`() RETURNS int(11)
+                    begin
+                    return (select count(1) from t_user);
+                    end
+                    character_set_client: utf8mb4
+                    collation_connection: utf8mb4_0900_ai_ci
+                      Database Collation: utf8mb4_0900_ai_ci
+                    1 row in set (0.00 sec)
+
+        4. 从information_schema库Routines表中查询
+        SELECT * FROM information_schema.Routines WHERE ROUTINE_NAME=存储函数名;
+
+    </pre>
+
+    <p class="smallTitle">4. 删除存储函数</p>
+    <pre>
+
+        drop function if exists 存储函数名;
+    </pre>
+
+    </br>
+</div>
+
+</body>
+</html>
