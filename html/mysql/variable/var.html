@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mysql中用户变量与系统变量的使用</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">@@gloabl</span>
+    <span class="label label-danger">@@session</span>
+    <span class="label label-info">mysql用户变量</span>
+</div>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">mysql中用户变量与系统变量的使用</p>
+    <hr>
+
+    <p class="smallTitle">1. 在存储过程和存储函数中使用用户变量</p>
+    <pre>
+
+        DECLARE var_name[,...] type [DEFAULT value]
+
+        1. DECLARE 关键字是用来声明变量的；
+        2. var_name 参数是变量的名称，这里可以同时定义多个变量；
+        3. type 参数用来指定变量的类型；
+        4. DEFAULT value 子句将变量默认值设置为 value，没有使用 DEFAULT 子句时，默认值为 NULL。
+
+        # 例子
+        # 1. 使用declare定义多个变量
+        mysql> delimiter //
+        mysql> create procedure pc1(OUT aa int(5))
+        mysql> begin
+        mysql> declare a， b int(5) default 100;
+        mysql> select a into aa;
+        mysql> end //
+        mysql> set @aaa=0;
+        mysql> call pc1(@aaa);
+        mysql> select @aaa; //100
+
+        #2. 使用set定义变量并赋值
+        mysql> delimiter //
+        mysql> create procedure pc2()
+            -> begin
+            -> set @a=11, @b=22;
+            -> select @a, @b;
+            -> end //
+        mysql> callpc2(); //11, 22
+
+        #3. 用户变量使用@， 系统变量使用@@
+        mysql> delimiter //
+        mysql> drop procedure if exists pc3;
+        mysql> create procedure pc3()
+        mysql> begin
+        mysql> declare a, b int(5) default 30;
+        mysql> select @a, @b; //30,30
+        mysql> select a, b; //30,30 @a和a效果一样
+        mysql> end //
+
+        #4. 使用select ... into ... 为用户变量赋值
+        SELECT col_name [...] INTO var_name[,...] FROM table_name WEHRE condition
+        # 例子：
+        mysql> delimiter //
+        mysql> drop procedure if exists pc4;
+        mysql> create procedure pc4(OUT aa int(5))
+        mysql> begin
+        mysql> declare a int(5) default 100;
+        mysql> select @a into aa;
+        mysql> end //
+        mysql> set @aaa=0;
+        mssql> call pc4(@aaa);
+        mysql> select @aaa; //100
+
+    </pre>
+
+    <p class="smallTitle">mysql系统变量</p>
+    <p class="introduceText">mysql系统变量包含全局变量global variable和会话变量session variable</p>
+    <p class="contents"># 关于全局变量和会话变量的区别:</p>
+    <p class="introduceText">
+        1.1， 全局变量在MYSQL启动的时候由服务器自动将它们初始化为默认值, 这些默认值可以通过更改my.cnf这个文件来更改;
+        会话变量在每次建立一个新的连接的时候，由MYSQL来初始化, MYSQL会将当前所有全局变量的值复制一份,来做为会话变量;
+    </p>
+    <p class="introduceText">
+        1.2， 对全局变量的修改会影响到整个服务器，但是对会话变量的修改，只会影响到当前的会话（也就是当前的数据库连接）；
+    </p>
+    <pre>
+
+        1. 查看全局变量
+        show global variables \G;
+
+        2. 查询会话变量
+        show session variables \G; 或者 show variables;
+
+        # 变量表包含Variable_name和Value两列， 因此可以根据这两列快速添加查找：
+        mysql> show global variables where Variable_name like '%bin%' and Value='OFF';
+                +------------------------------------------------+-------+
+                | Variable_name                                  | Value |
+                +------------------------------------------------+-------+
+                | activate_all_roles_on_login                    | OFF   |
+                | binlog_direct_non_transactional_updates        | OFF   |
+                | binlog_encryption                              | OFF   |
+                | binlog_rotate_encryption_master_key_at_startup | OFF   |
+                | binlog_rows_query_log_events                   | OFF   |
+                | general_log                                    | OFF   |
+                | innodb_api_enable_binlog                       | OFF   |
+                | innodb_print_ddl_logs                          | OFF   |
+                | innodb_redo_log_encrypt                        | OFF   |
+                | innodb_undo_log_encrypt                        | OFF   |
+                | log_bin_use_v1_row_events                      | OFF   |
+                | log_queries_not_using_indexes                  | OFF   |
+                | log_slow_admin_statements                      | OFF   |
+                | log_slow_extra                                 | OFF   |
+                | log_slow_slave_statements                      | OFF   |
+                | relay_log_recovery                             | OFF   |
+                | slow_query_log                                 | OFF   |
+                | sql_log_off                                    | OFF   |
+                +------------------------------------------------+-------+
+
+        3. 使用select语句查询全局变量：
+          select @@global.[字段名]
+          #例子： 查询log_bin: select @@global.log_bin;
+
+        4. 使用select语句查询回话变量
+          select @@session.[字段名]
+          #例子： select @@session.autocommit;
+
+        5. 不清楚变量级别，优先查询会话变量，再查询全局变量
+          select @@[变量名]
+    </pre>
+
+    </br>
+</div>
+
+</body>
+</html>

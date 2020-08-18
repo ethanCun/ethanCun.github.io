@@ -59,9 +59,9 @@
         mysql> delimiter //
         mysql> create function fc2(name varchar(255)) returns int
             -> begin
-            -> declare mage int(5);
-            -> select age into mage from t_user where username=name;
-            -> return mage;
+            -> declare @mage int(5);
+            -> select age into @mage from t_user where username=name;
+            -> return @mage;
             -> end //
         mysql> select fc2('wangwu');
 
@@ -70,9 +70,9 @@
         mysql> create function fc3(name varchar(255), ssex varchar(255)) returns int(5)
             -> comment '根据年龄和性别查找年龄'
             -> begin
-            -> declare mage int(5) default 0;
-            -> select age into mage from t_user where username=name and sex=ssex;
-            -> return mage;
+            -> declare @mage int(5) default 0;
+            -> select age into @mage from t_user where username=name and sex=ssex;
+            -> return @mage;
             -> end //
         mysql> select fc3('wangwu', '0');
 
