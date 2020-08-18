@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mysql存储过程和函数中的流程控制语句</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">IF语句</span>
+    <span class="label label-danger">CASE语句</span>
+    <span class="label label-info">LOOP语句</span>
+    <span class="label label-success">LEAVE语句</span>
+    <span class="label label-danger">ITERATE语句</span>
+    <span class="label label-info">REPEAT语句</span>
+    <span class="label label-success">WHILE语句</span>
+
+</div>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">mysql存储过程和函数中的流程控制语句</p>
+    <hr>
+
+    <p class="smallTitle">1. IF语句</p>
+    <pre>
+
+        #格式
+        IF search_condition THEN statement_list
+            [ELSEIF search_condition THEN statement_list]...
+            [ELSE statement_list]
+        END IF
+
+        #例子：
+        mysql> delimiter //
+        mysql> drop procedure if exists pc;
+        msyql> create procedure pc(IN a1 int(5), OUT res int(5))
+        msyql> begin
+        mysql> set @a=10, @b=20, @c=30;
+        mysql> IF a1=1 THEN select @a into res;
+        msyql> ELSEIF a1=2 THEN select @b into res;
+        mysql> ELSE select @c into res;
+        mysql> END IF;
+        mysql> end //
+
+        mysql> call pc(1, @res1);
+        mysql> select @res1; //10;
+
+        mysql> call pc(2, @res2);
+        mysql> select @res2; //20;
+
+        mysql> call pc(5, @res3);
+        mysql> select @res3; //30;
+
+    </pre>
+
+    <p class="smallTitle">2. CASE语句</p>
+    <pre>
+
+        #格式
+        CASE
+            WHEN search_condition THEN statement_list
+            [WHEN search_condition THEN statement_list] ...
+            [ELSE statement_list]
+        END CASE
+
+        # 例子:
+         mysql> delimiter //
+         mysql> drop function if exists fc;
+            -> create function fc(sex int) returns varchar(255)
+            ->  comment '性别描述'
+            -> begin
+            -> declare sexdesc varchar(255);
+            -> case sex
+            -> when 1 then select '男' into sexdesc;
+            -> when 0 then select '女' into sexdesc;
+            -> else select '人妖' into sexdesc;
+            -> end case;
+            -> return sexdesc;
+            -> end //
+        mysql> select fc(1); //男
+        mysql> select fc(2); //人妖
+        mysql> select fc(0); //女
+
+    </pre>
+</br>
+</div>
+
+</body>
+</html>
