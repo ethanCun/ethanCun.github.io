@@ -42,8 +42,9 @@
            解决办法：
             set global log_bin_trust_function_creators=true;
             select @@log_bin_trust_function_creators;
+          注意：特征后不能带分号，不然报语法错误
         4. routine_body: 表示 SQL 代码的内容，可以用 BEGIN...END 来标示 SQL 代码的开始和结束;
-        5. 存储函数要求必须有返回值，且仅返回一个结果值;
+        5. 存储函数要求必须有返回值，且仅返回一个结果值; 如果有多个返回值，则报错：Result consisted of more than one row；
 
         # 例子1： 创建不带参数的存储函数
         mysql> delimiter //
