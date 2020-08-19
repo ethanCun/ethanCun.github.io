@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mysql自定义条件与处理异常</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">condition</span>
+    <span class="label label-danger">handler</span>
+</div>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">mysql自定义条件与处理异常</p>
+    <hr>
+
+    <p class="introduceText">
+        mysql自定义条件与处理异常是指在程序执行过程中可以预先定义好处理接下来将会发生的错误，mysql支持的方式有
+        continue：发生错误之后继续执行下面的sql，exit：遇到错误马上退出程序； mysql不支持UNDO:发生错误后
+        撤回之前的操作。
+    </p>
+
+    <p class="smallTitle">1. 自定义条件</p>
+    <pre>
+
+        # 格式:
+        DECLARE condition_name CONDITION FOR condition_value
+        其中condition value有两种:
+        SQLSTATE sqlstate_value | mysql_error_code
+
+        # 关于sqlstate_value和mysql_error_code:
+        # 例子： ERROR 1062 (23000): Duplicate entry '1' for key 'PRIMARY'
+        # 其中 1062 是mysql_error_code, 23000 是sqlstate_value;
+
+        # 自定义条件的两中方式例子：
+        declare duplicate_primary_key condition for sqlstate 23000;
+        declare duplicate_primary_key condition for 1062;
+
+    </pre>
+
+    <p class="smallTitle">2. 自定义处理程序</p>
+    <pre>
+
+        # 格式:
+        DECLARE handler_type HANDLER FOR condition_value[...] sp_statement
+
+        # 关于handler_type的种类:
+        CONTINUE | EXIT | UNDO
+        #1. CONTINUE 表示遇到错误不进行处理，继续向下执行；
+        #2. EXIT 表示遇到错误后马上退出；
+        #3. UNDO 表示遇到错误后撤回之前的操作，MySQL 中暂时还不支持这种处理方式。
+
+        # 关于condition_value的种类:
+        SQLSTATE sqlstate_value | condition_name | SQLWARNING | NOT FOUND | SQLEXCEPTION | mysql_error_code
+        #1. sqlstate_value: sql错误括号内的编码；
+        #2. condition_name：条件名称;
+        #3. SQLWARNING: 匹配所有以 01 开头的 sqlstate_value 值；
+        #4. NOT FOUND:匹配所有以 02 开头的 sqlstate_value 值;
+        #5. SQLEXCEPTION:匹配所有没有被 SQLWARNING 或 NOT FOUND 捕获的 sqlstate_value 值；
+        #6. mysql_error_code:匹配数值类型错误代码;
+
+    </pre>
+
+    <p class="contents">实例:</p>
+    <pre>
+
+        mysql> delimiter //
+        mysql> drop procedure if exists pc;
+            -> create procedure pc()
+            -> begin
+            -> declare continue handler for sqlwarning set @info='error';
+            -> declare continue handler for not found set @info='can not found';
+            -> declare continue handler for sqlexception set @info='sql exception';
+            -> set @x=1;
+            -> insert into t_order values(1, '');
+            -> set @x=2;
+            -> insert into t_order values(1, '');
+            -> set @x=3;
+            -> end //
+        mysql> delimiter ;
+        mysql> call pc; //顺利执行
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>
