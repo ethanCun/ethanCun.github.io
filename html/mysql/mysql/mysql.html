@@ -21,7 +21,13 @@
     <p class="title">mysql常见问题记录</p>
     <hr>
 
-    <p class="smallTitle">1. 使用group by报错:</p>
+    <ul>
+        <li><a href="#one">1. 使用group by报错</a> </li>
+        <li><a href="#two">2. mysqldump 备份数据库的时候报错</a> </li>
+        <li><a href="#three">3. !=, <> 查出数据不包含NULL的情况</a> </li>
+    </ul>
+
+    <p class="smallTitle" id="one">1. 使用group by报错:</p>
     <pre>
         xxxxx which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
 
@@ -41,9 +47,7 @@
 
     </pre>
 
-    <p class="smallTitle">
-        2. mysqldump 备份数据库的时候报错
-    </p>
+    <p class="smallTitle" id="two">2. mysqldump 备份数据库的时候报错</p>
     <pre>
 
          mysqldump: Got error: 2002: Can't connect to local MySQL server through socket '/tmp/mysql.sock' (2) when trying to connect..
@@ -57,6 +61,16 @@
          结果： /var/lib/mysql/mysql.sock
          2. 建立软连接:  ln -s /var/lib/mysql/mysql.sock /tmp/mysql.sock
          3. 重新备份数据库:  mysqldump -uroot -pxxxxx db > db.sql
+    </pre>
+
+    <p class="smallTitle" id="three">3. !=, <> 查出数据不包含NULL的情况</p>
+    <pre>
+
+        # select * from t_user where username!='lisi';
+        或者 select * from t_user where username <> 'lisi';
+        查出来的数据不包含username为NULL的行， 如果需要查出所有满足条件的行：
+        select * from t_user where username<>'lisi' or username is null;
+
     </pre>
 
     <br>
