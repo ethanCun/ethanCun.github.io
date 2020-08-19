@@ -84,9 +84,122 @@
             -> end case;
             -> return sexdesc;
             -> end //
-        mysql> select fc(1); //男
-        mysql> select fc(2); //人妖
-        mysql> select fc(0); //女
+         mysql> select fc(1); //男
+         mysql> select fc(2); //人妖
+         mysql> select fc(0); //女
+
+    </pre>
+
+    <p class="smallTitle">3. LOOP, LEAVE, ITERATE循环与跳出循环</p>
+    <pre>
+
+        # LOOP循环
+        [begin_label:]LOOP
+            statement_list
+        END LOOP [end_label]
+
+        1. begin_label 参数和 end_label 参数分别表示循环开始和结束的标志，这两个标志必须相同，而且都可以省略;
+        2. begin_label 参数和 end_label 参数， 不能使用mysql关键字命名;
+
+        # LEAVE：跳出整个循环 相当于break
+        LEAVE label
+
+        1. label 参数表示循环的标志，LEAVE 语句必须跟在循环标志前面;
+        2. label 参数， 不能使用mysql关键字命名;
+
+        # 例子:
+        mysql> delimiter //
+        mysql> drop procedure if exists pc;
+        mysql> create procedure  pc(In a int(5))
+        mysql> begin
+        mysql> set @num=0;
+        mysql> addnum:loop
+        mysql> set @num=@num+a;
+        mysql> if @num>=100 then select @num;
+        mysql> leave addnum; //跳出循环
+        mysql> end if;   //结束if
+        mysql> end loop addnum; //结束loop
+        mysql> end //
+        mysql> delimiter ;
+        mysql> call pc(10); //输出110
+
+
+        # ITERATE： 跳出本次循环, 继续下次循环， 相当于continue
+        ITERATE label
+
+        1. label 参数表示循环的标志，ITERATE 语句必须跟在循环标志前面;
+        2. label 参数， 不能使用mysql关键字命名;
+
+        # 例子：筛选出100内被5整除的数，小于0跳出循环
+        mysql> delimiter //
+        mysql> drop procedure if exists pc;
+            -> create procedure pc(In a int(5))
+            -> comment ''
+            -> begin
+            -> set @num=a;
+            -> minus_num:loop
+            -> set @num=@num-1;
+            -> if mod(@num,5)<>0 then iterate minus_num;
+            -> elseif @num<=0 then leave minus_num;
+            -> else select @num;
+            -> end if;
+            -> end loop minus_num;
+            -> end //
+        mysql> delimiter ;
+
+    </pre>
+
+    <p class="smallTitle">4. REPEAT循环语句</p>
+    <pre>
+
+        1. REPEAT
+        [begin_label:] REPEAT
+            statement_list
+            UNTIL search_condition
+        END REPEAT [end_label]
+
+        1. begin_label 为 REPEAT 语句的标注名称，该参数可以省略；
+        2. repeat一直循环，直至满足until的条件语句
+        3. repeat 循环都用 end repeat 结束。
+
+        # 例子:
+        mysql> drop procedure if exists pc;
+            -> create procedure pc(IN a int(5))
+            -> comment ''
+            -> begin
+            -> set @num=a;
+            -> repeat
+            -> set @num=@num-1;
+            -> select @num;
+            -> until @num<=0
+            -> end repeat;
+            -> end //
+
+    </pre>
+
+    <p class="smallTitle">5. WHILE循环语句</p>
+    <pre>
+
+        # WHILE循环
+        [begin_label:] WHILE search_condition DO
+            statement list
+        END WHILE [end_label]
+
+        1. while循环与repeat相反： while满足条件时执行循环，repeat满足条件时推出循环;
+        2. begin_label,end_label可以省略；
+        3. 使用end while结束语句;
+
+        # 例子:
+        mysql> drop procedure if exists pc;
+            -> create procedure pc(IN a int(5))
+            -> comment ''
+            -> begin
+            -> set @num=0;
+            -> while @num&lt;a do
+            > set @num=@num+1;
+            > select @num;
+            > end while;
+            > end //
 
     </pre>
 </br>
