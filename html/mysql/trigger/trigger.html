@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mysql中的触发器</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">TRIGGER</span>
+    <span class="label label-danger">触发器</span>
+</div>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">mysql中的触发器</p>
+    <hr>
+
+    <p class="introduceText">
+        mysql的触发器是在对表进行操作后，接下来会自动进行的一系列操作， 类似于存储过程， 但他是自动触发的，
+        触发器不允许返回任何数据， 必须用变量来进行接收。
+    </p>
+
+    <p class="smallTitle">1. 创建触发器</p>
+    <pre>
+
+        # 格式:
+        CREATE TRIGGER 触发器名  BEFORE|AFTER  INSERT|UPDATE|DELETE ON 表名 FOR EACH ROW 触发器主体
+
+        #1. INSERT|UPDATE|DELETE: 触发事件，用于指定激活触发器的语句的种类。
+        #1. INSERT：将新行插入表时激活触发器。
+        #1.2. DELETE： 从表中删除某一行数据时激活触发器，例如 DELETE 和 REPLACE 语句。
+        #1.3. UPDATE：更改表中某一行数据时激活触发器，例如 UPDATE 语句。
+
+        #2. BEFORE|AFTER: 触发器被触发的时刻，表示触发器是在激活它的语句之前或之后触发。
+        #3. 表名：必须是永久性表，不能将触发器与临时表或视图关联起来； 同一个表不能拥有两个具有相同触发时刻和事件的触发器。
+        #4. 触发器主体: 触发器动作主体，包含触发器激活时将要执行的 MySQL 语句。如果要执行多个语句，可使用 BEGIN…END 复合语句结构。
+        #5. FOR EACH ROW: 一般是指行级触发，对于受触发事件影响的每一行都要激活触发器的动作。例如，使用 INSERT 语句向某个表中插入多行数据时，触发器会对每一行数据的插入都执行相应的触发器动作。
+        #6. mysql5之后不允许触发器返回任何数据， 因此需用变量进行接收， 否则会报错:
+            Not allowed to return a result set from a trigger;
+            例子: create trigger mytrigger before insert on t_user for each row select count(1) into @count from t_user;
+
+        #例子: 创建before和after insert的触发器， 然后比较count(1):
+            create trigger before_insert_trigger before insert on t_user for each row select count(1) into @before_insert_total_count from t_user;
+            create trigger after_insert_trigger after insert on t_user for each row select count(1) into @after_insert_total_count from t_user;
+            select @before_insert_total_count; //20 插入之前为20
+            select @after_insert_total_count; //21  插入之后为21
+
+
+    </pre>
+
+    <p class="smallTitle">2. 查看trigger</p>
+    <pre>
+
+        1. 查看所有触发器: show triggers;
+        mysql> show triggers \G;
+        *************************** 1. row ***************************
+                     Trigger: mytrigger
+                       Event: INSERT
+                       Table: t_user
+                   Statement: select count(1) into @count from t_user
+                      Timing: BEFORE
+                     Created: 2020-08-20 14:45:41.65
+                    sql_mode: STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+                     Definer: root@%
+        character_set_client: utf8mb4
+        collation_connection: utf8mb4_0900_ai_ci
+          Database Collation: utf8mb4_0900_ai_ci
+
+        2. show create trigger trigger_name \G;
+        mysql> show create trigger mytrigger \G;
+        *************************** 1. row ***************************
+        Trigger: mytrigger
+        sql_mode: STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+        SQL Original Statement: CREATE DEFINER=`root`@`%` TRIGGER `mytrigger` BEFORE INSERT ON `t_user` FOR EACH ROW select count(1) into @count from t_user;
+        character_set_client: utf8mb4
+        collation_connection: utf8mb4_0900_ai_ci
+        Database Collation: utf8mb4_0900_ai_ci
+        Created: 2020-08-20 14:45:41.65
+
+        3. select * from information_schema.triggers where trigger_name='triggger_name' \G;
+        mysql> select * from information_schema.triggers where trigger_name='mytrigger' \G;
+        *************************** 1. row ***************************
+                   TRIGGER_CATALOG: def
+                    TRIGGER_SCHEMA: jackson
+                      TRIGGER_NAME: mytrigger
+                EVENT_MANIPULATION: INSERT
+              EVENT_OBJECT_CATALOG: def
+               EVENT_OBJECT_SCHEMA: jackson
+                EVENT_OBJECT_TABLE: t_user
+                      ACTION_ORDER: 1
+                  ACTION_CONDITION: NULL
+                  ACTION_STATEMENT: select count(1) into @count from t_user
+                ACTION_ORIENTATION: ROW
+                     ACTION_TIMING: BEFORE
+        ACTION_REFERENCE_OLD_TABLE: NULL
+        ACTION_REFERENCE_NEW_TABLE: NULL
+          ACTION_REFERENCE_OLD_ROW: OLD
+          ACTION_REFERENCE_NEW_ROW: NEW
+                           CREATED: 2020-08-20 14:45:41.65
+                          SQL_MODE: STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+                           DEFINER: root@%
+              CHARACTER_SET_CLIENT: utf8mb4
+              COLLATION_CONNECTION: utf8mb4_0900_ai_ci
+                DATABASE_COLLATION: utf8mb4_0900_ai_ci
+
+
+    </pre>
+
+    <p class="smallTitle">3. 删除触发器</p>
+    <pre>
+
+        # 1. 删除一个表的同时，也会自动删除该表上的触发器；
+        # 2. 另外，触发器不能更新或覆盖，为了修改一个触发器，必须先删除它，再重新创建；
+        drop trigger if exists trigger_name;
+
+    </pre>
+
+
+    <br>
+</div>
+
+</body>
+</html>
