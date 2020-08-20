@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mysql游标的使用</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">游标/光标</span>
+    <span class="label label-danger">CURSOR</span>
+</div>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">mysql游标的使用</p>
+    <hr>
+
+    <p class="introduceText">
+        mysql游标，也成光标，类似数组下表， 主要用于在存储过程和存储函数中取数据； 存储过程END之后，游标消失。
+        游标的使用包括： 1. 申明游标； 2.打开游标； 3.使用游标读取数据； 4. 关闭游标
+    </p>
+
+    <p class="smallTitle">1. 声明游标</p>
+    <pre>
+
+        #格式:
+        DECLARE cursor_name CURSOR FOR select_statement;
+
+        # 1. cursor_name: 游标名称；
+        # 2. select_statement: select语句
+    </pre>
+
+    <p class="smallTitle">2. 打开游标</p>
+    <pre>
+
+        #格式:
+        OPEN cursor_name;
+    </pre>
+
+    <p class="smallTitle">3. 使用游标</p>
+    <pre>
+
+        #格式:
+        FETCH cursor_name INTO var_name [var_name]...
+    </pre>
+
+    <p class="smallTitle">4. 关闭游标</p>
+    <pre>
+
+        #格式:
+        CLOSE cursor_name;
+    </pre>
+
+    <p class="smallTitle">5. 注意事项</p>
+    <pre>
+
+        # 1. 游标的声明需要在条件申明之前， 不然会报错:
+            ERROR 1338 (42000): Cursor declaration after handler declaration
+
+        # 2. 变量的申明需要在条件和游标声明之前, 不然会报错:
+            ERROR 1337 (42000): Variable or condition declaration after cursor or handler declaration
+    </pre>
+
+    <p class="smallTitle">6. 实例：</p>
+    <p class="contents">6.1, 使用游标输出用户表的所有用户名:</p>
+    <pre>
+
+        mysql> delimiter //
+        mysql> drop procedure if exists pc;
+            -> create procedure pc()
+            -> begin
+            -> declare name varchar(255) default '';
+            -> declare done int(5); //定义条件flag
+            -> declare find_username cursor for select username from t_user; //定义游标
+            -> declare continue handler for sqlexception set done=1; //定义条件处理程序
+            -> set done=0;
+            -> open find_username; //打开游标
+            -> while done=0 do //循环
+            -> fetch find_username into name;
+            -> select name;
+            -> end while;
+            -> close find_username; //关闭游标
+            -> end //
+        mysql> delimiter ;
+        mysql> call pc();
+
+    </pre>
+    <p class="contents">6.2, 使用游标拼接用户表中的所有用户名称:</p>
+    <pre>
+
+        msyql> delimiter //
+        msyql> drop procedure if exists pc;
+            -> create procedure pc()
+            -> begin
+            -> declare done, mage int(5); //注意字段与表的字段不能重名
+            -> declare mname varchar(255); //注意字段与表的字段不能重名
+            -> declare user_info cursor for select username, age from t_user;
+            -> declare continue handler for sqlexception set done=1;
+            -> set done=0;
+            -> open user_info;
+            -> while done=0 do
+            -> fetch user_info into mname, mage;
+            -> select mname;
+            -> select mage;
+            -> select concat_ws(',', @userinfo, mname, mmage); // 将mname和mage用,拼接, 并存在@userinfo中
+            -> end while;
+            -> close user_info;
+            -> end //
+        mysql> delimiter ;
+        mysql> call pc();
+
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

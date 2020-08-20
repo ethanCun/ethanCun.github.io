@@ -36,11 +36,11 @@
         # 例子
         # 1. 使用declare定义多个变量
         mysql> delimiter //
-        mysql> create procedure pc1(OUT aa int(5))
-        mysql> begin
-        mysql> declare a， b int(5) default 100;
-        mysql> select a into aa;
-        mysql> end //
+            -> create procedure pc1(OUT aa int(5))
+            -> begin
+            -> declare a， b int(5) default 100;
+            -> select a into aa;
+            -> end //
         mysql> set @aaa=0;
         mysql> call pc1(@aaa);
         mysql> select @aaa; //100
@@ -56,24 +56,24 @@
 
         #3. 用户变量使用@， 系统变量使用@@
         mysql> delimiter //
-        mysql> drop procedure if exists pc3;
-        mysql> create procedure pc3()
-        mysql> begin
-        mysql> declare a, b int(5) default 30;
-        mysql> select @a, @b; //30,30
-        mysql> select a, b; //30,30 @a和a效果一样
-        mysql> end //
+            -> drop procedure if exists pc3;
+            -> create procedure pc3()
+            -> begin
+            -> declare a, b int(5) default 30;
+            -> select @a, @b; //30,30
+            -> select a, b; //30,30 @a和a效果一样
+            -> end //
 
         #4. 使用select ... into ... 为用户变量赋值
         SELECT col_name [...] INTO var_name[,...] FROM table_name WEHRE condition
         # 例子：
         mysql> delimiter //
-        mysql> drop procedure if exists pc4;
-        mysql> create procedure pc4(OUT aa int(5))
-        mysql> begin
-        mysql> declare a int(5) default 100;
-        mysql> select @a into aa;
-        mysql> end //
+            -> drop procedure if exists pc4;
+            -> create procedure pc4(OUT aa int(5))
+            -> begin
+            -> declare a int(5) default 100;
+            -> select @a into aa;
+            -> end //
         mysql> set @aaa=0;
         mssql> call pc4(@aaa);
         mysql> select @aaa; //100
