@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>mysql中的触发器</title>
+    <title>mysql中的触发器与事件</title>
     <link rel="icon" href="../../../Source/icon-img.jpeg">
     <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
     <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
@@ -13,13 +13,13 @@
 <div class="labels">
 
     <span class="label label-success">TRIGGER</span>
-    <span class="label label-danger">触发器</span>
+    <span class="label label-danger">EVENT</span>
 </div>
 
 
 <div class="contentBgDiv">
 
-    <p class="title">mysql中的触发器</p>
+    <p class="title">mysql中的触发器与事件</p>
     <hr>
 
     <p class="introduceText">
@@ -122,6 +122,64 @@
 
     </pre>
 
+    <p class="smallTitle">4. 事件是特殊的触发器， 它是开发人员手动创建并执行的。</p>
+    <pre>
+
+        # 创建格式:
+        CREATE EVENT [IF NOT EXISTS] event_name
+        ON SCHEDULE schedule
+        [ON COMPLETION [NOT] PRESERVE]
+        [ENABLE | DISABLE | DISABLE ON SLAVE]
+        [COMMENT 'comment']
+        DO event_body;
+
+        #1. schedule: 必选,用于定义执行的时间和时间间隔, 格式如：
+            AT timestamp [+ INTERVAL interval]... 或者
+            EVERY interval
+            [STARTS timestamp [+ INTERVAL interval] ...]
+            [ENDS timestamp[+ INTERVAL interval]...]
+
+        interval： 时间间隔 ；
+            YEAR | QUARTER | MONTH | DAY | HOUR | MINUTE |
+            WEEK | SECOND | YEAR_MONTH | DAY_HOUR | DAY_MINUTE |
+            DAY_SECOND | HOUR_MINUTE | HOUR_SECOND | MINUTE_SECOND
+
+        2. ON COMPLETION [NOT] PRESERVE： 用于定义事件是否循环执行，即是一次执行还是永久执行，默认为一次执行，即 NOT PRESERVE；
+
+        3. [ENABLE | DISABLE | DISABLE ON SLAVE]：
+            1. 关键字 ENABLE 表示该事件是活动的，即调度器检查事件是否必须调用；
+            2. 关键字 DISABLE 表示该事件是关闭的，即事件的声明存储到目录中，但是调度器不会检查它是否应该调用；
+            3. 关键字 DISABLE ON SLAVE 表示事件在从机中是关闭的。
+
+        4.  DO event_body:
+            用于指定事件启动时所要执行的代码，可以是任何有效的 SQL 语句、存储过程或者一个计划执行的事件。
+            如果包含多条语句，则可以使用 BEGIN..END 复合结构
+
+        # 例子: 每隔10秒插入一条数据
+        CREATE EVENT `time_insert` ON SCHEDULE EVERY 10 SECOND
+        STARTS '2020-08-21 08:21:41'
+        ON COMPLETION PRESERVE ENABLE
+        DO insert into t_user values ('zhangsan', 10 ,1);
+
+        # 查看所有的事件:
+        1. select * from information_schema.events \G;
+        2. show events \G;
+
+        # 查看事件的创造语句:
+        show create event time_insert \G;
+        *************************** 1. row ***************************
+                       Event: time_insert
+                    sql_mode: STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+                   time_zone: SYSTEM
+                Create Event: CREATE DEFINER=`root`@`%` EVENT `time_insert` ON SCHEDULE EVERY 10 SECOND STARTS '2020-08-21 08:21:41' ON COMPLETION PRESERVE ENABLE DO insert into t_user values ('zhangsan', 10 ,1)
+        character_set_client: utf8mb4
+        collation_connection: utf8mb4_0900_ai_ci
+          Database Collation: utf8mb4_0900_ai_ci
+
+        #. 删除事件
+        drop event if exists time_insert;
+
+    </pre>
 
     <br>
 </div>
