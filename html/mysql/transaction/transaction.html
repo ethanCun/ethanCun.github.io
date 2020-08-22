@@ -89,11 +89,11 @@
     <p class="smallTitle">4. 事务的隔离级别可能会出现的问题</p>
     <pre>
 
-        隔离级别	       脏读	不可重复读	幻读
-        READ UNCOMITTED	√	    √	     √
-        READ COMMITTED	×	    √	     √
-        REPEATABLE READ	×	    ×	     √
-        SERIALIZABLE	×	    ×	     ×
+        隔离级别	                                脏读	 不可重复读	幻读
+        READ UNCOMITTED(读未提交 RU)	            √	    √	     √
+        READ COMMITTED(读提交 RC)	            ×	    √	     √
+        REPEATABLE READ(可重复度 RR)	            ×	    ×	     √
+        SERIALIZABLE(串行化)	                    ×	    ×	     ×
 
         # 脏读：在一个事务中读到了另外一个事务中尚未提交的数据， 因为其他事务有可能rollback，所以就出现了脏读；
         # 不可重复读：在事务A中第一次读取数据， 在事务B中更新数据后， 再回到事务A读取数据，事务A中两次读到的数据不一样，就出现了不可重复读；
