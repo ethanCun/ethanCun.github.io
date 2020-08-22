@@ -25,6 +25,7 @@
         <li><a href="#one">1. 使用group by报错</a> </li>
         <li><a href="#two">2. mysqldump 备份数据库的时候报错</a> </li>
         <li><a href="#three">3. !=, <> 查出数据不包含NULL的情况</a> </li>
+        <li><a href="#fourth">4. mysql对同一张表查找的同时进行更新操作报错</a> </li>
     </ul>
 
     <p class="smallTitle" id="one">1. 使用group by报错:</p>
@@ -70,6 +71,21 @@
         或者 select * from t_user where username <> 'lisi';
         查出来的数据不包含username为NULL的行， 如果需要查出所有满足条件的行：
         select * from t_user where username<>'lisi' or username is null;
+
+    </pre>
+
+    <p class="smallTitle" id="fourth">4. mysql对同一张表查找的时候更新数据</p>
+    <pre>
+
+        # mysql不能同时对同一张表在更新的同时进行更新操作；
+        # 例如下面的操作:
+        # delete from t_user where name in (select name from t_user group by name having count(name)>1);
+        # 会报错:
+        # ERROR 1093 (HY000): You can't specify target table 't_user' for update in FROM clause
+
+        # 解决方案, 使用中间表接受一下查找的数据， 然后进行更新操作:
+        # delete from t_user where name in (select name from (select name from t_user group by name having count(name)>1) b);
+        # delete from t_user where name in (select name from (select name from (select name from t_user group by name having count(name)>1) b) a);
 
     </pre>
 
