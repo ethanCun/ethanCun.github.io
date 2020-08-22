@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mysql中的索引</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">索引</span>
+    <span class="label label-danger">index</span>
+</div>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">mysql中的索引</p>
+    <hr>
+
+    <p class="introduceText">
+        mysql的数据存储在数据库的每一行中， 行又保存在页上， 当查找数据的时候先找到数据所在的页，在找
+        页中的行， 这个用来查找数据的特殊结构就是索引， 如果不使用索引的话， 每次查找数据就会使用全盘扫描，
+        查找速度会变慢， 但索引本身也是需要占用磁盘空间的， 如果索引数量过多或者过长， 或者失效了，
+        就可能不会提高查询性能，还会占用磁盘内存，同时， 索引的存在虽然会提高查询性能，但是会降低插入数据的
+        速度，因为向有索引的表中插入记录时，数据库系统会按照索引进行排序，因此可以在插入数据的时候删除索引。
+    </p>
+
+    <p class="smallTitle"> 1. mysql索引的种类</p>
+    <p> 1.1, 按存储方式分为B-树索引和hash索引</p>
+    <pre>
+
+        # 可以使用show engines; 来查看mysql引擎:
+        mysql> show engines;
+            +--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+            | Engine             | Support | Comment                                                        | Transactions | XA   | Savepoints |
+            +--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+            | ARCHIVE            | YES     | Archive storage engine                                         | NO           | NO   | NO         |
+            | BLACKHOLE          | YES     | /dev/null storage engine (anything you write to it disappears) | NO           | NO   | NO         |
+            | MRG_MYISAM         | YES     | Collection of identical MyISAM tables                          | NO           | NO   | NO         |
+            | FEDERATED          | NO      | Federated MySQL storage engine                                 | NULL         | NULL | NULL       |
+            | MyISAM             | YES     | MyISAM storage engine                                          | NO           | NO   | NO         |
+            | PERFORMANCE_SCHEMA | YES     | Performance Schema                                             | NO           | NO   | NO         |
+            | InnoDB             | DEFAULT | Supports transactions, row-level locking, and foreign keys     | YES          | YES  | YES        |
+            | MEMORY             | YES     | Hash based, stored in memory, useful for temporary tables      | NO           | NO   | NO         |
+            | CSV                | YES     | CSV storage engine                                             | NO           | NO   | NO         |
+            +--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+
+        # B-树索引结构：
+            1. 叶子节点：包含的条目直接指向表里的数据行。叶子节点之间彼此相连，一个叶子节点有一个指向下一个叶子节点的指针；
+            2. 分支节点：包含的条目指向索引里其他的分支节点或者叶子节点；
+            3. 根节点：一个 B-树索引只有一个根节点，实际上就是位于树的最顶端的分支节点；
+
+        # B-树索引特点：
+            1. 必须遵循左边前缀原则，多列索引查询必须从索引的最左边的列开始；
+            2. 可以对查询结果进行 ORDER BY 排序；
+
+
+        # 哈希索引:
+            1. MySQL 目前仅有 MEMORY 存储引擎和 HEAP 存储引擎支持这类索引；其中，MEMORY 存储引擎可以支持 B-树索引和 HASH 索引，且将 HASH 当成默认索引；
+            2. HASH是根据索引列对应的哈希值的方法获取表的记录行, 因此哈希索引的最大特点是访问速度快， 但是计算hash值的过程很耗时，所以建立索引耗时；
+            3. 不能使用 HASH 索引排序，HASH 索引只支持等值比较；
+            4. HASH 索引不支持键的部分匹配，因为在计算 HASH 值的时候是通过整个索引值来计算的；
+
+    </pre>
+
+    <p>1.2, 按照具体用途区分: 普通索引， 主键索引， 唯一索引， 空间索引， 全文索引</p>
+    <pre>
+
+        # 普通索引：
+        1.1. 创建表的时候创建： create table if not exists(id int(5), name varchar(255), index index_name(name));
+        1.2. 修改表的时候创建：create index index_name on table_name(column);
+         例子:  1.1. create table if not exists t1 (id int(5), name varchar(255), index name_index(name));
+                1.2. create index id_idx on t1(id);
+
+        # 主键索引：
+        1.1. 创建表的时候创建: create table if not exists (id int(5), name varchar(255), primary key(id));
+        1.2. 修改表的时候创建: alter table table_name add constraint primary key (id);
+
+        # 唯一索引：
+        1.1. 创建表的时候创建: create table if not exists (id int(5), name varchar(255), unique index_name(name));
+        1.2. 修改表的时候创建: create unique index index_name on table_name(column);
+          例子: 1.1. create table if not exists (id int(5), name varchar(255), unique name_index(name));
+                1.2. create unique index uname_idx on t1(name);
+
+        # 空间索引: 只支持MyiSAM引擎, 少用， create spatial index index_name on table_name(column);
+
+        # 全文索引: 少用, 用来查找文本中的关键字,只能在 CHAR、VARCHAR 或 TEXT 类型的列上创建, 只支持MyiSAM引擎:
+            create fulltext index index_name on table_name(column)
+
+    </pre>
+
+    <p> 1.3, 按照列数分为： 单列索引，所列索引</p>
+    <pre>
+
+        # 单列索引: 只包含表的一个列
+         create index index_name on table_name(column);
+
+        # 多列索引：包含表的多个列, 按最左原则匹配
+         create index index_name on table_name(column1, column2..);
+
+    </pre>
+
+    <p class="smallTitle">2. 查看表中的索引</p>
+    <pre>
+
+        show index from table_name;
+    </pre>
+
+    <p class="smallTitle">3. 删除表中的索引</p>
+    <pre>
+
+        drop index index_name on table_name;
+    </pre>
+
+    <p class="smallTitle">4. 索引失效的一些情况</p>
+    <pre>
+
+        #1. 模糊查询like: 如果左边是%，索引会失效;
+        mysql> explain select * from t1 where name like '%1%';
+        +----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+
+        | id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |
+        +----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+
+        |  1 | SIMPLE      | t1    | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    1 |   100.00 | Using where |
+        +----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+
+
+        mysql> explain select * from t1 where name like '1%';
+        +----+-------------+-------+------------+-------+---------------+------------+---------+------+------+----------+-----------------------+
+        | id | select_type | table | partitions | type  | possible_keys | key        | key_len | ref  | rows | filtered | Extra                 |
+        +----+-------------+-------+------------+-------+---------------+------------+---------+------+------+----------+-----------------------+
+        |  1 | SIMPLE      | t1    | NULL       | range | name_index    | name_index | 1023    | NULL |    1 |   100.00 | Using index condition |
+        +----+-------------+-------+------------+-------+---------------+------------+---------+------+------+----------+-----------------------+
+
+        #2. 不适用索引比使用索引查询速度更快:
+        # t1表没什么数据， 不使用索引：
+        mysql> explain select * from t1 where name='1';
+        +----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+--------------------------------+
+        | id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra                          |
+        +----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+--------------------------------+
+        |  1 | SIMPLE      | NULL  | NULL       | NULL | NULL          | NULL | NULL    | NULL | NULL |     NULL | no matching row in const table |
+        +----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+--------------------------------+
+        1 row in set, 1 warning (0.00 sec)
+
+        # t_user表200万数据， 使用索引：
+        mysql> explain select * from t_user where name='11';
+        +----+-------------+--------+------------+------+-----------------------------+----------------+---------+-------+------+----------+-------+
+        | id | select_type | table  | partitions | type | possible_keys               | key            | key_len | ref   | rows | filtered | Extra |
+        +----+-------------+--------+------------+------+-----------------------------+----------------+---------+-------+------+----------+-------+
+        |  1 | SIMPLE      | t_user | NULL       | ref  | username_index,age_sex_name | username_index | 1023    | const |    1 |   100.00 | NULL  |
+        +----+-------------+--------+------------+------+-----------------------------+----------------+---------+-------+------+----------+-------+
+        1 row in set, 1 warning (0.00 sec)
+
+
+        #3. 使用了or， or前后有一个不是索引，查询中不会使用索引:
+        # name和age都有索引：
+        mysql> explain select * from t_user where name='11' or age=1;
+        +----+-------------+--------+------------+-------------+-----------------------------+-----------------------------+---------+------+------+----------+------------------------------------------------------------+
+        | id | select_type | table  | partitions | type        | possible_keys               | key                         | key_len | ref  | rows | filtered | Extra                                                      |
+        +----+-------------+--------+------------+-------------+-----------------------------+-----------------------------+---------+------+------+----------+------------------------------------------------------------+
+        |  1 | SIMPLE      | t_user | NULL       | index_merge | username_index,age_sex_name | username_index,age_sex_name | 1023,5  | NULL |    2 |   100.00 | Using sort_union(username_index,age_sex_name); Using where |
+        +----+-------------+--------+------------+-------------+-----------------------------+-----------------------------+---------+------+------+----------+------------------------------------------------------------+
+        1 row in set, 1 warning (0.00 sec)
+
+        # name有索引， sex不满足索引条件，下面的age_sex_name并没有起作用， rows为82783：
+        mysql> explain select * from t_user where name='11' or sex=1;
+        +----+-------------+--------+------------+-------+----------------+--------------+---------+------+-------+----------+--------------------------+
+        | id | select_type | table  | partitions | type  | possible_keys  | key          | key_len | ref  | rows  | filtered | Extra                    |
+        +----+-------------+--------+------------+-------+----------------+--------------+---------+------+-------+----------+--------------------------+
+        |  1 | SIMPLE      | t_user | NULL       | index | username_index | age_sex_name | 1033    | NULL | 82783 |    10.00 | Using where; Using index |
+        +----+-------------+--------+------------+-------+----------------+--------------+---------+------+-------+----------+--------------------------+
+        1 row in set, 1 warning (0.00 sec)
+
+
+        #4. 最左原则：在表的多个字段上创建一个多列索引，只有查询条件中使用了这些字段中的第一个字段，索引才会起作用, age_sex_name并没有起作用；
+        mysql> explain select * from t_user where sex=0;
+        +----+-------------+--------+------------+-------+---------------+--------------+---------+------+-------+----------+--------------------------+
+        | id | select_type | table  | partitions | type  | possible_keys | key          | key_len | ref  | rows  | filtered | Extra                    |
+        +----+-------------+--------+------------+-------+---------------+--------------+---------+------+-------+----------+--------------------------+
+        |  1 | SIMPLE      | t_user | NULL       | index | age_sex_name  | age_sex_name | 1033    | NULL | 82783 |    10.00 | Using where; Using index |
+        +----+-------------+--------+------------+-------+---------------+--------------+---------+------+-------+----------+--------------------------+
+        1 row in set, 1 warning (0.00 sec)
+
+
+        #5. 数据类型出现因式转换的时候，t_user表中name类型为varchar(255):
+        mysql> explain select * from t_user where name=1; //索引失效
+        +----+-------------+--------+------------+-------+----------------+--------------+---------+------+-------+----------+--------------------------+
+        | id | select_type | table  | partitions | type  | possible_keys  | key          | key_len | ref  | rows  | filtered | Extra                    |
+        +----+-------------+--------+------------+-------+----------------+--------------+---------+------+-------+----------+--------------------------+
+        |  1 | SIMPLE      | t_user | NULL       | index | username_index | age_sex_name | 1033    | NULL | 82783 |    10.00 | Using where; Using index |
+        +----+-------------+--------+------------+-------+----------------+--------------+---------+------+-------+----------+--------------------------+
+        1 row in set, 4 warnings (0.00 sec)
+
+        mysql> explain select * from t_user where name=''; //索引未失效
+        +----+-------------+--------+------------+------+-----------------------------+----------------+---------+-------+------+----------+-------+
+        | id | select_type | table  | partitions | type | possible_keys               | key            | key_len | ref   | rows | filtered | Extra |
+        +----+-------------+--------+------------+------+-----------------------------+----------------+---------+-------+------+----------+-------+
+        |  1 | SIMPLE      | t_user | NULL       | ref  | username_index,age_sex_name | username_index | 1023    | const |    1 |   100.00 | NULL  |
+        +----+-------------+--------+------------+------+-----------------------------+----------------+---------+-------+------+----------+-------+
+        1 row in set, 1 warning (0.00 sec)
+
+
+        #6. 第一个索引字段使用函数时， 索引会失效:
+        # 索引失效:
+        mysql> explain select * from t_user where left(name, 2)='';
+        +----+-------------+--------+------------+-------+---------------+--------------+---------+------+-------+----------+--------------------------+
+        | id | select_type | table  | partitions | type  | possible_keys | key          | key_len | ref  | rows  | filtered | Extra                    |
+        +----+-------------+--------+------------+-------+---------------+--------------+---------+------+-------+----------+--------------------------+
+        |  1 | SIMPLE      | t_user | NULL       | index | NULL          | age_sex_name | 1033    | NULL | 82783 |   100.00 | Using where; Using index |
+        +----+-------------+--------+------------+-------+---------------+--------------+---------+------+-------+----------+--------------------------+
+
+        # 索引起作用， 前面name创建了索引
+        mysql> explain select * from t_user where name='   ' and left(name, 2)='';
+        +----+-------------+--------+------------+------+-----------------------------+----------------+---------+-------+------+----------+-----------------------+
+        | id | select_type | table  | partitions | type | possible_keys               | key            | key_len | ref   | rows | filtered | Extra                 |
+        +----+-------------+--------+------------+------+-----------------------------+----------------+---------+-------+------+----------+-----------------------+
+        |  1 | SIMPLE      | t_user | NULL       | ref  | username_index,age_sex_name | username_index | 1023    | const |    1 |   100.00 | Using index condition |
+        +----+-------------+--------+------------+------+-----------------------------+----------------+---------+-------+------+----------+-----------------------+
+
+    </pre>
+
+
+    <p class="smallTitle">5. 正确创建索引</p>
+    <pre>
+
+        #1. 使用唯一性索引可以大大加速查询速度；
+        #2. 为经常需要 ORDER BY、GROUP BY、DISTINCT 和 UNION 等操作的字段创建索引；
+        #3. 为经查需要进行业务查询的列创建索引；
+        #4. 限制索引的数量，过多会占用太多磁盘；
+        #5. 数据量小的表没必要创建索引；
+        #6. 创建索引的时候尽量使用类型长度小的列，例如varhcar(20)优先varchar(255);
+        #7. 删除不经常用或者不用的索引；
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>
