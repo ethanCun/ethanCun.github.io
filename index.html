@@ -13,6 +13,15 @@
     <script type="text/javascript" src="./js/MouseRunJs.js"></script>
     <script src="Vendor/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
     <script src="js/jquery.ripples.js"></script>
+    <style>
+        html, body{
+
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 <body style="background-color: #f8f8f8">
 
@@ -45,13 +54,12 @@
 
             <ul class="nav navbar-nav">
 
-                <li class=""><a href="html/archive.html">归档</a></li>
+                <li class=""><a href="html/archive.html"><span>归档</span></a></li>
                 <!-- <li class=""><a href="html/iOS/iOSArticleList.html">iOS</a></li> -->
                 <!-- <li class=""><a href="html/archive.html">Java</a></li> -->
                 <!-- <li class=""><a href="html/HTML5/Html5ArticleList.html">web</a></li> -->
-<!--                <li class=""><a href="html/ReactNative/ReactNativeArticleList.html">ReactNative</a></li>-->
-                <!--<li class=""><a target="_blank" href="html/Other/Resume/MyResume.html">个人简历</a> </li>-->
-                <li class=""><a target="_blank" href="https://github.com/ethanCun">GitHub</a></li>
+<!--             <li class=""><a href="html/ReactNative/ReactNativeArticleList.html">ReactNative</a></li>-->
+                <li class=""><a target="_blank" href="https://github.com/ethanCun"><span>GitHub</span> </a></li>
                 <!-- <li class=""><a href="html/Other/OtherArticleList.html">其他</a></li> -->
 
                 <!--<li class="dropdown">-->
@@ -86,229 +94,9 @@
     </div>
 
     <!--滚动的鼠标-->
-    <div class="mouse-icon">
-        <div class="wheel"></div>
-    </div>
-</div>
-
-<!--分类-->
-<div class="container">
-
-    <div class="row">
-
-        <div class="col-xs-6 col-sm-3">
-
-            <div class="first" onclick="javascript:window.location.href='html/iOS/iOSArticleList.html'">
-                <i class="fa fa-apple"></i>
-                <p class="title">iOS</p>
-            </div>
-
-        </div>
-
-        <div class="col-xs-6 col-sm-3">
-
-            <div class="first"  onclick="javascript:window.location.href='html/archive.html'">
-                <i class="fa fa-mortar-board"></i>
-                <p class="title">Java</p>
-            </div>
-
-        </div>
-
-        <div class="col-xs-6 col-sm-3">
-
-            <div class="first" onclick="javascript:window.location.href='html/HTML5/Html5ArticleList.html'">
-                <i class="fa fa-html5"></i>
-                <p class="title">web</p>
-            </div>
-
-        </div>
-
-        <div class="col-xs-6 col-sm-3">
-
-            <div class="first" onclick="javascript:window.location.href='html/Other/OtherArticleList.html'">
-                <i class="fa fa-mobile"></i>
-                <p class="title">Others</p>
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!--推荐-->
-<div class="container">
-
-    <div class="col-xs-12 col-md-12">
-        <div class="jumbotron rac-details" onclick="javascript:window.location.href='html/archive.html'">
-            <i class="fa fa-play-circle"></i>
-            <h1>Objective-C与Swift笔记记录</h1>
-        </div>
-    </div>
-
-    <div class="col-xs-12 col-md-12">
-        <div class="jumbotron rac-details" onclick="javascript:window.location.href='html/HTML5/vue/vue.html'">
-            <i class="fa fa-play-circle"></i>
-            <h1>vue从html到template, 开发到部署</h1>
-        </div>
-    </div>
-
-    <div class="col-xs-12 col-md-12">
-        <div class="jumbotron rac-details" onclick="javascript:window.location.href='html/archive.html'">
-            <i class="fa fa-tag"></i>
-            <h1>springboot开发记录</h1>
-            <p>
-                &nbsp;&nbsp;&nbsp;&nbsp;当调用一个类的方法时，先在本类中的方法缓存列表中进行查询(参考YYModel)，
-                如果在缓存列表中找到了该方法的实现，就执行，如果找不到就在本类中的方列表中进行查找。
-                在本类方列表中查找到相应的方法实现后就进行调用，如果没找到，就去父类中进行查找。
-                如果在父类中的方法列表中找到了相应方法的实现，那么就执行，否则就执行下方的几步。
-            </p>
-        </div>
-    </div>
-
-<!--    <div class="col-xs-12 col-md-12">
-        <div class="jumbotron rac-details" onclick="javascript:window.location.href='html/iOS/YYModelRead/YYModelRead.html'">
-            <i class="fa fa-safari"></i>
-            <h1>YYModel源码解读</h1>
-            <p>
-                &nbsp;&nbsp;&nbsp;&nbsp; Json数据解析在mvc及mvvm中是非常重要的一个步骤,不同于web使用ajax直接用
-                object类型的data去访问'key'值;在iOS中最常用的json序列化框架就是YYModel与MJExtension;
-                前者相对后者来说拥有更快的解析速度,也更加轻量,因此工作中我基本都是用的YYModel;
-                YYModel非常轻量,总共5个文件:头文件(&lt;YYModel/YYModel.h&gt;) + &lt;YYModel/NSObject+YYModel.h&gt; + &lt;YYModel/YYClassInfo.h&gt;。
-            </p>
-        </div>
-    </div> -->
-
-  <!--  <div class="col-xs-12 col-md-6">
-        <div class="jumbotron shopping-car" onclick="javascript:window.location.href='html/iOS/shoppinCar/ShoppingCar.html'">
-            <i class="fa fa-shopping-cart"></i>
-            <h1>购物车</h1>
-            <p> 仿淘宝购物订单逻辑<br>
-                设计模式MVC 控制器450行代码 cell 280行代码 实现类似淘宝购物车的选择，编辑，删除等功能<br>
-                使用YYModel管理数据结构...
-            </p>
-        </div>
-    </div> -->
-
-<!--    <div class="col-xs-12 col-md-6">
-        <div class="jumbotron rac-details" onclick="javascript:window.location.href='html/iOS/RACSummarise/RACSummarise.html'">
-            <i class="fa fa-mobile-phone"></i>
-            <h1>RAC核心方法总结(一)</h1>
-            <p> 一. concat:按一定顺序拼接信号，当多个信号发出的时候，有顺序的接收信号。<br>
-                二. then:用于连接两个信号，当第一个信号完成，才会连接then返回的信号。<br>
-                三. merge:把多个信号合并为一个信号，任何一个信号有新值的时候就会调用...
-            </p>
-        </div>
-    </div> -->
-
-</div>
-
-<!--&lt;!&ndash;介绍&ndash;&gt;-->
-<!--<div class="container">-->
-
-    <!--<div class="row">-->
-
-        <!--<div class="col-xs-12 col-md-6 skill">-->
-
-            <!--<div class="objc">-->
-                <!--<span class="label label-success">Objective-C</span>-->
-                <!--<div class="progress progress-striped active">-->
-                    <!--<div class="progress-bar progress-bar-success" role="progressbar"-->
-                         <!--aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"-->
-                         <!--style="width: 95%;">-->
-                        <!--<span class="sr-only">95% 完成</span>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="swift">-->
-                <!--<span class="label label-info">Swift</span>-->
-                <!--<div class="progress progress-striped active">-->
-                    <!--<div class="progress-bar progress-bar-info" role="progressbar"-->
-                         <!--aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"-->
-                         <!--style="width: 85%;">-->
-                        <!--<span class="sr-only">85% 完成</span>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="HTML5">-->
-                <!--<span class="label label-primary">HTML5</span>-->
-                <!--<div class="progress progress-striped active">-->
-                    <!--<div class="progress-bar progress-striped" role="progressbar"-->
-                         <!--aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"-->
-                         <!--style="width: 80%;">-->
-                        <!--<span class="sr-only">80% 完成</span>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="CSS">-->
-                <!--<span class="label label-primary">CSS</span>-->
-                <!--<div class="progress progress-striped active">-->
-                    <!--<div class="progress-bar progress-striped" role="progressbar"-->
-                         <!--aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"-->
-                         <!--style="width: 80%;">-->
-                        <!--<span class="sr-only">80% 完成</span>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="javascript">-->
-                <!--<span class="label label-primary">javascript</span>-->
-                <!--<div class="progress progress-striped active">-->
-                    <!--<div class="progress-bar progress-striped" role="progressbar"-->
-                         <!--aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"-->
-                         <!--style="width: 80%;">-->
-                        <!--<span class="sr-only">80% 完成</span>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="ReactNative">-->
-                <!--<span class="label label-danger">ReactNative</span>-->
-                <!--<div class="progress progress-striped active">-->
-                    <!--<div class="progress-bar progress-bar-danger" role="progressbar"-->
-                         <!--aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"-->
-                         <!--style="width: 60%;">-->
-                        <!--<span class="sr-only">60% 完成</span>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="PHP">-->
-                <!--<span class="label label-warning">PHP</span>-->
-                <!--<div class="progress progress-striped active">-->
-                    <!--<div class="progress-bar progress-bar-warning" role="progressbar"-->
-                         <!--aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"-->
-                         <!--style="width: 40%;">-->
-                        <!--<span class="sr-only">40% 完成</span>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-
-        <!--<div class="col-xs-12 col-md-6">-->
-
-            <!--<div class="jumbotron aboutme">-->
-
-                <!--<p>ABOUT ME!</p>-->
-                <!--<h3><i class="fa fa-envelope-open-o"><span> : zz511627807@163.com</span></i></h3>-->
-                <!--<h3><i class="fa fa-mobile-phone"><span> : +86 17673647340</span></i></h3>-->
-                <!--<h3><i class="fa fa-wechat"><span> : wx15112348182</span></i></h3>-->
-                <!--<h2><span><a class="company" href="http://www.tkface.net"><i class="fa fa-male"> : ethan(TKFACE)</i></a></span></h2>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
-<!--</div>-->
-
-
-<!--底部-->
-<div class="container bottomDiv">
-
-    <p class="right">@ 2016 ethan All right Reserved</p>
-
-    <div class="row">
-        <div><a target="_blank" href="https://juejin.im/user/596765b26fb9a06ba73d4fd4"><i class="fa fa-podcast"></i></a></div>
-        <div><a target="_blank" href="http://weibo.com/p/1005056318522732/home?pids=&profile_ftype=1&is_all=1#_0"><i class="fa fa-weibo"></i></a></div>
-        <div><a target="_blank" href="mailto:zz511627807@163.com"><i class="fa fa-paper-plane"></i></a></div>
-        <!--<div><a href="http://www.linkedin.com/in/%E6%AD%A3%E8%8B%B1-%E9%99%88-441061127/"><i class="fa fa-linkedin"></i></a></div>-->
-        <div><a target="_blank" href="https://github.com/ethanCun"><i class="fa fa-github"></i></a></div>
-    </div>
+<!--    <div class="mouse-icon">-->
+<!--        <div class="wheel"></div>-->
+<!--    </div>-->
 </div>
 
 </body>
