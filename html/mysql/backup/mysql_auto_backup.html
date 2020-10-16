@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>linux下mysql数据库的备份</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-success">mysql备份</span>
+</div>
+
+
+<div class="contentBgDiv">
+
+    <p class="title">linux下mysql数据库的备份</p>
+    <hr>
+
+    <p class="smallTitle">1. 使用mysqldump备份数据库</p>
+    <p class="introduceText">
+        linux下使用/usr/bin下的mysqldump命令来备份mysql，使用mysqldump常需要设置的一些参数:
+    </p>
+    <pre>
+
+            # 1. --opt:  包含add-drop-table，add-locks，extended-insert，lock-tables这几个参数，一般都需要使用；
+                1.1. add-drop-table:
+                    每个数据表创建之前添加drop数据表语句。(默认为打开状态，使用--skip-add-drop-table取消选项);
+                1.2. add-locks:
+                    在每个表导出之前增加LOCK TABLES并且之后UNLOCK TABLE。(默认为打开状态，使用--skip-add-locks取消选项)
+                1.3. extended-insert:
+                    使用具有多个VALUES列的INSERT语法。这样使导出文件更小，并加速导入时的速度。默认为打开状态，使用--skip-extended-insert取消选项。
+                1.4. lock-tables:
+                    开始导出前，锁定所有表。
+
+            # 2. -u数据库用户名  -p数据库用户密码 -h数据库地址 数据库名 > 导出的文件路径；
+
+            # 3.  --skip-lock-tables:
+                 忽略权限， 没有权限的linux用户也可以备份；
+
+            # 4. | gzip:
+                压缩sql文件，占用更小的磁盘；
+
+            # 5. `date +%F`是shell中生成当前日期，格式如2015-11-05；
+
+
+            例如：
+            #不压缩：
+            /usr/bin/mysqldump --opt -uroot -p123456 -hlocalhost db_name --skip-lock-tables > /mnt/backup_sqls/`data +F%`.sql
+
+            # 压缩
+            /usr/bin/mysqldump --opt -uroot -p123456 -hlocalhost db_name --skip-lock-tables | grep > /mnt/backup_sqls/`date +%F`.sql.zip
+
+    </pre>
+
+    <p class="smallTitle">2. 测试上面的命令是否在/mntlu路径下生成了sql文件，如果成功了，就可以开始使用linux的crontab开启器自动备份了</p>
+    <p class="introduceText">
+        关于linux的crontab: linux的 crond 命令每分中会定期检查是否有要执行的工作，如果有要执行的工作便会自动执行该工作，
+            因此适合用来做定时执行mysql的备份脚本， 先编写一个自动备份脚本(/usr/local/mysql_backup/mysql_auto_backup.sh)如下:
+    </p>
+    <pre>
+
+        #!/bin/sh
+        # Database info
+        DB_USER="root"
+        DB_PASS="123456"
+        DB_HOST="localhost"
+        DB_NAME="testdb"
+
+        # Other vars
+        BIN_DIR="/usr/bin"  #the mysql bin path
+        BCK_DIR="/mnt/mysql_backup_log/logs"  #the backup file directory
+        DATE=`date +%F`
+
+        # mysql backup
+        # unzip
+         $BIN_DIR/mysqldump --opt -u$DB_USER -p$DB_PASS -h$DB_HOST $DB_NAME --skip-lock-tables > $BCK_DIR/testdb_$DATE.sql
+        # zip
+        #$BIN_DIR/mysqldump --opt -u$DB_USER -p$DB_PASS -h$DB_HOST $DB_NAME | gzip > $BCK_DIR/db_$DATE.sql
+    </pre>
+
+    <p class="introduceText">
+
+        #chmod x: 可执行
+        接着给这个sh文件授权： chmod +x  /usr/local/mysql_backup/mysql_auto_backup.sh
+    </p>
+    <p class="introduceText">
+
+        接下来运行这个文件是否可以正常运行： ./usr/local/mysql_backup/mysql_auto_backup.sh
+    </p>
+    <p class="introduceText">
+        关于chmod文件权限管理:
+    </p>
+    <pre>
+
+        # 关于chmod: change mode: 是控制用户对文件的权限的命令;
+
+        权限分为三级 : 文件所有者（Owner）、用户组（Group）、其它用户（Other Users）；
+        u 表示该文件的拥有者，g 表示与该文件的拥有者属于同一个群体(group)者，o 表示其他以外的人，a 表示这三者皆是；
+        + 表示增加权限、- 表示取消权限、= 表示唯一设定权限；
+        r 表示可读取，w 表示可写入，x 表示可执行，X 表示只有当该文件是个子目录或者该文件已经被设定过为可执行；
+
+        八进制语法：
+        4:  只读
+        2： 只写
+        1： 只执行
+        7：读 + 写 + 执行
+        5：读 + 执行
+    </pre>
+
+    <p class="smallTitle">3. sh可以正常导出后，就可以在crontab中添加定时任务，每天导出一次sql</p>
+    <p class="introduceText">
+        crontab常用命令如此下：
+    </p>
+    <pre>
+        crontab -e : 设值定时任务;
+        crontab -l: 列出目前所有定时任务；
+        crontab -r: 删除定时任务;
+        service crond start: 启动定时任务；
+        service crond stop: 关闭定时任务；
+        service crond restart: 重启定时任务；
+        service crond reload: 重新载入定时任务配置；
+
+
+        # 定时任务设置格式说明:
+        *    *    *    *    *
+        -    -    -    -    -
+        |    |    |    |    |
+        |    |    |    |    +----- 星期中星期几 (0 - 7) (星期天 为0)
+        |    |    |    +---------- 月份 (1 - 12)
+        |    |    +--------------- 一个月中的第几天 (1 - 31)
+        |    +-------------------- 小时 (0 - 23)
+        +------------------------- 分钟 (0 - 59)
+
+          *:   表示每一个单位(分/时/天/月/星期几)都执行；
+          a-b： 表示区间范围执行；
+          a,b,c: 表示具体点执行；
+          */n: 表示每n个单位执行一次； 如 */10 * * * *表示每10分钟执行一次；
+    </pre>
+    <p class="introduceText">
+        开始配置定时任务， crontab -e:
+    </p>
+    <pre>
+        # 每天的凌晨5点备份
+        00 05 * * * /bin/sh /usr/local/mysql_backup/mysql_auto_backup.sh
+
+        service crontab reload; # 重新加载一次配置
+        crontab -l; #查看定时任务是否设置成功
+    </pre>
+
+
+
+    <br>
+    <br>
+</div>
+
+</body>
+</html>
