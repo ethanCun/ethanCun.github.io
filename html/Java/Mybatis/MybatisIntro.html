@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mybatis介绍与工作原理</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Mybatis介绍与工作原理</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Mybatis介绍与工作原理</p>
+    <hr>
+
+    <p class="smallTitle">1. Mybatis介绍与工作原理</p>
+    <pre>
+
+        /**
+         * 持久层以后只需要关注sql编写，sqlsession， 下面的实现被包含在mybatis里面
+         * sqlsession: 包括了connection, preparedstatement, resultset
+         *
+         * mybatis工作流程：
+         *  1. 根据mybatis-config创建一个输入流；
+         *  2. 根据输入流创建SqlSessionFactory
+         *  3. SqlSessionFactory.openSession得到SqlSession
+         *  4. SqlSession.getMapper得到dao对象
+         *  5. dao对象操作接口方法
+         *
+         *  注意sqlSessionFactory是需要设计成单例的，sqlSession每次连接都需要重新创建一个
+         *
+         */
+    </pre>
+
+    <p class="smallTitle">2. 引入包</p>
+    <pre>
+        
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+            &lt;version&gt;5.2.8.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+            &lt;version&gt;8.0.19&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+            &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+            &lt;version&gt;3.5.3&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;log4j&lt;/groupId&gt;
+            &lt;artifactId&gt;log4j&lt;/artifactId&gt;
+            &lt;version&gt;1.2.17&lt;/version&gt;
+        &lt;/dependency&gt;
+
+    </pre>
+    
+    <p class="smallTitle">3. mybatis-config配置</p>
+    <pre>
+        &lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+                &lt;!DOCTYPE configuration
+                PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-config.dtd"&gt;
+        &lt;configuration&gt;
+        
+            &lt;!--mybatis全局属性--&gt;
+            &lt;settings&gt;
+                &lt;!--自增主键--&gt;
+                &lt;setting name="useGeneratedKeys" value="true"/&gt;
+                &lt;!-- 使用列别名替换列名 默认:true --&gt;
+                &lt;setting name="useColumnLabel" value="true"/&gt;
+                &lt;!-- 开启驼峰命名转换:Table{create_time} -&gt; Entity{createTime} --&gt;
+                &lt;setting name="mapUnderscoreToCamelCase" value="true"/&gt;
+                &lt;!-- 在mybatis中添加log4j日志, 添加完这个后才会有sql语句打印 --&gt;
+                &lt;setting name="logImpl" value="Log4J" /&gt;
+            &lt;/settings&gt;
+        
+        
+            &lt;!-- default指定数据源环境 --&gt;
+            &lt;environments default="development"&gt;
+        
+                &lt;!-- 可以配置多个环境 --&gt;
+                &lt;environment id="development"&gt;
+                    &lt;!-- 事务管理器 --&gt;
+                    &lt;transactionManager type="JDBC"&gt;&lt;/transactionManager&gt;
+                    &lt;!-- 数据源 type为池子， 数据库连接池非常费时间 --&gt;
+                    &lt;!-- 连接池子的作用： 预先在连接池创建多个连接池对象， 省略
+                        掉创建连接和关闭连接的时间 如dbcp c3p0， 现在用的最多是druid
+                        POOLED是mybatis默认连接池 --&gt;
+                    &lt;dataSource type="POOLED"&gt;
+                        &lt;property name="driver" value="com.mysql.cj.jdbc.Driver" /&gt;
+                        &lt;property name="url" value="jdbc:mysql://localhost:3306/test" /&gt;
+                        &lt;property name="username" value="root" /&gt;
+                        &lt;property name="password" value="xxxx" /&gt;
+                    &lt;/dataSource&gt;
+                &lt;/environment&gt;
+        
+                &lt;environment id="distribution"&gt;
+        
+                    &lt;!-- 事务管理器 --&gt;
+                    &lt;transactionManager type="JDBC"&gt;&lt;/transactionManager&gt;
+                    &lt;!-- 数据源 --&gt;
+                    &lt;dataSource type="POOLED"&gt;
+                        &lt;property name="driver" value="${jdbc.driver}" /&gt;
+                        &lt;property name="url" value="${jdbc.url}" /&gt;
+                        &lt;property name="username" value="${username}" /&gt;
+                        &lt;property name="password" value="${password}" /&gt;
+                    &lt;/dataSource&gt;
+                &lt;/environment&gt;
+        
+            &lt;/environments&gt;
+        
+            &lt;!-- sql映射文件位置 --&gt;
+            &lt;mappers&gt;
+                &lt;package name="com.spring.mapper" /&gt;
+            &lt;/mappers&gt;
+        
+        &lt;/configuration&gt;
+    </pre>
+
+    <p class="smallTitle">4. 日志配置log4j.properties</p>
+    <pre>
+
+        # 通过修改log4j.rootCategory来进行Log4J的日志级别的输出以及选择输出的位置。
+        log4j.rootCategory=INFO, CONSOLE, LOGFILE
+
+        # 通过log4j.logger来记录日志，可以详细的类，也可以只到包中，同时可以选择日志的输出级别。
+        # 在下面演示的配置中，xyz.tulling.mapper是包名，而DEBUG是日志的输出级别。
+        log4j.logger.com.mybatis = DEBUG
+
+        # 最后则是一些输出显示的配置
+        # CONSOLE is set to be a ConsoleAppender using a PatternLayout.
+        log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender
+        log4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout
+        log4j.appender.CONSOLE.layout.ConversionPattern=%C %d{YYYY-MM-dd hh:mm:ss} %L %m%n
+
+        # LOGFILE is set to be a File appender using a PatternLayout.
+        log4j.appender.LOGFILE=org.apache.log4j.FileAppender
+        log4j.appender.LOGFILE.File=axis.log
+        log4j.appender.LOGFILE.Append=true
+        log4j.appender.LOGFILE.layout=org.apache.log4j.PatternLayout
+        log4j.appender.LOGFILE.layout.ConversionPattern=%-4r [%t] %-5p %c %x - %m%n
+
+        # 通常这样配置后，控制台会输出如下信息：
+        #日志解析：
+        #其中第一行是执行的SQL语句。
+        #第二行是执行的参数。没有填写参数，所以为无。
+        #第三行代表返回的信息数：查询了三条数据，所以tota为3。
+        #org.apache.ibatis.logging.jdbc.BaseJdbcLogger 2020-10-01 05:53:33 143 ==>  Preparing: select u.id, u.username, u.password, stu.id, stu.name, stu.age, stu. uid from `t_user` u, `t_student` stu where u.id = stu.uid;
+        #org.apache.ibatis.logging.jdbc.BaseJdbcLogger 2020-10-01 05:53:33 143 ==> Parameters:
+        #org.apache.ibatis.logging.jdbc.BaseJdbcLogger 2020-10-01 05:53:33 143 <==      Total: 3
+
+    </pre>
+
+    <p class="smallTitle">5. Mybatis通过Mapper操作</p>
+    <pre>
+
+            //通过Mapper操作数据已经解决了需要手动提交事务的问题，底层是用代理处理的事务提交
+           public static void getDataWithDao(){
+
+                String resource = "mybatis-config.xml";
+
+                try {
+
+                    InputStream is = Resources.getResourceAsStream(resource);
+                    SqlSessionFactory sqlSessionFactory =
+                            new SqlSessionFactoryBuilder().build(is);
+                    SqlSession sqlSession = sqlSessionFactory.openSession();
+                    StudentDao studentDao = sqlSession.getMapper(StudentDao.class);
+                    System.out.println(studentDao.studentWithId(15));
+
+                    sqlSession.close();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+    </pre>
+
+    <p class="smallTitle">6. 通过SqlSession操作</p>
+    <pre>
+
+        public static void getDataWithSession(){
+
+            String resource = "mybatis-config.xml";
+
+            try {
+                InputStream is = Resources.getResourceAsStream(resource);
+                SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder()
+                        .build(is);
+                SqlSession sqlSession = sqlSessionFactory.openSession();
+
+                //statement: namespace + sqlid， 后面可以带参数
+                List&lt;Student&gt; students = sqlSession.selectList("teacher.getall");
+                System.out.println(students);
+
+                if (sqlSession.insert("teacher.insert", new Student(0, "zz", 10)) < 0) {
+                    System.out.println("新增失败");
+                }else {
+                    System.out.println("新增成功");
+                }
+
+                if (sqlSession.update("teacher.update", new Student(11, "zzzsss", 100)) < 0) {
+                    System.out.println("更新失败");
+                }else {
+                    System.out.println("更新成功");
+                }
+
+                if (sqlSession.delete("teacher.delete", 11) < 0) {
+                    System.out.println("删除失败");
+                }else {
+                    System.out.println("删除成功");
+                }
+
+                //SqlSession是需要手动提交事务的
+                // 注意: mybatis默认情况下是需要手动提交事务
+                sqlSession.commit();
+
+                sqlSession.close();
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    </pre>
+
+    <p class="smallTitle">7. 自定义线程安全的SqlSession</p>
+    <pre>
+
+        //sqlSession操作对象
+        public class SqlSessionUtil {
+
+            private static SqlSessionFactory sqlSessionFactory;
+
+            //执行时间早，并且只执行一次
+            static {
+
+                String resource = "mybatis-config.xml";
+                InputStream is = null;
+                try {
+                    is = Resources.getResourceAsStream(resource);
+                    sqlSessionFactory =
+                            new SqlSessionFactoryBuilder().build(is);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            //构造方法私有化, 防止外部重新创建对象调用getSession
+            //因为实例对象是可以调用static方法的
+            private SqlSessionUtil(){}
+
+            private static ThreadLocal&lt;SqlSession&gt; t =
+                    new ThreadLocal&lt;SqlSession&gt;();
+
+            //获取SqlSession对象
+            public static SqlSession getSession(){
+
+                SqlSession sqlSession = t.get();
+
+                if (sqlSession == null) {
+                    sqlSession = sqlSessionFactory.openSession();
+                    t.set(sqlSession);
+                }
+
+                return sqlSession;
+            }
+
+            //关闭SqlSession对象
+            public static void closeSession(SqlSession sqlSession){
+
+                if (sqlSession != null) {
+
+                    sqlSession.close();
+
+                    //清空threadLocal, 这个必须加, 因为线程可能没有销毁，从线程池中重新分配一个线程
+                    //所以需要手动删除这个线程
+                    t.remove();
+                }
+            }
+        }
+    </pre>
+
+    <p class="smallTitle">8. 使用jdk动态代理解决SqlSession需要手动提交事务的问题</p>
+    <pre>
+
+        //使用动态代理， 处理事务
+        public class TransactionInvocationHandler implements InvocationHandler {
+
+            private Object target;
+
+            public TransactionInvocationHandler(){}
+
+            public TransactionInvocationHandler(Object target){
+                this.target = target;
+            }
+
+            public Object invoke(Object proxy, Method method, Object[] args) {
+
+                SqlSession sqlSession = null;
+                Object obj = null;
+
+                try {
+
+                    sqlSession = SqlSessionUtil.getSession();
+
+                    obj = method.invoke(target, args);
+
+                    //处理业务方法完毕， 手动提交事务
+                    sqlSession.commit();
+
+                } catch (IllegalAccessException e) {
+
+                    //发生异常，手动回滚
+                    sqlSession.rollback();
+                    e.printStackTrace();
+
+                } catch (InvocationTargetException e) {
+
+                    e.printStackTrace();
+                    //最后删除会话， 移除threadlocal当前线程
+                    SqlSessionUtil.closeSession(sqlSession);
+                }
+
+                return obj;
+            }
+
+
+            //获取代理对象
+            public Object getProxy(){
+
+                return Proxy.newProxyInstance(target.getClass().getClassLoader(),
+                        target.getClass().getInterfaces(), this);
+            }
+
+        }
+
+    </pre>
+
+    <p class="smallTitle">9. 外部调用</p>
+    <pre>
+
+        public static Object getProxyObject(Object service){
+
+            TransactionInvocationHandler handler = new
+                    TransactionInvocationHandler(service);
+
+            return handler.getProxy();
+        }
+
+        StudentService studentService = new StudentServiceImpl();
+
+        //代理的主要目的是帮mybatis处理事务， 因为mybatis的事务默认是需要手动提交的
+        StudentService proxy = (StudentService) ServiceFactory.getProxyObject(studentService);
+
+        Student student = proxy.studentWithId(12);
+        System.out.println(student);
+    </pre>
+
+    <br>
+</div>
+
+<br>
+</body>
+</html>
