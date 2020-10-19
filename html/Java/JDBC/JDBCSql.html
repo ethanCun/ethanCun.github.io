@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>JDBC sql注入的问题</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">JDBC sql注入的问题</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">JDBC sql注入的问题</p>
+    <hr>
+
+    <p class="smallTitle">1. sql注入产生的原因</p>
+    <pre>
+
+        用户在表单上输入 or 1=1 或者类似的数据，导致特定的sql语句执行错误，或者偏离原来的执行计划；
+    </pre>
+
+    <p class="smallTitle">2. Statement与PreparedStatement</p>
+    <pre>
+
+        mybatis的#相当于PreparedStatement， mybatis的$相当于Statement;
+        PreparedStatement是预编译的，用问号占位符， 然后动态赋值， sql语句只编译一次，因此速度快；
+        Statement是使用字符串拼接， 因此参数不同都需要编译， 速度慢，会导致sql注入；
+    </pre>
+
+    <p class="smallTitle">3. sql注入实例</p>
+    <pre>
+
+         Connection connection = null;
+        PreparedStatement ps = null;
+
+        try {
+            connection = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/test",
+                    "root", "xxxx");
+
+            String sql = "select * from t_student where sname=?";
+            ps = connection.prepareStatement(sql);
+
+            //查询为空 PreparedStatement不会引起sql注入的问题
+            ps.setString(1, "yy or 1=1");
+
+            //Statement相当于mysql的$, PreparedStatement相当于mybatis的#
+            String name="'yy' or 1=1";
+            String sql = "select * from t_student where sname=" + name;
+
+            //存在sql注入
+            ps = connection.createStatement();
+            ResultSet rs = ps.executeQuery(sql);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()){
+
+                System.out.println(rs.getInt(1));
+                System.out.println(rs.getString(2));
+                System.out.println(rs.getInt(3));
+                System.out.println(rs.getInt(4));
+            }
+
+            rs.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+
+            if (ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null){
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

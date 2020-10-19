@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>JDBC的curd</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">JDBC的curd</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">JDBC的curd</p>
+    <hr>
+    
+    <p class="smallTitle">1. JDBC简介</p>
+    <pre>
+        
+        jdbc： JavaEE规范中的一种 Java Database Connect, 是使用Java代码来操作各种数据库；
+        为了防止不同的数据库底层解析不同，因此SUN只提供了JDBC规范，不提供实现类,
+        所有的具体实现类都由数据库的生产厂商来实现， 因此如果要使用Java访问数据库，
+        需要到各个数据库提供商下载相关的jar包， 比如mysql-connector-java.jar
+        
+        使用maven导入mysql包：
+        &lt;dependency&gt;
+            &lt;groupId&gt;mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+            &lt;version&gt;8.0.19&lt;/version&gt;
+        &lt;/dependency&gt;
+
+    </pre>
+
+    <p class="smallTitle">2. JDBC加载驱动与CURD</p>
+    <pre>
+
+        //加载过程写在静态代码块中，减少加载时间
+        static {
+
+            try {
+
+                //加载驱动
+                Class.forName("com.mysql.cj.jdbc.Driver");
+
+            }catch (ClassNotFoundException e){
+                e.printStackTrace();
+            }
+        }
+
+        //curd
+        Connection connection = null;
+        PreparedStatement insertPs = null;
+        PreparedStatement deletePs = null;
+        PreparedStatement updatePs = null;
+        PreparedStatement selectPs = null;
+        PreparedStatement selectPs2 = null;
+
+        try {
+            //Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager
+                    .getConnection("jdbc:mysql://localhost:3306/test",
+                    "root", "xxxx");
+
+            //insert
+            String sql = "insert into t_student (`id`, `name`, `age`, `cid`) values (?, ?, ?, ?)";
+
+            //定义sql容器，放入sql
+            insertPs = connection.prepareStatement(sql);
+            //设置参数
+            insertPs.setInt(1, 0);
+            insertPs.setString(2, "王五");
+            insertPs.setString(3, "30");
+            insertPs.setInt(4, 10);
+
+            //执行sql
+            int insert = insertPs.executeUpdate();
+
+            if (insert > 0){
+                System.out.println("插入成功");
+            }else {
+                System.out.println("插入失败");
+            }
+
+
+
+            //update
+            updatePs = connection.prepareStatement("update t_student set name=?, " +
+                    "age=?, cid=? where id=?");
+            updatePs.setString(1, "李四");
+            updatePs.setInt(2, 33);
+            updatePs.setInt(3, 10);
+            updatePs.setInt(4, 49);
+
+            if (updatePs.executeUpdate() > 0){
+                System.out.println("更新成功");
+            }else {
+                System.out.println("更新失败");
+            }
+
+
+
+            //delete
+            deletePs = connection.prepareStatement("delete from t_student where id=?");
+            deletePs.setInt(1, 48);
+            if (deletePs.executeUpdate() > 0) {
+                System.out.println("删除成功");
+            }else {
+                System.out.println("删除失败");
+            }
+
+
+            //select: 返回多条记录
+            selectPs = connection.prepareStatement("select * from t_student");
+            ResultSet rs = selectPs.executeQuery();
+            while (rs.next()){
+                System.out.println(rs.getInt(1));
+                System.out.println(rs.getString(2));
+                System.out.println(rs.getString(3));
+                System.out.println(rs.getInt(4));
+                System.out.println("=====");
+            }
+            rs.close();
+
+
+            //查询：返回一条记录
+            selectPs2 = connection.prepareStatement("select count(1) from t_student where name=?");
+            selectPs2.setString(1, "王五");
+            ResultSet rs2 = selectPs2.executeQuery();
+            rs2.next(); //下移一行，因为只有一条数据
+            //获取这个结果就是返回的行数
+            System.out.println("count = " + rs2.getInt(1));
+            //移动到最后一行
+            rs2.last();
+            System.out.println("total rows = " + rs2.getInt(1));
+            rs2.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+
+            try {
+                if (insertPs != null) {
+                    insertPs.close();
+                }
+                if (updatePs != null) {
+                    updatePs.close();
+                }
+                if (deletePs != null) {
+                    deletePs.close();
+                }
+                if (selectPs != null) {
+                    selectPs.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+    </pre>
+
+    <br>
+</div>
+
+<br>
+</body>
+</html>

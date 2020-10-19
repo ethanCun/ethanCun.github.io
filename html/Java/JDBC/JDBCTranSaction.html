@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>JDBC演示mysql事务锁</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">JDBC演示mysql事务锁</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">JDBC演示mysql事务锁</p>
+    <hr>
+
+    <p class="smallTitle">1. 修改JDBC的事务提交方式</p>
+    <pre>
+
+        //mysql的事务默认是自动提交的， 设置手动提交事务
+        connection.setAutoCommit(false);
+
+        //这个地方排除异常默认情况下自动提交事务会只增加一条数据
+        int b = 10/0; //抛出异常，设置为手动提交事务后不会插入数据
+
+        //手动提交事务
+        connection.commit();
+
+    </pre>
+
+    <p class="smallTitle">2. JDBC操作MySQL的事务锁</p>
+    <pre>
+
+        MySQL行锁：
+        在多线程的情况下， 多个线程同时依据索引字段对表进行更新操作， 会使用事务锁的行锁，
+        当一个线程中的事务没有提交时， 在另外的线程中操作不了这一行的数据；
+
+        MySQL表锁:
+        当在多个线程下依据非索引字段对表进行更新时， 会使用事务所的表锁，
+        如果某一个线程中的事务没有提交，在另外的线程中操作不了整张表的数据；
+
+        加锁与释放锁的时机：
+        无论是update还是select语句添加的锁，锁的添加添加时机和释放时机都是一样的；
+        加锁的时机是在执行sql的时候加锁， 释放的时机是提交或者回滚的时候释放；
+
+        对查询语句加锁:
+        select * from t_student where ... for update
+            如果where是一个索引字段， 那么就会产生一个行级锁；
+            如果where不是索引字段查询条件， 那么就会产生一个表级锁；
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>
