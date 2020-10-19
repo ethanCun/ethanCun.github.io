@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>javase中的日期、随机数、精度计算、数字格式化</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">javase中的日期、随机数、精度计算、数字格式化</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">javase中的日期、随机数、精度计算、数字格式化</p>
+    <hr>
+
+    <ul>
+        <li><a href="#date">1. 日期格式化</a> </li>
+        <li><a href="#numberFormat">2. 数字格式化</a> </li>
+        <li><a href="#bigDecimal">3. BigDecimal高精度计算</a> </li>
+        <li><a href="#randomNumber">4. 随机数</a> </li>
+    </ul>
+
+    <p class="smallTitle" id="date">1. 日期格式化</p>
+    <pre>
+
+             //Date相关的在util包下
+            //主要是String和Date之间的互相转换
+
+             //System.exit(-1); //退出虚拟机， 指定退出原因的编号
+            System.out.println(System.getenv()); //输出虚拟机环境参数
+
+            //获取1970-01-01到现在的毫秒数
+            Long start = System.currentTimeMillis();
+
+            //Wed Oct 14 16:31:08 CST 2018
+            //CST:中国标准时间
+            Date now = new Date();
+            System.out.println(now);
+
+            //具体格式的日期  java.text包下，负责日期格式化
+            //注意大小写的区别h H  SSS:毫秒
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
+            String nowTime = simpleDateFormat.format(now);
+            //2018-10-14 16:37:09 537
+            System.out.println(nowTime);
+
+            //日期字符串转化为Date
+            //注意：字符串格式和SimpleDateFormat指定的格式需要一直， 不一致会报错：
+            //java.text.ParseException
+            Date date1 = simpleDateFormat.parse(nowTime);
+            System.out.println(date1);
+
+            System.out.println(date1.equals(now));
+
+            //通过毫秒数构建Date
+            Date date2 = new Date(System.currentTimeMillis());
+            //1970-01-01 00:00:00 001
+            Date date3 = new Date(1);
+            System.out.println(simpleDateFormat.format(date2));
+            System.out.println(simpleDateFormat.format(date3));
+            //昨天
+            Date date4 = new Date(System.currentTimeMillis()-24*60*60*1000);
+            System.out.println(simpleDateFormat.format(date4));
+
+            //输出时间戳
+            System.out.println(date4.getTime());
+
+            Long end = System.currentTimeMillis();
+
+            System.out.println(end- start);
+    </pre>
+
+    <p class="smallTitle" id="numberFormat">2. 数字格式化</p>
+    <pre>
+
+         /**
+         *
+         * #: 代表任意数字
+         * ,: 代表千分位
+         * .: 代表小数点
+         * 0: 代表不够时补0
+         *
+         * ###,###.## :  加入千分位， 保留两位小数
+         */
+
+        DecimalFormat decimalFormat = new DecimalFormat("###,###.00");
+        System.out.println(decimalFormat.format(1210000121.12));
+
+    </pre>
+
+    <p class="smallTitle" id="bigDecimal">3. BigDecimal高精度计算</p>
+    <pre>
+
+         /**
+         *
+         * BigDecimal: 精度高
+         *  他是java.math包下的；
+         *
+         */
+        BigDecimal b1 = new BigDecimal(100);
+        BigDecimal b2 = new BigDecimal(200);
+
+        //调用方法求和
+        BigDecimal b3 = b1.add(b2);
+        //除
+        BigDecimal b4 = b1.divide(b2);
+        //乘
+        BigDecimal b5 = b1.multiply(b2);
+        //减
+        BigDecimal b6 = b1.subtract(b2);
+
+    </pre>
+
+    <p class="smallTitle" id="randomNumber">4. 随机数</p>
+    <pre>
+
+         /**
+         * 随机数
+         */
+
+        int random = new Random().nextInt();
+        System.out.println(random);
+
+        //产生0-100之间的随机数 不包括100
+        System.out.println(new Random().nextInt(100));
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

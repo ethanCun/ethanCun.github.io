@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>javase-basic</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">javase基础</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">javase基础必备</p>
+    <hr>
+
+    <ul>
+        <li><a href="#final">1. final和static</a> </li>
+        <li><a href="#idea">2. idea常用快捷键</a> </li>
+        <li><a href="#object">3. 关于Object类</a> </li>
+        <li><a href="#package">4. 关于package与import</a> </li>
+        <li><a href="#innerClass">5. 匿名内部类</a> </li>
+        <li><a href="#abstract">6. 抽象类</a> </li>
+        <li><a href="#interface">7. 接口</a> </li>
+        <li><a href="#public">8. 访问控制权限</a> </li>
+    </ul>
+
+    <p class="smallTitle" id="final">1. final和static</p>
+    <pre>
+
+         /**
+         *
+         * final关键字： 修饰变量方法和类
+         *
+         *  1. 修饰的类不能被继承；
+         *  2. 修饰的方法不能被重写；
+         *  3. final修饰的变量只能被赋值一次；
+         *  4. final修饰的引用类型变量属性可以改变；
+         *  5. final修饰的实例变量必须赋初始值， 可以直接赋值，也可以在构造方法中赋值；
+         *      注意实例变量是在创建对象的时候，构造方法中初始化的；
+         *  6. 注意final修饰的实例变量一般用static修饰，这样实例变量只有一份，
+         *      如果没有static，则会在堆中创建多个实例变量；
+         *
+         */
+
+        //final修饰的变量只能赋值一次
+        //注意局部变量没有初始值
+        final int a;
+        a = 200;
+
+        final User user = new User("zzz");
+        user.setName("yyy");
+        user.setName("ccc");
+        System.out.println(user);
+
+        System.out.println(user.aa);
+
+        //普通的实例变量在创建对象的时候，构造方法中初始化；
+        private String name;
+
+        //static保证age只有一份， 不然会在堆中会创建多个age，都会10，浪费内存；
+        //常量和静态变量存在方法区，在类加载的时候初始化；
+        public static final Integer AGE = 10;
+
+        调用System.gc(); 有概率触发finalize(), finalize方法由JVM调用;
+        //对象被垃圾回收器回收的时候调用
+        @Override
+        protected void finalize() throws Throwable {
+
+            System.out.println("jvm垃圾回收器调用，finalize走了");
+        }
+
+    </pre>
+
+    <p class="smallTitle" id="idea">2. idea常用快捷键</p>
+    <pre>
+
+        //快速删除一行 command + y
+        //左右箭头分别是关闭和打开文件夹
+        System.out.println("aa");
+
+        //itli等变量方式
+
+        //选择文件夹，按左右方向键可以展开收起
+
+    </pre>
+
+    <p class="smallTitle" id="object">3. 关于Object类</p>
+    <pre>
+
+        所有的类默认直接或者间接继承Object;
+        //判断是否相等：
+        简单类型： ==;
+        引用类型: equals, 判断对象是否相等一般需要重写， 默认就是比较地址;
+
+        /**
+         *
+         * protected void finalize() throws Throwable { }
+         *
+         * finalize方法 是protected修饰的，
+         * 不需要程序员手动调用， jvm的垃圾回收器负责调用这个方法，
+         * 当对象准备回收的时候，jvm的垃圾回收器就会调用这个方法，
+         *
+         * static是在类加载的时候调用的， finalize是在对象准备回收的时候调用的;
+         * 注意： jvm垃圾回收器不是总会回收的， 垃圾数少可能不回收，有一定概率回收
+         *
+         * public native int hashCode();
+         *
+         * hashcode是对象的内存地址经过hash算法，得出的一个值，
+         * 所以hashcode可以等同看做是对象的内存地址；
+         */
+
+    </pre>
+
+    <p class="smallTitle" id="package">4. 关于package与import</p>
+    <pre>
+
+         * 类名可以用*来代替， 但是包名不能用*
+         * 比如 import java.util.*; 合法
+         * 但是 import *; 不合法
+    </pre>
+
+    <p class="smallTitle" id="innerClass">5. 匿名内部类</p>
+    <pre>
+
+         /**
+         * 匿名内部类：
+         *
+         *  出现在类中的类，没有名字， 包括静态内部类， 实例内部类， 局部内部类
+         *
+         *  使用内部类编写的代码可读性差， 不建议用内部类
+         *
+         *  匿名内部类是局部内部类的一种：
+         *
+         */
+
+         //相当于创建了一个接口实现对象， 这个创建的类和一个普通的参数一样
+        //缺点：1.没有对象名，2.可读性差
+        A.hh(new say() {
+            @Override
+            public void say() {
+                System.out.println("hello world");
+            }
+        });
+
+
+        public static class 静态内部类{
+
+        }
+
+        public class 实例内部类{
+
+        }
+
+        public void dosome(){
+
+            //方法走完， 类消失
+            class 局部内部类{
+
+
+            }
+        }
+
+    </pre>
+
+    <p class="smallTitle" id="abstract">6. 抽象类</p>
+    <pre>
+
+         /**
+         *
+         * 抽象类：
+         *
+         *      1. 什么是抽象类：
+         *          将类与类之间的共同点抽象出来成一个类就成了抽象类；
+         *          类的进一步抽象，所以抽象类无法创建对象，也就是无法实例化；
+         *          抽象类可以进一步抽象，所以抽象类可以继承；
+         *
+         *      2. 抽象类属于什么数据类型：
+         *          抽象类也是引用数据类型
+         *
+         *      3. 抽象类是用来被子类继承的；
+         *
+         *      4. final和abstract是对立的， 所以两个不能同时使用：
+         *          1. final修饰的类不能被集成， abstract修饰的类就是设计用来继承的；
+         *          2. final修饰的方法不能被重写，abstract修饰的类就是设计用来重写的；
+         *          3. final修饰的变量不能被修改，只能被赋值一次；
+         *
+         *      5. 抽象类虽然不能实例化，但是它有构造方法，它的构造方式是供子类使用的；
+         *          因为子类调用构造方法初始化时，会先调用父类的构造方法；
+         *
+         *      6. 子类实例化的时候， 如果super()无法找到父类的构造方法就会报错；
+         *
+         *      7. 抽象类中不一定有抽象方法，但是抽象方法必须出现在抽象类中；
+         *
+         *      8. 非抽象类继承抽象类， 必须重写父类抽象类的抽象方法，
+         *          因为子类继承父类会得到父类的所有方法，但是抽象方法不能出现在非抽象类中；
+         *          抽象类继承抽象类，不必抽血父类抽象类的抽象方法；
+         *
+         *      9. Java里面没有方法体的方法除了抽象方法，还有native方法(底层调用c++动态链接库)；
+         *
+         *
+         *      抽象方法：
+         *          没有方法实现， 没有方法体{}的方法；
+         */
+
+        //无法实例化
+        //Animal animal = new Animal();
+
+        //people p = new people();
+
+        //面向抽象编程： 用抽象类对象接受非抽象类对象
+        Animal animal = new people();
+
+        //抽象类
+        public static abstract class Animal{
+
+        public abstract void dosome();
+
+            private Integer a;
+            public static final String b = "b";
+
+            public Animal(){
+
+                System.out.println("animal ...");
+            }
+        }
+
+    </pre>
+
+    <p class="smallTitle" id="interface">7. 接口</p>
+    <pre>
+
+         /**
+         *
+         * 接口：
+         *  1. 接口也是一种引用数据类型, 因此编译之后也是class文件；
+         *  2. 接口是完全抽象的，抽象类是半抽象的， 或者说接口是特殊的抽象类,
+         *      之所以说特殊是以为，接口中的方法都是抽象方法，接口中的变量都是常量；
+         *  3. 接口支持多继承，类可以实现多个接口，类不支持多继承；
+         *  4. 接口中只包含常量和抽象方法，编写代码的时候public abstract可以省略；
+         *  5. 接口中的所有方法都是public；
+         *  6. 接口中的方法都是抽象方法，所以不能有方法体；
+         *  7. 常量中的public static final可以省略， 所以接口中的常量是不能被修改的；
+         *  8. 接口是实现implements, 抽象类是集成extends；
+         *  9. 一个非抽象的类实现接口， 必须实现接口中的所有方法；
+         *  10. 注意子类实现接口， 方法的权限必须比接口(父类)更高，不能更低，因此
+         *      非抽象子类实现接口的方法public不能省略；
+         *  11. 接口和接口之间可以转换，但是如果没有任何一个子类同时实现这两个接口，
+         *      运行时会报错: ClassCastException；
+         *  12. 继承和实现同时存在时extends写在前面，implements写在后面；
+         *  13. 注意所有的对象都是默认继承Object: extends Object implements xxx；
+         *  14. 接口存在的意义是将接口调用者与接口实现者解耦合；
+         *  15. 抽象类和接口的区别：
+         *      1.抽象类有构造方法，接口没有构造方法；
+         *      2.抽象类支持单继承，接口支持多继承；
+         *      3.抽象类中可以有常量，实例变量，接口中只有常量；
+         *
+         */
+
+    </pre>
+
+    <p class="smallTitle" id="public">8. 访问控制权限</p>
+    <pre>
+
+         /**
+         *
+         * 用来修饰属性(都可以)， 方法(都可以)， 类(只有public和 default)，
+         * 接口(只有public和default)
+         *
+         * private < default < protected < public
+         *
+         * 默认是default
+         *
+         * 注意： 子类实现了父类的方法， 访问权限修饰符只能比父类高， 不能比父类低，
+         *      所以实现接口的方法都必须是public
+         *
+         *  private: 只有自己能够访问， 其他不行
+         *
+         *  protected: 自己和子类，以及同一个包下可以访问， 其他不行
+         *
+         *  default: 只能在本类和同一个包访问，其他包不行
+         *
+         *  public: 在哪都行，其他包都行；
+         *
+         *
+         */
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

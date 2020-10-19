@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>java中的File</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">java中的File</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">java中的File</p>
+    <hr>
+
+    <p class="smallTitle" id="intro">1. File介绍</p>
+    <pre>
+
+        /**
+         * File:
+         *  1. 代表文件或者文件夹, File只是一个路径的抽象表达方式;
+         *  2. 和IO流的四大家族没关系，不能完成文件的读和写；
+         *  3. 掌握file类的常用方法
+         */
+    </pre>
+
+    <p class="smallTitle" id="methods">2. File常用方法</p>
+    <pre>
+
+         //文件
+        File file = new File("/Users/macofethan/Desktop/javase/javase01/src/main/java/com/ethan/File文件与文件夹/a");
+
+        //是否存在
+        System.out.println(file.exists());
+
+        if (!file.exists()){
+
+            //以文件的形式创建
+            file.createNewFile();
+
+            //以目录的形式创建
+            //file.mkdir();
+
+            //以目录的形式创建, 可以建立不存在的子包
+            //file.mkdirs();
+        }
+
+
+        //获取文件的父路径
+        System.out.println(file.getParent());
+        //获取父文件对象
+        //file.getParentFile();
+        //获取文件的绝对路径
+        System.out.println(file.getAbsolutePath());
+        //文件名
+        System.out.println(file.getName());
+        //是否是文件
+        System.out.println(file.isFile());
+        //是否是目录
+        System.out.println(file.isDirectory());
+        //文件最后修改时间 1970到现在的毫秒数
+        Date date = new Date(file.lastModified());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
+        System.out.println(simpleDateFormat.format(date));
+        //文件总字节数
+        System.out.println(file.length());
+        //修改名称
+        file.renameTo(new File("/Users/macofethan/Desktop/javase/javase01/src/main/java/com/ethan/File文件与文件夹/abc.txt"));
+
+        //删除
+        //file.delete();
+
+
+        //获取文件夹下的所有子目录:file.listFiles()
+        File file1 = new File("/Users/macofethan/Desktop/javase/javase01/src/main/java/com/ethan/File文件与文件夹");
+
+        for (File subFile : file1.listFiles()) {
+
+            System.out.println(subFile.getAbsolutePath());
+        }
+
+    </pre>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>包装类的自动装箱拆箱</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">包装类的自动装箱拆箱</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">包装类的自动装箱拆箱</p>
+    <hr>
+
+    <div class="contentBgDiv">
+
+        <p class="smallTitle">1. 基础类型与包装类型的对应</p>
+        <pre>
+
+              /**
+             *
+             * 8中包装类型：
+             *
+             *  属于引用类型;
+             *
+             *  byte   java.lang.Byte
+             *  short  java.lang.Short
+             *  int    java.lang.Integer
+             *  long   java.lang.Long
+             *  char   java.lang.Character
+             *  float  java.lang.Float
+             *  double  java.lang.Double
+             *  boolean java.lang.Boolean
+             *
+             */
+
+             /* 基本数据类型的默认值
+             * byte 0
+             * short 0
+             * int 0
+             * long 0L
+             * char \u0000
+             * boolean false
+             * float 0.0f
+             * double 0.0
+             */
+
+        </pre>
+
+        <p class="smallTitle">2. 装箱与拆箱</p>
+        <pre>
+
+            Integer aa = new Integer(100); //装箱
+            System.out.println(aa.floatValue()); //拆箱
+
+            Integer b = 100; //jdk1.5之后支持自动装箱
+            int c = b; //jdk1.5之后支持自动拆箱
+
+            //分析
+            Integer d = 1000;
+            Integer e = 1000;
+            //相当于
+            //Integer e = new Integer(1000);
+            System.out.println(d == e); //false
+
+            int f = 100;
+            int g = 100;
+            System.out.println(f == g); //true
+
+            /走了缓存 Java中为了提高程序运行效率，会将-128 -- +127提前创建好， 放到
+            //IntegerCache.cache中, 这个保存在方法区的整数型常量池中，这个区间的不在堆上面
+            //创建值了，直接用整数型常量池中的数据
+            //注意： 可以在VM option中设置Cache.high=-Djava.lang.Integer.IntegerCache.high=128
+            Integer h = Integer.valueOf(127);
+            Integer j = Integer.valueOf(127);
+            System.out.println(h == j); //true
+
+            //超出范围 不走缓存
+            Integer k = Integer.valueOf(128);
+            Integer l = Integer.valueOf(128);
+            System.out.println(k == l); //false
+
+            //这两个相当于上面
+            Integer q = 127;
+            Integer w = 127;
+            System.out.println(q == w); //true
+
+            Integer t = 128;
+            Integer r = 128;
+            System.out.println(t == r); //false
+
+            //引用堆上的同一个对象， 地址相同
+            System.out.println(h == q); //true
+
+        </pre>
+
+        <p class="smallTitle">3. Integer包装类常用的方法</p>
+        <pre>
+
+             //Integer中常用的方法
+            public static void main(String[] args) {
+
+                Integer.max(10, 20);
+                Integer.sum(10, 20);
+
+                //NullPointerException :空指针
+                //IndexOutOfBoundsException ：下标越界
+                //NumberFormatException： 格式错误
+                //ClassCastException： 类型错误
+
+                //throws NumberFormatException
+                //System.out.println(Integer.valueOf("中文"));
+                //Integer a = new Integer("中文");
+
+                System.out.println(Integer.parseInt("124"));
+
+                //这个也会报错:java.lang.NumberFormatException
+                //System.out.println(Integer.parseInt("124.0"));
+
+                System.out.println(Float.parseFloat("1.23f"));
+                System.out.println(Double.parseDouble("3.14"));
+
+                //转二进制
+                System.out.println(Integer.toBinaryString(11));
+                //转八进制
+                System.out.println(Integer.toOctalString(11));
+                //转十六进制
+                System.out.println(Integer.toHexString(100));
+            }
+        </pre>
+    </div>
+
+    <br>
+</div>
+
+</body>
+</html>

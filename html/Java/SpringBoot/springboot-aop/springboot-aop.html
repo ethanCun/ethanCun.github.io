@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>在springboot中使用aop</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">aop</span>
+    <span class="label label-info">切点表达式</span>
+    <span class="label label-warning"><a target="_blank" href="https://github.com/ethanCun/springboot/tree/master/springboot-aop">demo</a> </span>
+    <span class="label label-info"><a target="_blank" href="https://segmentfault.com/a/1190000013290504">参考链接</a> </span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">在springboot中使用aop</p>
+    <hr>
+
+    <div class="contentBgDiv">
+
+        <p class="smallTitle">一、在pom中引入依赖包</p>
+        <p class="introduceText">
+            在application.properties中输入spring.aop.auto,
+            发现spring.aop.auto属性默认是开启的，
+            也就是说只要引入了AOP依赖后，默认已经增加了@EnableAspectJAutoProxy。
+            因此，不需要在DemoApplication中加上这个注解。
+        </p>
+        <p class="introduceText">
+            在pom.xml中点击spring-boot-starter-aop, 发现它依赖了spring-boot-starter之外，
+            还依赖了spring-aop, aspectjweaver。Spring AOP提供的基本的AOP功能，
+            AspectJ提供的完整的AOP框架。
+        </p>
+        <pre>
+            
+            &lt;!--引入spring-boot-starter-aop--&gt;
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-starter-aop&lt;/artifactId&gt;
+            &lt;/dependency&gt;
+        </pre>
+    </div>
+
+    <div class="contentBgDiv">
+
+        <p class="smallTitle">二、配置springboot-aop</p>
+        <p class="introduceText">要想把一个类变成切面类，需要两步: </p>
+        <p class="introduceText">1, 在类上使用 @Component 注解 把切面类加入到IOC容器中</p>
+        <p class="introduceText">2, 在类上使用 @Aspect 注解 使之成为切面类</p>
+        <pre>
+
+            @Component
+            @Aspect
+            public class aspectConfig {
+
+            }
+        </pre>
+
+    </div>
+
+    <div class="contentBgDiv">
+
+        <p class="smallTitle">三、定义切点表达式：execution, within, this, target, args, @within, @annotation等</p>
+        <p class="introduceText">execution表达式详解: 切入点表达式的格式：execution([可见性]返回类型[声明类型].方法名(参数)[异常])</p>
+        <pre>
+            /**
+             * 定义切入点:
+             * execution表达式详解: 切入点表达式的格式：execution([可见性]返回类型[声明类型].方法名(参数)[异常])
+             *
+             * execution(): 表达式主体。
+             * 第一个*号：表示返回类型， *号表示所有的类型。
+             * 包名：表示需要拦截的包名，后面的两个句点表示当前包和当前包的所有子包，com.example.demo包、子孙包下所有类的方法。
+             * 第二个*号：表示类名，*号表示所有的类。
+             * *(..):最后这个星号表示方法名，*号表示所有的方法，后面括弧里面表示方法的参数，两个句点表示任何参数
+             * */
+        </pre>
+        <p class="introduceText">实例</p>
+        <pre>
+
+            @Pointcut("execution(public * com.example.demo..*.*(..))")
+            public void executionPointCut(){}
+        </pre>
+
+        <p class="introduceText">within: 用于匹配连接点所在的Java类或者包。 </p>
+        <pre>
+            //匹配helloController2这个类
+            @Pointcut("within(com.example.demo.controller.HelloController2)")
+            public void withinPointCut1(){}
+            //匹配com.example.demo下的所有类 所有方法
+            @Pointcut("within(com.example.demo..*)")
+            public void withinPointCut2(){}
+
+            //测试within
+            @Before(value = "withinPointCut1()")
+            public void testWithin1(){
+
+                logger.info("within1.....");
+            }
+            //测试within
+            @Before(value = "withinPointCut2()")
+            public void testWithin2(){
+
+                logger.info("within2.....");
+            }
+        </pre>
+        <p class="introduceText">this:用于向通知方法中传入代理对象的引用。</p>
+        <pre>
+            /**
+             * this:用于向通知方法中传入代理对象的引用。
+             * */
+            @Before("executionPointCut() && this(proxy)")
+            public void testThis(JoinPoint joinPoint, Object proxy){
+
+                //joinPoint = execution(String com.example.demo.controller.HelloController.hello(String))
+                logger.info("joinPoint = " + joinPoint);
+                //proxy = com.example.demo.controller.HelloController@1915d41c
+                logger.info("proxy = " + proxy);
+            }
+        </pre>
+        <p class="introduceText">target: 用于向通知方法中传入目标对象的引用。</p>
+        <pre>
+            @Before("executionPointCut() && target(target)")
+            public void testTarget(JoinPoint joinPoint, Object target){
+
+                //joinPoint = execution(String com.example.demo.controller.HelloController.hello(String))
+                logger.info("joinPoint = " + joinPoint);
+                //target = com.example.demo.controller.HelloController@1915d41c
+                logger.info("target = " + target);
+            }
+        </pre>
+        <p class="introduceText">args：用于将参数传入到通知方法中。</p>
+        <pre>
+            /**
+             * args：用于将参数传入到通知方法中。
+             */
+            @Before("executionPointCut() && args(name)")
+            public void testArgs(JoinPoint joinPoint, String name){
+
+                //joinPoint = execution(String com.example.demo.controller.HelloController.hello(String))
+                logger.info("joinPoint = " + joinPoint);
+                //name = czy
+                logger.info("name = " + name);
+            }
+        </pre>
+        <p class="introduceText">@within ：用于匹配在类一级使用了参数确定的注解的类，其所有方法都将被匹配。</p>
+        <p class="introduceText">定义一个注解：</p>
+        <pre>
+            @Retention(RetentionPolicy.RUNTIME)
+            @Target({ElementType.TYPE, ElementType.METHOD}) //可以用在类、枚举、接口、以及方法上
+            @Documented
+            public @interface CzyAdviceAnnotation {
+
+                String name() default "";
+            }
+        </pre>
+        <pre>
+            /**
+             * @within ：用于匹配在类一级使用了参数确定的注解的类，其所有方法都将被匹配。
+             * */
+            @Pointcut("@within(com.example.demo.common.CzyAdviceAnnotation)")
+            public void testAtWithinPointCut(){}
+
+            //测试@within
+            @Before(value = "testAtWithinPointCut()")
+            public void testAtWithin(JoinPoint joinPoint){
+
+                logger.info("@within....");
+            }
+        </pre>
+        <p class="introduceText">@annotation ：匹配连接点被它参数指定的Annotation注解的方法。也就是说，所有被指定注解标注的方法都将匹配。</p>
+        <pre>
+            /**
+             * @annotation ：匹配连接点被它参数指定的Annotation注解的方法。也就是说，所有被指定注解标注的方法都将匹配。
+             * */
+            @Pointcut("@annotation(com.example.demo.common.CzyAdviceAnnotation)")
+            public void testAtAnnotationPointCut(){}
+
+            @Before(value = "testAtAnnotationPointCut()")
+            public void testAtAnnotation(){
+
+                logger.info("@annotation....");
+            }
+        </pre>
+
+        <p class="introduceText">也可以不预先声明切点, 在使用的时候在写切点表达式:</p>
+        <pre>
+            /**
+             * 使用args来绑定参数名称
+             * */
+            @Before(value = "execution(public * com.example.demo..*.*(..))&&" + "args(name,..)")
+            public void testGetArgs(String name){
+
+                logger.info("使用args来接受接口中传过来的数据: " + name);
+            }
+        </pre>
+    </div>
+
+    <div class="contentBgDiv">
+        <p class="smallTitle">四、拦截通知:</p>
+        <p class="introduceText">@before:前置通知: 方法调用前被调用</p>
+
+        <pre>
+
+            /**
+            * 前置通知：方法调用前被调用
+            * */
+            @Before("executionPointCut()")
+            public void doBefore(JoinPoint joinPoint) throws Throwable{
+
+                //接收到请求，记录请求内容 RequestContextHolder:通过RequestContextHolder来获取请求信息，Session信息；
+                //参考：<a target="_blank" href="https://www.cnblogs.com/shuilangyizu/p/8621669.html">https://www.cnblogs.com/shuilangyizu/p/8621669.html</a>
+                ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+                HttpServletRequest request = attributes.getRequest();
+
+                //记录下请求内容
+                //URL: http://localhost:8080/hello1
+                logger.info("URL: " + request.getRequestURL().toString());
+                //HTTP_METHOD: GET
+                logger.info("HTTP_METHOD: " + request.getMethod());
+                //IP 0:0:0:0:0:0:0:1
+                logger.info("IP " + request.getRemoteAddr());
+                //CLASS_INFO: com.example.demo.controller.HelloController.hello
+                logger.info("CLASS_INFO: " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
+                //ARGS: [czy]
+                logger.info("ARGS: " + Arrays.toString(joinPoint.getArgs()));
+                //this: com.example.demo.controller.HelloController@1915d41c
+                logger.info("this: " + joinPoint.getThis());
+                //target: com.example.demo.controller.HelloController@1915d41c
+                logger.info("target: " + joinPoint.getTarget());
+            }
+        </pre>
+
+        <p class="introduceText">@AfterReturning: 后置返回通知</p>
+
+        <pre>
+            /**
+             *  后置返回通知
+             *  这里需要注意的是:
+             *  如果参数中的第一个参数为JoinPoint，则第二个参数为返回值的信息
+             *  如果参数中的第一个参数不为JoinPoint，则第一个参数为returning中对应的参数
+             *  returning：限定了只有目标方法返回值与通知方法相应参数类型时才能执行后置返回通知，否则不执行，
+             *  对于returning对应的通知方法参数为Object类型将匹配任何目标返回值
+             * */
+            @AfterReturning(value = "executionPointCut()", returning = "keys")
+            public void doAfterReturning1(JoinPoint joinPoint, Object keys){
+
+                logger.info("第一个后置通知的返回值: " + keys);
+            }
+
+
+            @AfterReturning(value = "executionPointCut()", returning = "keys", argNames = "keys")
+            public void doAfterReturning2(Object keys){
+
+                logger.info("第二个后置通知的返回值: " + keys);
+            }
+        </pre>
+
+        <p class="introduceText">@AfterThrowing: 后置异常通知</p>
+
+        <pre>
+            /**
+             * 后置异常通知
+             * 定义一个名字，该名字用于匹配通知实现方法的一个参数名，当目标方法抛出异常返回后，将把目标方法抛出的异常传给通知方法；
+             * throwing:限定了只有目标方法抛出的异常与通知方法相应参数异常类型时才能执行后置异常通知，否则不执行，
+             * 对于throwing对应的通知方法参数为Throwable类型将匹配任何异常。
+             * */
+            @AfterThrowing(value = "executionPointCut()", throwing = "exception")
+            public void doAfterThrowingAdvice(JoinPoint joinPoint, Throwable exception){
+
+                //目标方法名
+                logger.info(joinPoint.getSignature().getName());
+            }
+        </pre>
+
+        <p class="introduceText">@After: 后置最终通知</p>
+
+        <pre>
+            /**
+             * 后置最终通知@After：当某连接点退出时执行的通知（不论是正常返回还是异常退出）。
+             * */
+            @After(value = "executionPointCut()")
+            public void doAfterAdvice(JoinPoint joinPoint){
+
+                logger.info("后置最终通知");
+            }
+        </pre>
+
+        <p class="introduceText">@Around: 环绕通知</p>
+
+        <pre>
+            /**
+             * 环绕通知：
+             * 环绕通知非常强大，可以决定目标方法是否执行，什么时候执行，执行时是否需要替换方法参数，执行完毕是否需要替换返回值。
+             * 环绕通知第一个参数必须是org.aspectj.lang.ProceedingJoinPoint类型
+             * */
+            @Around(value = "executionPointCut()")
+            public Object doAroundAdvice(ProceedingJoinPoint proceedingJoinPoint){
+
+                logger.info("环绕通知的目标方法名: " + proceedingJoinPoint.getSignature().getName());
+
+                try {
+
+                    Object obj = proceedingJoinPoint.proceed();
+                    logger.info("环绕通知proceed产生的对象: " + obj);
+                    return obj;
+
+                }catch (Throwable throwable){
+
+                    throwable.printStackTrace();
+                }
+
+                return null;
+            }
+        </pre>
+
+    </div>
+
+
+    <br><br>
+</div>
+
+
+</body>
+</html>

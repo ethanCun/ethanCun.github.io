@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>java中的枚举和异常</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">java中的枚举和异常</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">java中的枚举和异常</p>
+    <hr>
+
+    <p class="smallTitle">1. 枚举</p>
+    <pre>
+
+        //超过两种情况的建议使用枚举类型
+        //枚举编译之后也是字节码文件，是引用类型
+        public enum ErrorType{
+
+            //枚举中的值
+            SUCCESS("0", "成功"),
+            FAIL("-1", "失败");
+
+            //私有实例变量
+            private String code;
+            private String msg;
+
+            ErrorType(){}
+
+            ErrorType(String code, String msg){
+                this.code = code;
+                this.msg = msg;
+            }
+
+            public String getCode() {
+                return code;
+            }
+
+            public void setCode(String code) {
+                this.code = code;
+            }
+
+            public String getMsg() {
+                return msg;
+            }
+
+            public void setMsg(String msg) {
+                this.msg = msg;
+            }
+
+            @Override
+            public String toString() {
+                return "ErrorType{" +
+                        "code='" + code + '\'' +
+                        ", msg='" + msg + '\'' +
+                        '}';
+            }
+        }
+
+
+        //调用
+        public static void main(String[] args) {
+
+            System.out.println(ErrorType.SUCCESS);
+            System.out.println(ErrorType.SUCCESS.getCode());
+            System.out.println(ErrorType.SUCCESS.getMsg());
+        }
+    </pre>
+
+    <p class="smallTitle">2. 异常的常见种类</p>
+    <pre>
+
+        1. 异常机制的作用：
+         *       提高程序的健壮性；
+         *
+         * 2. 异常的种类：
+         *
+         *      java.lang.NumberFormatException
+         *      java.lang.ArithmeticException
+         *      java.lang.ArrayIndexOutOfBoundsException
+         *      java.lang.ClassCastException
+         *      java.text.ParseException
+         *
+         * 关键字： try catch finall throws throw
+         */
+
+        //java.lang.NumberFormatException: For input string: "张三"
+        //Integer c = Integer.valueOf("张三");
+
+        //java.lang.ArithmeticException: / by zero
+        //int a = 10/0;
+
+        //ava.lang.ArrayIndexOutOfBoundsException: 10
+        //int b = new int[]{1,2,3}[10];
+
+        //ava.lang.ClassCastException: java.lang.Integer cannot be cast to java.lang.String
+         //Object s = 122;
+        //String s1 = (String)s;
+
+        //java.text.ParseException: Unparseable date: "2020-10-101"
+        //	at java.text.DateFormat.parse(DateFormat.java:366)
+        //	at com.ethan.异常.App1.main(App1.java:33)
+        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //System.out.println(simpleDateFormat.parse("2020-10-101"));
+
+    </pre>
+
+    <p class="smallTitle">3. 自定义异常</p>
+    <pre>
+
+        //数字格式异常
+        NumberFormatException numberFormatException
+                = new NumberFormatException("数字格式化异常");
+        System.out.println(numberFormatException);
+
+        //空指针异常
+        NullPointerException nullPointerException
+                = new NullPointerException("空指针异常");
+        System.out.println(nullPointerException);
+
+        //思考:程序为什么会有一定概率先抛出异常再执行上面的输出?
+        //原因： 异常输出和标准输出流， 系统维护了两个线程来执行， 因此执行顺序是不确定的；
+        //java.lang.ArithmeticException: / by zero
+        int a = 10/0; //实际上jvm执行到这里的时候会创建一个数学运算异常对象
+    </pre>
+
+    <p class="smallTitle">3. 异常处理机制</p>
+    <pre>
+
+            //main方法如果处理不了这个异常，就会将异常抛给jvm，jvm处理不了就退出程序
+            //所以不建议在main方法上抛出异常， 因为这样会影响程序的健壮性；
+            public static void main(String[] args) throws Exception {
+
+                /*
+                 * 异常处理机制：
+                 *
+                 * 1. 方法上throws Exception: 异常上抛，谁调用抛给谁， 谁就需要处理这个异常;
+                 *      最上级如果处理不了，jvm就会终止程序, 这里main方法会将异常抛给jvm;
+                 *
+                 * 2. try catch异常捕捉：自己处理；
+                 *
+                 * 上报异常的方式， 后续的代码不会执行, 这个方法就结束了；
+                 * try catch处理后，后面的代码会继续执行；
+                 *
+                 *  注意：
+                 *  1. finally中的代码一定会执行， 无论try中是否有异常， 无论catch中是否有return
+                 *  通常在finally关闭流，关闭连接等；
+                 *  2. 可以没有catch语句， 执行顺序： try finally return;
+                 *  3. try不能单独使用;
+                 *  4. 退出虚拟机后finallyJ就不执行了:
+                 *          try {
+
+                                System.exit(0);
+                            }finally {
+
+                                System.out.println("这个不会执行了");
+                            }
+                 */
+                RuntimeException runtimeException;
+
+                //手动抛出异常 throw 方法上是throws
+                //throw new FileNotFoundException("文件不存在");
+            }
+
+            //多个catch时， 子类先catch， 不能是父类在上，子类在下
+            //jdk8中可以采用 | 或链接符号来拼接多个异常类型catch
+            try {
+                int a = 10/0;
+                Integer.valueOf("张三");
+            }catch (ArithmeticException | NumberFormatException e){
+                //输出错误栈 java.lang.ArithmeticException: / by zero
+                e.printStackTrace();
+            }finally{
+                System.out.println("finally");
+            }
+
+    </pre>
+
+    <p class="smallTitle">4. 异常常用方法</p>
+    <pre>
+
+        NumberFormatException numberFormatException = new NumberFormatException("格式错误");
+        System.out.println(numberFormatException.getMessage());
+
+        //打印异常采用的是异步输出的；
+        //jvm异常信息System.err；
+        //追踪异常信息：从上往下看，因为异常是从下往上抛的；
+        numberFormatException.printStackTrace();
+    </pre>
+
+    <p class="smallTitle">5. try fianlly return 的执行顺序</p>
+    <pre>
+
+            public static int test01(){
+
+                int i = 100;
+
+                try {
+                    return i; //这里会输出100， 原因：  java中原则： 1。finally一定得执行， 2. return一定最后执行；
+                            //3.try先执行 finally然后执行； 这里使用了中间变量复制来解决这个冲突，可以查看编译之后的
+                            //字节码文件， 确实如此
+                }finally {
+                    i++;
+                }
+            }
+
+            //编译之后的字节码文件如下:
+            public static int test01() {
+
+                byte var0 = 100;
+
+                byte var1;
+                try {
+                    var1 = var0;
+                } finally {
+                    int var5 = var0 + 1;
+                }
+
+                return var1;
+            }
+
+    </pre>
+
+    <p class="smallTitle">6. 编译型异常与运行时异常</p>
+    <pre>
+
+         /**
+         * UML: Unified Modeling Language
+         *  统一建模语言, 一种图标式语言；
+         *  面向对象都有UML图，软件设计人员使用；
+         *
+         *
+         *     异常：
+         *                       Object
+         *                      Throwable
+         *       Error(jvm直接退出)                           Exception(可处理)
+         *   VirtualMachineError  IOError    RuntimeException(运行时异常)  其他直接继承于Exception的异常都是编译型异常
+         *
+         */
+
+        //对于编译型异常：注意子类抛出的异常范围必须小于或者等于父类的异常，子类也可以不抛异常；
+        //对于运行时异常：父类没有异常的时候，子类可以抛运行时异常；
+        //编译型异常： 又称为受检异常；
+        //运行时异常： 又称为非受检异常；
+
+        //Error一旦发生jvm立即退出，Error错误是不能处理的；
+        //Exception可以通过try catch异常机制捕捉，然后jvm继续执行；
+        //编译型异常必须在编译前处理，运行时异常可以不不处理；
+
+        //自定义异常写法：
+         //可以参考java.lang的异常类的写法
+        static class MyException extends RuntimeException{
+
+            private String code;
+            private String msg;
+
+            public MyException(){
+            }
+
+            public MyException(String msg){
+                this.msg = msg;
+            }
+
+            public MyException(String code, String msg){
+                this.msg = msg;
+                this.code = code;
+            }
+
+            public String getCode() {
+                return code;
+            }
+
+            public String getMsg() {
+                return msg;
+            }
+
+            @Override
+            public String toString() {
+                return "MyException{" +
+                        "code='" + code + '\'' +
+                        ", msg='" + msg + '\'' +
+                        '}';
+            }
+        }
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

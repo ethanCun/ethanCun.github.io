@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>springboot-mybatis多数据库的使用：使用aop实现</title>
+
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="contentBgDiv">
+
+    <p class="label label-warning"><a target="_blank"
+                                      href="https://github.com/ethanCun/springboot/tree/master/springboot-aop-multi-datasource">demo</a> </p>
+
+    <p class="title">springboot-mybatis多数据库的使用：使用aop实现</p>
+    <hr>
+
+    <p class="smallTitle">
+        使用aop 配置mybatis多数据源加载数据大概流程:
+    </p>
+    <p class="introduceText">
+        1. 在application中定义多个数据源
+    </p>
+    <p class="introduceText">
+        2. 定义一个注解@TargetDataSource, 标注在方法上用来表示操作哪个数据库的数据
+    </p>
+    <p class="introduceText">
+        3. 在切面中拦截@TargetDataSource的dataSource, 在ThreadLocal中设置dataSource
+        的key
+    </p>
+    <p class="introduceText">
+        4. AbstractRoutingDataSource的拦截之后会调用determineCurrentLookupKey()
+        方法
+    </p>
+    <p class="introduceText">
+        5. 在DataSourceConfig里面的sqlSessionFactory方法里面根据@Qualifier("dynamicDataSource") DataSource dataSource动态操作数据源
+    </p>
+
+    <div class="contentBgDiv">
+
+        <p class="smallTitle">1. 在application中定义多个数据源:</p>
+        <pre>
+
+                server.port=8080
+
+                server.tomcat.uri-encoding=utf-8
+
+                #mybatis配置
+                mybatis.mapper-locations=classpath:mapper/*/*.xml
+                mybatis.type-aliases-package=com.example.demo.entity
+                #mybatis.config-location=
+
+                #druid数据库连接池配置
+                spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
+                spring.datasource.druid.initial-size=5
+                spring.datasource.druid.max-active=5
+                spring.datasource.druid.min-idle=5
+                spring.datasource.druid.max-wait=30000
+
+                #数据库1配置
+                spring.datasource.one.driver-class-name=com.mysql.cj.jdbc.Driver
+                spring.datasource.one.url=jdbc:mysql://127.0.0.1:3306/test1
+                spring.datasource.one.username=root
+                spring.datasource.one.password=xxx
+
+                #数据库2配置
+                spring.datasource.two.driver-class-name=com.mysql.cj.jdbc.Driver
+                spring.datasource.two.url=jdbc:mysql://127.0.0.1:3306/test2
+                spring.datasource.two.username=root
+                spring.datasource.two.password=xxx
+            </pre>
+    </div>
+
+    <div class="contentBgDiv">
+
+
+        <p class="smallTitle">
+            2. 定义一个注解@TargetDataSource, 标注在方法上用来表示操作哪个数据库的数据:
+        </p>
+        <pre>
+
+            package com.example.demo.config;
+
+            import java.lang.annotation.*;
+
+            @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE, ElementType.METHOD})
+            @Retention(RetentionPolicy.RUNTIME)
+            @Documented
+            public @interface TargetDataSource {
+
+                String dataSource();
+            }
+        </pre>
+    </div>
+
+    <div class="contentBgDiv">
+
+        <p class="smallTitle">
+            3. 在切面中拦截@TargetDataSource的dataSource, 在ThreadLocal中设置dataSource 的key:
+        </p>
+        <p class="introduceText">DynamicDataSourceAspect:</p>
+        <pre>
+
+            package com.example.demo.config;
+
+            import org.aspectj.lang.ProceedingJoinPoint;
+            import org.aspectj.lang.annotation.Around;
+            import org.aspectj.lang.annotation.Aspect;
+            import org.aspectj.lang.annotation.Pointcut;
+            import org.aspectj.lang.reflect.MethodSignature;
+            import org.springframework.stereotype.Component;
+
+            import java.lang.reflect.Method;
+
+            @Aspect
+            @Component
+            public class DynamicDataSourceAspect {
+
+                @Pointcut("@annotation(com.example.demo.config.TargetDataSource)")
+                public void annotationPoint(){
+
+                }
+
+                @Pointcut("execution(public * com.example.demo.*..*(..))")
+                public void excludeService(){
+
+                }
+
+                @Around(value = "annotationPoint()&&excludeService()")
+                public Object around(ProceedingJoinPoint point) throws Throwable {
+
+                    MethodSignature methodSignature = (MethodSignature) point.getSignature();
+
+                    Method targetMethod = methodSignature.getMethod();
+
+                    //拦截@TargetDataSource注解的dataSource
+                    if (targetMethod.isAnnotationPresent(TargetDataSource.class)){
+
+                        //根据注解获取数据库
+                        String targetDataSource = targetMethod.getAnnotation(TargetDataSource.class).dataSource();
+                        //设置数据库
+                        DynamicDataSourceHolder.setDataSource(targetDataSource);
+                    }
+
+                    //继续执行
+                    Object result = point.proceed();
+
+                    //清除数据库
+                    DynamicDataSourceHolder.cleanDataSource();
+
+                    return result;
+                }
+            }
+
+        </pre>
+
+    </div>
+
+    <div class="contentBgDiv">
+
+        <p class="smallTitle">
+            4. AbstractRoutingDataSource的拦截之后会调用determineCurrentLookupKey() 方法
+        </p>
+
+        <p class="introduceText">DynamicDataSource:</p>
+        <pre>
+            package com.example.demo.config;
+
+            import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+
+            import javax.sql.DataSource;
+
+            //根据key切换数据源
+            public class DynamicDataSource extends AbstractRoutingDataSource {
+
+                //每次请求的时候都会调用这个方法
+                @Override
+                protected Object determineCurrentLookupKey() {
+
+                    return DynamicDataSourceHolder.getDataSource();
+                }
+            }
+        </pre>
+
+        <p class="introduceText">DynamicDataSourceHolder:</p>
+        <pre>
+
+            package com.example.demo.config;
+
+            import java.util.ArrayList;
+            import java.util.List;
+
+            //存放数据源对应的key
+            public class DynamicDataSourceHolder {
+
+                //线程本地环境
+                private static final ThreadLocal&lt;String&gt; contextHolders =
+                        new ThreadLocal&lt;&gt;();
+
+                //数据源列表
+                private static List&lt;String&gt; dataSourceIds =
+                        new ArrayList&lt;&gt;();
+
+                //设置数据源
+                public static void setDataSource(String customerType){
+
+                    contextHolders.set(customerType);
+                }
+
+                //获取数据源
+                public static String getDataSource(){
+
+                    return (String)contextHolders.get();
+                }
+
+                //清除数据源
+                public static void cleanDataSource(){
+
+                    contextHolders.remove();
+                }
+
+                //判断指定的数据源是否存在
+                public static boolean containsDataSource(String dataSourceId){
+
+                    return dataSourceIds.contains(dataSourceId);
+                }
+            }
+
+        </pre>
+    </div>
+
+    <div class="contentBgDiv">
+
+        <p class="smallTitle">
+            5. 在DataSourceConfig里面的sqlSessionFactory方法里面根据@Qualifier("dynamicDataSource") DataSource dataSource动态操作数据源:
+        </p>
+        <pre>
+
+            package com.example.demo.config;
+
+            import com.alibaba.druid.pool.DruidDataSource;
+            import org.apache.ibatis.session.SqlSessionFactory;
+            import org.mybatis.spring.SqlSessionFactoryBean;
+            import org.mybatis.spring.annotation.MapperScan;
+            import org.springframework.beans.factory.annotation.Qualifier;
+            import org.springframework.beans.factory.annotation.Value;
+            import org.springframework.boot.context.properties.ConfigurationProperties;
+            import org.springframework.context.annotation.Bean;
+            import org.springframework.context.annotation.Configuration;
+            import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+            import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+            import org.springframework.transaction.PlatformTransactionManager;
+
+            import javax.sql.DataSource;
+            import java.sql.SQLException;
+            import java.util.HashMap;
+            import java.util.Map;
+
+            @Configuration
+            @MapperScan(basePackages = {"com.example.demo.mapper.test1",
+                    "com.example.demo.mapper.test2"},
+                    sqlSessionFactoryRef = "sqlSessionFactory")
+            public class DruidDataSourceConfig {
+
+                //配置别名
+                @Value("${mybatis.type-aliases-package}")
+                private String typeAliasPackage;
+
+                //配置mapper扫描位置
+                @Value("${mybatis.mapper-locations}")
+                private String mapperLocations;
+
+                //mybatis配置位置
+            //    @Value("${mybatis.config-location}")
+            //    private String configLocation;
+
+
+                //配置数据源1
+                @Bean(name = "oneDataSource")
+                @ConfigurationProperties(prefix = "spring.datasource.one")
+                public DataSource oneDataSource(){
+
+                    return new DruidDataSource();
+                }
+
+                //配置数据源2
+                @Bean(name = "twoDataSource")
+                @ConfigurationProperties(prefix = "spring.datasource.two")
+                public DataSource twoDataSource(){
+
+                    return new DruidDataSource();
+                }
+
+                //数据源管理 目标数据库 以及默认加载的数据库
+                @Bean
+                public DataSource dynamicDataSource() throws SQLException{
+
+                    DynamicDataSource dynamicDataSource = new DynamicDataSource();
+
+                    Map&lt;Object, Object&gt; targetDataSources = new HashMap&lt;&gt;();
+                    targetDataSources.put("oneDataSource", oneDataSource());
+                    targetDataSources.put("twoDataSource", twoDataSource());
+                    dynamicDataSource.setTargetDataSources(targetDataSources);
+
+                    dynamicDataSource.setDefaultTargetDataSource(oneDataSource());
+
+                    return dynamicDataSource;
+                }
+
+                //配置sqlSessionFactory
+                //只会加载一次 下次请求的时候根据dynamicDataSource动态加载数据库
+                @Bean
+                public SqlSessionFactory sqlSessionFactory(@Qualifier("dynamicDataSource") DataSource dataSource)
+                    throws Exception{
+
+                    SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
+                    bean.setDataSource(dataSource);
+                    bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(mapperLocations));
+                    bean.setTypeAliasesPackage(typeAliasPackage);
+            //        bean.setConfigLocation(configLocation);
+
+                    return bean.getObject();
+                }
+
+                //配置事务
+                @Bean
+                public PlatformTransactionManager transactionManager(@Qualifier("dynamicDataSource") DataSource dataSource){
+
+                    return new DataSourceTransactionManager(dataSource);
+                }
+            }
+
+        </pre>
+    </div>
+
+    <div class="contentBgDiv">
+
+        <p class="smallTitle">
+            6. 指定配置@TargetDataSource(dataSource=""), 根据不同的dataSource
+            加载数据库:
+        </p>
+        <pre>
+
+            //指定加载数据库1
+            @TargetDataSource(dataSource = "oneDataSource")
+            @RequestMapping(value = "/saveToDb1", method = RequestMethod.POST)
+            public int saveToDb1(@RequestBody User1 user1){
+
+                return user1Service.saveToDb1(user1);
+            }
+
+            //指定加载数据库2
+            @TargetDataSource(dataSource = "twoDataSource")
+            @RequestMapping(value = "/saveToDb2", method = RequestMethod.POST)
+            public int saveToDb2(@RequestBody User2 user2){
+
+                return user2Service.saveToDb2(user2);
+            }
+        </pre>
+    </div>
+
+    <br>
+</div>
+
+</body>
+</html>

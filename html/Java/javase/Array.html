@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>java中的数组</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">java中的数组</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">java中的数组</p>
+    <hr>
+
+    <ul>
+        <li><a href="#mainargs">1. main方法的String[] args</a> </li>
+        <li><a href="#initial">2.数组的声明与初始化</a> </li>
+        <li><a href="#expand">3. 数组的扩容</a> </li>
+        <li><a href="#arrays">4. Arrays工具类</a> </li>
+        <li><a href="#array">5. 一维数组与多维数组</a> </li>
+        <li><a href="#binarysearch">6. 二分查找写法</a> </li>
+        <li><a href="#maopao">7. 冒泡排序</a> </li>
+        <li><a href="#xuanze">8. 选择排序</a> </li>
+    </ul>
+
+    <p class="smallTitle"  id="mainargs">1. main方法的String[] args</p>
+    <pre>
+
+        //可以在jvm其中前指定用户手动传入的参数，他是一个字符串数组：
+        //指定main方法输出用户输入的args:
+        //edit configurations -> Program Arguments -> 添加 a b c (多个参数用空格分开)
+        public static void main(String[] args) {
+        }
+    </pre>
+
+    <p class="smallTitle" id="initial">2.数组的声明与初始化</p>
+    <pre>
+
+        int[] a = {1,2,4};
+
+        //注意这样写是不允许的
+        //log({1,2,3});
+
+        一维数组的扩容:
+            先新建一个大数组，然后将小数组中的数据拷贝到大数组中，
+            所以数组扩容效率较低，因为存在拷贝操作， 所以最好能够提前准确预知数组所需大小；
+
+        int[] a = {1, 2, 3};
+        int[] b = new int[5];
+
+        //声明数组并赋初始值, 不能再指定大小，此时数组长度为3
+        int[] c = new int[]{1, 2, 4};
+
+        //数组拷贝
+        System.arraycopy(a, 0, b, 0, a.length);
+    </pre>
+
+    <p class="smallTitle" id="expand">3. 数组的扩容</p>
+    <pre>
+
+        int[] a = {1, 2, 3};
+        int[] b = new int[5];
+
+        //数组拷贝: 源数组， 起始下标，对象数组，对象数组下标，长度
+        System.arraycopy(a, 0, b, 0, a.length);
+
+    </pre>
+
+    <p class="smallTitle" id="arrays">4. Arrays工具类</p>
+    <pre>
+
+        //排序
+        int[] a = {12, 2, 4, 2, 5};
+        Arrays.sort(a); //从小到大
+        Arrays.parallelSort(a); //将数组分成多个小数组排序，然后再拼接起来
+
+        //二分法查找数据: 要求数组中的元素已排序
+        System.out.println(Arrays.binarySearch(a, 4));
+    </pre>
+
+    <p class="smallTitle" id="array">5. 一维数组与多维数组</p>
+    <pre>
+
+         /**
+         *
+         *  数组是引用类型， 数组数据存放在堆中， 引用存放在栈中；
+         *
+         *  数组中的数据可以是基本类型，也可以是引用类型的地址；
+         *
+         *  Java中数组一旦创建，长度不可变:length: 长度；
+         *
+         *  分为一维数组， 二位数组， 多维数组；
+         *
+         *  数组中存放的内存地址统一；
+         *
+         *   数组的优点：
+         *      数组中存放的元素内存地址是连续的， 拿第一元素的地址作为数组的地址；
+         *      这是因为数组里面存放的数据类型一致(同类或者子类)，因此占用内存大小一样，
+         *      元素的内存地址又是连续的，因此可以通过下标计算得出元素的地址，
+         *      因此查找速度快；
+         *      数组中查找一个元素和一万个元素的查找速度是一样的，因为他是通过下标计算
+         *      内存地址直接定位元素的。
+         *
+         *    数组的缺点：
+         *      1. 因为数组中元素地址是连续的，因此插入新元素的时候，需要将
+         *      其他元素向前或者向后移动，但是对数组最后一个元素的增删不影响效率；
+         *      2. 数组不能保存大数据量的数据，因为很难在内存上找到一块特别
+         *      大的连续的内存空间；
+         *
+         *
+         *     数组的声明：
+         *      int[], string[], double[];
+         *     数组的初始化:
+         *      1. 静态初始化:
+         *      int[] a = {100, 200}; //Java风格
+         *      int a2[] = {100, 200}; //c++风格， 不建议使用
+         *      2. 动态初始化
+         *      int[] a = new int[5];
+         *
+         *
+         */
+
+        //静态初始化
+        int[] a = {100, 200}; //Java风格
+        int a2[] = {100, 200}; //c++风格， 不建议使用
+        a[0] = 150;
+
+        Object o1 = new Object();
+        Object o2 = new Object();
+        Object[] objs = {o1, o2};
+
+        //动态初始化
+        int[] b = new int[10]; //10个元素， 默认是0
+        b[0] = 300;
+        b[1] = 400;
+        
+        //二维数组
+        int[][] a = {{1, 2}, {2, 3}};
+        int[][][] b = {{{1, 2}, {2, 3}}, {{1, 2}, {2, 3}}}; //三维数组
+
+    </pre>
+
+    <p class="smallTitle" id="binarysearch">6. 二分查找写法</p>
+    <pre>
+        
+        //二分查找
+        public static int binarySearch(int[] arr, int target){
+    
+            int begin =0 ;
+            int end = arr.length-1;
+    
+            //开始在结束左边就一直循环
+            while (begin <= end){
+    
+                int mid = (begin+end)/2; //中间位置
+    
+                if (arr[mid] == target){
+                    return mid;
+                }else if(arr[mid] < target){
+                    begin = mid+1; //改变起点
+                }else {
+                    end = mid-1; //改变
+                }
+            }
+    
+    
+            return -1;
+        }
+    </pre>
+    
+    <p class="smallTitle" id="maopao">7. 冒泡排序</p>
+    <pre>
+        
+         /**
+         *
+         * 冒泡排序：
+         *
+         *  数组中的元素从前到后， 相邻的元素比较， 较小的放前面， 第一次循环后
+         *  最大的数在右边;
+         *
+         *  接着前面的 n-1个数继续排序， 选出第二个最大的数， 放在最右边；
+         *
+         *
+         *  每一次循环都需要找出最大的数据放在最右边；
+         */
+        public static void maopao(int[] arr){
+        
+            //冒泡外层i-- 外层表示相邻交换次数：arr.length-1次
+            for (int i=arr.length-1; i&gt;0; i--){
+    
+                //内层表示需要循环的次数， 每走一次外层循环次数就减一，相当于i从
+                for (int j=0; j&lt;i; j++){
+    
+                    if (arr[j] &gt; arr[j+1]){
+    
+    
+                        int temp = arr[j];
+                        arr[j] = arr[j+1];
+                        arr[j+1] = temp;
+                    }
+                }
+            }
+        }
+        
+    </pre>
+
+    <p class="smallTitle" id="xuanze">8. 选择排序</p>
+    <pre>
+
+         /**
+         * 选择排序:
+         *
+         *      每次选出最小的值，和最前面的元素交换位置, 然后将剩下的选出最小的和
+         *      剩下元素的第一个元素交换位置，这样完成后就是从小到大的；
+         *
+         *     选择排序效率比冒泡排序高， 循环次数n-1；
+         *
+         */
+
+        public static void xuanze(int[] arr){
+
+            for (int i = 0; i < arr.length-1; i++) {
+
+                //i的大小正好是参加比较的所有元素的下标
+                int min = i;
+
+                //拿着min位置和剩下的元素比较，
+                for (int j = i+1; j < arr.length; j++){
+
+                    //如果后面有更小的数，就记录下来位置
+                    if (arr[j] < arr[min]){
+
+                        min = j;
+                    }
+                }
+
+
+                //将最小的数放到i的位置
+                if (min != i){
+
+                    int temp = arr[min];
+                    arr[min] = arr[i];
+                    arr[i] = temp;
+                }
+            }
+        }
+
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

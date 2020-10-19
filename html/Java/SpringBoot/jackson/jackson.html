@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>springboot中jackson使用</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info"><a target="_blank" href="https://github.com/ethanCun/springboot/tree/master/demo-jackson">
+        demo-jackson
+    </a> </span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">springboot中jackson使用</p>
+    <hr>
+    <br>
+
+    <p class="smallTitle">1. jackson+@DateTimeFormat出参格式化与入参格式化</p>
+    <div class="contents">
+
+        <pre>
+                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                @Column(name = "create_time")
+                private Date createTime;
+        </pre>
+
+        <p class="contents"><b>1. 入参格式化</b></p>
+        <p class="contents">
+               实体中含有Date类型的属性，直接给createTime传一个字符串类型的数据，会报错：不能将字符串转换为Date类型；
+            为了解决这个问题，可以使用@DateTimeFormat指定pattern格式，这样就可以给createTime传字符串，但是需要注意
+            必须安装pattern的格式传参，不然也会报错。
+        </p>
+
+        <p class="contents"><b>2. 出参格式化</b></p>
+        <p class="contents">
+            我们从数据库获取Date类型的字段，直接返回给前端展示，是形如：2222-11-11T04:11:12.000+0000 这样的格式，
+            很显然这不是我们希望的格式，这时可以借助jackson进行日期格式化展示:
+            需要注意的是，我们使用的北京时间与格林威治时间差了8小时，因此应该在这里设置一下timezone = "GMT+8"
+        </p>
+        <pre>
+                //jackson格式化date参数
+                @JsonFormat(pattern = "yyyy年MM月dd日 HH:mm:ss", timezone = "GMT+8")
+                //入参格式化
+                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                @Column(name = "create_time")
+                private Date createTime;
+        </pre>
+        <p class="contents">
+            这样，我们可以借助@DateTimeFormat+@JsonFormat实现属性的入参出参格式化。
+        </p>
+        <p class="contents">
+            如果一个属性中有很多date类型的字段，我们是不是得每一个属性都去配出参格式化呢，其实我们可以在application.properties
+            中统一配置:
+        </p>
+        <pre>
+            ## date的出参格式化
+            #数据库里面查出来的时间是时间戳格式，前端需要处理才能展示相应的格式，自己一个个转的话太麻烦，所以可以在apllication.properties加入下面配置就可以
+            spring.jackson.date-format=yyyy-MM-dd HH:mm:ss
+            #北京时间比格林威治时间加上8个小时
+            spring.jackson.time-zone=GMT+8
+        </pre>
+
+        <p class="smallTitle">2. jackson json字符串与json对象之间的相互转化</p>
+        <p class="contents">
+            jackson json字符串与json对象的转换提供了简单的api， 通过ObjectMapper就可以实现简单的转换， 还可以将json信息
+            以file或者stream形式保存。
+        </p>
+        <pre>
+
+            User user = new User();
+            user.setCreateTime(new Date());
+            user.setUpdateTime(new Date());
+            user.setBirthday(new Date());
+            user.setUsername("张三");
+            user.setAge(20);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String userJson = objectMapper.writeValueAsString(user);
+            objectMapper.writeValue(new File("/Users/cunethan/Desktop/user.json"), user);
+
+            User newUser = objectMapper.readValue(userJson, User.class);
+
+            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String dateTimeNow = dateTimeFormat.format(new Date());
+            objectMapper.setDateFormat(dateTimeFormat) ;
+        </pre>
+
+        <p class="smallTitle">3. jackson 常用的注解</p>
+        <p class="contents">
+            除了@JsonFormat外，jackson还提供了许多其他的注解:
+        </p>
+        <pre>
+            package com.example.demojackson.entity;
+
+            import com.fasterxml.jackson.annotation.*;
+            import lombok.*;
+            import org.apache.catalina.startup.SetContextPropertiesRule;
+            import org.springframework.format.annotation.DateTimeFormat;
+
+            import java.util.Date;
+            import javax.persistence.*;
+
+            @Getter
+            //@Setter
+            @NoArgsConstructor
+            @AllArgsConstructor
+            @ToString
+            @Table(name = "t_user")
+            //指定不返回类中的一个或者多个属性
+            //@JsonIgnoreProperties(value = {"id", "username"})
+            //属性值为null的不参与序列化
+            //@JsonInclude(JsonInclude.Include.NON_NULL)
+            //指定属性在 json 字符串中的顺序
+            //@JsonPropertyOrder(value = {"username", "id", "age"})
+            public class User {
+
+                //指定某个属性不参与序列化
+                //@JsonIgnore
+                @Id
+                private Integer id;
+
+                //@JsonProperty(value = "name")
+                private String username;
+
+                private Integer age;
+
+                //@JsonFormat(pattern = "yyyy年MM月dd日 HH:mm:ss", timezone = "GMT+8")
+                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                @Column(name = "create_time")
+                private Date createTime;
+
+                //@JsonFormat(pattern = "yyyy年MM月dd日 HH:mm:ss", timezone = "GMT+8")
+                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                @Column(name = "update_time")
+                private Date updateTime;
+
+                //@JsonFormat(pattern = "yyyy年MM月dd日 HH:mm:ss", timezone = "GMT+8")
+                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                private Date birthday;
+
+
+                public void setId(Integer id) {
+                    this.id = id;
+                }
+
+                //@JsonSetter 标注于 setter 方法上，类似 @JsonProperty ，也可以解决 json 键名称和 java pojo 字段名称不匹配的问题
+                //@JsonSetter(value = "name")
+                public void setUsername(String username) {
+                    this.username = username;
+                }
+
+                public void setAge(Integer age) {
+                     this.age = age;
+                }
+
+                public void setCreateTime(Date createTime) {
+                    this.createTime = createTime;
+                }
+
+                public void setUpdateTime(Date updateTime) {
+                    this.updateTime = updateTime;
+                }
+
+                public void setBirthday(Date birthday) {
+                     this.birthday = birthday;
+                }
+            }
+        </pre>
+
+    </div>
+
+
+    <br>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>thymeleaf在springboot项目中的使用</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+<div class="labels">
+
+    <span class="label label-info">layui</span>
+</div>
+
+<div class="contentBgDiv">
+
+
+    <p class="title">thymeleaf在springboot项目中的使用</p>
+    <p style="margin-right: 20px; text-align: right"><a href="https://github.com/ethanCun/springboot/tree/master/demo_thymeleaf_playground">demo地址</a> </p>
+
+    <div class="contentBgDiv">
+
+        <p class="smallTitle">thymeleaf简介</p>
+        <pre>
+            Thymeleaf 是一个跟 Velocity、FreeMarker 类似的模板引擎, 它可以在有网络和无网络的环境下运行。
+            通常配合springboot来渲染前端页面，未引入thymeleaf会报错找不到相关页面。
+        </pre>
+
+        <p class="smallTitle">springboot引入thymeleaf</p>
+        <pre>
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
+            &lt;/dependency&gt;
+        </pre>
+        
+        <p class="smallTitle">在html文件中引入</p>
+        <pre>
+            &lt;html lang="en" xmlns:th="http://www.thymeleaf.org"&gt;
+        </pre>
+
+        <p class="smallTitle">标准表达式语法</p>
+        <pre>
+            标准表达式语法
+            它们分为四类：
+
+            1.变量表达式 ${}
+            2.选择或星号表达式 *{}
+            3.文字国际化表达式 #{}
+            4.URL 表达式 @{}
+        </pre>
+
+        <p class="smallTitle">th:text 文本替换</p>
+        <pre>
+            &lt;p th:text="'welcome,' + ${name}"&gt;&lt;/p&gt;
+        </pre>
+        
+        <p class="smallTitle">th:src  图片类地址引入</p>
+        <pre>
+            &lt;img th:src="@{/img/Piglogo1024.png}" th:style="'width:100px; height:100px; display:block'"&gt;
+        </pre>
+
+        <p class="smallTitle">th:href 链接地址</p>
+        <pre>
+            &lt;a th:href="@{http://www.baidu.com}" th:text="baidu"&gt;&lt;/a&gt;
+            &lt;a th:href="@{/test1}" th:text="text1.html"&gt;&lt;/a&gt;
+        </pre>
+
+        <p class="smallTitle">th:if 只有表达式中的条件成立，才会显示其内容</p>
+        <pre>
+            &lt;p th:if="${name == 'czy'}" th:text="${name}"&gt;&lt;/p&gt;
+        </pre>
+        
+        <p class="smallTitle">th:unless 只有表达式中的条件不成立，才会显示其内容</p>
+        <pre>
+            &lt;p th:unless="${name == null && name.equals('')}" th:text="${name}"&gt;&lt;/p&gt;
+        </pre>
+
+        <p class="smallTitle">th:object:替换对象</p>
+        <pre>
+            &lt;div th:object="${names}"&gt;&lt;/div&gt;
+        </pre>
+
+        <p class="smallTitle">th:each</p>
+        <pre>
+            iterStat称作状态变量，属性有：
+            index:当前迭代对象的 index（从0开始计算）
+            count: 当前迭代对象的 index(从1开始计算)
+            size:被迭代对象的大小
+            current:当前迭代变量
+            even/odd:布尔值，当前循环是否是偶数/奇数（从0开始计算）
+            first:布尔值，当前循环是否是第一个
+            last:布尔值，当前循环是否是最后一个
+
+            &lt;tr th:each="name,iterStat: ${names}"&gt;
+            
+                &lt;td th:text="'name:' + ${name}"&gt;&lt;/td&gt;
+                &lt;td th:text="'index:' + ${iterStat.index}"&gt;&lt;/td&gt;
+                &lt;td th:text="'count:' + ${iterStat.count}"&gt;&lt;/td&gt;
+                &lt;td th:text="'current:' + ${iterStat.current}"&gt;&lt;/td&gt;
+                &lt;td th:text="'size:' + ${iterStat.size}"&gt;&lt;/td&gt;
+                &lt;td th:text="'first:' + ${iterStat.first}"&gt;&lt;/td&gt;
+                &lt;td th:text="'last:' + ${iterStat.last}"&gt;&lt;/td&gt;
+                &lt;td th:text="'odd:' + ${iterStat.odd}"&gt;&lt;/td&gt;
+            
+                &lt;br/&gt;
+            &lt;/tr&gt;
+        </pre>
+
+        <p class="smallTitle">使用*号表达式</p>
+        <pre>
+            &lt;div th:each="user, iterStat : ${user}"&gt;
+            
+                &lt;p th:text="*{name}"&gt;&lt;/p&gt;
+                &lt;p th:text="*{age}"&gt;&lt;/p&gt;
+                &lt;p th:text="${iterStat.index}"&gt;&lt;/p&gt;
+                &lt;p th:text="${iterStat.current}"&gt;&lt;/p&gt;
+            &lt;/div&gt;
+        </pre>
+
+        <p class="smallTitle">th:onclick</p>
+        <pre>
+
+            &lt;p th:onclick="testOnclick()" th:text="onclick"&gt;&lt;/p&gt;
+            
+            &lt;script th:src="@{/js/onclick.js}"&gt;&lt;/script&gt;
+
+            function testOnclick() {
+
+                var x = document.getElementsByClassName('testP');
+            
+                /**
+                 *  ==：运算符称作相等，用来检测两个操作数是否相等，这里的相等定义的非常宽松，可以允许进行类型转换
+                 ===：用来检测两个操作数是否严格相等
+            
+                 1、对于string,number等基础类型，==和===是有区别的
+                 不同类型间比较，==之比较“转化成同一类型后的值”看“值”是否相等，===如果类型不同，其结果就是不等
+                 同类型比较，直接进行“值”比较，两者结果一样
+            
+                 2、对于Array,Object等高级类型，==和===是没有区别的
+            
+                 3、基础类型与高级类型，==和===是有区别的
+                 对于==，将高级转化为基础类型，进行“值”比较，因为类型不同，===结果为false
+                 */
+            
+                if (x[0].innerHTML === 'xxxx'){
+            
+                    x[0].innerHTML = 'yyyy';
+                    x[0].style.color = 'red';
+                } else {
+            
+                    x[0].innerHTML = 'xxxx';
+                    x[0].style.color = "green";
+                }
+            }
+            
+        </pre>
+
+        <p class="smallTitle">th:include:布局标签，替换内容到引入的文件; th:replace布局标签，替换整个标签到引入的文件</p>
+        <pre>
+
+            其中th:include中的参数格式为templatename::[domselector],
+            其中templatename是模板名（如footer），domselector是可选的dom选择器。
+            如果只写templatename，不写domselector，则会加载整个模板。
+
+            &lt;div th:include="footer :: copyright"&gt;&lt;/div&gt;
+
+            &lt;!--不通过th:fragment引用模板--  footer为文件名 实际中可能为文件路径 &gt;
+            &lt;div th:include="footer :: .copyright1"&gt;&lt;/div&gt;
+            &lt;div th:include="footer :: #copyright2"&gt;&lt;/div&gt;
+            
+            被引用的文件：footer.html
+
+            &lt;!--th:fragment	布局标签，定义一个代码片段，方便其它地方引用--&gt;
+            &lt;p&gt;th:fragment	布局标签，定义一个代码片段，方便其它地方引用&lt;/p&gt;
+            &lt;div th:fragment="copyright"&gt;
+            
+                @2019 czy
+            &lt;/div&gt;
+            
+            &lt;div class="copyright1"&gt;
+            
+                @2019 ethan1
+            &lt;/div&gt;
+            
+            &lt;div id="copyright2"&gt;
+            
+                @2019 ethan2
+            &lt;/div&gt;
+        
+            th:replace:
+            &lt;div th:replace="footer :: copyright"&gt;&lt;/div&gt;
+            
+        </pre>
+
+
+        <p class="smallTitle">内联js</p>
+        <p class="contents">thymeleaf内联与layui一起使用时，注意[[]]不要写在一行， 否则报错：org.thymeleaf.exceptions.TemplateProcessingException: Could not parse as expression: "</p>
+        <pre>
+
+            内联文本：[[#{name}]] 内联文本的表示方式，使用时，必须先用th:inline="text/javascript/none"激活，
+            th:inline可以在父级标签内使用，甚至作为 body 的标签。内联文本尽管比th:text的代码少，不利于原型显示。
+
+            &lt;script th:inline="javascript"&gt;
+
+                var ctx = [[@{/}]];
+                var userUrl = ctx + "user";
+                var name = [[${name}]];
+                var names = [[${names}]];
+                var user = [[${user}]];
+
+            &lt;/script&gt;
+        </pre>
+
+        <p class="smallTitle">themeleaf内嵌变量</p>
+        <pre>
+            &lt;p th:text="${#dates.createNow()}"&gt;&lt;/p&gt;
+            &lt;p th:text="${#dates.createToday()}"&gt;&lt;/p&gt;
+            &lt;p th:text="${#strings.isEmpty('czy')}"&gt;&lt;/p&gt;
+            &lt;p th:text="${#strings.length('czy')}"&gt;&lt;/p&gt;
+            &lt;p th:text="${#strings.randomAlphanumeric(10)}"&gt;&lt;/p&gt;
+
+            dates ： java.util.Date的功能方法类。
+            calendars : 类似#dates，面向java.util.Calendar
+            numbers : 格式化数字的功能方法类
+            strings : 字符串对象的功能类，contains,startWiths,prepending/appending等等。
+            objects: 对objects的功能类操作。
+            bools: 对布尔值求值的功能方法。
+            arrays：对数组的功能类方法。
+            lists: 对lists功能类方法
+            sets
+            maps
+
+        </pre>
+
+    </div>
+
+</div>
+
+
+</body>
+</html>

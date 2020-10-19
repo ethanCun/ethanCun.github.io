@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>java中的集合</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">java中的集合</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">java中的集合</p>
+    <hr>
+
+    <ul>
+        <li><a href="#intro">1. 集合的介绍与分类</a> </li>
+        <li><a href="#extend">2. 集合的继承关系</a> </li>
+        <li><a href="#ArrayMethods">3. 循环遍历</a> </li>
+        <li><a href="#Generic">4. 泛型集合</a> </li>
+        <li><a href="#CollectionsMethods">5. 集合常用方法</a> </li>
+        <li><a href="#Collections">6. Collections集合工具常用的方法</a> </li>
+        <li><a href="#ArrayList">7. ArrayList</a> </li>
+        <li><a href="#Vector">8. Vector</a> </li>
+        <li><a href="#LinkedList">9. LinkedList双向链表</a> </li>
+        <li><a href="#hash">10. 哈希表数据结构</a> </li>
+        <li><a href="#HashMap">11. HashMap与HashTable</a> </li>
+        <li><a href="#hashcodeEquals">12. HashMap为什么需要重写HashCode和Equals</a> </li>
+        <li><a href="#properties">13. Properties</a> </li>
+        <li><a href="#TreeMap">14. TreeMap平衡二叉树</a> </li>
+    </ul>
+
+    <p class="smallTitle" id="intro">1. 集合的介绍与分类</p>
+    <pre>
+
+         /**
+         *
+         *  1. 集合不能直接保存基本数据，也不能装对象：
+         *      对于基本数据类型，其实是自动装箱了，对于引用数据类型，是装的对象地址；
+         *
+         *  2. 不同的数据集合，底层数据结构不相同：
+         *        数组
+         *        二叉树
+         *        链表
+         *        哈希表
+         *
+         *  3. 集合在java.utils包下面；
+         *
+         *  4. 放在集合里面的对象需要重写equals方法: 没有重写比较的是地址, 重写之后按照重写的逻辑比较；
+         */
+
+         //底层是数组
+        ArrayList&lt;Integer&gt; arrayList1 = new ArrayList<>();
+        arrayList1.add(100); //自动装箱了
+        //本质： arrayList1.add(Integer.valueOf(100));
+
+        //底层是链表
+        new LinkedList<>();
+
+        //底层是hash表
+        new HashMap<>();
+
+        //底层是自平衡二叉树
+        new TreeMap<>();
+
+    </pre>
+
+    <p class="smallTitle" id="extend">2. 集合的继承关系</p>
+    <pre>
+
+        /**
+         *
+         * Collection继承Iterable
+         *
+         * 1. 存储单个元素的集合超级父接口： java.util.Collection
+         * 2. 存储键值对的几个超级父接口： java.util.Map
+         *      注意map的key和value都是保存对象的引用地址
+         *      所有map集合的key是无需补课重复的；
+         *
+         *     有序： 存进去和取出来的数据顺序是一样的, 是指地址有序；
+         *     可排序： 提供了排序的功能，
+         *     这两个不一样
+         */
+
+        Iterable iterable; //可迭代可遍历的， 迭代器对象
+        Collection collection; //
+        List list; //有序可重复（地址是有序的）
+        Set set; //无需不可重复
+        SortedSet sortedSet; //无序不可重复， 自动排序 (注意无需是指内存地址无序)
+        Queue queue;
+        BlockingQueue blockingQueue;
+
+
+        //list下面
+        ArrayList arrayList; //底层是数组 非线程安全
+        LinkedList linkedList; //底层是双向链表
+        Stack stack; //
+        Vector vector; //底层是数组 线程安全, 现在线程安全一般不用这个解决方案
+
+        //set下面
+        HashSet hashSet = new HashSet(); //底层是hashmap hashmap底层是hash表
+        TreeSet treeSet = new TreeSet(); //底层是treemap 可排序 treemap底层是二叉树
+
+
+        Map map; //key和value都是保存对象的地址
+        HashMap hashMap; //底层是hash表 线程不安全
+        Hashtable hashtable; //底层是hash表, 线程安全, 现在通过其他方式控制线程才能安全
+        TreeMap treeMap; //底层是二叉树
+        SortedMap sortedMap; //无序不重复， 可排序
+
+
+        //继承hashtable， key和value必须是string类型， 线程安全
+        Properties properties;
+
+
+    </pre>
+
+    <p class="smallTitle" id="ArrayMethods">3. 循环遍历</p>
+    <pre>
+
+        for (int i = 0; i < arr.length; i++) {
+            System.out.println(arr[i]);
+        }
+
+        //增强for循环: 没有下标
+        for (int i : arr) {
+            System.out.println(i);
+        }
+
+        //迭代器
+        Iterator iterator = list01.iterator(); //初始指针并没有指向第一个元素
+        while (iterator.hasNext()){ //是否还有元素
+
+            String ele = (String)iterator.next(); //next()会使指针偏移
+            System.out.println(ele);
+        }
+
+
+    </pre>
+
+    <p class="smallTitle" id="Generic">4. 泛型集合</p>
+    <pre>
+
+         /**
+         *
+         * 1. 没有使用泛型之前， 集合中可以存放Object的所有子类；
+         * 2. 使用泛型后，只能存对应数据类型的元素；
+         * 3. 集合中不能存储基本类型，只能存地址；
+         *
+         */
+
+        /**
+         *
+         * 泛型： jdk5之后新增的特性；
+         *
+         *  优点：
+         *      1. 集合中类型一致；
+         *      2. 不需要向下转型；
+         *      3. 更加优雅地面向接口开发；
+         *
+         *  缺点：
+         *      1.集合中元素缺乏多样性；
+         *
+         *
+         *  注意：
+         *  jdk8之后推出了 自动类型推断机制，又称为钻石表达式；
+         *      ArrayList<>: 这里的类型会自动推断
+         *
+         */
+
+    </pre>
+
+    <p class="smallTitle" id="CollectionsMethods">5. 集合常用方法</p>
+    <pre>
+
+        //size
+        System.out.println(collection.size());
+
+        //清空
+        //collection.clear();
+        //System.out.println(collection.size());
+
+        //是否包含
+        System.out.println(collection.contains(3.14));
+
+        //remove
+        System.out.println(collection.remove(3.14));
+        System.out.println(collection);
+
+        //是否为空
+        System.out.println(collection.isEmpty());
+
+        //转换为数组
+        System.out.println(collection.toArray());
+
+        //迭代器
+        //迭代方式是所有collection(list,set)通用的，在map中不使用
+        //快捷创建迭代器的快捷键： itli
+        //迭代器可以理解为一个指针，开始的时候并没有指向下标0
+        Iterator iterator = collection.iterator();
+        while (iterator.hasNext()){ //是否还有下个元素
+            //next: 让迭代器前进一位，并返回这个位置的元素
+            System.out.println(iterator.next());
+        }
+
+    </pre>
+
+    <p class="smallTitle" id="Collections">6. Collections集合工具常用的方法</p>
+    <pre>
+
+        //Arrays
+        List list01 = new ArrayList();
+        list01.add("d");
+        list01.add("a");
+        list01.add("b");
+        list01.add("c");
+
+        //变成线程安全的List
+        List list02 = Collections.synchronizedList(list01);
+
+
+        //变成可排序的List, 要求集合中元素实现了Comparable<>接口
+        //注意这个排序方法只能对List排序
+        Collections.sort(list01);
+
+       //那么如何对Set排序
+        HashSet&lt;String&gt; hashSet = new HashSet<>();
+        hashSet.add("kk");
+        hashSet.add("f");
+        hashSet.add("oo");
+
+        //对set排序, 先将set变为List
+        List&lt;String&gt; list03 = new ArrayList(hashSet);
+        Collections.sort(list03);
+
+        for(String s : list03){
+            System.out.println(s);
+        }
+
+    </pre>
+
+    <p class="smallTitle" id="ArrayList">7. ArrayList</p>
+    <pre>
+
+         /**
+         *
+         *  ArrayList：继承AbstractArrayList, 初始化容量是10
+         *      底层是Object[]数组
+         *
+         *      arrayList扩容是原来的1.5倍；
+         *      arrayList优化就是尽量稍作扩容操作，正确地预估初始化容量
+         *      能够减少扩容次数；
+         *
+         *      扩容： 新容量 = 旧容量 + (旧容量 >> 1) ;
+         *
+         *      10 >> 1 : 00001010 变为了 00000110 10变为5， 相当于除以2
+         *
+         *      15 = 10 + 5 ： 相当于1.5倍
+         *
+         *
+         *   优点： 检索效率高，地址有序， 可以计算出元素的地址，因此
+         *        查询速度和数组的大小没关系；
+         *   缺点： 往末尾添加效率没影响，但是不是末尾的元素需要保证有序，
+         *      就得移动所以效率低； 其次，数组无法存储大数据量，因为很难
+         *      找到一个片连续的内存；
+         */
+
+        //注意： 底层先创建一个长度为10的数组，添加第一个元素的时候
+        //设置大小为10的空间
+        ArrayList arrayList = new ArrayList(10);
+        //size获取当前集合元素个数，不是容量
+        System.out.println(arrayList.size());
+
+        for (int i = 0; i < 20; i++) {
+
+            arrayList.add(i);
+        }
+    </pre>
+
+    <p class="smallTitle" id="Vector">8. Vector</p>
+    <pre>
+
+         /**
+         * Vector 初始容量 也是10;
+         *
+         * 注意： Vector扩容是原来的2倍；
+         *       ArrayList扩容是原来的1.5倍；
+         *
+         *    Vector中所有方法都是线程同步的；线程安全
+         */
+
+        Vector list = new Vector();
+        list.add(10);
+        list.add(20);
+
+        //将不安全的ArrayList转为线程安全的Vector
+        ArrayList list01 = new ArrayList();
+        List list1 = Collections.synchronizedList(list);
+    </pre>
+
+    <p class="smallTitle" id="LinkedList">9. LinkedList双向链表</p>
+    <pre>
+
+        //单向链表:
+         /**
+         *
+         * 链表的基本单元结构是节点Node：
+         *   对于单向链表来说，任何一个节Node中有两个属性：
+         *      1. 存储的数据，
+         *      2. 下一节点的内存地址；
+         *
+         *      单向链表的末尾节点，下一个节点的内存地址为空null
+         *
+         *  优点：
+         *      1. 随机增删元素效率较高， 不涉及到元素位移的问题；
+         *      2. 查找元素效率较低，内存地址是不连续的,
+         *          每次查找元素都是从头开始遍历查找数据；
+         *
+         *  因为我们平时都是在末尾加， 所以ArrayList用得比LinkedList多；
+         *
+         */
+
+        //双向链表:
+         /**
+         *
+         * 双向链表的基本单元还是节点，但是它还包括上一个节点的内存地址:
+         *  1. 数据；
+         *  2. 上一个节点的内存地址；
+         *  3. 下一个节点的内存地址；
+         *
+         *  1. 双向链表的头节点pre为null，末尾节点的next为null；
+         *  2. linkedList是没有初始容量的， pre， next都是空；
+         *
+         *  注意：不管是ArrayList和LinkedList都只需面向接口编程；
+         *      用List来接收子类对象
+         */
+
+    </pre>
+
+    <p class="smallTitle" id="hash">10. 哈希表数据结构</p>
+    <pre>
+
+        /**
+         *
+         * 哈希表： 又称散列表数据结构
+         *
+         *  HashMap底层是哈希表或者说散列表数据结构；
+         *
+         *  哈希表和数组和单向链表的结合体，结合了两者的优势：
+         *      数组： 在查询方面效率较高， 在插入数据效率较差；
+         *      单向链表： 在增删数据方面效率高，在查询方面较差；
+         *
+         *      哈希表的结构类似于吊着的帘子；
+         *
+         *  Node[] nodes;
+         *
+         *  class Node{
+         *
+         *      private String key;
+         *      private Object values;
+         *      private Node next;
+         *  }
+         *
+         *
+         *
+         *    static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; {
+         *         final int hash; //是key通过hashCode()之后的值,hash值通过哈希函数算法，可以转换成数组的下标
+         *         final K key;
+         *         V value;
+         *         Node&lt;K,V&gt; next;
+         *
+         *    ....
+         *    }
+         *
+         *  HashMap的默认加载容量是16， 默认加载因子是0.75；
+         *
+         *      加载因子是指当hashmap底层数组容量达到75%的时候，数组开始扩容；
+         *      hashmap初始化容量必须是2的次方，这是为了提高hashmap的存储效率所必须的，
+         *      更容易达到散列均匀；
+         *
+         *  hashmap扩容底层是resize方法， 左移1为也就是扩容为原来的两倍:
+         *      newThr = oldThr &lt;&lt; 1; // double threshold
+         *
+         *
+         */
+
+        //HashMap内部有一个静态内部类 Node&lt;K, V&gt;
+        //HashMap的key是地址无序，不重复的；
+        //无序是因为数据加在单向链表上，并且不知道在那个下标对应的链表上
+        //重写equals方法来保证HashMap的key不重复
+        HashMap hashMap;
+
+        //put(k， v) 原理:
+        //1. 先将k v封装到Node单向链表中；
+        //2. 调用k的hashCode()方法得出hash值，然后通过哈希函数算法将hash值
+        //转换为数组的下标， 如果下标的位置没有值，就将Node添加到数组的这个下标上；
+        //如果下标对应的位置上有Node, 此时会拿着k和链表上每一个key进行equals， 如果
+        //链表上没有这个key，就会将这个键值对放在链表的最后； 如果链表上存在这个key，
+        //就替换掉链表上这个key对应的value；
+
+
+        //get(k)原理：
+        //1. 先调用key的hashCode方法值， 通过哈希函数算法计算出下标，
+        // 如果这个位置上没数据，返回null；
+        //2. 如果数组下标存在对应的值，接下来拿着key和 单向链表上的所有值
+        //进行equals， 找到了就返回对应的value，不存在就返回null;
+
+
+        //总结： 为什么hash表 查询和随机增删的效率都还不错：
+        //1. 随机增删发生在单向链表上，并且可以通过数组的下标快速定位到数据所在的链表，
+        // 不需要移位；
+        //2. 查询时， 只需要遍历对应数组下标的单向链表， 不必要遍历所有的单向链表；
+
+        //注意： hashMap的查询效率不如纯数组， 它多了一个通过hashCode计算下标的过程；
+        //jdk7中hashMap的结构为数组+单向链表; jdb8中hashMap的结构为数组+单向链表
+        //+红黑树， 红黑树的作用是为了解决数组下标对应的链表长度过长时，查询效率慢的问题，
+        //长度超过8就编程红黑树了；
+
+        //为什么hashmap的key需要重写hashcode()和equals？
+        //需要保证不重复：不重写equals()默认走Object的equals方法，比较的是内存地址；
+
+
+        //注意： 同一个数组下标下，单链表上所有节点的hash值是不一定相同的，他们只是
+        // 通过hash算法计算后的下标是一样的，但是hash值一样的肯定在同一个单向链表上；
+        //1. 如果将HashMap&lt;K, V&gt;, K的hashCode设置为一个固定的值，hashmap底层
+        //就变成了数组里面只有一个单链表，性能无法发挥出来，这个情况称为三列分布不均匀；
+        //2. 如果将hashmap所有k的hashcode都设置为不同的值，底层就变成了
+        // 数组，这也是一种三列分布不均匀；
+
+
+        //因此放在HashMap和他子类中的key需要重写hashcode()和equals()方法
+        HashSet hashSet;
+        String s1;
+        Integer a;
+
+
+        //特别注意， 对于hashmap 的key生成的hash， 可能会发生hash碰撞，
+        //导致同一个单向链表上的hash可以不一样，但是反过来用这个hash计算出
+        //下标肯定是和原来一样的；
+    </pre>
+
+    <p class="smallTitle" id="HashMap">11. HashMap与HashTable</p>
+    <pre>
+
+          /**
+         *
+         * 1.Map和Collection平级；
+         * 2.Map使用key value键值对保存数据， key value都是保存的对象地址；
+         */
+
+         /**
+         *
+         * jdk8中hashmap底层变成了： 数组+单链表+红黑树的结构，
+         *  当红黑树节点数小于6会变回单向链表：
+         *
+         * 单链表节点数超过8就会自动转换：
+         *  static final int TREEIFY_THRESHOLD = 8;
+         * 当红黑树节点数小于6会变回单向链表:
+         *  static final int UNTREEIFY_THRESHOLD = 6;
+         *
+         * 这样做主要是为了map.get(key)是数据的查询效率，
+         *  因为二叉树会减少检索范围；
+         *
+         */
+
+         Set keys = map1.keySet(); //key是一个set 所以地址无序不重复
+         Collection values = map1.values(); //value是一个Collection
+         //Map.Entry 静态内部类
+         Set&lt;Map.Entry&lt;String, Object&gt;&gt; entrySets = map1.entrySet();
+
+         Iterator iterator = entrySets.iterator();
+         while (iterator.hasNext()){
+
+            Map.Entry&lt;String, Object&gt; map = (Map.Entry&lt;String, Object&gt;)iterator.next();
+
+            System.out.println(map.getKey());
+            System.out.println(map.getValue());
+        }
+
+         /**
+         * hashTable底层也是hash表结构
+         * hashTable的key不能为null, value也不能为null
+         * hashTable都带有@Synchronized
+         *
+         * 初始化容量是11， 默认加载因子是0.75, hashTable的扩容方法是rehash
+         *
+         * 新容量= 2*旧容量+1：
+         *  int newCapacity = (oldCapacity << 1) + 1;
+         *
+         */
+
+        1. hashmap的key可以为空, value也可以为空， key为空是hash值为0；
+        2. hashTable的key不能为null, value也不能为null;
+
+    </pre>
+
+    <p class="smallTitle" id="hashcodeEquals">12.  HashMap为什么需要重写HashCode和Equals</p>
+    <pre>
+
+        //注意： hashmap存取数据时， 都是先调用key的hashCode方法，再调用
+        //equals方法; 先计算hash表的数组下标，在通过equals方法在单链表
+        //上查找对应key的value，但数组下标对应的value为空时，就没必要再继续
+        //调用equals方法来查找单链表上的元素了；
+
+        1. hashcode全部相同， hash表就成了一个单链表， hashcode全部不相同就成了一个数组；
+        2. 不重写equals，所有元素equals就无法找到单链表上的元素；
+        3. 重写hashcode和equals只要是为了保证hash表的一个良好的散列效果；
+
+    </pre>
+
+    <p class="smallTitle" id="properties">13. Properties</p>
+    <pre>
+
+         /**
+         *
+         * Properties 属性类对象， 继承与hashTable，是线程安全的
+         * key和value只能为String
+         */
+        Properties properties = new Properties();
+
+        //底层就是调用了hashTable的put方法, 线程安全
+        properties.setProperty("name", "czy");
+
+    </pre>
+
+    <p class="smallTitle" id="TreeMap">14. TreeMap平衡二叉树</p>
+    <pre>
+
+        /**
+         *
+         * TreeSet底层是一个TreeMap,
+         * TreeMap底层是一个二叉树，
+         * 放到TreeSet中的元素，相当于放在了TreeMap的key集合部分，
+         * TreeSet集合中的元素是地址无序不可重复，但是可根据大小排序，
+         *
+         *  TreeMap有序
+         */
+
+        /**
+         *
+         * 1. 自平衡二叉树， 遵循左小右大的原则存放： 所以存放的时候需要比较，
+         *      小的放在根节点左子树，大的放在右子树；
+         * 2. 遍历平衡二叉树的时候有三种方式：
+         *     1.前序遍历： 根左右
+         *     2.中序遍历： 左根右
+         *     3.后序遍历： 左右根
+         *
+         *    前序中序后序说的是根的位置；
+         * 3. TreeSet采用的是中序遍历方式；
+         * 4. 按照比根小放左边，比根大放右边，如果子树高度超过3就将根设置为右节点的值；
+         *
+         */
+
+         /**
+         *
+         * 平衡二叉树关键代码：
+         *
+         * do {
+         *      parent = t;
+         *      cmp = cpr.compare(key, t.key);
+         *      if (cmp < 0)
+         *         t = t.left;
+         *      else if (cmp > 0)
+         *         t = t.right;
+         *      else
+         *         return t.setValue(value);
+         *      } while (t != null);
+         *  }
+         *
+         */
+
+        自定义类型添加到可排序集合，需要实现Comparable接口:
+
+        //对于所有的可排序的集合， 需要实现比较接口, 比如TreeSet
+        class Student implements Comparable{
+
+            private int age;
+
+            @Override
+            public int compareTo(Object o) {
+
+                return this.age - o.age;
+            }
+        }
+
+        或者传入自定义比较器:
+        class MyComparator implements Comparator&lt;User&gt; {
+
+            @Override
+            public int compare(User o1, User o2) {
+                return o1.getAge()-o2.getAge();
+            }
+        }
+
+        //总结：
+        //当比较规则经常改变的时候，使用自定义的比较器Comparator；
+        //当比较规则改变较少的时候，使用实现Comparable接口；
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

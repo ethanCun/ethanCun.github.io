@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>springboot中使用HttpClient对接第三方平台</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info"><a target="_blank" href="https://github.com/ethanCun/springboot/tree/master/demo-httpclient">
+        demo-httpclient
+    </a> </span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">springboot中使用HttpClient对接第三方平台</p>
+
+    <br>
+    <ul>
+
+        <li><a href="#pom">1.pom.xml中引入httpclient/httpmime依赖</a> </li>
+        <li><a href="#getNoParam">2.HttpClient的get请求(不带参数)</a> </li>
+        <li><a href="#getParam">3. HttpClient的get请求(带参数)</a> </li>
+        <li><a href="#postNoParam">4. HttpClient的post请求(不带参数)</a> </li>
+        <li><a href="#postParam">5. HttpClient的post请求(带普通参数)</a> </li>
+        <li><a href="#postObjectParam">6. HttpClient的post请求(带对象参数)</a> </li>
+        <li><a href="#file">7. HttpClient发送文件</a> </li>
+        <li><a href="#stream">8. HttpClient发送流</a> </li>
+    </ul>
+    <hr>
+
+    <div class="contentBgDiv">
+        
+        <p class="smallTitle" id="pom">1. pom.xml中引入httpclient/httpmime依赖</p>
+        <p class="contents">在使用httpclient或者httpmime包中的类不能自动生成时，在pom中多做修改保存操作，可能包未导入成功，也可能是正在导入，但是没有导入完成</p>
+        <pre>
+            
+            &lt;!--httpclient--&gt;
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.apache.httpcomponents&lt;/groupId&gt;
+                &lt;artifactId&gt;httpclient&lt;/artifactId&gt;
+                &lt;version&gt;4.5.5&lt;/version&gt;
+            &lt;/dependency&gt;
+
+            &lt;!--httpmime：发送文件--&gt;
+            &lt;dependency&gt;
+                &lt;groupId&gt;org.apache.httpcomponents&lt;/groupId&gt;
+                &lt;artifactId&gt;httpmime&lt;/artifactId&gt;
+                &lt;version&gt;4.5.5&lt;/version&gt;
+            &lt;/dependency&gt;
+
+        </pre>
+        
+        <p class="smallTitle" id="getNoParam">2. HttpClient的get请求(不带参数)</p>
+
+        <p class="contents">接收端:</p>
+        <pre>
+
+            /**
+             * get不带参数
+             * @return
+             */
+            @GetMapping(value = "/get")
+            public String get(){
+
+                return "接收到无参数的请求";
+            }
+        </pre>
+        <p class="contents">发送端:</p>
+        <pre>
+
+            package com.example.httpclient.demohttpclient.cpntroller;
+
+            import com.alibaba.fastjson.JSON;
+            import com.example.httpclient.demohttpclient.entity.User;
+            import org.apache.http.HttpEntity;
+            import org.apache.http.NameValuePair;
+            import org.apache.http.client.config.RequestConfig;
+            import org.apache.http.client.entity.UrlEncodedFormEntity;
+            import org.apache.http.client.methods.CloseableHttpResponse;
+            import org.apache.http.client.methods.HttpGet;
+            import org.apache.http.client.methods.HttpPost;
+            import org.apache.http.client.utils.URIBuilder;
+            import org.apache.http.entity.ContentType;
+            import org.apache.http.entity.InputStreamEntity;
+            import org.apache.http.entity.StringEntity;
+            import org.apache.http.entity.mime.MultipartEntityBuilder;
+            import org.apache.http.impl.client.CloseableHttpClient;
+            import org.apache.http.impl.client.HttpClientBuilder;
+            import org.apache.http.message.BasicNameValuePair;
+            import org.apache.http.util.EntityUtils;
+            import org.springframework.web.bind.annotation.GetMapping;
+            import org.springframework.web.bind.annotation.PostMapping;
+            import org.springframework.web.bind.annotation.RequestBody;
+            import org.springframework.web.bind.annotation.RestController;
+
+            import java.io.File;
+            import java.io.FileInputStream;
+            import java.io.InputStream;
+            import java.net.URI;
+            import java.net.URLEncoder;
+            import java.nio.charset.Charset;
+            import java.nio.charset.StandardCharsets;
+            import java.util.ArrayList;
+            import java.util.List;
+
+            /**
+             * 不带参数的请求
+             */
+            @GetMapping(value = "/sendNoParam")
+            public void sendNoParam(){
+
+                //获取httpclient客户端
+                CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
+
+                //创建get请求
+                HttpGet httpGet = new HttpGet("http://localhost:8080/get");
+
+                //响应模型
+                CloseableHttpResponse closeableHttpResponse = null;
+
+                try {
+
+                    //客户端发起get请求
+                    closeableHttpResponse = closeableHttpClient.execute(httpGet);
+
+                    //从响应模型中获取响应实体
+                    HttpEntity httpEntity = closeableHttpResponse.getEntity();
+
+                    if (httpEntity != null){
+
+                        System.out.println("响应状态:" + closeableHttpResponse.getStatusLine());
+                        System.out.println("响应内容:" + EntityUtils.toString(httpEntity));
+                    }
+
+                }catch (Exception e){
+
+                }finally {
+
+                   try {
+
+                       //释放资源
+                       if (closeableHttpClient != null){
+                           closeableHttpClient.close();
+                       }
+                       if (closeableHttpResponse != null){
+                           closeableHttpResponse.close();
+                       }
+                   }catch (Exception e){
+
+                   }
+
+                }
+            }
+        </pre>
+
+        <p class="smallTitle" id="getParam">3. HttpClient的get请求(带参数)</p>
+        <p class="contents">接收端:</p>
+        <pre>
+
+            /**
+             * get带参数的请求
+             * @param name
+             * @param age
+             * @return
+             */
+            @GetMapping(value = "/getWithParam")
+            public String getWithParam(@RequestParam(value = "myname") String name,
+                                       @RequestParam(value = "myage") String age){
+
+                return "name: " + name + " age: " + age;
+            }
+        </pre>
+        <p class="contents">发送端(参数使用StringBuffer拼接):</p>
+        <pre>
+
+            /**
+             * 带参数的请求 参数使用StringBuffer拼接
+             * @param myname
+             * @param myage
+             */
+            @GetMapping(value = "/sendWithParam")
+            public void sendWithParam(String myname, String myage){
+
+                //请求客户端
+                CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
+
+                //请求参数 param拼接
+                StringBuffer param = new StringBuffer();
+                param.append("myname="+myname);
+                param.append("&myage="+myage);
+
+                //请求方式
+                HttpGet httpGet = new HttpGet("http://localhost:8080/getWithParam?" + param);
+
+                //配置httpGet请求的信息
+                RequestConfig requestConfig = RequestConfig.custom()
+                        .setConnectTimeout(5000) //连接超时时间
+                        .setConnectionRequestTimeout(5000) //请求超时时间
+                        .setSocketTimeout(5000) //socket读写超时时间
+                        .setRedirectsEnabled(true) //是否允许重定向
+                        .build();
+
+                httpGet.setConfig(requestConfig);
+
+                //响应模型
+                CloseableHttpResponse response = null;
+
+                try {
+
+                    //发起请求
+                    response = closeableHttpClient.execute(httpGet);
+
+                    //请求内容
+                    HttpEntity httpEntity = response.getEntity();
+
+                    System.out.println("请求状态: " + response.getStatusLine());
+                    System.out.println("请求内容: " + EntityUtils.toString(httpEntity));
+
+                }catch (Exception e){
+
+                }finally {
+
+                    try {
+
+                        if (closeableHttpClient != null){
+                            closeableHttpClient.close();
+                        }
+                        if (response != null){
+                            response.close();
+                        }
+                    }catch (Exception e){
+
+                    }
+
+                }
+            }
+        </pre>
+        <p class="contents">发送端(参数使用URIBuilder + List&lt;NameValuePair&gt;构建):</p>
+        <pre>
+
+            /**
+             * 带参数的请求 使用URIBuilder + List&lt;NameValuePair&gt;构建
+             * @param myname
+             * @param myage
+             */
+            @GetMapping(value = "sendWithParamUri")
+            public void sendWithParamUri(String myname, String myage){
+
+                //客户端
+                CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+
+                //请求参数：
+                List&lt;NameValuePair&gt; params = new ArrayList&lt;&gt;();
+                params.add(new BasicNameValuePair("myname", myname));
+                params.add(new BasicNameValuePair("myage", myage));
+
+                //构建uri
+                URI uri = null;
+
+                try {
+
+                    uri = new URIBuilder().setScheme("http")
+                            .setHost("localhost").setPort(8080).setPath("getWithParam")
+                            .setParameters(params).build();
+
+
+                }catch (Exception e){
+
+                }
+
+                //请求方式
+                HttpGet httpGet = new HttpGet(uri);
+
+                //响应模型
+                CloseableHttpResponse response = null;
+
+                try {
+
+                    //发起请求
+                    response = httpClient.execute(httpGet);
+
+                    //响应内容
+                    HttpEntity httpEntity = response.getEntity();
+
+                    System.out.println("响应状态: " + response.getStatusLine());
+                    System.out.println("响应内容: " + EntityUtils.toString(httpEntity));
+
+                }catch (Exception e){
+
+                }finally {
+
+                    try {
+
+                        //释放资源
+                        if (httpClient != null){
+                            httpClient.close();
+                        }
+                        if (response != null){
+                            response.close();
+                        }
+                    }catch (Exception e){
+
+                    }
+                }
+            }
+
+        </pre>
+
+        <p class="smallTitle" id="postNoParam">4. HttpClient的post请求(不带参数)</p>
+        
+        <p class="contents">接收端:</p>
+        <pre>
+            
+            /**
+             * 不带参数的post请求
+             * @return
+             */
+            @PostMapping(value = "/postWithNoParam")
+            public String postWithNoParam(){
+        
+                return "不带参数的post请求";
+            }
+        </pre>
+        <p class="contents">发送端:</p>
+        <pre>
+            
+            /**
+             * httpclient不带参数的post请求
+             */
+            @GetMapping(value = "/sendWithPostNoParam")
+            public void sendWithPostNoParam(){
+        
+                //请求客户端
+                CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        
+                //请求方式
+                HttpPost httpPost = new HttpPost("http://localhost:8080/postWithNoParam");
+        
+                //请求配置
+                RequestConfig requestConfig = RequestConfig.custom()
+                        .setRedirectsEnabled(false)
+                        .setSocketTimeout(5000)
+                        .setConnectTimeout(5000)
+                        .setConnectionRequestTimeout(5000)
+                        .build();
+        
+                httpPost.setConfig(requestConfig);
+        
+                //响应模型
+                CloseableHttpResponse response = null;
+        
+                try {
+        
+                    response = httpClient.execute(httpPost);
+        
+                    HttpEntity httpEntity = response.getEntity();
+        
+                    System.out.println("请求状态: " + response.getStatusLine());
+                    System.out.println("请求内容: " + EntityUtils.toString(httpEntity));
+        
+                }catch (Exception e){
+        
+        
+                }finally {
+        
+                    try {
+        
+                        if (httpClient != null){
+                            httpClient.close();
+                        }
+                        if (response != null){
+                            response.close();
+                        }
+                    }catch (Exception e){
+        
+                    }
+                }
+            }
+        </pre>
+        
+        <p class="smallTitle" id="postParam">5. HttpClient的post请求(带普通参数)</p>
+        <p class="contents">接收端:</p>
+        <pre>
+            
+            /**
+             * 带普通参数的post请求
+             * @param name
+             * @param age
+             * @return
+             */
+            @PostMapping(value = "/postWithParam")
+            public Person postWithParam(String name, String age){
+        
+                Person p = new Person();
+                p.setName(name);
+                p.setAge(age);
+        
+                return p;
+            }
+        </pre>
+        <p class="contents">发送端:</p>
+        <pre>
+            
+            /**
+             * httpclient带普通参数的post请求
+             * @param name
+             * @param age
+             */
+            @GetMapping(value = "/sendWithPostParam")
+            public void sendWithPostParam(String name, String age){
+        
+                //客户端
+                CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        
+                //请求参数
+                List&lt;NameValuePair&gt; params = new ArrayList&lt;&gt;();
+                params.add(new BasicNameValuePair("name", name));
+                params.add(new BasicNameValuePair("age", age));
+        
+                //uri
+                URI uri = null;
+        
+                try {
+        
+                    uri = new URIBuilder().setScheme("http").setHost("localhost")
+                            .setPort(8080).setPath("postWithParam")
+                            .setParameters(params).build();
+                }catch (Exception e){
+        
+                }
+        
+                //请求方式
+                HttpPost httpPost = new HttpPost(uri);
+        
+                //响应模型
+                CloseableHttpResponse response = null;
+        
+                try {
+        
+                    response = httpClient.execute(httpPost);
+        
+                    //响应内容
+                    HttpEntity httpEntity = response.getEntity();
+        
+                    System.out.println("响应状态: " + response.getStatusLine());
+                    System.out.println("响应内容: " + EntityUtils.toString(httpEntity));
+        
+                }catch (Exception e){
+        
+                }finally {
+        
+                    try {
+        
+                        if (httpClient != null){
+                            httpClient.close();
+                        }
+                        if (response != null){
+                            response = null;
+                        }
+                    }catch (Exception e){
+        
+                    }
+                }
+            }
+        </pre>
+        <p class="contents">发送端(表单格式发送):</p>
+        <pre>
+            
+            /**
+             * httpclient的form post表单请求
+             * Content-Type:application/x-www-form-urlencoded
+             * @param name
+             * @param age
+             */
+            @GetMapping(value = "/sendWithPostForm")
+            public void sendWithPostForm(String name, String age){
+        
+                //客户端
+                CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        
+                //请求form表单
+                List&lt;NameValuePair&gt; params = new ArrayList&lt;&gt;();
+                params.add(new BasicNameValuePair("name", name));
+                params.add(new BasicNameValuePair("age", age));
+        
+                //表单请求
+                UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(params, StandardCharsets.UTF_8);
+        
+                //请求方式
+                HttpPost httpPost = new HttpPost("http://localhost:8080/postWithParam");
+                httpPost.setEntity(formEntity);
+        
+                //设置请求头为表单发送方式
+                httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        
+                //响应模型
+                CloseableHttpResponse response = null;
+        
+                try {
+        
+                    response = httpClient.execute(httpPost);
+        
+                    //响应内容
+                    HttpEntity httpEntity = response.getEntity();
+        
+                    System.out.println("表单请求响应状态: " + response.getStatusLine());
+                    System.out.println("响应内容: " + EntityUtils.toString(httpEntity, StandardCharsets.UTF_8));
+        
+                }catch (Exception e){
+        
+                }finally {
+                    try {
+        
+                        if (httpClient != null){
+                            httpClient.close();
+                        }
+                        if (response != null){
+                            response.close();
+                        }
+                    }catch (Exception e){
+        
+                    }
+                }
+            }
+
+        </pre>
+        
+        <p class="smallTitle" id="postObjectParam">6. HttpClient的post请求(带对象参数)</p>
+        <p class="contents">接收端:</p>
+        <pre>
+            
+            /**
+             * 带对象参数和普通参数的post请求
+             * @param user
+             * @param name
+             * @param age
+             * @return
+             */
+            @PostMapping(value = "/postWithObjectAndParam")
+            public Person postWithObjectAndParam(@RequestBody User user, String name, String age){
+                    
+                Person p = new Person();
+                p.setAge(age);
+                p.setName(name);
+                p.setUser(user);
+        
+                return p;
+            }
+
+        </pre>
+        <p class="contents">发送端:</p>
+        <pre>
+            
+              /**
+             * httpclient发送带有对象和普通参数的post请求
+             * Content-Type:application/json;charset=utf8
+             * @param user
+             * @param name
+             * @param age
+             */
+            @PostMapping(value = "/sendWithObjectParam")
+            public void sendWithObjectParam(@RequestBody User user, String name, String age){
+        
+                System.out.println("send: user = " + user + " name = " + name
+                + " age = " + age);
+        
+                //请求客户端
+                CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        
+                //普通参数 可以使用拼接的方式拼接成StringBuffer, 也可以使用URIBuilder构建
+                List&lt;NameValuePair&gt; params = new ArrayList&lt;&gt;();
+                params.add(new BasicNameValuePair("name", name));
+                params.add(new BasicNameValuePair("age", age));
+        
+                URI uri = null;
+        
+                try {
+        
+                    uri = new URIBuilder().setScheme("http").setHost("localhost")
+                            .setPort(8080).setPath("postWithObjectAndParam")
+                            .setParameters(params).build();
+                }catch (Exception e){
+        
+                }
+        
+                //请求方式
+                HttpPost httpPost = new HttpPost(uri);
+        
+                //对象参数
+                String userJsonStr = JSON.toJSONString(user);
+                StringEntity stringEntity = new StringEntity(userJsonStr, "UTF-8");
+                httpPost.setEntity(stringEntity);
+        
+                //带有对象的请求需要设置请求头Content-Type为application/json
+                httpPost.setHeader("Content-Type", "application/json;charset=utf8");
+        
+                //响应模型
+                CloseableHttpResponse response = null;
+        
+                try {
+        
+                    //发起请求
+                    response = httpClient.execute(httpPost);
+        
+                    //响应内容
+                    HttpEntity httpEntity = response.getEntity();
+        
+                    System.out.println("响应状态: " + response.getStatusLine());
+                    //设置Charset为UTF8解决乱码现象
+                    System.out.println("响应内容: " + EntityUtils.toString(httpEntity, StandardCharsets.UTF_8));
+                }catch (Exception e){
+        
+                }finally {
+        
+                    try {
+        
+                        if (httpClient != null){
+                            httpClient.close();
+                        }
+                        if (response != null){
+                            response.close();
+                        }
+                    }catch (Exception e){
+        
+                    }
+                }
+            }
+        </pre>
+
+        
+        <p class="smallTitle" id="file">7. HttpClient发送文件</p>
+        <p class="content">接收端:</p>
+        <pre>
+            
+            /***
+             * 接受文件  List&lt;MultipartFile&gt; multipartFiles
+             * @param name
+             * @param age
+             * @param files
+             * @return  接收到的文件的具体信息
+             */
+            @PostMapping(value = "/file")
+            public String postFile(@RequestParam(value = "name") String name,
+                                   @RequestParam(value = "age") String age,
+                                   @RequestParam(value = "files") List&lt;MultipartFile&gt; files) throws UnsupportedEncodingException {
+        
+                StringBuffer sb = new StringBuffer();
+        
+                //防止中文乱码
+                sb.append("\n");
+                sb.append("name=").append(name).append("\tage=").append(age);
+        
+                String fileName;
+                for (MultipartFile file : files){
+        
+                    sb.append("\n文件信息:\n");
+                    fileName = file.getOriginalFilename();
+        
+                    if (fileName == null){
+                        continue;
+                    }
+        
+                    fileName = URLDecoder.decode(fileName, "utf-8");
+                    sb.append("\t文件名:").append(fileName);
+                    sb.append("\t文件大小:").append(file.getSize()*1.0/1024.0).append("kb");
+                    sb.append("\tContentType:").append(file.getContentType());
+                    sb.append("\n");
+        
+                    try {
+        
+                        //将文件复制到桌面上的files文件夹下面
+                        File toFile = new File("/Users/macofethan/Desktop/files/" + fileName);
+                        file.transferTo(toFile);
+                    }catch (Exception e){
+        
+                        System.out.println("文件拷贝失败：" + e.getMessage());
+                    }
+                }
+        
+                return sb.toString();
+            }
+        </pre>
+        <p class="contents">发送端:</p>
+        <pre>
+            
+            /***
+             * httpclient发送文件file:
+             *  使用multipartEntityBuilder来添加二进制文件 以及普通text文本， 再转化为HttpEntity传输
+             */
+            @GetMapping(value = "/sendFile")
+            public void sendFile(){
+        
+                CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        
+                HttpPost httpPost = new HttpPost("http://localhost:8080/file");
+        
+                CloseableHttpResponse response = null;
+        
+                try {
+        
+                    MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+        
+                    //第一个文件
+                    String filekeys = "files";
+                    File file1 = new File("/Users/macofethan/Desktop/2.jpeg");
+                    multipartEntityBuilder.addBinaryBody(filekeys, file1, ContentType.MULTIPART_FORM_DATA, URLEncoder.encode(file1.getName(), "utf-8"));
+        
+                    //第二个文件 同一个filekeys 接收端用一个数组接受
+                    File file2 = new File("/Users/macofethan/Desktop/1.jpg");
+                    multipartEntityBuilder.addBinaryBody(filekeys, file2, ContentType.DEFAULT_BINARY, URLEncoder.encode(file2.getName(), "utf-8"));
+        
+                    //其他参数
+                    ContentType contentType = ContentType.create("text/plain", Charset.forName("UTF-8"));
+                    multipartEntityBuilder.addTextBody("name", "zhangsan", contentType);
+                    multipartEntityBuilder.addTextBody("age", "100", contentType);
+        
+                    HttpEntity httpEntity = multipartEntityBuilder.build();
+                    httpPost.setEntity(httpEntity);
+        
+                    //响应模型
+                    response = httpClient.execute(httpPost);
+        
+                    HttpEntity responseEntity = response.getEntity();
+        
+                    System.out.println("响应状态: " + response.getStatusLine());
+        
+                    if (responseEntity != null){
+        
+                        System.out.println("响应内容: " + EntityUtils.toString(responseEntity, StandardCharsets.UTF_8));
+                    }
+        
+        
+                }catch (Exception e){
+        
+        
+                }finally {
+        
+                    try {
+        
+                        if (httpClient != null){
+                            httpClient.close();
+                        }
+                        if (response != null){
+                            response.close();
+                        }
+                    }catch (Exception e){
+        
+                    }
+                }
+            }
+        </pre>
+        
+
+        <p class="smallTitle" id="stream">8. HttpClient发送流</p>
+        <p class="contents">接收端:</p>
+        <pre>
+
+            /***
+             * 接受httpclient传过来的二进制流
+             * @param name
+             * @param is
+             * @return
+             */
+            @PostMapping(value = "/is")
+            public String getInputStream(@RequestParam(value = "name") String name,
+                                         InputStream is) throws IOException {
+
+                StringBuffer sb = new StringBuffer();
+
+                sb.append("\nname=").append(name);
+                sb.append("\n输入流的内容为:");
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+
+                String line;
+                float length = 0;
+
+                while ((line = reader.readLine()) != null){
+
+                    length += line.length();
+                    sb.append(line);
+                }
+
+                System.out.println("接受到到的流长度: " + length/1024.0/1024.0 + "m");
+
+                return sb.toString();
+            }
+        </pre>
+        <p class="contents">发送端:</p>
+        <pre>
+            
+            /**
+             * httpclient发送二进制流
+             */
+            @GetMapping(value = "/sendIs")
+            public void sendInputStream(String name){
+        
+                CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        
+                List&lt;NameValuePair&gt; params = new ArrayList&lt;&gt;();
+                params.add(new BasicNameValuePair("name", name));
+        
+                URI uri = null;
+        
+                try {
+        
+                    uri = new URIBuilder().setScheme("http").setHost("localhost")
+                            .setPort(8080).setPath("is").setParameters(params).build();
+                }catch (Exception e){
+        
+                }
+        
+                HttpPost httpPost = new HttpPost(uri);
+        
+                CloseableHttpResponse response = null;
+        
+                try {
+        
+                    File file = new File("/Users/macofethan/Desktop/1.mp4");
+        
+                    InputStream is = new FileInputStream(file);
+        
+                    /**
+                     * 输入流 传输的长度最多1m 传输的ContentType
+                     */
+                    InputStreamEntity inputStreamEntity = new InputStreamEntity(is, 1024*1024, ContentType.DEFAULT_BINARY);
+        
+                    httpPost.setEntity(inputStreamEntity);
+        
+                    response = httpClient.execute(httpPost);
+        
+                    HttpEntity responseEntity = response.getEntity();
+        
+                    System.out.println("响应状态： " + response.getStatusLine());
+                    System.out.println("响应内容: " + EntityUtils.toString(responseEntity));
+        
+                }catch (Exception e){
+        
+                }finally {
+                    try {
+                        if (httpClient != null){
+                            httpClient.close();
+                        }
+                        if (response != null){
+                            response.close();
+                        }
+                    }catch (Exception e){
+        
+                    }
+                }
+            }
+        </pre>
+
+        <br>
+    </div>
+</div>
+</body>
+</html>

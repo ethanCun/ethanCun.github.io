@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>springboot aop+slf4j 配置自定义tomcat日志输出</title>
+        <link rel="icon" href="../../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">aop</span>
+    <span class="label label-danger">@slf4j</span>
+    <span class="label label-success">tomcat日志</span>
+    <span><a target="_blank" href="https://github.com/ethanCun/springboot/tree/master/demo-aop-log">demo地址</a> </span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">springboot aop+slf4j 配置自定义tomcat日志输出</p>
+    <hr />
+
+    <p class="smallTitle"><b>1. springboot引入aop</b></p>
+    <pre>
+        &lt;!-- 引入aop --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-aop&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+    </pre>
+    <p class="introduceText">spring-boot-starter-aop依赖了aspectjweaver，aspectjweaver包含了aop的核心功能</p>
+    <p class="introduceText">这里不需要加上@EnableAspectJAutoProxy， 因为springboot默认开启了aop：</p>
+    <pre>
+        #aop 默认是开启的
+        spring.aop.auto=true
+        # false: 使用默认java来时出现aop  true：使用CGLIB来实现aop
+        spring.aop.proxy-target-class=false
+    </pre>
+    <p class="introduceText">监控日志只需要在请求路径前打印请求的相关信息:</p>
+    <p class="introduceText"><b>日志切面:</b></p>
+    <pre>
+
+        package com.example.demoaoplog.Aspect;
+
+        import lombok.extern.slf4j.Slf4j;
+        import org.aspectj.lang.JoinPoint;
+        import org.aspectj.lang.annotation.Aspect;
+        import org.aspectj.lang.annotation.Before;
+        import org.aspectj.lang.annotation.Pointcut;
+        import org.springframework.stereotype.Component;
+        import org.springframework.web.context.request.RequestAttributes;
+        import org.springframework.web.context.request.RequestContextHolder;
+        import org.springframework.web.context.request.ServletRequestAttributes;
+
+        import javax.servlet.http.HttpServletRequest;
+        import java.io.BufferedReader;
+        import java.io.IOException;
+
+        //日志切面 打印请求地址 方式  参数等
+        @Component
+        @Aspect
+        @Slf4j
+        public class WebLogAspect {
+
+            //定义一个切点: controller1
+            @Pointcut("execution(public * com.example.demoaoplog.controller..*.*(..))")
+            public void logPoint(){};
+
+            //定义一个切点：controller2
+            @Pointcut("execution(public * com.example.demoaoplog.controller2..*.*(..))")
+            public void logPoint2(){};
+
+            @Before("logPoint() || logPoint2()")
+            public void logBefore(JoinPoint joinPoint){
+
+                //获取请求
+                RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+                HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
+
+                //记录请求的详细信息
+                log.info("请求地址: " + request.getRequestURL().toString());
+                log.info("请求方式: " + request.getMethod());
+                log.info("请求sessionId: " + request.getRequestedSessionId());
+                log.info("请求query参数: " + request.getQueryString());
+                log.info("请求map参数: " + request.getParameterMap().toString());
+                log.info("请求发起地址: " + request.getRemoteAddr());
+                log.info("包名：" + joinPoint.getSignature().getDeclaringTypeName() + " 方法名:" + joinPoint.getSignature().getName());
+
+                //获取body里面的数据
+                try {
+
+                    //这里的getReader方法在ResquestWrapper中已经被重写
+                    BufferedReader reader = request.getReader();
+
+                    String line = null;
+                    StringBuilder sb = new StringBuilder();
+                    while ((line = reader.readLine()) != null){
+
+                        sb.append(line);
+                    }
+
+                    log.info("请求body数据: " + sb.toString());
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                log.info(" 《《《 上条日志内容结束 》》》");
+                log.info("=================================================================");
+                log.info("《《《 下条日志内容开始 》》》\n");
+            }
+        }
+
+    </pre>
+    <p class="introduceText">需要注意的是获取请求体重数据的时候调用request.getReader()写入的数据为空,
+    这是由于拦截器中，request中getReader()和getInputStream()只能调用一次，到controller里数据就为空了，
+    解决的方式就是重写HttpServletRequestWrapper，在request.getInputStream()第一次调用的时候将请求体保存起来，
+    然后再在切面中获取这个保存的请求体。</p>
+    <p class="introduceText"><b>1.1 重写HttpServletRequestWrapper：</b></p>
+    <pre>
+
+        package com.example.demoaoplog.config;
+
+        import javax.servlet.ReadListener;
+        import javax.servlet.ServletInputStream;
+        import javax.servlet.http.HttpServletRequest;
+        import javax.servlet.http.HttpServletRequestWrapper;
+        import java.io.*;
+
+        //重写httpServeletRequest的getReader()方法
+        public class RequestWrapper extends HttpServletRequestWrapper {
+
+            private String body = "";
+
+            //重写构造方法 获取request里body的数据，赋值给body
+            public RequestWrapper(HttpServletRequest request){
+
+                super(request);
+
+                StringBuilder stringBuilder = new StringBuilder();
+                BufferedReader bufferedReader = null;
+                InputStream inputStream = null;
+
+                try {
+
+                    inputStream = request.getInputStream();
+
+                    if (inputStream != null){
+
+                        bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+                        char[] charBuffer = new char[128];
+                        int bytesRead = -1;
+                        while ((bytesRead = bufferedReader.read(charBuffer)) > 0){
+                            stringBuilder.append(charBuffer, 0, bytesRead);
+                        }
+                    }else {
+                        stringBuilder.append("");
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }finally {
+
+                    if (inputStream != null){
+                        try {
+                            inputStream.close();
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if (bufferedReader != null){
+                        try {
+                            bufferedReader.close();
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                body = stringBuilder.toString();
+            }
+
+            //重写getInputStream方法
+            @Override
+            public ServletInputStream getInputStream() throws IOException {
+
+                final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(body.getBytes());
+                ServletInputStream servletInputStream = new ServletInputStream() {
+
+                    @Override
+                    public boolean isFinished() {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean isReady() {
+                        return false;
+                    }
+
+                    @Override
+                    public void setReadListener(ReadListener listener) {
+
+                    }
+
+                    @Override
+                    public int read() throws IOException {
+                        return byteArrayInputStream.read();
+                    }
+                };
+
+                return servletInputStream;
+            }
+
+            //重写getReader()方法
+            @Override
+            public BufferedReader getReader() throws IOException {
+                return new BufferedReader(new InputStreamReader(this.getInputStream()));
+            }
+
+            public String getBody(){
+                return this.body;
+            }
+        }
+
+    </pre>
+
+    <p class="introduceText"><b>1.2 重写Filter，替换请求为HttpServletRequestWrapper：</b></p>
+    <pre>
+
+        package com.example.demoaoplog.config;
+
+        import javax.servlet.*;
+        import javax.servlet.http.HttpServletRequest;
+        import java.io.IOException;
+
+
+        //自定义filter替换为自定义的RequestWrapper
+        public class RepeatedlyReadFilter implements Filter {
+
+            @Override
+            public void init(FilterConfig filterConfig) throws ServletException {
+
+            }
+
+            @Override
+            public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
+                                 FilterChain filterChain) throws IOException, ServletException {
+
+                ServletRequest requestWrapper = null;
+
+                if(servletRequest instanceof HttpServletRequest) {
+                    requestWrapper = new RequestWrapper((HttpServletRequest)servletRequest);
+                }
+                if(requestWrapper == null) {
+                    filterChain.doFilter(servletRequest, servletResponse);
+                } else {
+                    filterChain.doFilter(requestWrapper, servletResponse);
+                }
+            }
+
+            @Override
+            public void destroy() {
+
+            }
+
+        }
+
+    </pre>
+
+    <p class="introduceText"><b>1.3 注册这个Filter到拦截器:</b></p>
+    <pre>
+
+        package com.example.demoaoplog.config;
+
+        import org.springframework.beans.factory.annotation.Configurable;
+        import org.springframework.boot.web.servlet.FilterRegistrationBean;
+        import org.springframework.context.annotation.Bean;
+        import org.springframework.stereotype.Component;
+        import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+        //SpringBoot拦截器获取Request的body数据
+        //问题分析：由于拦截器中，request中getReader()和getInputStream()只能调用一次，到controller里数据就为空了。
+        //解决办法：重写HttpServletRequestWrapper把request保存下来，然后通过过滤器把保存下来的request再填充进去
+        @Component
+        @Configurable
+        public class WebMvcConfig extends WebMvcConfigurerAdapter {
+
+            @Bean
+            public FilterRegistrationBean repeatedlyReadFilter(){
+
+                FilterRegistrationBean registration = new FilterRegistrationBean();
+                RepeatedlyReadFilter repeatedlyReadFilter = new RepeatedlyReadFilter();
+                registration.setFilter(repeatedlyReadFilter);
+                registration.addUrlPatterns("/*");
+
+                return registration;
+            }
+        }
+
+    </pre>
+
+    <p class="smallTitle"><b>2. 使用@Slf4j打印请求日志，并部署到tomcat</b></p>
+    <p class="introduceText">可以在application.properties中指定日志输出等级:</p>
+    <pre>
+
+        # 日志 debug info warn error
+        # 根路径输出info及以上级别日志
+        logging.level.root=info
+        logging.level.com.example.demoaoplog.controller=info
+        logging.level.com.example.demoaoplog.controller2=debug
+        # 文件位置
+        logging.file=./logs/aop.log
+        # 文件格式
+        logging.pattern.console=%d - %msg%n
+    </pre>
+    <p class="introduceText">也可以在logback-spring.xml中自定义日志输出位置(一般采用这种方式):</p>
+    <pre>
+        
+            &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+            &lt;configuration  scan="true" scanPeriod="10 seconds"&gt;
+    
+            &lt;contextName&gt;logback&lt;/contextName&gt;
+
+            &lt;!-- 格式化输出：%date表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %msg：日志消息，%n是换行符--&gt;
+            &lt;property name="LOG_PATTERN" value="%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" /&gt;
+        
+            <b>&lt;!-- 定义日志存储的路径，不要配置相对路径, logs文件在本地的话是项目根路径同级别目录，在tomcat中默认输出路径是tomcat的bin目录--&gt;</b>
+            &lt;property name="FILE_PATH" value="../proj-logs/demo-aop-log" /&gt;
+        
+            &lt;!-- 控制台输出日志 --&gt;
+            &lt;appender name="console" class="ch.qos.logback.core.ConsoleAppender"&gt;
+                &lt;!-- 日志级别过滤INFO以下 --&gt;
+                &lt;filter class="ch.qos.logback.classic.filter.ThresholdFilter"&gt;
+                    &lt;level&gt;DEBUG&lt;/level&gt;
+                &lt;/filter&gt;
+                &lt;encoder&gt;
+                    &lt;!-- 按照上面配置的LOG_PATTERN来打印日志 --&gt;
+                    &lt;pattern&gt;${LOG_PATTERN}&lt;/pattern&gt;
+                &lt;/encoder&gt;
+            &lt;/appender&gt;
+        
+            &lt;!--每天生成一个日志文件，保存30天的日志文件。rollingFile用来切分文件的 --&gt;
+            &lt;appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender"&gt;
+        
+                &lt;rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"&gt;
+        
+                    &lt;fileNamePattern&gt;${FILE_PATH}/info/demo-aop-log.%d{yyyy-MM-dd}.%i.log&lt;/fileNamePattern&gt;
+        
+                    &lt;maxHistory&gt;30&lt;/maxHistory&gt;
+        
+                    &lt;timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP"&gt;
+                        &lt;!-- 日志文件的最大大小 --&gt;
+                        &lt;maxFileSize&gt;2MB&lt;/maxFileSize&gt;
+                    &lt;/timeBasedFileNamingAndTriggeringPolicy&gt;
+        
+                    &lt;!-- 超出删除老文件 --&gt;
+                    &lt;totalSizeCap&gt;1GB&lt;/totalSizeCap&gt;
+                &lt;/rollingPolicy&gt;
+        
+                &lt;filter class="ch.qos.logback.classic.filter.LevelFilter"&gt;
+                    &lt;level&gt;INFO&lt;/level&gt;
+                    &lt;onMatch&gt;ACCEPT&lt;/onMatch&gt;
+                    &lt;onMismatch&gt;DENY&lt;/onMismatch&gt;
+                &lt;/filter&gt;
+        
+                &lt;encoder&gt;
+                    &lt;pattern&gt;${LOG_PATTERN}&lt;/pattern&gt;
+                &lt;/encoder&gt;
+            &lt;/appender&gt;
+        
+            &lt;!--每天生成一个日志文件，保存30天的日志文件。rollingFile用来切分文件的 --&gt;
+            &lt;appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender"&gt;
+        
+                &lt;rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"&gt;
+        
+                    &lt;fileNamePattern&gt;${FILE_PATH}/error/demo-aop-log.%d{yyyy-MM-dd}.%i.log&lt;/fileNamePattern&gt;
+        
+                    &lt;maxHistory&gt;30&lt;/maxHistory&gt;
+        
+                    &lt;timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP"&gt;
+                        &lt;!-- 日志文件的最大大小 --&gt;
+                        &lt;maxFileSize&gt;2MB&lt;/maxFileSize&gt;
+                    &lt;/timeBasedFileNamingAndTriggeringPolicy&gt;
+        
+                    &lt;!-- 超出删除老文件 --&gt;
+                    &lt;totalSizeCap&gt;1GB&lt;/totalSizeCap&gt;
+                &lt;/rollingPolicy&gt;
+                &lt;filter class="ch.qos.logback.classic.filter.LevelFilter"&gt;
+                    &lt;level&gt;ERROR&lt;/level&gt;
+                    &lt;onMatch&gt;ACCEPT&lt;/onMatch&gt;
+                    &lt;onMismatch&gt;DENY&lt;/onMismatch&gt;
+                &lt;/filter&gt;
+                &lt;encoder&gt;
+                    &lt;pattern&gt;${LOG_PATTERN}&lt;/pattern&gt;
+                &lt;/encoder&gt;
+            &lt;/appender&gt;
+        
+            &lt;!-- project default level --&gt;
+            &lt;logger name="net.sh.rgface.serive" level="DEBUG" /&gt;
+        
+            &lt;!-- 日志输出级别 --&gt;
+            &lt;root&gt;
+                &lt;level value="info" /&gt;
+                &lt;appender-ref ref="rollingFile" /&gt;
+                &lt;level value="error" /&gt;
+                &lt;appender-ref ref="error" /&gt;
+                &lt;level value="debug" /&gt;
+                &lt;appender-ref ref="console" /&gt;
+            &lt;/root&gt;
+        &lt;/configuration&gt;
+        
+    </pre>
+    <p class="introduceText">配置文件执行顺序: logback.xml 先于 application.properties 先于 logback-spring.xml，
+    因此application.properties中的配置会被logback-spring.xml覆盖。</p>
+
+    <p class="introduceText"><b>补充: 报错:javax.management.InstanceNotFoundException: org.springframework.boot:type=Admin,name=SpringApplication....</b></p>
+    <p class="introduceText">解决办法: Edit Configuration -> 去掉勾选Enable launch optimization 和
+     Enable JMX agent</p>
+    <br>
+</div>
+</body>
+</html>
