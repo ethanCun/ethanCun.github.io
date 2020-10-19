@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Servlet的监听器和过滤器</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Servlet的监听器和过滤器</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Servlet的监听器和过滤器</p>
+    <hr>
+
+    <p class="smallTitle">1. 监听器与过滤器简介</p>
+    <pre>
+
+        /**
+         *
+         * 1. 来自Servlet规范中的一组接口 8个接口
+         * 2. 专门用来监听【域对象生命周期变化】以及【域对象共享数据变化】
+         * 3. 监听器实现类，需要开发人员编写
+         *
+         * 关于域对象：
+         *  在某一个范围内，可以为servlet提供共享数据的对象
+         *
+         *  分类：
+         *  1. ServletContext: 也成application, 全局作用域对象, 在tomcat运行期间，
+         *      为所有的servlet提供数据；
+         *  2. HttpSession： 在一次会话过程中为参与本次会话的servlet提供数据共享；
+         *  3. HttpServletRequest：再一次请求过程中为参与本次请求的servlet提供所有数据共享，
+         *      比如请求转发；
+         *
+         */
+    </pre>
+
+    <p class="smallTitle">2. 过滤器javax.servlet.Filter</p>
+    <pre>
+
+        /**
+         *
+         * 过滤器：
+         *
+         *  1. 来自servlet规范中的一组接口；
+         *  2. filter可以在请求到达指定资源处理文件之前进行拦截，从而进行判断是否合法或者做增强
+         *  功能；
+         *  3. 过滤器的实现需要开发人员手动实现；
+         *
+         *  这个demo演示只有age大于18可以访问图片
+         */
+
+    </pre>
+
+    <p class="smallTitle">3. 过滤器实例</p>
+    <pre>
+
+        /**
+         * 这个filter过滤器用来设置所有servlet里面的request对象的chasetEncoding:
+         *  保证所有post请求， 请求体内的中文不至于乱码
+         */
+        public class filter02 implements Filter {
+
+            public filter02(){
+                System.out.println("filter02 构造器...");
+            }
+
+            //和listener一样， init方法必须要实现
+            @Override
+            public void init(FilterConfig filterConfig) {
+                System.out.println("filter02 init...");
+            }
+
+            @Override
+            public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+
+                request.setCharacterEncoding("utf-8");
+                response.setCharacterEncoding("utf-8");
+                response.setContentType("text/html;charset=utf-8");
+
+                //放行请求
+                chain.doFilter(request, response);
+            }
+
+            @Override
+            public void destroy() {
+                System.out.println("filter02 destory...");
+            }
+        }
+
+    </pre>
+
+    <p class="smallTitle">4. 监听器:ServletContextListener</p>
+    <pre>
+
+        //ServletContextListener监听器：用来监听全局作用域对象的创建销毁;
+        //比较常见的例子就是在init的时候先构建一些数据库连接池子供接下来使用；
+
+        public class listener01 implements ServletContextListener {
+
+            public listener01() {
+
+                System.out.println("listener01 构造函数...");
+            }
+
+            public void contextInitialized(ServletContextEvent sce) {
+
+                System.out.println("listener01 全局作用域对象创建...");
+            }
+
+            public void contextDestroyed(ServletContextEvent sce) {
+
+                System.out.println("listener01 全局作用域对象销毁....");
+            }
+
+        }
+    </pre>
+
+    <p class="smallTitle">5. 监听器：ServletContextAttributeListener</p>
+    <pre>
+
+        //ServletContextAttributeListener:用来监听servlet全局作用域中数据变化;
+
+        public class listener02 implements ServletContextAttributeListener{
+
+        public listener02(){
+
+            System.out.println("listener02 构造函数 ...");
+        }
+
+        @Override
+        public void attributeAdded(ServletContextAttributeEvent event) {
+
+            System.out.println("listener02 attributeAdded...: ");
+            System.out.println("name: " + event.getName());
+            System.out.println("value: " + event.getValue());
+        }
+
+        @Override
+        public void attributeRemoved(ServletContextAttributeEvent event) {
+
+            System.out.println("listener02 attributeRemoved...");
+            System.out.println("name: " + event.getName());
+            System.out.println("value: " + event.getValue());
+        }
+
+        @Override
+        public void attributeReplaced(ServletContextAttributeEvent event) {
+
+            System.out.println("listener02 attributeReplaced...");
+            System.out.println("name: " + event.getName());
+            System.out.println("value: " + event.getValue());
+        }
+
+
+        //全局作用域对象
+        getServletContext().setAttribute("name", "czy");
+        getServletContext().setAttribute("name", "zz");
+        getServletContext().removeAttribute("name");
+    }
+    </pre>
+
+    <p class="smallTitle">6. 监听器：HttpSessionListener, HttpSessionAttributeListener</p>
+    <pre>
+
+        HttpSessionListener: 监听会话的创建、销毁；
+        HttpSessionAttributeListener： 监听会话属性的添加、移除、替换；
+
+         //创建session
+        request.getSession().setAttribute("weight", 65);
+        //改变session value
+        request.getSession().setAttribute("weight", 40);
+        //移除session
+        request.getSession().removeAttribute("weight");
+    </pre>
+
+    <br>
+</div>
+
+
+
+</body>
+</html>
