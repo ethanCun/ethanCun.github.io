@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Servlet中常用对象</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Servlet中常用对象</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Servlet中的HttpServletRequest与HttpServletResponse</p>
+    <hr>
+
+    <p class="smallTitle">1. Servlet中常用的对象</p>
+    <pre>
+
+            servlet5中工具对象：
+
+            1. HttpServletRequest接口： 负责读取请求协议包；
+            2. HttpServletRespose接口： 负责将数据放入响应包中；
+            3. ServletContext接口： 可以为当前网站中的所有servlet提供共享数据；
+            4. Cookie对象：在一次会话过程中存储浏览器在服务端锁产生的私人数据；
+            5. HttpSession接口：在一次会话过程中存储浏览器在服务端锁产生的私人数据；
+
+    </pre>
+
+    <p class="smallTitle">2. HttpServletRespose设置输出文本</p>
+    <pre>
+
+        //HttpServletRespose是一个接口，由tomcat提供实现类，负责将响应数据写入响应头和响应体中，将response称为响应对象;
+        protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
+            throws javax.servlet.ServletException, IOException {
+
+
+            //注意：一定要在获取输出流之前设置字符集 GBK或者UTF-8正确显示中文
+            response.setCharacterEncoding("GBK");
+            //设置响应头中内容为UTF-8编码
+            response.setContentType("text/html;charset=utf-8");
+
+            PrintWriter writer = response.getWriter();
+
+            String str = "hello world";
+
+            writer.write(str);
+            writer.write(str, 1, 1);
+            //write方法只能将字符串或者unicode码写入到响应体中
+            //这里会输出2， 也就是值为50的unicode码
+            writer.write(50);
+            //print方法可以将任何类型写入浏览器，并保持原有的特征
+            writer.println(50);
+            //输出中文
+            //浏览器会根据响应头中的字符集进行解码，默认的字符集是iso-8859-1(中欧地区)，
+            //所以默认情况下浏览器解析中文会出错????
+            writer.println("世界你好");
+
+        }
+
+    </pre>
+
+    <p class="smallTitle">3. HttpServletResponse输出html</p>
+    <pre>
+
+        HttpServletResponse输出html标签:
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+            String str = "&lt;h1&gt;世界&lt;br/&gt;你好&lt;/h1&gt;";
+
+            response.setCharacterEncoding("UTF-8");
+
+            //浏览器会根据响应头中的内容类型处理响应体中的数据， 这里是html
+            //所以需要设置为text/html;charset=utf-8
+            response.setContentType("text/html; charset=utf-8");
+
+            PrintWriter writer = response.getWriter();
+            writer.print(str);
+        }
+    </pre>
+
+    <p class="smallTitle">4. HttpServletResponse输出图片</p>
+    <pre>
+
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+            //在响应头中设置浏览器不缓存图片
+            response.setHeader("Pragma", "no-cache");
+            response.setHeader("Cache-Control", "no-cache");
+            response.setDateHeader("Expires", 0);
+            response.setContentType("image/jpeg");
+
+            OutputStream os = response.getOutputStream();
+            File file = new File("/Users/macofethan/Desktop/WechatIMG8.jpeg");
+            FileInputStream fileInputStream = new FileInputStream(file);
+            byte[] bytes = readStream(fileInputStream);
+            response.getOutputStream().write(bytes);
+            os.close();
+        }
+
+        //读取管道中的数据
+        public byte[] readStream(InputStream inputStream) throws IOException {
+
+            ByteArrayOutputStream byteArrayOutputStream =
+                    new ByteArrayOutputStream();
+            int data = -1;
+
+            //读取输入流
+            while ((data = inputStream.read()) != -1){
+
+                byteArrayOutputStream.write(data);
+            }
+
+            return byteArrayOutputStream.toByteArray();
+        }
+    </pre>
+
+    <p class="smallTitle">5. 关于HttpServletRequest</p>
+    <pre>
+
+        httpservletrequest的实现类由tomcat实现;
+
+        //注意：post请求参数在请求体内是由request对象解析的，默认是iso-8859-1， 所以默认中文会乱码
+        //get请求参数在请求头内是由tomcat解析，默认utf-8，不会出现乱码；
+        //所以post请求需要设置一下character-encoding
+        request.setCharacterEncoding("UTF-8");
+
+        //获取请求头或者请求体中的所有参数
+        Enumeration&lt;String&gt; params = request.getParameterNames();
+
+        //打印请求行信息 url和method
+        //http://localhost:8001/a.do
+        System.out.println(request.getRequestURL());
+        ///a.do
+        System.out.println(request.getRequestURI());
+        //GET
+        System.out.println(request.getMethod());
+        // 就是edit configuration里面的application context
+        System.out.println(request.getContextPath());
+        //
+        System.out.println(request.getQueryString());
+
+        while (params.hasMoreElements()){
+
+            String next = (String)params.nextElement();
+
+            System.out.println(next);
+
+            //获取请求头或者请求体的字段value
+            System.out.println(request.getParameter(next));
+        }
+
+    </pre>
+
+    <p class="smallTitle">6. HttpServletRequest和HttpServletResponse的声明周期</p>
+    <pre>
+
+        request和response都是由tomcat创建, 每当tomcat收到一个请求协议包时，
+        tomcat就会为这个请求创建一个request和response对象;
+
+        根据请求行里面的method决定调用get还是post方法， 这个逻辑体现在service方法中；
+        请求断开后，由tomcat销毁request和response, 然后由tomcat将响应体推送到浏览器上;
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

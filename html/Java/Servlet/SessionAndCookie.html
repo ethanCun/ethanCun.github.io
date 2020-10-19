@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Servlet中的HttpSession与Cookie</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Servlet中的HttpSession与Cookie</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Servlet中的HttpSession与Cookie</p>
+    <hr>
+
+    <p class="smallTitle">1. Servlet中的Cookie</p>
+    <pre>
+
+        /**
+         *
+         * HttpSession:
+         * 定义： 一个浏览器与一个服务器一次完整的交流；
+         * 特点： 在一次会话过程中，可能会有过个请求，也可能会访问多个servlet;
+         *
+         *
+         * Cookie：
+         *  是servlet提供的一个工具类，在参与一次会话过程在servlet之间进行数据共享;
+         *  存储在浏览器上;
+         *
+         *  cookie实现不同servlet之间数据共享的大概流程:
+         *  首先浏览器请求第一个servlet，这个servlet会将浏览器的用户信息保存到cookie，
+         *  接着，tomcat将cookie放入响应头内，推送回浏览器；
+         *  浏览器下次请求另外一个servlet时，需要无条件地将上次服务端返回的cookie放入
+         *  请求头中发送给服务器, 这样另外一个servlet就可以读取cookie，从而
+         *  就实现了不同servlet之间的共享数据;
+         *
+         *  cookie的使用：
+         *      1. 创建cookie对象来保存用户信息：
+         *          Cookie cookie = new Cookie("name", "czy");
+         *          注意一个cookie中只能有一个键值对，只能存储string类型数据；
+         *      2. 将cookie写入响应头:
+         *          response.addCookie(cookie);
+         *      3. 从请求头中读取浏览器中发送过来的cookie：
+         *
+         * cookie的声明周期:
+         *
+         *      1. 创建： 手动new创建的时候产生；
+         *      2. 销毁： cookie保存在浏览器内存中， 默认浏览器关闭的时候，cookie被销毁；
+         *          人工干预下，可以将cookie保存在客户端计算机的硬盘上，也可以指定cookie的
+         *          保存时间；在存活时间内，关闭浏览器，关闭计算机不会销毁cookie；
+         *
+         *
+         *
+         */
+    </pre>
+
+    <p class="smallTitle">2. Cookie的具体操作</p>
+    <pre>
+
+        //设置Cookie
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+            //创建一个cookie，只能保存string类型，浏览器只能存储string
+            //一个cookie对应一个键值对
+            Cookie cookie = new Cookie("name", "czy");
+            //手动指定cookie在硬盘中的存活时间，关闭浏览器和计算机不会销毁cookie
+            //单位为second
+            cookie.setMaxAge(10);
+            //cookie放入响应头
+            response.addCookie(cookie);
+
+            Cookie cookie1 = new Cookie("age", "100");
+            response.addCookie(cookie1);
+        }
+
+        //获取Cookie
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+            //获取浏览器发送过来的cookie
+            Cookie[] cookies = request.getCookies();
+
+            for (Cookie cookie : cookies) {
+
+                System.out.println(cookie.getName());
+                System.out.println(cookie.getValue());
+            }
+        }
+
+    </pre>
+
+    <p class="smallTitle">3. Servlet中的HttpSession</p>
+    <pre>
+
+        /**
+         *
+         * 关于HTTPSession：
+         *
+         *      实现类有tomcat实现，作用类似Cookie，用来在不同的servlet之间提供共享数据；
+         *      开发人员习惯于将HttpSession所修饰的对象成为会话作用域对象，也可用叫做session对象;
+         *
+         *  httpsession与cookie相同点：
+         *      1. 都是用于不同的servlet之间共享数据；
+         *
+         *      不同点：
+         *          1. cookie保存在浏览器内存或者客户端硬盘中， httpsession保存在服务端计算机内存中；
+         *          2. cookie只能保存string类型的数据，httpsession可以存储任意类型数据；
+         *          3. 一个cookie只能存储一个键值对，一个httpsession对象可以存储任意个数的键值对；
+         *
+         *
+         *      1. httpsession创建：
+         *      tomcat不会主动为当前浏览器创建对应的httpsession对象， 只有浏览器向servlet
+         *      提出要求时，才会创建session；
+         *
+         *      request.getSession();
+         */
+    </pre>
+
+    <p class="smallTitle">4. HttpSession的具体操作</p>
+    <pre>
+
+          HttpSession设值：
+          protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+            //1. 创建session request.getSession()相当于request.getSession(true)
+            //如果当前浏览器在服务端已经有了一个session对象，此时tomcat需要将这个对象返回
+            //如果当前浏览器没有seesion对象，此时tomcat需要创建一个session；
+            //request.getSession();
+            //request.getSession(true);
+
+            //如果当前浏览器在服务端已经有了一个session对象，此时tomcat需要将这个对象返回
+            //如果没有就返回mull
+            //request.getSession(false);
+
+            //比如当客户身份已经合法，就可以使用getsession(false),
+            // 如果没有验证就需要用getsession(true);
+
+            //tomcat是如何将浏览器和session对象关联起来：
+            //在tomcat创建了session对象时，会为session对象生成一个唯一的id，然后将JSESSIONID
+            //放入响应头推送到浏览器的cookie上面，下次在请求的时候会将JSESSIONID发送给servlet;
+
+            //如何使用httpsession：
+            //在本次会话过程中，需要为本次会话中的其他sevlet提供数据；
+            request.getSession().setAttribute("height", 170);
+            //获取会话
+            //request.getSession().getAttribute("height");
+        }
+
+        HttpSession获取值：
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+            //获取session
+            System.out.println(request.getSession().getAttribute("height"));
+        }
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

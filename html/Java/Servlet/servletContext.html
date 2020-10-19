@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>使用ServletContext实现Servlet之间的数据共享</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">使用ServletContext实现Servlet之间的数据共享</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">使用ServletContext实现Servlet之间的数据共享</p>
+    <hr>
+    
+    <p class="smallTitle">1. ServletContext数据共享简介</p>
+    <pre>
+        
+        servlet共享数据方式一： tomcat放数据
+        在开始开发前，将需要的共享数据写入web.xml
+        流程：
+        在网站启动时，tomcat会为当前网站创建一个全局作用域对象，
+        然后将web.xml中配置的共享数据添加到全局作用域对象;
+        在网站运行时，当某一个servlet需要共享数据时，可以从全局对象中
+        索要数据: request.getServletContext().getInitParamter("共享数据名称 ");
+    
+        servlet共享数据方式二：某一个servlet放数据:
+        tomcat运行期间，由某一个servlet放入数据到servletContext中, 供其他servlet使用,
+        request.getServletContext().setAttribute(key, value);
+        其他servlet获取数据:
+        request.getServletContext().getAttribute(key);
+    </pre>
+    
+    <p class="smallTitle">2. 开始开发前,共享数据放到web.xml中</p>
+    <pre>
+        
+          &lt;context-param&gt;
+            &lt;!--共享数据的key--&gt;
+            &lt;param-name&gt;name&lt;/param-name&gt;
+                      &lt;!--共享数据的value--&gt;
+            &lt;param-value&gt;张三&lt;/param-value&gt;
+          &lt;/context-param&gt;
+
+        获取数据:
+        String name = servletContext.getInitParameter("name");
+
+    </pre>
+
+    <p class="smallTitle">3. tomcat运行期间, 共享数据</p>
+    <pre>
+
+        //设置数据
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+            //这个servlet提供共享数据， 然后在/a.do里面获取
+            request.getServletContext().setAttribute("age", 20);
+        }
+
+        //获取数据
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+            //获取当前工程中的全局作用域对象 servletContext 一般也叫做application
+            ServletContext servletContext = request.getServletContext();
+
+            Integer age = (Integer)servletContext.getAttribute("age");
+        }
+
+    </pre>
+    
+</div>
+
+<br>
+</body>
+</html>

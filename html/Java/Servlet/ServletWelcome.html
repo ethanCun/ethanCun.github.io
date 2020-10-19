@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Servlet欢迎页、重定向与请求转发</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Servlet欢迎页、重定向与请求转发</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Servlet欢迎页、重定向与请求转发</p>
+    <hr>
+    
+    <p class="smallTitle">1. Servlet欢迎页的加载顺序</p>
+    <pre>
+        
+        当浏览器向tomcat发送默认请求，也就是请求根路径：localhost:8001/时，
+        会去加载welcome-file-list中的文件,
+        如果没有设置的话，tomcat会找到自己conf目录下的web.xml， 在web.xml中有如下默认配置文件，
+        tomcat会根据这个顺序加载对应的欢迎页：
+        
+        &lt;welcome-file-list&gt;
+            &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+            &lt;welcome-file&gt;index.htm&lt;/welcome-file&gt;
+            &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+        &lt;/welcome-file-list&gt;
+    
+        默认欢迎页面可以是静态文件，也可以是动态文件，如servlet，
+        但这个servlet一定得是一个查询servlet，并且在运行时不需要得到浏览器发送的参数;
+    </pre>
+
+    <p class="smallTitle">2. 请求重定向</p>
+    <pre>
+
+        /**
+         *
+         *  重定向：
+         *      浏览器第一次请求到/a, tomcat将/b推送给浏览器，浏览器自动请求/b，这个过程就是重定向;
+         *
+         *  重定向特征：
+         *      1. 重定向发生在浏览器上；
+         *      2. 浏览器发送的请求次数有多次；
+         *      3. 地址栏中内容会发生变化， /a变成了/b， 因为是改变的浏览器的location;
+         *      4. 浏览重定向时候发送的请求一定是get请求，因为改变location都是get请求;
+         *      5. 重定向时，可以访问多个网站的资源文件，不一定是同一个网站的内容；
+         *
+         *
+         *  重定向使用场景：
+         *      多个功能， 如添加数据后再查询数据, 也就是一个servlet完成功能后再重定向
+         *      到另一个servlet完成其他功能；
+         *
+         *
+         */
+
+        @Override
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+            //执行完这个servlet01，再去执行servlet02
+            System.out.println("/a");
+
+            //重定向: 将地址写入响应头的Location中
+            resp.sendRedirect("/b");
+        }
+
+    </pre>
+
+    <p class="smallTitle">3. 请求转发</p>
+    <pre>
+
+        /**
+         *
+         * 这个servlet演示请求转发:
+         *
+         *  请求转发原理： servlet03在完成任务后，代替用户在调用一次servlet04，
+         *      而不是将/d发送给浏览器，这个过程叫做请求转发；
+         *
+         *  请求转发特征：
+         *      1. 请求转发只能在同一个网站操作，不能转发到其他网站；
+         *      2. 请求转发浏览器地址栏不会发生变化;
+         *      3. 浏览器只发生一次请求，调用多个sevlet；
+         *      4. 请求转发发生在服务器；
+         *      5. 请求转发的方式，也就是servlet04接受的请求方式就是浏览器请求的方式，
+         *          因为他们共用一个请求包，
+                        requestDispatcher.forward(req, resp);
+                6. 请求转发中各个sevlet如何实现数据共享：
+                    1. servletContext全局作用域对象
+         *
+         *
+         *   请求转发不适合场景：
+         *      重定向适合的他都不适合， 比如添加后在去另外一个sevlet中查询数据,
+         *      因为如果浏览器刷新后，会再次调用接口刷新，多次调用多个sevlet；
+         *
+         *   请求转发适合场景:
+         *      查询sevlet调用jsp
+         *
+         */
+
+        @Override
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+            //数据共享： 1.servletContext 2. httpSession, 3. 公用请求作用域对象request
+            getServletContext().setAttribute("name", "czy");
+            req.getSession().setAttribute("age", 100);
+            req.setAttribute("sex", "男");
+
+            //请求转发, 创建一个资源申请报告对象RequestDispatcher
+            //然后将申请报告推送给tomcat，同时将servlet03拥有的request和response一起交
+            //给tomcat
+            RequestDispatcher requestDispatcher = req.getRequestDispatcher("/d");
+
+            //tomcat在接受到申请之后就会将请求转发给/d
+            requestDispatcher.forward(req, resp);
+        }
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

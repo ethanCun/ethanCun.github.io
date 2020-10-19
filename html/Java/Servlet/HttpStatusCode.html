@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Servlet的运行状态码</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Servlet的运行状态码</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Servlet的运行状态码</p>
+    <hr>
+
+    <p class="smallTitle">1. http状态码简介</p>
+    <pre>
+
+        /**
+         *
+         * 这个servlet演示http状态码:
+         *
+         *  1. http状态码由三个数字组成；
+         *  2. http状态码由tomcat负责创建生成；
+         *  3. http状态码由tomcat写入状态行；
+         *  4. http状态码通知浏览器在收到tomcat响应后的行为，以及通知浏览器本次无法通过服务的原因；
+         *
+         *
+         *  种类：
+         *  1. 1xx：通知浏览器本次返回的资源并不完整，需要浏览器继续向服务器发送申请；
+         *  2. 2xx：通知浏览器将一个完整的文件推送给了浏览器；
+         *          200： 拿到了文件并且没有任何问题，
+         *  3. 3xx：表示服务器推送给浏览器的不是资源文件，而是一个网址，需要浏览器在
+         *      收到这个请求后，立刻向这个网址发送请求；
+         *      302: 转发到另一个地址response.sendRedirect(url)
+         *  4. 4xx: 通知浏览器本次服务端没有办法提对应的资源服务；
+         *      404：服务器没有正确的资源文件；
+         *      405: 服务端有请求对应的servlet，但servlet不负责对一个的请求，比如发送
+         *      的是post请求，但servlet中只要get方法；
+         *  5. 5xx: 通知浏览器本次服务器没有正确响应的原因是，服务器运行时异常；
+         *      500: 运行时异常;
+         *
+         */
+    </pre>
+
+    <p class="smallTitle">2. http状态码实例</p>
+    <pre>
+
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+            //3xx: 将网址写入响应头的location中, 返回302表示要求浏览器立即去
+            //请求Response Header里面的Location
+            response.sendRedirect("http://www.baidu.com");
+        }
+
+        //没有get请求， 只有post请求， 会报405
+        @WebServlet(name = "servlet02", urlPatterns = "/b")
+        public class servlet02 extends HttpServlet {
+            protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+            }
+        }
+
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+            String a=null;
+            // java.lang.NumberFormatException: null； 服务器内部错误500
+            Integer b = Integer.valueOf(a);
+        }
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

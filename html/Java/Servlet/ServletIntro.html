@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Servlet</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Servlet注册、优先级、生命周期</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Servlet</p>
+    <hr>
+    
+    <p class="smallTitle">1. 注册Servlet</p>
+    <pre>
+        
+        需要引入包：
+            &lt;dependency&gt;
+              &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+              &lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+              &lt;version&gt;4.0.1&lt;/version&gt;
+            &lt;/dependency&gt;
+        
+        1. 继承于HttpServlet， 实现doGet和doPost请求，实际是调用doService(),然后根据请求方法判断；
+        2. 注册Servlet的两种形式：
+            1. 注解形式: @WebServlet(name = "MyServlet02", urlPatterns = {"/a", "b"})
+            2. web.xml中注册：
+        <!-- xml形式注册servlet， 也可以使用@WebServlet注解注册servlet -->
+        &lt;servlet&gt;
+            &lt;servlet-name&gt;myservlet1&lt;/servlet-name&gt;
+            &lt;servlet-class&gt;com.servlet.controller.MyServlet1&lt;/servlet-class&gt;
+        &lt;/servlet&gt;
+        &lt;servlet-mapping&gt;
+            &lt;servlet-name&gt;myservlet1&lt;/servlet-name&gt;
+            &lt;url-pattern&gt;/a.do&lt;/url-pattern&gt;
+        &lt;/servlet-mapping&gt;
+        
+    </pre>
+    
+    <p class="smallTitle">2. Servlet url-pattern的写法</p>
+    <pre>
+        
+         1. 资源路径与servlet url-pattern完全一致： 比如/d.do这个必须完全匹配d.do,
+         /a/d.do不会被调用;
+         2. 前置条件请求路径： 请求资源路径是以url-pattern内容为开头的， 比如/abc/*
+         可以响应所有以abc开头的请求；
+         3. 后置条件请求路径： 请求资源路径是以url-pattern内容为结尾的，比如*.do可以
+         响应所有以do结尾的请求, 后置条件请求路径不能以/开头；
+         4. 通配符： /*可以响应所有的请求
+        
+        具体匹配：
+        &lt;servlet&gt;
+            &lt;servlet-name&gt;MyServlet04&lt;/servlet-name&gt;
+            &lt;servlet-class&gt;com.servlet.controller.MyServlet04&lt;/servlet-class&gt;
+        &lt;/servlet&gt;
+        &lt;servlet-mapping&gt;
+            &lt;servlet-name&gt;MyServlet04&lt;/servlet-name&gt;
+            &lt;url-pattern&gt;.do&lt;/url-pattern&gt;
+        &lt;/servlet-mapping&gt;
+        
+        前置匹配：
+        &lt;servlet&gt;
+            &lt;servlet-name&gt;MyServlet04&lt;/servlet-name&gt;
+            &lt;servlet-class&gt;com.servlet.controller.MyServlet04&lt;/servlet-class&gt;
+        &lt;/servlet&gt;
+        &lt;servlet-mapping&gt;
+            &lt;servlet-name&gt;MyServlet04&lt;/servlet-name&gt;
+            &lt;url-pattern&gt;/abc/*&lt;/url-pattern&gt;
+        &lt;/servlet-mapping&gt;
+        
+        后置匹配：
+        &lt;servlet&gt;
+            &lt;servlet-name&gt;MyServlet04&lt;/servlet-name&gt;
+            &lt;servlet-class&gt;com.servlet.controller.MyServlet04&lt;/servlet-class&gt;
+        &lt;/servlet&gt;
+        &lt;servlet-mapping&gt;
+            &lt;servlet-name&gt;MyServlet04&lt;/servlet-name&gt;
+            &lt;url-pattern&gt;/*.do&lt;/url-pattern&gt;
+        &lt;/servlet-mapping&gt;
+        
+        通配符
+        &lt;servlet&gt;
+            &lt;servlet-name&gt;MyServlet04&lt;/servlet-name&gt;
+            &lt;servlet-class&gt;com.servlet.controller.MyServlet04&lt;/servlet-class&gt;
+        &lt;/servlet&gt;
+        &lt;servlet-mapping&gt;
+            &lt;servlet-name&gt;MyServlet04&lt;/servlet-name&gt;
+            &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+        &lt;/servlet-mapping&gt;
+        
+    </pre>
+
+    <p class="smallTitle">3. Servlet url-pattern的优先级</p>
+    <pre>
+
+        访问http://localhost:8001/abc/a.do
+        优先级从高到底：
+        指定匹配符/abc/a.do > 前置匹配符/abc/*  > 通配符/* > 后置匹配符*.do
+        可以简单记忆为：
+            完整路径匹配 大于 目录匹配 大于 后缀名匹配
+    </pre>
+
+    <p class="smallTitle">4. Servlet的生命周期</p>
+    <pre>
+
+        &lt;!--
+
+            关于servlet生命周期：
+            1. 在tomcat运行期间，一个servlet只能实例化一个对象，也就是一次tomcat运行后
+            ，只调用一次构造方法，这样可以节约内存；
+            2. servlet在tomcat关闭时，由tomcat来销毁所有的servlet对象；
+        --&gt;
+
+        &lt;servlet&gt;
+            &lt;servlet-name&gt;servlet02&lt;/servlet-name&gt;
+            &lt;servlet-class&gt;com.servlet.controller.servlet02&lt;/servlet-class&gt;
+            &lt;!--
+                    Servlet默认实在请求开始时候初始化的，也就是走构造函数；
+                    控制在tomcat启动的时候就创建servlet, 只要大于0就可以
+              --&gt;
+            &lt;load-on-startup&gt;10&lt;/load-on-startup&gt;
+        &lt;/servlet&gt;
+        &lt;servlet-mapping&gt;
+            &lt;servlet-name&gt;servlet02&lt;/servlet-name&gt;
+            &lt;url-pattern&gt;/b.do&lt;/url-pattern&gt;
+        &lt;/servlet-mapping&gt;
+
+    </pre>
+
+    <br>
+</div>
+    
+</body>
+</html>
