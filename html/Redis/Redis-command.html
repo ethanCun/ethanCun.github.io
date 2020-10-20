@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Redis常使用的基本命令</title>
+        <link rel="icon" href="../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Redis常使用的基本命令</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Redis常使用的基本命令</p>
+    <hr>
+
+    <p class="smallTitle">1. Redis的作用于使用场景</p>
+    <pre>
+
+        1. 作为数据库;
+        2. 作为缓存；
+        3. 作为消息中间件MQ;
+    </pre>
+
+    <p class="smallTitle">2. Redis命令</p>
+    <pre>
+
+         *  redis有16个数据库， 默认index是0， 也就是默认使用第0个数据库;
+         *
+         * 1. 切换数据库 select 0;
+         * 2. 查看数据库数据量： dbsize
+         * 3. 查看所有的key: keys *
+         * 4. 清空全部： flushall
+         *    清除当前数据库： flushdb
+         * 5. 判断key是否存在： exists name
+         * 6. 将当前数据库的数据移动到另一个数据库: move name 1 （move key 数据库index）
+         * 7. 设置过期时间： expire name 10 (name 10s后过期自动删除)
+         * 8. 产看剩余时间： ttl name (单位s) -2代表已删除
+         * 9. 查看key对应的数据类型： type key;
+         * 10. 删除key： del name;
+
+    </pre>
+
+    <p class="smallTitle">3. Redis为什么这么快？</p>
+    <pre>
+
+        Redis严格来说并不是单线程的，他在保存数据rdb\aof的时候会fork一个子线程来负责存储数据；
+        它之所以快是因为：redis将所有的数据放在内存中，基本上没有cpu多线程上下文切换耗时，也没有和
+        频繁磁盘的io交互，只有在保存数据的时候回将数据写入到.dump或者.aof中，这些是可以忽略的；
+    </pre>
+
+    <br>
+</div>
+
+
+</body>
+</html>

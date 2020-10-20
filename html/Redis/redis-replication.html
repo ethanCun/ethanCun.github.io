@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>redis的主从复制</title>
+        <link rel="icon" href="../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">redis的主从复制</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">redis的主从复制</p>
+    <hr>
+    
+    <p class="smallTitle">1. redis的主从复制简介</p>
+    <pre>
+        
+         * redis的主从复制：
+         *
+         *  数据的复制是单向的， 都是主机赋值到从机，减少主机压力；
+         *  master以写为主，slave以读为主； 一般至少需要一主二从；
+         *  单台redis内存超过20g就应该搭建redis集群，在真实的项目中不能使用单机redis；
+        
+         *  作用：
+         *      1. 数据热备份；
+         *      2. 故障恢复；
+         *      3. 负载均衡；
+         *      4. 高可用；
+        
+         *  配置集群环境：
+         *  只配置从库，不用配置主库，默认每一台redis都是一个主节点；
+        
+    </pre>
+    
+    <p class="smallTitle">2. redis主从复制常用命令</p>
+    <pre>
+        
+         *      1. 查看当前库的信息：
+         *          127.0.0.1:6379> info replication
+         *          # Replication
+         *          role:master 角色
+         *          connected_slaves:0 从机数量
+         *          master_replid:58d606aee3b85a4fd720603229b11cce92b4798b
+         *          master_replid2:0000000000000000000000000000000000000000
+         *          master_repl_offset:0
+         *          second_repl_offset:-1
+         *          repl_backlog_active:0
+         *          repl_backlog_size:1048576
+         *          repl_backlog_first_byte_offset:0
+         *          repl_backlog_histlen:
+         *
+         *   复制3个redis.conf， 修改端口，pid名字，logfile名字，dump.rdb名称
+         *
+         *   redis集群主机不用配置， 默认都是主机， 让一台主机变从机：
+         *
+         *      使用命令配置:
+         *      1. slaveof 127.0.0.1 6379; 6379为主机端口
+         *      2. 使用info replication查看机器信息
+         *
+         * //主机
+         *  127.0.0.1:6379> info replication
+         *  # Replication
+         *  role:master //角色为主机
+         *  connected_slaves:1 //从机数量
+         *  slave0:ip=127.0.0.1,port=6380,state=online,offset=140,lag=0
+         *  master_replid:10e94a862059032cfbcf60f41d5fd4c0589d2b91
+         *  master_replid2:0000000000000000000000000000000000000000
+         *  master_repl_offset:140
+         *  second_repl_offset:-1
+         *  repl_backlog_active:1
+         *  repl_backlog_size:1048576
+         *  repl_backlog_first_byte_offset:1
+         *  repl_backlog_histlen:140
+         *  127.0.0.1:6379>
+         *
+         *  //从机：
+         *  127.0.0.1:6380> info replication
+         *  # Replication
+         *  role:slave 角色为从机
+         *  master_host:127.0.0.1
+         *  master_port:6379
+         *  master_link_status:up
+         *  master_last_io_seconds_ago:2
+         *  master_sync_in_progress:0
+         *  slave_repl_offset:140
+         *  slave_priority:100
+         *  slave_read_only:1
+         *  connected_slaves:0
+         *  master_replid:10e94a862059032cfbcf60f41d5fd4c0589d2b91
+         *  master_replid2:0000000000000000000000000000000000000000
+         *  master_repl_offset:140
+         *  second_repl_offset:-1
+         *  repl_backlog_active:1
+         *  repl_backlog_size:1048576
+         *  repl_backlog_first_byte_offset:1
+         *  repl_backlog_histlen:140
+        
+        
+         *  真实的主从配置应该在配置文件中配置：
+         *      # replicaof &lt;masterip&gt;(主机的ip) &lt;masterport&gt;(主机的端口)
+         *      # masterauth &lt;master-password&gt; (主机的密码)
+         *
+         *  主机负责写， 从机负责读， 主机中的所有信息和数据都会自动被从机保存;
+         *  从机写数据会直接报错；
+         *
+         *  测试：
+         *      1. 主机断开连接， 从机依旧是连接到主机的，但是没有写操作了， 主机重新连接后，
+         *      从机仍然可以正常工作， 但是这个时候是不能从机自动选举的；
+         *      2. 从机断开， 如果之前是用命令行设置的主机，下次从机重连后，会自动变为主机，
+         *      不会同步主机在断开的这段时间内更新的数据, 重新使用slaveof命令变为主机的
+         *      从机后， 会自动同步主机的数据；
+         *
+         *      全量复制： 从机发送同步命令，主机收到后，将整个数据文件从传送到从机，完成同步；
+         *      增量赋值： 主机收到命令，一次同步到从机；
+         *
+         *
+         *  手动使从机变为主节点： slaveof no one
+    </pre>
+    
+    <br>
+</div>
+</body>
+</html>

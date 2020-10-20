@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>redis.conf配置文件</title>
+        <link rel="icon" href="../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">redis.conf配置文件</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">redis.conf配置文件</p>
+    <hr>
+
+    <p class="smallTitle">1. redis.conf配置文件详解</p>
+    <pre>
+
+         * 1. 通过配置文件启动 redis-server redis.conf的路径
+         *
+         * 2. 配置文件单位对大小写不敏感
+         *
+         * 3. 可以包含其他子配置文件：
+         *      # include /path/to/local.conf
+         *      # include /path/to/other.conf
+         *
+         * 4. network: bind 127.0.0.1 默认绑定本机地址
+         *
+         * 5. 保护模式： protected-mode yes
+         *
+         * 6. 端口：port 6379
+         *
+         * 7. 以守护进程方式运行： # 守护进程， 开启后台运行， 默认是no
+         *      daemonize yes
+         *
+         * 8. 配置文件的pid文件，如果以后台方式运行，需要指定pid文件
+         *      pidfile /var/run/redis_6379.pid
+         *
+         * 9. 日志级别： debug(调试)， verbose(debug), notice(生产)，warning(非常重要)
+         *      loglevel notice
+         *
+         * 10. logfile "" :  日志的文件名， 为空是标准输出
+         *
+         * 11. databases 16： 默认的数据库数量
+         *
+         * 12. 是否总是显示logo: always-show-logo yes
+         *
+         * 13. 快照： 在规定的时间内执行了多少次操作会执行持久化到文件.rdb, .aof
+         *          save 900 1 # 900s内至少一个key修改了1次，就进行持久化操作
+         *          save 300 10
+         *          save 60 10000
+         *      redis是内存数据库， 如果内有持久化， 数据断电即失；
+         *
+         * 14. 持久化如果出错还继续工作： stop-writes-on-bgsave-error yes
+         *
+         * 15. 是否压缩rdb文件：rdbcompression yes 会消耗cpu资源
+         *
+         * 16. 保存rdb文件的时候进行错误的校验：rdbchecksum yes
+         *
+         * 17. dir ./： rdb文件保存的目录
+         *
+         * 18. security密码操作：
+         *      config set requirepass xxx
+         *      config get requirepass
+         *      auth xxx //验证密码
+         *
+         * 19. clients限制：
+         *      maxclients 10000： 设置最大的客户端连接数
+         *
+         * 20. memory manager:
+         *      maxmemory &lt;bytes&gt;: 设置redis最大内存
+         *      maxmemory-policy noeviction: 内存到达最大值的处理策略， 默认是noeviction，
+         *              永远不过期，直接报错
+         *
+         * 21. 是否开启aof模式， 默认不开启，因为默认使用的rdb:
+         *      appendonly no
+         *      appendfilename "appendonly.aof": aof文件名称
+         *      appendfsync everysec: 每秒执行同步， 可能会丢失这一秒的数据
+         *
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

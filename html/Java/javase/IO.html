@@ -30,6 +30,8 @@
         <li><a href="#InputStreamReader">5. 转换流：将字节流转换为字符流</a> </li>
         <li><a href="#DataInputStream">6. 数据专属流</a> </li>
         <li><a href="#PrintStream">7. 标准输出流</a> </li>
+        <li><a href="#ObjectStream">8. 对象专属流</a> </li>
+        <li><a href="#IOProperties">9. IO流和Properties联合使用</a> </li>
     </ul>
 
     <p class="smallTitle" id="intro">1. IO流简介</p>
@@ -430,6 +432,71 @@
                 }
             }
         }
+
+    </pre>
+
+    <p class="smallTitle" id="ObjectStream">8. 对象专属流</p>
+    <pre>
+
+        1. 序列化： 从内存中将对象模型转换成二进制原始数据保存到磁盘，ObjectOutputStream, writeObject()；
+            ObjectOutputStream objOutputStream = new ObjectOutputStream(new FileOutputStream(file));
+            objOutputStream.writeObject(obj);
+
+        2. 反序列化： 将磁盘中的二进制原始数据重新转换成对象模型数据，ObjectInputStream，readObject()；
+            ObjectInputStream objInputStream = new ObjectInputStream(fileInputStream);
+            objInputStream.readObject();
+
+        反序列化的前提：
+　　　　　　1 类必须实现 Seriaizable
+　　　　　　2 必须存在类对应的 class 文件
+          3 必须添加一个唯一的序列化号
+
+        1. 没有序列化时会报错： readObject方法声明抛出了ClassNotFoundException(class文件找不到异常)
+        2. implements java.io.Serializable; 是一个标志性接口，虚拟机会将实现了这个接口的类序列化，
+            底层调用了WriteObject0()，对于Object类型的数据，会判断时候实现了Serializable; 实现了
+            就继续往下执行，没有实现就抛出异常；
+        3. 添加序列化版本号的原因： 没有添加时，jvm会自动产生一个版本号，只要修改了文件，就会产生新的版本号，
+            因此每次改变文件后，序列化版本号就发生了变化，而jvm确定一个类是根据类名和序列化版本号来确定的，
+            所以下次反序列化的时候就会报错，所以必须自己添加一个固定国的序列化版本号：
+            private static final long serialVersionUID = 1L;
+
+            idea工具生成序列化版本号： settings -> editor -> inspections -> 选择Serializable class
+                without 'serialVersionUID'
+
+
+    </pre>
+
+    <p class="smallTitle" id="IOProperties">9. IO流和Properties联合使用</p>
+    <pre>
+
+           public static void main(String[] args) throws IOException {
+
+                /**
+                 * Properties: 继承hashtable, 一般用来保存配置信息
+                 */
+
+                //key=value形式的文件， 一般以Properties文件结尾
+                //配置文件中key重复， 会自动将后面的value覆盖前面的value
+                //配置文件中key和value之间最好不要用空格
+                //配置文件中key和value之间可以用=号和：号，一般用等号
+                FileInputStream fileInputStream =
+                        new FileInputStream("/Users/macofethan/Desktop/javase/javase01/src/main/java/com/ethan/IO流/io流和Properties联合使用/User");
+
+                Properties properties = new Properties();
+
+                //加载文件中的数据, 这个就是spring中import的原理
+                properties.load(fileInputStream);
+
+                for (Object key : properties.keySet()) {
+                    System.out.println(key + " = " + properties.get(key));
+                }
+            }
+
+            User文件:
+            name=zz
+            age=12
+            sex=man
+            hh:00
 
     </pre>
 

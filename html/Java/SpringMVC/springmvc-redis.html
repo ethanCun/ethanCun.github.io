@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>springmvc集成redis</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">springmvc集成redis</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">springmvc集成redis</p>
+    <hr>
+    
+    <p class="smallTitle">1. 导入包</p>
+    <pre>
+        
+        &lt;dependency&gt;
+          &lt;groupId&gt;junit&lt;/groupId&gt;
+          &lt;artifactId&gt;junit&lt;/artifactId&gt;
+          &lt;version&gt;4.11&lt;/version&gt;
+          &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+          &lt;version&gt;5.2.8.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+          &lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+          &lt;version&gt;4.0.1&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        //redis
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework.data&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-data-redis&lt;/artifactId&gt;
+          &lt;version&gt;1.6.2.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        //jedis连接池
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.apache.commons&lt;/groupId&gt;
+          &lt;artifactId&gt;commons-pool2&lt;/artifactId&gt;
+          &lt;version&gt;2.9.0&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        //jedis
+        &lt;dependency&gt;
+          &lt;groupId&gt;redis.clients&lt;/groupId&gt;
+          &lt;artifactId&gt;jedis&lt;/artifactId&gt;
+          &lt;version&gt;2.9.0&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+          &lt;artifactId&gt;jackson-core&lt;/artifactId&gt;
+          &lt;version&gt;2.11.1&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+          &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;
+          &lt;version&gt;2.11.1&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;mysql&lt;/groupId&gt;
+          &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+          &lt;version&gt;8.0.15&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-test&lt;/artifactId&gt;
+          &lt;version&gt;5.2.8.RELEASE&lt;/version&gt;
+          &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+
+    </pre>
+    
+    <p class="smallTitle">2. 注解形式配置文件</p>
+    <pre>
+        
+        @Configuration
+        @EnableCaching //开启redis缓存
+        public class RedisConfig {
+        
+            @Bean
+            public JedisConnectionFactory jedisConnectionFactory(){
+        
+                JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
+                jedisConnectionFactory.setHostName("127.0.0.1");
+                jedisConnectionFactory.setPort(6379);
+                jedisConnectionFactory.setPassword("xxxxx");
+        
+                return jedisConnectionFactory;
+            }
+        
+            @Bean("myRedisTemplate")
+            public RedisTemplate&lt;String, Object&gt; redisTemplate(RedisConnectionFactory redisConnectionFactory){
+        
+                RedisTemplate&lt;String, Object&gt; redisTemplate =
+                        new RedisTemplate&lt;&gt;();
+        
+                StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+        
+                //value jackson序列化
+                Jackson2JsonRedisSerializer serializer = new Jackson2JsonRedisSerializer&lt;Object&gt;(Object.class);
+                ObjectMapper om = new ObjectMapper();
+        
+                //objectmapperr序列化
+                om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+                om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+                om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                //// 设置 SerializationFeature.FAIL_ON_EMPTY_BEANS 为 false
+                om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                serializer.setObjectMapper(om);
+        
+                //解决redis终端查看乱码问题
+                redisTemplate.setKeySerializer(stringRedisSerializer);
+                redisTemplate.setHashKeySerializer(stringRedisSerializer);
+        
+                redisTemplate.setValueSerializer(serializer);
+                redisTemplate.setHashValueSerializer(serializer);
+        
+                redisTemplate.setConnectionFactory(redisConnectionFactory);
+        
+                //设置完后， 设置所有的properties
+                redisTemplate.afterPropertiesSet();
+        
+                return redisTemplate;
+            }
+        
+            //redis缓存管理器
+            @Bean
+            public CacheManager cacheManager(RedisTemplate redisTemplate){
+        
+                return new RedisCacheManager(redisTemplate);
+            }
+        
+        }
+    </pre>
+    
+    <p class="smallTitle">3. xml形式配置文件</p>
+    <pre>
+        
+        &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+        &lt;beans xmlns="http://www.springframework.org/schema/beans"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:context="http://www.springframework.org/schema/context"
+               xmlns:cache="http://www.springframework.org/schema/cache"
+               xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd"&gt;
+
+            &lt;context:property-placeholder location="classpath:redis.properties" /&gt;
+        
+            &lt;!--
+                开启redis缓存
+            --&gt;
+            &lt;cache:annotation-driven /&gt;
+        
+            &lt;bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig"&gt;
+        
+                &lt;property name="maxTotal" value="4096"/&gt;
+                &lt;property name="maxIdle" value="128"/&gt;
+                &lt;property name="maxWaitMillis" value="3000"/&gt;
+                &lt;property name="testOnBorrow" value="true" /&gt;
+                &lt;property name="testOnReturn" value="true" /&gt;
+            &lt;/bean&gt;
+        
+        
+            &lt;bean id="connectionFactory"
+                  class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"&gt;
+                
+                &lt;property name="hostName" value="${redis.host}" /&gt;
+                &lt;property name="port" value="${redis.port}" /&gt;
+                &lt;property name="password" value="${redis.pass}" /&gt;
+                &lt;property name="poolConfig" ref="poolConfig" /&gt;
+            &lt;/bean&gt;
+            
+            &lt;bean id="myRedisTemplate"
+                  class="org.springframework.data.redis.core.RedisTemplate"&gt;
+                &lt;property name="connectionFactory" ref="connectionFactory" /&gt;
+                &lt;property name="keySerializer"&gt;
+                    &lt;bean class="org.springframework.data.redis.serializer.StringRedisSerializer" /&gt;
+                &lt;/property&gt;
+                &lt;property name="valueSerializer"&gt;
+                    &lt;bean class="org.springframework.data.redis.serializer.StringRedisSerializer" /&gt;
+                &lt;/property&gt;
+                &lt;property name="hashKeySerializer"&gt;
+                    &lt;bean class="org.springframework.data.redis.serializer.StringRedisSerializer" /&gt;
+                &lt;/property&gt;
+                &lt;property name="hashValueSerializer"&gt;
+                    &lt;bean class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer" /&gt;
+                &lt;/property&gt;
+            &lt;/bean&gt;
+
+        
+            &lt;!--
+                redisCacheManager
+            --&gt;
+            &lt;bean id="cacheManager" class="org.springframework.data.redis.cache.RedisCacheManager"&gt;
+        
+                &lt;!--
+                    redistemplate
+                --&gt;
+                &lt;constructor-arg index="0" type="org.springframework.data.redis.core.RedisOperations"&gt;
+        
+                    &lt;ref bean="myRedisTemplate" /&gt;
+                &lt;/constructor-arg&gt;
+        
+                &lt;!--
+                    过期时间
+                --&gt;
+                &lt;property name="defaultExpiration" value="10000"/&gt;
+        
+                &lt;!--
+                    支持事务
+                --&gt;
+                &lt;property name="transactionAware" value="true" /&gt;
+        
+            &lt;/bean&gt;
+        
+        &lt;/beans&gt;
+
+    </pre>
+
+    <p class="smallTitle">4. 使用redisTemplate</p>
+    <pre>
+
+            @Autowired
+            @Qualifier("myRedisTemplate")
+            private RedisTemplate&lt;String, Object&gt; redisTemplate;
+
+            @ResponseBody
+            @RequestMapping(value = "/test01", produces = {"text/html;charset=utf-8"})
+            @Cacheable(cacheNames = {"aa", "bb"}, key = "'aa'")
+            public String test(){
+
+                System.out.println(this.redisTemplate.opsForValue().get("name"));
+                this.redisTemplate.opsForList().leftPushAll("list", "a", "b", "c");
+                System.out.println(this.redisTemplate.opsForList().range("list", 0, -1));
+                this.redisTemplate.opsForSet().add("user1", "a", "b", "c");
+                this.redisTemplate.opsForSet().add("user2", "b", "c", "d");
+                System.out.println(this.redisTemplate.opsForSet().intersect("user1", "user2"));
+                System.out.println(this.redisTemplate.opsForSet().difference("user2", "user1"));
+                System.out.println(this.redisTemplate.opsForSet().union("user2", "user1"));
+
+                this.redisTemplate.opsForValue().set("这是中文", "这是中文");
+
+                return "这是缓存的数据";
+            }
+    </pre>
+
+    <p class="smallTitle">5. 解决redis-cli中文乱码的问题</p>
+    <pre>
+
+         * redis终端value乱码： 可以使用redis-cli --raw查看；
+         * redis终端key乱码： 可以使用key为string的解析器；
+    </pre>
+    
+    
+    
+    <br>
+</div>
+</body>
+</html>

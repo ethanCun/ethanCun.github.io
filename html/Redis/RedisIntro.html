@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>NoSql以及Redis安装、性能测试</title>
+        <link rel="icon" href="../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">NoSql以及Redis安装、性能测试</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">NoSql以及Redis安装、性能测试</p>
+    <hr>
+
+    <p class="smallTitle">1. NoSQL简介以及类型</p>
+    <pre>
+
+        NoSQL: not only sql;  特点： 查询熟读快， 无固定结构化
+        NoSQL的四大分类：
+            1. kv键值对型数据库： redis, Tair, memcache;
+            2. 文档型数据库： 类似kv型， 但value是结构化数据，所以查询性能相对较低, MongoDB,ConthDB;
+            3. 列存储数据库(大数据开发)：HBase;
+            4. 图关系型数据库：Neo4j,InfoGrid
+
+    </pre>
+
+    <p class="smallTitle">2. Redis介绍以及种类</p>
+    <pre>
+
+        全称：remote dictionary server， 远程服务字典；
+        c编写，提供多种语言的编写api；
+        免费和开源；
+        效率高，高速缓存：读：11万每秒， 写：8万每秒；
+
+        作用：
+        1.内存存储(内存是断电即失的)，支持持久化(rdb, aof)，主从复制；
+        2.发布订阅系统；
+        3.地图信息分析；
+        4.计时器，计数器(浏览量incre, decre)
+        等等...
+
+        特点：
+        1.多样的数据类型(string, list, set, hash, zset, geo, hyperloglog, bitmap)；
+        2.持久化；
+        3.没有原子性的事务
+
+        官网：<a target="_blank" href="https://redis.io/">https://redis.io/</a>
+        中文网：<a target="_blank" href="http://redis.cn/">http://redis.cn/</a>
+
+    </pre>
+
+    <p class="smallTitle">3. Linux安装Redis</p>
+    <pre>
+
+         *    1. 下载redis，上传到linux /opt目录，tar -zxvf 解压;
+         *    2. 安装gcc-c++: yum install gcc-c++ (需要网络);
+         *    3. make编译（可以多次make）；
+         *    4. 编译安装： make install;
+         *    5. redis的默认安装路径： /usr/local
+         *    6. 启动redis-server, 默认不是后台启动, 全启动命令： redis-server path to redis.conf;
+         *    # redis.config守护进程， 开启后台运行， 默认是no
+         *      daemonize yes
+         *    7. 启动redis-cli客户端来连接redis服务, 全命令： redis-cli -p 6379;
+         *
+         *     设置密码： config set requirepass xxx
+         *     验证密码： auth xxx
+         *    8. 关闭redis：
+         *      1. lsof -i:6379;  kill pid
+         *      2. 列出所有进程再过滤： ps -ef | grep redis
+         *      3. 在cli中运行shutdown
+
+    </pre>
+
+    <p class="smallTitle">4. redis-benchmark性能测试</p>
+    <pre>
+
+         * redis-benchmark 性能测试工具：
+         *
+         * -h: 指定主机
+         * -p: 指定端口
+         * -c: 指定并发连接数
+         * -n: 指定请求数
+         *
+         * 测试命令： 100个并发连接 每个并发100000个请求
+         *  redis-benchmark -h 127.0.0.1 -p 6379 -c 100 -n 100000
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

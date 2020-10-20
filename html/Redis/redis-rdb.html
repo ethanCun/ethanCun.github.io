@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>redis的rdb存储方式</title>
+        <link rel="icon" href="../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">redis的rdb存储方式</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">redis的rdb存储方式</p>
+    <hr>
+
+    <p class="smallTitle">1. rdb简介</p>
+    <pre>
+
+        全称： redis database;
+
+        1. redis默认的是rdb，因此不需要修改redis.conf配置文件；
+        2. rdb保存的文件是dump.rdb；
+
+
+         *  过程：redis会单独创建fork一个子进程来进行持久化，会先将数据写入到一个临时文件中，
+         *      待持久化过程都结束了，在用这个临时文件替换上次持久化号的文件；
+         *      因此rdb的缺点是最后一次持久化的数据可能会会丢失；
+         *      整个持久化的过程中主线程是不进行任何任何io操作的，这样就保证了高性能；
+         *      如果需要大规模数据的恢复，且对数据恢复的完整性不是很高，rdb比aof要高效；
+
+        rdb的相关配置在redis.conf的snapshotting中:
+         *  1. 持久化策略： 900秒内至少一个key改变1次就执行持久化
+         *      save 900 1
+         *      save 300 10
+         *      save 60 10000
+
+    </pre>
+
+    <p class="smallTitle">2. 触发rdb保存的时机</p>
+    <pre>
+
+         *      rdb触发机制：
+         *       1. 满足save条件；
+
+                    持久化策略： 900秒内至少一个key改变1次就执行持久化
+                     *      save 900 1
+                     *      save 300 10
+                     *      save 60 10000
+
+         *       2. 执行flushall；
+         *       3. 退出redis，也会产生rdb文件；
+    </pre>
+
+    <p class="smallTitle">3. 恢复rdb中的数据</p>
+    <pre>
+
+         *  2. 如何恢复rdb文件：
+         *      1.只需要将rdb文件放到redis启动目录就行，redis启动的时候会自动检查dump.rdb
+         *      并恢复其中的数据；
+         *      2.查看需要存在的位置： config get dir
+         *          127.0.0.1:6379> config get dir
+         *              1) "dir"
+         *              2) "/Users/macofethan" # 如果这个路径下存在dump.rdb， redis启动的时候
+         *                  就会恢复这里的数据;
+    </pre>
+
+    <p class="smallTitle">4. rdb的优点与缺点</p>
+    <pre>
+
+         *  3. rdb优点：
+         *      1. 适合大规模的数据恢复， 速度比aof快， 因此生产环境需要对dump.rdb备份；
+         *      2. 对数据完整性要求不高，可以使用rdb恢复；
+         *     rdb缺点：
+         *      1. 需要一定的时间间隔才能出发持久化，最后一次修改的数据可能会丢失；
+         *      2. fork进程的时候，会占用一定的内存空间；
+
+    </pre>
+
+    <br>
+</div>
+</body>
+</html>

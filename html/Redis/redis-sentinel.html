@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>redis的哨兵模式</title>
+        <link rel="icon" href="../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">redis的哨兵模式</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">redis的哨兵模式</p>
+    <hr>
+    
+    <p class="smallTitle">1. redis的哨兵模式简介</p>
+    <pre>
+        
+          redis的哨兵模式, 自动选举从机为主机：
+         
+          原理，哨兵给主机发送命令连接， 如果没法应就代表主机挂了, 投票量达到匹配号的数量就选择另外一台机器为主机，
+          达到高可用的目的；
+        
+          多哨兵模式： 哨兵之间可以互相监控;
+    </pre>
+    
+    <p class="smallTitle">2. 哨兵模式启动与配置</p>
+    <pre>
+        
+        哨兵模式启动： redis-sentinel sentinel.conf
+        
+         * sentinel.conf关键配置：
+         *
+         *  mymaster: 定义主机的名称， 后面重新选举后主机也是这个名称
+         *  1: 多少个哨兵认为主机挂了， 主机就应该是挂了，就是多哨兵的票数
+         *  sentinel monitor &lt;master-name&gt; &lt;ip&gt; &lt;redis-port&gt; &lt;quorum&gt;
+         *  sentinel monitor mymaster 127.0.0.1 6380 1
+         *
+         *  配置主从密码验证：
+         *  sentinel auth-pass &lt;master-name&gt; &lt;password&gt;
+         *  sentinel auth-pass mymaster xxx
+         *
+         *  注意：
+         *      主机挂掉， 重新选举新的从机为主机后， 再次启动的主机会变为从机；
+    </pre>
+
+    <p class="smallTitle">3. 哨兵模式的优点与缺点</p>
+    <pre>
+
+         *  哨兵模式的优点：
+         *
+         *      1. 基于主从复制， 所有的主从复制优点它全有，而且是自动的；
+         *      2. 故障可以转移， 高可用性；
+         *      3. 哨兵模式是主从复制的升级；
+         *
+         *    缺点：
+         *
+         *      redis不好在线扩容， 只能做横向扩展， 配置信息麻烦;
+    </pre>
+    
+    <br>
+</div>
+</body>
+</html>

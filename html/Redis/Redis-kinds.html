@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Redis中的8大数据类型</title>
+        <link rel="icon" href="../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Redis中的8大数据类型</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Redis中的8大数据类型</p>
+    <hr>
+
+    <ul>
+        <li><a href="#intro">1. Redis中的8大数据类型</a> </li>
+        <li><a href="#string">2. String类型</a> </li>
+        <li><a href="#hash">3. hash</a> </li>
+        <li><a href="#list">4. list</a> </li>
+        <li><a href="#set">5. set</a> </li>
+        <li><a href="#zset">6. zset</a> </li>
+        <li><a href="#gepspatial">7. geospatial</a> </li>
+        <li><a href="#hyperloglog">8. Hyperloglog</a> </li>
+        <li><a href="#bitmap">9. bitmap</li>
+    </ul>
+
+    <p class="smallTitle" id="intro">1. Redis中的8大数据类型</p>
+    <pre>
+
+        redis的五大基本数据类型：
+            字符串（strings）， 散列（hashes） ， 列表（lists）， 集合（sets）， 有序集合（sorted sets/zset）
+        redis的三大特殊类型：
+            bitmaps（位图）， hyperloglogs（基点） 和 地理空间（geospatial） 索引半径查询
+    </pre>
+
+    <p class="smallTitle" id="string">2. String类型</p>
+    <pre>
+
+         //string应用场景： 计数器incr decr, 分布式锁setnx, 不常变化的值
+
+         *  1. append name z; 返回拼接后的长度, 如果name不存在就相当于set name z;
+         *  2. strlen name; 获取字符串长度;
+         *  3. 截取子串： substr name 起始index 长度;
+         *          getrange key start end; start为0，end为-1代表获取整个字符串
+         *     替换子串：setrange key offset value; offset为替换位置， value为替换的内容；
+         *  4. 增加1： incr age;
+         *     减少1： decr age;
+         *     设置步长增加：incrby age 10;
+         *     设置步长减少：decrby age 10;
+         *  5. setex key seconds value(set with expire): 设值的同时设置过期时间
+         *     setnx key value(set if not exists): 当前不存在就设值, 在分布式锁汇总会经常
+         *     使用;
+         *  6. 一次性设置或获取多个值：
+         *      mset key value [key value ...]
+         *      msetnx name zzz age 100 是一个原子性的操作， 要么一起成功， 要么一起失败
+         *      mget key [key ...]
+         *  7. set get复合命令：
+         *      getset key value; 先获取值，再设置值，因此返回的是原来的值；
+         *  8. rediskey的复用：
+         *      mset user:1:name zhangsan user:1:age 20; 对应id为1的user对象的信息；
+         *      mset article:1:views 10; 对应的id为1的文章的查看次数；
+         *
+         *
+    </pre>
+
+    <p class="smallTitle" id="hash">3. hash</p>
+    <pre>
+
+        hash应用： 变更数据，变更用户信息 hset user:1:name czy, hash更适合存储对象， string更加适合存储字符串
+
+         *      set命令都是h开头, hash本质和string没有太大的区别，还是一个简单的key-value,
+         *      指示这个value是key-value;
+         *     1. 设值： hset key field value [field value ...]
+         *              hmset key field value [field value ...]
+         *     2. 取值： hget key field
+         *              hmget key field [field ...]
+         *              hgetall key; 获取所有key value
+         *              hkeys key; 获取所有的key
+         *     3. 长度： hlen key
+         *     4. 删除： hdel key field [field ...]
+         *     5. 判断hash中的值是否存在：hexists key field
+         *     6. 步长增加：hincrby key field increment
+         *        步长减少：hincrby key field -increment
+         *     7. 不存在就设值：hsetnx key field value; 分布式锁
+
+    </pre>
+
+    <p class="smallTitle" id="list">4. list</p>
+    <pre>
+
+         list应用： 消息队列， 非实时的排行榜， 最新列表， list和sorted set比较的优势在于：
+            list占用的内存更少;
+
+         *      list实际上是一个链表，before node after, left, right都可以插入值；
+         *      如果key不存在，就创建新的链表， 如果存在，新增内容；如果移除了所有值，就成了
+         *      空链表，也代表不存在，在两边插入或者改动值，效率最高；
+         *      list类型可以当成栈(先进后出)或者是队列(先进先出)来使用；
+         *      list类型的命令都是以l开头的；
+         *    1. lpush key element [element ...]: 将一个或者多个值，放入到列表头部;
+         *        rpush key element [element ...]:  将一个或者多个值，放入到列表尾部;
+         *    2. lrange key start stop: 获取list中的值， 最后一个下标为-1， 倒数第二个为-2..
+         *    3. 移除左边第一个元素：lpop key;
+         *       移除右边第一个元素：rpop key;
+         *       移除指定的值：lrem key count element; 移除count个element
+         *    4. 通过下标获取值：lindex key index; 从坐标开始算起
+         *    5. 获取list长度: llen key;
+         *    6. 通过下标截取指定长度的值： ltrim key start stop； 获取start到stop位置的元素；
+         *    7. 将一个list右边的元素移动到另外一个list中：
+         *          rpoplpush source destination；
+         *    8. 更新list值：lset key index element; key不存在时，会报错；
+         *    9. 判断list是否存在： exists key;
+         *    10. 插入值： linsert key BEFORE|AFTER pivot(指定的值) element;
+    </pre>
+
+    <p class="smallTitle" id="set">5. set</p>
+    <pre>
+
+            set应用： 推荐好友， 共同关注， 共同点赞
+         *      set中的值不能重复，set命令都是s开头;
+         *     1. 添加元素： sadd key member [member ...]
+         *     2. 查看set的值： smembers key
+         *     3. 判断元素是不是在set中：sismember key member
+         *     4. 获取set元素个数： scard key
+         *     5. 移除set中的元素：srem key member [member ...]
+         *     6. 随机获取指定个数的元素(抽奖):srandmember key [count]
+         *     7. 随机删除集合中的元素：spop key [count]
+         *     8. 将指定值移除到另外一个集合中：smove source destination member
+         *     9. 获取集合的差值： sdiff key [key ...] 推荐好友
+         *        获取集合的交集： sinter key [key ...] 共同好友， 共同关注
+         *        获取集合的并集： sunion key [key ...]
+    </pre>
+
+    <p class="smallTitle" id="zset">6. zset</p>
+    <pre>
+
+        zset应用： 实时排行榜， 权重消息(根据score设置消息的权重)，
+
+         *      1. 设值：zadd key [NX|XX] [CH] [INCR] score member [score member ...]
+         *      2. 取值：zrange key start stop [WITHSCORES] 按照score升序获取值
+         *              zrevrange key start stop [WITHSCORES] 按照score降序获取值
+         *      3. 根据score排序：zrangebyscore key min max [WITHSCORES] [LIMIT offset count]
+         *          zrangebyscore salary -inf +inf; 升序排列-inf, +inf表示负无穷正无穷;
+         *          zrangebyscore salary -inf +inf withscores; 输出score
+         *          zrangebyscore salary (2312 10000 withscores; 表示2323&lt;score&lt;=10000的所有值
+         *      4. 移除元素： zrem key member [member ...]
+         *      5. 获取有序集合中的个数： zcard key
+         *      6. 获取指定score范围的元素个数：zcount key min max
+
+    </pre>
+
+    <p class="smallTitle" id="gepspatial">7. geospatial</p>
+    <pre>
+
+         *      1. 添加地理位置：geoadd key longitude(经度) latitude(纬度) member [longitude latitude member
+         *          注意： 两级(南北极)无法添加， 可以通过java程序一次性导入；
+         *          有效的经度： -180到180； 有效的纬度：-85.05到85.05
+         *          geoadd china:city 120.16 30.24 hangzhou 108.96 34.26 xian
+         *      2. 获取指定位置的经度和纬度：geopos key member [member ...]
+         *          geopos china:city beijin xian
+         *      3. 获取两个点之间的距离: geodist key member1 member2 [m|km|ft|mi]
+         *          geodist china:city beijin xian km; 单位默认是m
+         *      4. 获取在指定范围内的元素：
+         *          georadius key longitude latitude radius m|km|ft|mi [WITHCOORD] [WITHDIST] [WITHHASH] [COUNT count]
+         *          例子： georadius china:city 110 30 1000 km;
+         *              georadius china:city 110 30 1000 km withcoord withdist count 2;
+         *          withdist: 到经纬度为100， 30这个点的直线距离;
+         *          withcoord: 点的经纬度
+         *      5. 以某一个元素为中心，查询其他元素到它的距离以及他们的坐标等信息:
+         *          GEORADIUSBYMEMBER key member radius m|km|ft|mi [WITHCOORD] [WITHDIST] [WITHHASH] [COUNT count]
+         *          例子：georadiusbymember china:city beijin 10000 km withdist；
+         *      6. 返回元素的11为hash值：geohash key member [member ...]
+         *          降维打击：将二维的经纬度转化为11位的hash字符串， 字符串越接近，表示距离
+         *          越近：geohash china:city beijin
+
+
+         *    geo的底层实现原理是zset，因此可以使用zset命令来操作geo, 比如：
+         *    zrange china:city 0 -1
+         *    zrem china:city beijin
+
+    </pre>
+
+    <p class="smallTitle" id="hyperloglog">8. Hyperloglog</p>
+    <pre>
+
+         Hyperloglog:基数(不重复的元素的个数) {1,2,3,4,5,3} 基数为5
+         *      redis2.8.9版本就更新了Hyperloglog
+         *
+         *     1. 新增： pfadd key element [element ...]
+         *             PFADD czy a b c c d d e f g f g g b v
+         *     2. 数量： pfcount key [key ...]
+         *             PFCOUNT czy
+         *     3. 合并： pfmerge destkey sourcekey [sourcekey ...]
+         *             pfmerge czy3 czy czy2
+         *
+         *
+         *     应用： 1个人访问一个网站多次还是当成1次访问， 传统的方式用set覆盖， 因为他是不重复的，
+         *     但是set方式保存大量的用户id就会占用大量内存，我们的目的是为了基数，而不是保存用户id;
+         *     Hyperloglog优点： 占用的内存是固定的且占用内存非常小， 2^64, 只需非12kb内存；
+         *     Hyperloglog缺点： 存在0.81%的错误率, 因此如果不允许错误率就是用set;
+
+    </pre>
+
+    <p class="smallTitle" id="bitmap">9. bitmap</p>
+    <pre>
+
+         *  8. bitmap: 位存储， 如何帅选用户是最快的？ 按位筛选。
+         *
+         *      Bitmaps位图，数据结构！是使用二进制来记录，只有0和1两个状态
+         *
+                setbit daka 20180101 1; //打卡
+                setbit daka 20180102 0; //未打卡
+                bitcount daka;
+
+         *      应用： 统计活跃用户数量, 登录和未登录的用户， 统计打卡未打开， 像这种只有
+         *      两个状态的可以使用位图来统计；
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

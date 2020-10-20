@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>redis的消息发布与订阅</title>
+        <link rel="icon" href="../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">redis的消息发布与订阅</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">redis的消息发布与订阅</p>
+    <hr>
+
+    <p class="smallTitle">1. redis发布与订阅介绍</p>
+    <pre>
+
+        redis可以实现消息的发布和订阅，只是不常用， 日常中都用消息队列来实现这个效果;
+
+        消息发布中publish ------ 消息队列(频道channel) ------  消息订阅者client
+
+        publish --- channel -- subscribe --- 退订unsubscribe
+
+    </pre>
+
+    <p class="smallTitle">1. 订阅消息</p>
+    <pre>
+
+         *  1. 订阅消息： subscribe channel [channel ...]
+         *  macOfEthandeMacBook-Pro:~ macofethan$ redis-cli
+         * 127.0.0.1:6379> subscribe czy
+         * Reading messages... (press Ctrl-C to quit)
+         * 1) "subscribe"
+         * 2) "czy"
+         * 3) (integer) 1
+         * 1) "message"
+         * 2) "czy"
+         * 3) "hello"
+    </pre>
+
+    <p class="smallTitle">3. 发布消息</p>
+    <pre>
+
+        *  2. 发布消息：publish channel message
+         *  macOfEthandeMacBook-Pro:~ macofethan$ redis-cli
+         * 127.0.0.1:6379> publish czy hello
+         * (integer) 1
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

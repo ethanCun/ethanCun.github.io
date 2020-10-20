@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Redis的缓存穿透、缓存击穿和缓存雪崩</title>
+        <link rel="icon" href="../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Redis的缓存穿透、缓存击穿和缓存雪崩</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Redis的缓存穿透、缓存击穿和缓存雪崩</p>
+    <hr>
+
+    <p class="smallTitle">1. 缓存穿透</p>
+    <pre>
+
+         * 缓存穿透：
+         *      用户查询一个数据， 缓存中没有， 数据库也没有，这个时候如果请求量大，
+         *      就会一直去请求数据库， 造成数据库很大的压力，这就是缓存穿透；
+         *
+         *      解决方案：
+         *          1、 布隆过滤器：过滤器拦截不符合要求的请求；
+         *          2.  在缓存里面添加一个空对象， 这样就不会继续请求数据库；
+    </pre>
+
+    <p class="smallTitle">2. 缓存击穿</p>
+    <pre>
+
+         *  缓存击穿：
+         *      是redis的一个key非常热点，如果缓存过期，会大量数据同时访问数据库查询
+         *      最新数据，并且回写缓存，造成数据量压力过大；
+         *
+         *      和缓存穿透的区别： 一个是查不到数据， 一个是大量请求查一个
+         *
+         *       解决方案：
+         *          1. 设置key不过期；
+         *          2. 使用分布式锁， setnx如果不存在再去创建key;
+         *              在缓存层和数据库层加锁拦截大量的其他请求，放一个请求进去查询；
+    </pre>
+
+    <p class="smallTitle">3. 缓存雪崩</p>
+    <pre>
+
+         *  缓存雪崩：
+         *      是指在一段时间内，缓存集中失效，redis怠机或者断网，
+         *      所有的请求都直接查询数据库；
+         *
+         *      双十一解决方案： 停掉一些服务，保证其他服务可用，
+         *      比如双十一买的东西当天不能退；
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>
