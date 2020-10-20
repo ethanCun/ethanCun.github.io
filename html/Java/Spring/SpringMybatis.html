@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Spring简单整合Mybatis</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Spring简单整合Mybatis</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Spring简单整合Mybatis</p>
+    <hr>
+    
+    <p class="smallTitle">1. 导入必要的包</p>
+    <pre>
+        
+         &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+            &lt;version&gt;5.2.8.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- spring-jdbc jdbc访问数据库驱动 --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
+            &lt;version&gt;5.2.5.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- spring事务 自动提交事务 --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-tx&lt;/artifactId&gt;
+            &lt;version&gt;5.2.5.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- 数据库连接池 --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+            &lt;artifactId&gt;druid&lt;/artifactId&gt;
+            &lt;version&gt;1.1.21&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+            &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+            &lt;version&gt;3.5.3&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- mybatis-spring的作用： 将mybatis的对象交给spring管理 --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+            &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
+            &lt;version&gt;2.0.3&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- mysql --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+            &lt;version&gt;8.0.15&lt;/version&gt;
+        &lt;/dependency&gt;
+
+    </pre>
+    
+    <p class="smallTitle">2. Mybatis对象交给Spring来管理Bean</p>
+    <pre>
+        
+        &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+        &lt;beans xmlns="http://www.springframework.org/schema/beans"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:context="http://www.springframework.org/schema/context"
+               xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd"&gt;
+
+
+            &lt;!-- 读取dataSource配置文件, 用${}读取 --&gt;
+            &lt;context:property-placeholder location="jdbc/jdbc.properties" /&gt;
+        
+        
+            &lt;!-- 创建datasource --&gt;
+            &lt;bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+                  init-method="init" destroy-method="close"&gt;
+        
+                &lt;property name="url" value="${jdbc.url}" /&gt;
+                &lt;property name="username" value="${jdbc.user}" /&gt;
+                &lt;property name="password" value="${jdbc.password}" /&gt;
+        
+            &lt;/bean&gt;
+        
+        
+            &lt;!-- 根据xml得到input，根据input创建sqlSessionFactory -&gt;opensession得到 sqlSession -&gt;
+                  getMapper()得到dao实现对象--&gt;
+            &lt;!-- SqlSessionFactoryBean来自mybatis-spring --&gt;
+            &lt;bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"&gt;
+        
+                &lt;property name="dataSource" ref="dataSource" /&gt;
+        
+                &lt;!-- 指定mybatis主配置文件 --&gt;
+                &lt;property name="configLocation" value="classpath:mybatis/mybatis-config.xml" /&gt;
+        
+                &lt;!--  mappers文件位置 --&gt;
+                &lt;property name="mapperLocations" value="classpath:mappers/*" /&gt;
+            &lt;/bean&gt;
+        
+        
+            &lt;!-- mybatis扫描器, 创建dao和实现类对象 --&gt;
+            &lt;bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"&gt;
+        
+                &lt;!-- 从spring中获取sqlSessionFactory, --&gt;
+                &lt;property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" /&gt;
+        
+                &lt;!-- 配置扫描dao， 动态代理生成dao实现对象 --&gt;
+                &lt;property name="basePackage" value="com.spring.mapper" /&gt;
+            &lt;/bean&gt;
+        
+             &lt;!--
+                相当于：SqlSessionFactory factory =  map.get("sqlSessionFactoryBeanName")
+                SqlSession sqlSession = factory.openSession();
+                
+                接下来遍历接口， 创建dao的实现类:
+                for(接口： com.spring.mapper){
+                    dao对象 = sqlSession.getMapper(接口.class)
+                }
+                
+                接下来把创建好的对象放入spring容器中
+                map.put(接口bean默认名称(接口名首字母小写), dao对象)
+            --&gt;
+        
+            &lt;!-- 声明service --&gt;
+            &lt;bean id="studentService" class="com.spring.service.StudentServiceImpl" &gt;
+        
+                &lt;!-- 把dao设置给service --&gt;
+                &lt;property name="studentMapper" ref="studentMapper" /&gt;
+            &lt;/bean&gt;
+        
+        &lt;/beans&gt;
+
+    </pre>
+    
+
+<br>    
+</div>
+
+</body>
+</html>

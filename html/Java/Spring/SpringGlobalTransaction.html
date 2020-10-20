@@ -1,0 +1,151 @@
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Spring事务之注解形式配置全局事务</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Spring事务之注解形式配置全局事务</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Spring事务之注解形式配置全局事务</p>
+    <hr>
+    
+    <p class="smallTitle">1. 导入需要的包spring-jdbc, spring-aspects</p>
+    <pre>
+        
+        &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+            &lt;version&gt;5.2.8.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
+            &lt;version&gt;5.2.5.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+            &lt;artifactId&gt;druid&lt;/artifactId&gt;
+            &lt;version&gt;1.1.21&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+            &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+            &lt;version&gt;3.5.3&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+            &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
+            &lt;version&gt;2.0.3&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+            &lt;version&gt;8.0.19&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-aspects&lt;/artifactId&gt;
+            &lt;version&gt;5.2.5.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+    </pre>
+    
+    <p class="smallTitle">2. 根据指定前缀配置全局事务，加入aop切面, 并指定隔离级别，传播属性和回滚异常类型</p>
+    <pre>
+        
+        &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+        &lt;beans xmlns="http://www.springframework.org/schema/beans"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+               xmlns:aop="http://www.springframework.org/schema/aop"
+               xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd"&gt;
+
+            &lt;context:property-placeholder location="classpath:jdbc.properties" /&gt;
+        
+            &lt;bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"&gt;
+                &lt;property name="url" value="${jdbc.url}" /&gt;
+                &lt;property name="username" value="${jdbc.user}" /&gt;
+                &lt;property name="password" value="${jdbc.password}" /&gt;
+            &lt;/bean&gt;
+        
+            &lt;bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean"&gt;
+                &lt;property name="dataSource" ref="dataSource" /&gt;
+                &lt;property name="configLocation" value="classpath:mybatis/mybatis-config.xml" /&gt;
+                &lt;property name="mapperLocations" value="classpath:mappers/*" /&gt;
+            &lt;/bean&gt;
+        
+            &lt;bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"&gt;
+                &lt;property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBean"/&gt;
+                &lt;property name="basePackage" value="com.spring.mapper" /&gt;
+            &lt;/bean&gt;
+        
+            &lt;bean id="buyGoodsService" class="com.spring.service.imp.BuyGoodsServiceImpl"&gt;
+        
+                &lt;property name="goodsMapper" ref="goodsMapper" /&gt;
+                &lt;property name="saleMapper" ref="saleMapper" /&gt;
+            &lt;/bean&gt;
+        
+            &lt;bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"&gt;
+                &lt;property name="dataSource" ref="dataSource" /&gt;
+            &lt;/bean&gt;
+        
+            &lt;!--xml aspectj的事务: 全局配置spring-tx的事务支持，
+            解耦合java代码， 不用每个地方去添加@Transactional--&gt;
+            &lt;tx:advice id="txAdvisor"&gt;
+                &lt;tx:attributes&gt;
+                    &lt;tx:method name="buy*" isolation="DEFAULT" rollback-for="java.lang.RuntimeException"
+                               propagation="REQUIRED"/&gt;
+                    &lt;tx:method name="update*" isolation="DEFAULT" rollback-for="java.lang.RuntimeException"
+                               propagation="REQUIRED" /&gt;
+                    &lt;tx:method name="add*" isolation="DEFAULT" rollback-for="java.lang.RuntimeException"
+                               propagation="REQUIRED" /&gt;
+                    &lt;tx:method name="insert*" isolation="DEFAULT" rollback-for="java.lang.RuntimeException"
+                               propagation="REQUIRED" /&gt;
+                    &lt;tx:method name="delete*" isolation="DEFAULT" rollback-for="java.lang.RuntimeException"
+                               propagation="REQUIRED" /&gt;
+                    &lt;tx:method name="remove*" isolation="DEFAULT" rollback-for="java.lang.RuntimeException"
+                               propagation="REQUIRED" /&gt;
+        
+                    &lt;!--查询类操作可以事务，也可以不是事务操作--&gt;
+                    &lt;tx:method name="select*" isolation="DEFAULT" rollback-for="java.lang.RuntimeException"
+                               propagation="SUPPORTS"/&gt;
+        
+                    &lt;!--其他方法都是support级别--&gt;
+                    &lt;tx:method name="*" isolation="DEFAULT" rollback-for="java.lang.RuntimeException"
+                               propagation="SUPPORTS"/&gt;
+        
+                &lt;/tx:attributes&gt;
+            &lt;/tx:advice&gt;
+        
+            &lt;!-- 将全局事务引入到切面 --&gt;
+            &lt;aop:config&gt;
+        
+                &lt;aop:pointcut id="globalTx" expression="execution(public * *..service.imp..*(..))" /&gt;
+        
+                &lt;aop:advisor advice-ref="txAdvisor" pointcut-ref="globalTx"/&gt;
+            &lt;/aop:config&gt;
+        
+        &lt;/beans&gt;
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

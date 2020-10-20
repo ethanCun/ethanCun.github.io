@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Aop之spring-aop的使用</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Aop之spring-aop的使用</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Aop之spring-aop的使用</p>
+    <hr>
+    
+    <p class="smallTitle">1. spring-aop的实现方式</p>
+    <pre>
+        
+         * 1. spring-aop功能实现需要实现接口类(AfterAdvice, MethodInteceptor, MethodBeforeAdvice,
+           AfterReturningAdvice, ThrowsAdvice)
+         
+         * 2. spring-aop需要在配置文件中手动创建代理对象，
+            class为org.springframework.aop.framework.ProxyFactoryBean
+            参数分别为target, proxyInterfaces(需要实现功能增强的接口), interceptorNames(实现handler的切面类)
+    </pre>
+    
+    <p class="smallTitle">2.自定义spring-aop的接口实现类</p>
+    <pre>
+        
+        /**
+         * MethodInterceptor等同于InvocationHandler
+         *
+         * 这是一个环绕通知
+         *
+         * spring中的可用接口：
+         * 前置通知：MethodBeforeAdvice
+         * 后置通知：AfterReturningAdvice
+         * 环绕通知：MethodInterceptor
+         * 异常通知：ThrowsAdvice
+         */
+        public class MyInterceptor implements MethodInterceptor, MethodBeforeAdvice,
+            AfterAdvice, AfterReturningAdvice {
+        
+            public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+        
+                Object retValue = null;
+        
+                System.out.println("springaop在目标方法之前执行");
+        
+                //可以实现方法功能的增强， 目标方法的调用
+                retValue = methodInvocation.proceed();
+        
+                System.out.println("springaop在目标方法之后执行");
+        
+                return retValue;
+            }
+        
+            public void before(Method method, Object[] args, Object target) throws Throwable {
+        
+                System.out.println("before 1 ...");
+        
+                method.invoke(target, args);
+        
+                System.out.println("before 2 ...");
+            }
+        
+        
+            public void afterReturning(Object returnValue, Method method, Object[] args, Object target) {
+        
+                System.out.println("after returning ... ");
+            }
+        
+        }
+
+    </pre>
+    
+    <p class="smallTitle">3. 注册接口实现类以及配置aop</p>
+    <pre>
+
+        &lt;bean id="someService" class="com.spring.service.SomeServiceImpl" /&gt;
+
+        &lt;!-- spring aop的around通知--&gt;
+        &lt;bean id="aroundAdvice" class="com.spring.springaop.MyInterceptor" /&gt;
+    
+        &lt;!-- 声明proxyFactoryBean, 创建代理对象, 等同于jdk中的Proxy动态代理,
+              jdk中使用的Proxy.newProxyInstance(目标对象， 接口， handler)--&gt;
+        &lt;bean id="proxyObject" class="org.springframework.aop.framework.ProxyFactoryBean"&gt;
+    
+            &lt;!-- 指定目标代理类, 相当于Proxy中的target --&gt;
+            &lt;property name="target" ref="someService" /&gt;
+    
+            &lt;!-- 目标类实现的接口, 相当于Proxy中的interfaces --&gt;
+            &lt;!--&lt;property name="proxyInterfaces" value="com.spring.service.SomeService" /&gt;--&gt;
+    
+            &lt;!-- 增加的功能的类，切面类, 相当于Proxy的handler --&gt;
+            &lt;property name="interceptorNames" value="aroundAdvice" /&gt;
+    
+        &lt;/bean&gt;
+        
+    </pre>
+    
+    <br>
+</div>
+</body>
+</html>

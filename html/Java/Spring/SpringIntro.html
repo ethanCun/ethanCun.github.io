@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Spring简介 xml形式与注解形式使用</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Spring简介 xml形式与注解形式使用</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Spring简介 xml形式与注解形式使用</p>
+    <hr>
+    
+    <p class="smallTitle">1. 导入包</p>
+    <pre>
+        
+        //spring-context包： 包含了spring最常用的包: aop、beans等
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+            &lt;version&gt;5.2.8.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+        
+    </pre>
+    
+    <p class="smallTitle">2. bean的xml注入方式</p>
+    <pre>
+        
+        1. setter注入, autowire指定装配方式, 按类型装配：
+        &lt;bean id="stu" class="com.spring.Student" autowire="byType"&gt;
+            &lt;property name="name" value="${name}" /&gt;
+            &lt;property name="age" value="${age}"/&gt;
+        &lt;/bean&gt;
+        
+        2. 构造函数注入，通过name注入:
+        &lt;bean id="stu" class="com.spring.Student" autowire="byType"&gt;
+            &lt;constructor-arg name="name" value="${name}" /&gt;
+            &lt;constructor-arg name="age" value="${age}"/&gt;
+        &lt;/bean&gt;
+
+        构造函数注入，也可以指定index:
+        &lt;bean id="stu" class="com.spring.Student" autowire="byType"&gt;
+            &lt;constructor-arg index="0" value="${name}" /&gt;
+            &lt;constructor-arg index="1" value="${age}"/&gt;
+        &lt;/bean&gt;
+        
+    </pre>
+    
+    <p class="smallTitle">3. bean的注解注入方式</p>
+    <pre>
+        
+        @Component(beanid)： 通用
+        @Service： 服务层
+        @Repository： 数据访问层
+        @Controller: 控制层
+        
+        配合context:component-scan扫描指定的包：
+        &lt;!-- 扫描多个包 1. 指定父包； 2， 使用逗号或者分号指定多个包 --&gt;
+        &lt;context:component-scan base-package="com.spring.entity, com.spring.mapper, com.spring.service, com.spring.controller" /&gt;
+        &lt;context:component-scan base-package="com.spring.entity; com.spring.mapper" /&gt;
+        
+        //指定bean作用域 singleton prototype、request、session、global session
+        @Scope("prototype")
+        
+        //使用@Value赋值 相当于&lt;property name="" value=""&gt;&lt;/property&gt;
+        @Value("zhangsan")
+        private String name;
+        
+    </pre>
+    
+    <p class="smallTitle">4. 获取ioc中的bean</p>
+    <pre>
+        
+        ApplicationContext applicationContext =
+        new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
+
+        User user1 = (User) applicationContext.getBean("user");
+    </pre>
+    
+    <p class="smallTitle">4. 引入外部.properties配置文件和.xml配置文件</p>
+    <pre>
+        
+        &lt;!-- 引入外部配置文件 xml文件 --&gt;
+        &lt;import resource="classpath:l01/*.xml" /&gt;
+        
+        &lt;!-- 引入外部配置文件 .properties文件 --&gt;
+        &lt;context:property-placeholder location="" /&gt;
+        
+    </pre>
+    
+    <p class="smallTitle">5. bean的初始化声明周期</p>
+    <pre>
+        
+        1. 构造方法调用： 未指定lazyload的时候， bean的构造函数默认在初始化ioc的时候机会走，这个时候bean已经创建，
+            并且放入了ioc中；
+        2. 销毁： 未指定destory时， ioc销毁的时候bean销毁；
+    </pre>
+
+    <p class="smallTitle">6. xml配置文件形式与注解形式的优缺点对比</p>
+    <pre>
+
+        /**
+         *   1. 配置文件优点：
+         *     1. 配置文件和java源文件完全分离, 更加解耦合；
+         *     2. 只要有别人提供的Class和属性就可以创建bean
+         *      缺点：
+         *     1. 代码量大；
+         *     2. byName注入的时候还得去java代码里面查看属性名称，没有那么直观；
+         *
+         *   2. 注解优点：
+         *      1. 代码量小；
+         *      2. 方便直观；
+         *
+         *     注解缺点：
+         *      1. 得改源代码， 需要重新编译源代码；
+         *      2. 改变了源代码结构， 代码侵入性较高；
+         *
+         *   3. 结论： 经常需要更改的配置方法配置文件， 不需要怎么修改的使用注解；
+         */
+    </pre>
+    
+    <br>
+</div>
+
+<br>
+</body>
+</html>

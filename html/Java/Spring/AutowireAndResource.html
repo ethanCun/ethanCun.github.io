@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>@Autowired与@Resource装载方式的区别</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">@Autowired与@Resource装载方式的区别</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">@Autowired与@Resource装载方式的区别</p>
+    <hr>
+
+    <p class="smallTitle">1. @Autowired装载bean</p>
+    <pre>
+
+        位置： 1. 属性上 2.set方法上面;
+        使用autowired注入引用类型， @Autowired来自spring, 支持byName, byType默认是byType;
+        使用byName指定需要用到两个注解： @Autowired + @Qualifier("beanid");
+
+        @Autowired
+        @Qualifier("myschool")
+        private School school;
+
+
+    </pre>
+
+    <p class="smallTitle">2. @Resource装载bean</p>
+    <pre>
+
+        位置：1. 字段上 2.setter方法上;
+        @Resource, 来自jdk， 默认是按照名称注入，
+        @Resource和@Autowired不同的地方：@Resource首先按照byName赋值，如果失败再按照byType赋值；
+        @Autowired如果是按照byName装配失败的话，如果required为true，那就直接报错了
+        如果指定了@Resource的name，则只会按照byName注入，不会按照byType注入；
+
+        @Resource(name = "info")
+        private Info info;
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

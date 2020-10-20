@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8">
+    <title>Aop之Spring-AspectJ的使用</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+  </head>
+<body>
+
+<div class="labels">
+
+  <span class="label label-info">Aop之Spring-AspectJ的使用</span>
+</div>
+
+<div class="contentBgDiv">
+
+  <p class="title">Aop之Spring-AspectJ的使用</p>
+  <hr>
+
+  <ul>
+    <li><a href="#intro">1. Aspect-J简介</a> </li>
+    <li><a href="#import">2. 导入包：</a> </li>
+    <li><a href="#aspect">3. 构建切面类</a></li>
+    <li><a href="#ioc">4. 配置ioc切面</a> </li>
+    <li><a href="#proxy-type">5. 指定代理代理类型</a> </li>
+    <li><a href="#xml-aop">6. Spring-AspectJ的xml配置文件形式</a> </li>
+  </ul>
+  
+  <p class="smallTitle" id="intro">1. Aspect-J简介</p>
+  <pre>
+    
+     *  aspect: 需要进行功能增强的切面， 如日志，事务，统计时间，参数检查，权限，非业务功能，单独的模块
+    
+     *  JoinPoint: 连接点， 加入切面的方法
+    
+     *  PointCut: 切入点，就是连接点的集合， 有0个或者多个连接点
+          切点表达式： execution(public 包名 类名 方法名(参数)) 用空格分开；
+          *代表0或者多个， ..代表方法中多个参数或者包中的所有子类， +代表所有子包或者方法的所有实现类；
+    
+     *  目标对象： 需要增强功能类的对象
+    
+     *  通知Advice：也叫增强，是切面在程序中的执行时间，可以是接口也可以是注解；方法前、方法后、方法前后等
+          前置@Before、后置@AfterReturning、环绕@Around、异常@AfterThrowing、最终通知@After
+    
+     *  作用 ： 1. 解耦合， 业务代码与非业务代码区分开；
+     *          2. 减少重复的代码；
+      
+      aspectj可以用注解和xml实现， 做事务一般用xml形式
+    
+  </pre>
+  
+  <p class="smallTitle" id="import">2. 导入包：</p>
+  <pre>
+    
+      &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+            &lt;version&gt;5.2.8.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+
+      &lt;!-- spring-aspects --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-aspects&lt;/artifactId&gt;
+            &lt;version&gt;5.2.5.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+  </pre>
+  
+  <p class="smallTitle" id="aspect">3. 构建切面类</p>
+  <pre>
+    
+      /**
+       * 切面类， 增强业务方法功能
+       *   使用@Aspect表明当前类是一个切面类
+       */
+      @Aspect
+      public class MyAspect {
+      
+          /**
+           * 通知方法：
+           *
+           * 1. 可见性一般为public
+           * 2. 返回值一般为void， 只有环绕通知不是void
+           * 3. 方法名称随便自定义
+           * 4. 方法可以有参数， 参数类型有限制， 需要和连接点类型/个数一致
+           *
+           * @before @after @around等， 注解的参数value为一个切面表达式，表示需要
+           * 做业务增强的方法
+           *
+           * 切入点表达式： execution([public] 返回值 【包名.类名】.方法名(【参数列表】))
+           *  其中public 包名.类名都可以省略
+           *
+           *  如果有多个通知满足条件， 则多个通知都会走， 先走最快速度匹配到的
+           */
+          @Before(value = "execution(public * com.spring.service.*.*(..))")
+          public void mybefore(){
+      
+              System.out.println("before....");
+          }
+      
+          //最终通知
+          @After(value = "execution(public * com.spring.service.*.*(..))")
+          public void myafter(JoinPoint joinPoint){
+      
+              System.out.println("最终通知， 一定会执行的通知... ");
+              System.out.println("可以用来做资源回收， 内存释放...");
+      
+              //JoinPoint连接点： 一个连接点就是就是一个接口方法
+      
+              System.out.println("方法定义: " + joinPoint.getSignature());
+              System.out.println("方法名称: " + joinPoint.getSignature().getName());
+              System.out.println("方法参数值： ");
+              for (int i = 0; i < joinPoint.getArgs().length; i++) {
+      
+                  System.out.println(joinPoint.getArgs()[i]);
+              }
+              System.out.println("原来被代理的对象: " + joinPoint.getTarget().getClass().getName());
+              System.out.println("生成的实际代理对象: " + joinPoint.getThis().getClass().getName());
+          }
+      
+      
+          //最终通知@After， 最终通知必定会执行
+          // 这里的Integer写成int不会走这个通知,
+          // 如果参数是自定义类型， 则需要写全限定类型， 这里不能直接写User， 会报错
+          @After(value = "execution(public * com.spring.service.*.*(String, Integer, com.spring.entity.User))")
+          public void myafterWithArgs(){
+      
+              System.out.println("带参数方法的after...");
+          }
+      
+          //异常跑出通知
+          @AfterThrowing("execution(public * *(..))")
+          public void myafterthrowing(){
+      
+              System.out.println("afterthrowing...");
+          }
+      
+          // 能够获取到目标方法的执行结果；
+          // returning: 表示目标方法返回值，必须和方法参数名一样；
+          @AfterReturning(value = "execution(public * com.spring.service.SomeServiceImp.afterReturningDemo(..))", returning = "res")
+          public void myafterreturning(String res){
+      
+              res = "vv";
+      
+              System.out.println("afterreturn..." + res);
+          }
+      
+          //对于引用类型的返回值， 可以在切面返回数据之前修改对象的值， 对于引用类型的则修改无效
+          @AfterReturning(value = "execution(public * com.spring.service.SomeServiceImp.afterReturnUserDemo(..))", returning = "user")
+          public void myafterreturninguser(User user){
+      
+              user.setName("czy");
+              user.setAge("100");
+      
+              System.out.println("afterreturn..." + user);
+          }
+    
+          /**
+           *
+           * 环绕通知有参数： ProceedingJoinPoint; 有返回值， 推荐使用Object
+           *
+           * 特点与作用:
+           *  1. 在方法的前后都有增强功能；
+           *  2. 控制目标方法是否执行；
+           *  3. 修改目标方法的执行结果；
+           *
+           */
+          @Around(value = "execution(public * com.spring.service.SomeServiceImp.aroundDemo(..))")
+          public Object myaround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+      
+              Object result = null;
+      
+              System.out.println("环绕通知之前执行....");
+              System.out.println("环绕通知主要用来做事务...");
+      
+              //执行目标方法 相当于method.invoke(target, args);
+              //result = proceedingJoinPoint.proceed();
+      
+              //可以在这里控制方法是否执行
+              if (proceedingJoinPoint.getArgs()[0].equals("zzz")) {
+      
+                  System.out.println("=====> 我被执行了");
+                  result = proceedingJoinPoint.proceed();
+              }else{
+      
+                  System.out.println("=====> 我没有执行");
+              }
+      
+              System.out.println("环绕通知之后执行....");
+      
+              //可以在环绕通知之前改变返回结果
+              result = "我改变了结果";
+      
+              return result;
+          }
+      
+          /**
+           * 抛出异常通知:@AfterThrowing;
+           *
+           * value: 切入点表达式；
+           * throwing: 自定义变量名， 必须和参数列表中一样, 对应方法中的参数必须是Throwable类型；
+           *
+           * 特点：
+           *  1. 在执行方法发生异常时执行，可以看做是对目标方法的监控；
+           *  2. 不是异常处理程序，异常还是会抛出；
+           *  3. 通知方法带有一个参数；
+           * */
+          @AfterThrowing(value = "execution(public * com.spring.service.SomeServiceImp.*(..))", throwing = "exe")
+          public void throwException(Throwable exe){
+      
+              //主要用于记录异常 写入日志，数据库，发送通知邮件短信
+              System.out.println(exe.getMessage());
+      //        System.out.println(joinPoint.getSignature().getName());
+          }
+      
+          /**
+           * @Pointcut: 用来定义和管理切入点, value:切入点表达式，
+           *              方法名称就是切入点别名
+           *              方法里面无需代码
+           */
+          @Pointcut(value = "execution(public * *(..))")
+          public void myPointcut(){}
+      
+          @After(value = "myPointcut()")
+          public void myafter2(){
+      
+              System.out.println("使用自定义切入点....");
+          }
+      }
+  </pre>
+  
+  <p class="smallTitle" id="ioc">4. 配置ioc切面</p>
+  <pre>
+    
+      &lt;!--  声明切面类 --&gt;
+      &lt;bean id="myAspect" class="com.spring.aspect.MyAspect" /&gt;
+  
+      &lt;!-- 声明自动代理生成器： 使用aspectj把spring中目标类对象生成代理,
+        简单来说就是用来生成someServiceImp的代理对象
+         Enables the use of the @AspectJ style of Spring AOP
+         相当于 @EnableAspectJAutoProxy
+         --&gt;
+      &lt;aop:aspectj-autoproxy /&gt;
+    
+      //其他bean
+      ...
+  </pre>
+
+  <p class="smallTitle" id="proxy-type">5. 指定代理代理类型</p>
+  <pre>
+
+        &lt;!-- 目标类有接口：默认使用的是jdk动态代理 --&gt;
+        &lt;!-- 目标类没有接口：默认使用的是cglib动态代理 --&gt;
+        &lt;!-- 手动制定代理类型: true表示使用cglib代理， false代表使用jdk动态代理 --&gt;
+        &lt;tx:aspectj-autoproxy proxy-target-class="false" /&gt;
+
+        或者在aop包上使用注解指定代理的种类:
+        //true表示使用cglib代理， false代表使用jdk代理
+        @EnableAspectJAutoProxy(proxyTargetClass = false)
+
+  </pre>
+
+  <p class="smallTitle" id="xml-aop">6. Spring-AspectJ的xml配置文件形式</p>
+  <pre>
+
+      //1. 创建切面
+      public class MyAspect {
+
+        /**
+         * 定义切面方法实现的功能，
+         * 方法的定义同注解中方法的实现，
+         *
+         * &lt;aop:before method="mybefore" pointcut-ref="somePt" /&gt;
+         */
+          public void mybefore(){
+
+              System.out.println(" my before ... ");
+          }
+
+          public void myafter(){
+
+              System.out.println(" my after ... ");
+          }
+      }
+
+      2. 配置切面信息：
+        &lt;bean id="aspect" class="com.spring.aspect.MyAspect" /&gt;
+
+        &lt;!-- aop:config配置aop，相当于@Aspect--&gt;
+        &lt;aop:config&gt;
+
+            &lt;!-- aop配置有两个内容， 切面的位置， 切面的执行时间, 相当于@Pointcut(value = "eexecution(public * *..*.*(..))") --&gt;
+          &lt;!-- 1. 生命切入点表达式 id是切入点名称, expression是切入点表达式 --&gt;
+            &lt;aop:pointcut id="somePt" expression="execution(public * *..*.*(..))" /&gt;
+
+          &lt;!-- 2. 配置切面信息 ref:指定作为切面使用的对象名称,  --&gt;
+            &lt;aop:aspect ref="aspect"&gt;
+
+                &lt;!-- 配置通知 method:切面类中增强方法的名称，point-ref指定切入点表达式的id， 相当于@Before--&gt;
+                &lt;aop:before method="mybefore" pointcut-ref="somePt" /&gt;
+
+                &lt;aop:after method="myafter" pointcut-ref="somePt" /&gt;
+
+            &lt;/aop:aspect&gt;
+
+        &lt;/aop:config&gt;
+
+  </pre>
+
+  <br>
+</div>
+
+</body>
+</html>
