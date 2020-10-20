@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>springmvc搭建以及中央调度器处理请求的流程</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">springmvc搭建以及中央调度器处理请求的流程</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">springmvc搭建以及中央调度器处理请求的流程</p>
+    <hr>
+    
+    <p class="smallTitle">1. idea利用maven创建springmvc项目</p>
+    <pre>
+        
+        idea -> maven -> maven web app -> 填写group artifact等信息
+    </pre>
+    
+    <p class="smallTitle">2. 配置web.xml中央处理器， 字符串过滤， spring ioc加载等</p>
+    <pre>
+        
+          &lt;!--
+            注册中央处理器:
+          --&gt;
+          &lt;servlet&gt;
+            &lt;servlet-name&gt;dispatcher&lt;/servlet-name&gt;
+            &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+              &lt;!--
+                在使用springMVC时，默认的DispatcherServlet在初始化时候会加载
+                【servlet的名称】-servlet.xml文件，
+                而该文件一般位于WEB-INF下。而如果我们将配置写在applicationContext.xml中，
+                就需要在他加载的时候指定需要加载的文件和路径。
+          
+                为什么要找[servlet-name]-servlet.xml这个文件：
+          
+                  因为在DispatcherServlet这个servlet的init方法中，会创建springwebmvc的容器对象
+                  ApplicationContext, 在创建容器对象时，会加载springmvc需要的配置文件，默认查找
+                  位置为/WEB-INF/[servlet-name]-servlet.xml
+          
+              --&gt;
+            &lt;init-param&gt;
+              &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+              &lt;param-value&gt;/WEB-INF/applicationContext.xml&lt;/param-value&gt;
+            &lt;/init-param&gt;
+              &lt;!--启动项目初始化servlet, 数字越小，创建时间越早--&gt;
+            &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+          &lt;/servlet&gt;
+          &lt;servlet-mapping&gt;
+            &lt;servlet-name&gt;dispatcher&lt;/servlet-name&gt;
+            &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+          &lt;/servlet-mapping&gt;
+        
+        
+        &lt;!--
+            注册字符串过滤器, 主要用来处理post请求中文乱码
+        --&gt;
+        &lt;filter&gt;
+            &lt;filter-name&gt;encoding&lt;/filter-name&gt;
+            &lt;filter-class&gt;org.springframework.web.filter.CharacterEncodingFilter&lt;/filter-class&gt;
+          &lt;init-param&gt;
+              &lt;param-name&gt;encoding&lt;/param-name&gt;
+              &lt;param-value&gt;utf-8&lt;/param-value&gt;
+          &lt;/init-param&gt;
+          &lt;init-param&gt;
+              &lt;param-name&gt;forceRequestEncoding&lt;/param-name&gt;
+              &lt;param-value&gt;true&lt;/param-value&gt;
+          &lt;/init-param&gt;
+          &lt;init-param&gt;
+              &lt;param-name&gt;forceResponseEncoding&lt;/param-name&gt;
+              &lt;param-value&gt;true&lt;/param-value&gt;
+          &lt;/init-param&gt;
+        &lt;/filter&gt;
+        &lt;filter-mapping&gt;
+            &lt;filter-name&gt;encoding&lt;/filter-name&gt;
+            &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+        &lt;/filter-mapping&gt;
+                
+        
+    </pre>
+    
+    <p class="smallTitle">3. 配置视图解析器, 扫描处理器, 消息转换器</p>
+    <pre>
+        
+        &lt;!-- 扫描处理器包 --&gt;
+        &lt;context:component-scan base-package="com.demo.springmvc.controller" /&gt;
+        
+        &lt;!-- 视图处理器 --&gt;
+        &lt;bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"&gt;
+    
+            &lt;property name="prefix" value="/WEB-INF/jsp/" /&gt;
+            &lt;property name="suffix" value=".jsp" /&gt;
+        &lt;/bean&gt;
+
+        &lt;!--
+            加载消息转换器驱动,  注意是mvc下的， 不是cache下的
+            作用： 实例化HttpMessageConverter的实现类;
+        --&gt;
+        &lt;mvc:annotation-driven&gt;&lt;/mvc:annotation-driven&gt;
+        
+    </pre>
+    
+    <p class="smallTitle">4. 用继承Controller的形式搭建controller层</p>
+    <pre>
+
+        public class WelcomeController implements Controller {
+
+            @Override
+            public ModelAndView handleRequest(javax.servlet.http.HttpServletRequest httpServletRequest,
+                                              javax.servlet.http.HttpServletResponse httpServletResponse) {
+
+                ModelAndView mv = new ModelAndView();
+
+                /**
+                 * 将数据放入model中，底层是一个LinkedHashMap,
+                 * 相当于将数据放入request作用域中
+                 * request.setattribute("name", "czy")
+                 */
+                mv.addObject("name", "czy");
+
+                /**
+                 * 相当于请求转发：
+                 * request.getRequestDispatcher("/welcome.jsp").forward(request, response);
+                 */
+                //mv.setViewName("/WEB-INF/jsp/home.jsp");
+                //配置视图解析器后 InternalResourceViewResolver, home会通过中央调度器
+                //交给视图解析器, 根据前缀和后缀组成完成的视图路径
+                mv.setViewName("home");
+
+                //返回的mv中保存了数据和视图名称
+                return mv;
+            }
+        }
+    </pre>
+
+    <p class="smallTitle">5. 使用注解搭建Controller层</p>
+    <pre>
+
+        @Controller
+        public class HelloController {
+
+            @Autowired
+            private UserService userService;
+
+            @GetMapping(value = "/home")
+            public String home(){
+
+                return "home";
+            }
+        }
+    </pre>
+
+    <p class="smallTitle">6. 中央调度器DispatchServlet执行请求的流程</p>
+    <pre>
+
+        /**
+         *
+         * 前端控制器： DispatcherServlet
+         * 后端控制器： WelcomeController
+         *
+         *
+         * springmvc请求过程：
+         *
+         *  1. 用户请求链接/welcome.do， tomcat服务器接受这个请求，
+         *  2. tomcat根据web.xml的url-pattern设置把请求交给DispatcherServlet，
+         *  3. 中央调度器DispatcherServlet根据springmvc的配置文件中关于处理器的
+         *      配置指导/welcome.do是交给WelcomeController，于是DispatcherServlet
+         *      将请求分配到后端控制器，
+         *  4. WelcomeController调用handleRequest处理请求， 把结果放入ModelAndView；
+         *  5. ModelAndView会再次交给DispatcherServlet， DispatcherServlet将数据放入
+         *  视图， 通过HttpServletResponse输出到浏览器；
+         *
+         *
+         *  用户浏览器  -》 中央调度器，前段控制器DispatcherServlet -》 后端控制器
+         *  用户浏览器  《- 中央调度器，前段控制器DispatcherServlet 《- 后端控制器
+         *
+         *  前段控制器： 负责将请求转发到对应的后端控制器
+         *  后端控制器：负责处理具体的请求
+         *
+         *
+         *  springmvc处理请求流程:
+         *
+         *  1. 用户发起请求，DispatcherServlet接受请求，交给处理器映射器，
+         *      这些处理器映射器都实现了HandlerMapping接口;
+         *  2. HandlerMapping返回HandlerExecutionChain处理器执行链， 交给DispatcherServlet;
+         *  3. HandlerExecutionChain在容器中找到对应的handler返回给DiapatcherServlet，
+         *      ctx.getBean("home.do"), handler存在HandlerExecutionChain中；
+         *  4. 接着DispatcherServlet将HandlerExecutionChain中的handler交给适配器
+         *      HandlerAdapter，HandlerAdapter找到对应的实现方法， 执行handleRequest，
+         *      返回ModelAndView, 也就是说通过处理器适配器执行handleRequest方法；
+         *  5. 接着DispatcherServlet将ModelAndView交给视图解析器，找到对应的视图；
+         *         调用view.render()把modelandview中的数据放入到request中，并
+         *         执行对视图的forward请求转发；
+         *
+         */
+
+        这些请求过程， 可以在doDispatcher中查看，当然中间还穿插了springmvc的拦截器;
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

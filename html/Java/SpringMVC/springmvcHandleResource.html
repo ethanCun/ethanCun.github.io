@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>springmvc处理动态资源与静态资源</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">springmvc处理动态资源与静态资源</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">springmvc处理动态资源与静态资源</p>
+    <hr>
+
+    <p class="smallTitle">1. 中央调度器请求匹配的顺序</p>
+    <pre>
+
+        所有从中央调度器分步法过来的请求会优先去寻找动态资源的uri匹配， 匹配不到时，他会认为这是一个静态资源，
+        接着去找webapp根目录下的静态资源，仍然找不到时，就抛出404错误；
+    </pre>
+
+    <p class="smallTitle">2. 中央调度器url-pattern为后置匹配符*.do</p>
+    <pre>
+
+        中央调度器的url-pattern为后置匹配符*.do时，访问静态资源一般不会以.do结尾， 这时中央处理器就不会
+        拦截静态资源的请求，所有静态资源的请求会交给tomcat的DefaultServlet处理，所以这个时候可以正常访问
+        静态资源：
+        
+          &lt;servlet&gt;
+            &lt;servlet-name&gt;dispatcher&lt;/servlet-name&gt;
+            &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+            &lt;init-param&gt;
+              &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+              &lt;param-value&gt;classpath:applicationContext.xml&lt;/param-value&gt;
+            &lt;/init-param&gt;
+            &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+          &lt;/servlet&gt;
+          &lt;servlet-mapping&gt;
+            &lt;servlet-name&gt;dispatcher&lt;/servlet-name&gt;
+            &lt;url-pattern&gt;*.do&lt;/url-pattern&gt;
+          &lt;/servlet-mapping&gt;
+    </pre>
+    
+    <p class="smallTitle">3. 中央调度器url-pattern为通配符/*存在的问题</p>
+    <pre>
+        
+        url-pattern为通配符/*时， 中央调度器不仅会拦截动态请求，静态资源的请求也会被拦截，
+        并且用户发起的静态资源请求被当成了动态请求来处理，没有相应的uri时就会报错：
+          
+         &lt;servlet&gt;
+            &lt;servlet-name&gt;dispatcher&lt;/servlet-name&gt;
+            &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+            &lt;init-param&gt;
+              &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+              &lt;param-value&gt;classpath:applicationContext.xml&lt;/param-value&gt;
+            &lt;/init-param&gt;
+            &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+          &lt;/servlet&gt;
+          &lt;servlet-mapping&gt;
+            &lt;servlet-name&gt;dispatcher&lt;/servlet-name&gt;
+            &lt;url-pattern&gt;/&lt;/url-pattern&gt;
+          &lt;/servlet-mapping&gt;
+        
+    </pre>
+
+    <p class="smallTitle">4. 解决静态资源请求冲突方式</p>
+    <pre>
+        1. 中央调度器加上一个处理静态资源的对象:
+            配置这个注解后会生成DefaultServletRequestHandler来处理静态资源;
+            这个handler会将静态资源交给tomcat中一个名为DefaultServlet的servlet，
+            这个servlet是tomcat中专门用来处理静态资源的，DefaultServlet注册在
+            tomcat的web.xml中；
+                &lt;mvc:default-servlet-handler /&gt;
+
+
+        方式2：自定义springmvc的静态资源映射器:
+              会创建ResourceHttpRequestHandler，这个handler是springmvc自己处理静态资源的类，
+              不依赖tomcat的DefaultHandler;
+              &lt;mvc:resources mapping="/static/**" location="/static/" /&gt;
+    </pre>
+
+    <p class="smallTitle">5. /WEB-INF/</p>
+    <pre>
+
+        /WEB-INF/ 目录只能通过代码访问里面的静态资源， 不能直接通过url访问， 因此可以把需要保证安全的静态资源放到这个目录下；
+
+    </pre>
+
+    <br>
+</div>
+
+
+</div>
+
+</body>
+</html>

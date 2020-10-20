@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>springmvc中的常用注解、参数/返回类型、请求转发等</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">springmvc中的常用注解、参数/返回类型、请求转发等</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">springmvc中的常用注解、参数/返回类型、请求转发等</p>
+    <hr>
+    
+    <p class="smallTitle">1. springmvc请求方法中的参数</p>
+    <pre>
+        
+        1. springmvc处理器方法中可以包含4类参数：
+            HttpServletRequest, HttpServletResponse, HttpSession, 请求中自定义的参数
+        
+        2. 接受uri中的参数，可以逐个接受，也可以使用对象接受；
+            逐个接受的时候确保字段名称一致，使用对象接受确保对象实现了getter setter；
+        
+        3. 当参数是int类型时， 传入""会报错：NumberFormatException，
+            可以使用包装类型Integer来解决这个问题, 但是传入'ddd'这样转换不了，转成Integer的还是会报这个错误；
+        
+        4. 和普通servlet请求一样， post请求中文也会乱码，需要设置request的charsetEncoding;
+            omcat9默认是utf-8, tomcat8及以下是text/html;charset=ISO-8859-1；
+        
+            @ResponseBody
+            @RequestMapping(value = "/test1")
+            public String test1(HttpServletRequest request,
+                                HttpServletResponse response,
+                                HttpSession httpSession,
+                                String username,
+                                int age,
+                                Integer id) throws UnsupportedEncodingException {
+        
+                System.out.println(username);
+                System.out.println(id);
+                System.out.println(httpSession.getId());
+                System.out.println(request.getRequestURI());
+                System.out.println(request.getRemoteUser());
+                System.out.println(request.getUserPrincipal());
+        
+                //解决post请求中文乱码
+                request.setCharacterEncoding("utf-8");
+                response.setCharacterEncoding("utf-8");
+        
+                return "test1";
+            }
+        
+    </pre>
+    
+    <p class="smallTitle">2. springmvc的@RequestMapping</p>
+    <pre>
+        
+        1. @RequestMapping可以放在方法和类上，value可以是个数组， 多个uri均可以访问到;
+        2. 可以通过headers设置请求头键值对；
+        3. 通过produces设置请求产生数据的类型；
+        4. 通过consumes设置请求消费的数据类型；
+        5. 通过method指定请求方式；
+        
+        //value: 请求的uri, /表示从项目根开始绝对路径， 保证是唯一值, 可以是数组
+        //可以用在类上，也可以用在方法上
+        @ResponseBody
+        @GetMapping(value = {"/login", "/home", "/login"}, headers = {"token"},
+            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE}, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+        public List&lt;User&gt; login(){
+        
+            return ...;
+        }
+    </pre>
+
+    <p class="smallTitle">3. springmvc使用对象接受参数</p>
+    <pre>
+
+        /**
+         *
+         * 使用对象接受参数：
+         * 要求对象参数和接受的参数名称一致, 并且一定得实现setter,getter以及无参构造
+         *
+         * 具体请求时， 是适配器对象调用的这个方法：
+         * 先实例化参数列表中的参数
+         * Student student = new Student();
+         * 适配器对象.test01(student);
+         *
+         * 注意@RequestParam在这里不适用, 这个注解也不能放在entity对象的字段上，
+         * 只能放在参数前面;
+         */
+        @RequestMapping(value = "/test01")
+        public ModelAndView test01(Student student){
+
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.addObject("student", student);
+            modelAndView.setViewName("show");
+
+            return modelAndView;
+        }
+
+    </pre>
+
+    <p class="smallTitle">4. springmvc返回视图</p>
+    <pre>
+
+        /**
+         * 返回完整视图路径时， 一定不能配置视图解析器，
+         * 这个时候完整视图路径就相当于一个视图名称
+         *
+         * 总之一句话， 返回的字符串代表的是逻辑视图
+         */
+        @RequestMapping(value = "/page2")
+        public String test022(){
+
+            return "/WEB-INF/view/page2.jsp";
+        }
+
+
+    </pre>
+
+    <p class="smallTitle">5. springmvc请求转发</p>
+    <pre>
+
+        /**
+         * 这个演示请求转发:
+         *  通过制定逻辑视图名，通过视图解析器将它转为物理视图名称;
+         */
+        @RequestMapping(value = "/page1")
+        public String toPage1(HttpServletRequest request){
+
+            //使用逻辑视图的时候，如何传递数据呢， 可以手动将数据放入request
+            request.setAttribute("msg", "这是返回逻辑视图名称的方法中" +
+                    "使用HttpServletRequest手动放入的数据");
+
+            //这里相当于request.getRequestDispatcher("/page1").forward(req, resp);
+            return "page1";
+        }
+    </pre>
+
+    <p class="smallTitle">6. springmvc使用response PrintWriter输出json</p>
+    <pre>
+
+        //返回void， 使用response printwriter输出json字符串
+        @RequestMapping(value = "/test031")
+        public void test031(HttpServletResponse response, Student student) throws IOException {
+
+            //使用jackson将student转为json
+            ObjectMapper om = new ObjectMapper();
+            String json = om.writeValueAsString(student);
+
+            //输出json格式的字符串
+            PrintWriter writer = response.getWriter();
+            writer.print(json);
+            writer.flush();
+            writer.close();
+        }
+    </pre>
+
+    <p class="smallTitle">7. springmvc用jackson解析json数据,引入jackson</p>
+    <pre>
+
+        1. 导入包：
+        &lt;!--
+           jackson
+         --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+            &lt;artifactId&gt;jackson-core&lt;/artifactId&gt;
+            &lt;version&gt;2.11.1&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+            &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;
+            &lt;version&gt;2.11.1&lt;/version&gt;
+        &lt;/dependency&gt;
+
+
+        导入jackson之后， springmvc的消息转换器就可以将返回结果以json的形式转换出来；
+        然后配合@ResponseBody将json字符串输出到浏览器；
+    </pre>
+
+    <p class="smallTitle">8. springmvc使用@ResponseBody输出json</p>
+    <pre>
+
+            /**
+             * 返回对象:
+             * 和视图无关， 可以是Integer， 文本， 二进制， json等
+             * 需要使用@ResponseObject;
+             *
+             * springmvc中实现处理器方法返回对象到json，xml等数据格式的转换使用的是
+             * HttpMessageConverter, HttpMessageConverter的所用可以看做是:
+             * ObjectMapper om = new ObjectMappper();
+             * String json = om.writeValueAsString(student);
+             *
+             * 1. 定义了把处理器方法的返回值转化为数据格式的方法；
+             * 2. 可以把请求中的参数数据转化为处理器方法形参的java对象
+             *
+             * 1. canWrite： 检查方法的返回值是否能够转化为mediaType的数据格式
+             *   write：把处理器返回值，转化为contentType指定的数据类型;
+             * 2. canRead, read: 检查请求参数是否可以转化为处理器请求形参的java对象， 以及
+             *   转化操作；
+             *
+             *   使用control+H快捷键打开层级, 找到StringHttpMessageConveter和
+             *   MappingJackson2HttpMessageConverter, 称为消息转换器;
+             *
+             *   //StringHttpMessageConverter:
+             *   当处理器返回string的时候，调用这个转换器将string转为文本数据;
+             *
+             *   //MappingJackson2HttpMessageConverter:
+             *   当处理器返回list， map， 自定义对象， Integer等对象时， 调用这个
+             *   转换器将对象转化为json;
+             *
+             *   在项目中要使用消息转换器（实现HttpMessageConvertor接口）：
+             *   1. 默认项目中使用四个实现类对象，包含StringHttpMessageConvertor,
+             *   但不包含MappingJackson2HttpMessageConverter, 也就是默认不能把
+             *   对象转为json，要把对象转为json，需要使用MappingJackson2HttpMessageConverter，
+             *   需要在springmvc的配置文件中加入注解驱动：&lt;mvc:annotation-driven&gt;&lt;/mvc:annotation-driven&gt;
+             *   , 这个注解的作用是会创建消息转换器接口的七个实现类对象，这七个对象包含
+             *   StringHttpMessageConveter和MappingJackson2HttpMessageConverter
+             *
+             *  MappingJackson2HttpMessageConverter:
+             *  在内部是使用jackson工具库的ObjectMapper把java对象转换为json格式的，
+             *  注意spring5要求的版本是jackson2.9+；
+             *
+             *  springmvc默认是使用jackson来处理json格式数据的， 也可以使用其他的json工具库，
+             *  如gson, fastjson
+             *
+             *
+             *  1. 上述完成了对象到json的转换， 那么怎么讲json输出到浏览器呢，可以使用注解
+             * @ResponseBody输出： 相当于response.getwriter.println(json)
+             *
+             *
+             *  处理流程：
+             *  1. 框架根据返回值的数据类型，遍历HttpMessageConverter接口的实现类对象，
+             *      找到能够处理类型的实现类对象：MappingJackson2HttpMessageConverter;
+             *  2. 框架会调用write方法，将student类转换为json,MappingJackson2HttpMessageConverter
+             *      默认的数据处理格式是application/json;charset=utf-8;
+             *  3. 框架是使用@ResponseBody将2的结果通过HttpServletResponse输出到浏览器;
+             *
+             */
+            @ResponseBody
+            @RequestMapping(value = "/test032", method = RequestMethod.POST)
+            public Student test032(Student student){
+
+                return student;
+            }
+    </pre>
+    
+    <br>
+</div>
+
+</body>
+</html>

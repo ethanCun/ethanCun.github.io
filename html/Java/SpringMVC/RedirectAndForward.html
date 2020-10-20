@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>springmvc中的重定向与请求转发</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">springmvc中的重定向与请求转发</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">springmvc中的重定向与请求转发</p>
+    <hr>
+
+    <p class="smallTitle">1. springmvc的重定向</p>
+    <pre>
+
+             * redirect: 表示重定向，
+             *  相当于response.sendRedirect("xxx.jsp")
+
+            //重定向, 需要和视图解析器一同使用
+            @RequestMapping(value = "/a")
+            public String a(){
+
+                //redirect:需要浏览器再次请求的uri
+                return "redirect:b";
+            }
+
+            @RequestMapping(value = "/aa")
+            public ModelAndView aa(){
+
+                ModelAndView modelAndView = new ModelAndView();
+                modelAndView.setViewName("redirect:b");
+
+                return modelAndView;
+            }
+    </pre>
+
+    <p class="smallTitle">2. springmvc中的重定向</p>
+    <pre>
+
+            * forward: 表示转发，
+            * 相当于request.getRequestDispathcer("xxx.jsp").forward(req, resp);
+
+            //请求转发到静态资源, 不需要和视图解析器一同使用
+            @RequestMapping(value = "/b")
+            public String b(){
+
+                //forward:视图完整路径
+                return "forward:/WEB-INF/view/b.jsp";
+            }
+
+            //请求转到其到其他handler
+            @RequestMapping(value = "/b2")
+            public ModelAndView b2(String name, String age){
+
+                ModelAndView modelAndView = new ModelAndView();
+
+                modelAndView.addObject("name", name);
+                modelAndView.addObject("age", age);
+
+                //forward:uri
+                modelAndView.setViewName("forward:/result");
+
+                return modelAndView;
+            }
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

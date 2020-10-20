@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>springmvc使用mockmvc测试接口</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">springmvc使用mockmvc测试接口</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">springmvc使用mockmvc测试接口</p>
+    <hr>
+    
+    <p class="smallTitle">1. 导入相关的包</p>
+    <pre>
+        
+            &lt;dependency&gt;
+              &lt;groupId&gt;junit&lt;/groupId&gt;
+              &lt;artifactId&gt;junit&lt;/artifactId&gt;
+              &lt;version&gt;4.13&lt;/version&gt;
+              &lt;scope&gt;test&lt;/scope&gt;
+            &lt;/dependency&gt;
+        
+            &lt;!-- 4)Spring test --&gt;
+            &lt;dependency&gt;
+              &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+              &lt;artifactId&gt;spring-test&lt;/artifactId&gt;
+              &lt;version&gt;5.2.8.RELEASE&lt;/version&gt;
+            &lt;/dependency&gt;
+        
+            &lt;!--
+                junit4 测试依赖于 javax.servlet.api包， 不然会报错
+            --&gt;
+            &lt;dependency&gt;
+              &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+              &lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+              &lt;version&gt;4.0.1&lt;/version&gt;
+            &lt;/dependency&gt;
+        
+    </pre>
+
+    <p class="smallTitle">2. 为指定的类快速创建测试单元</p>
+    <pre>
+
+        在idea中选择需要测试的类： cmd+shift+t可以在有test目录的情况下快速创建对应的测试类
+    </pre>
+
+    <p class="smallTitle">3. 使用mockmvc测试</p>
+    <pre>
+
+            //SpringJunit4ClassRunner 依赖于spring-test, junit和javax.servlet.api三个包
+            @WebAppConfiguration //这个注解表示是WebApplicationContext
+            @RunWith(SpringJUnit4ClassRunner.class) //这个表示可以扫描到spring的ioc
+            @ContextConfiguration(locations = "classpath:applicationContext.xml")
+            public class Controller01Test{
+
+                @Autowired
+                private WebApplicationContext webApplicationContext;
+
+                private MockMvc mockMvc;
+
+                @Before
+                public void setup(){
+
+                    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+                }
+
+                @Test
+                public void test01() throws Exception{
+
+                    System.out.println(this.webApplicationContext);
+
+                    User user = new User(0 ,"张三", "100");
+
+                    ObjectMapper om = new ObjectMapper();
+                    String json = om.writeValueAsString(user);
+
+                    String jsonStr = this.mockMvc.perform(MockMvcRequestBuilders.post("/test01")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(json).header("token", "这是一个token"))
+                            .andExpect(MockMvcResultMatchers.status().isOk())
+                            .andDo(MockMvcResultHandlers.print())
+                            .andReturn().getResponse().getContentAsString();
+
+                    System.out.println(jsonStr);
+                }
+
+                @Test
+                public void test02() throws Exception{
+
+                    String jsonStr = this.mockMvc.perform(MockMvcRequestBuilders.get("/test02")
+                            .param("name", "张三").param("age", "100")
+                            .header("token", "这是一个token"))
+                            .andExpect(MockMvcResultMatchers.status().isOk())
+                            .andDo(MockMvcResultHandlers.print())
+                            .andReturn().getResponse().getContentAsString();
+
+                    System.out.println(jsonStr);
+                }
+
+                @Test
+                public void test03() throws  Exception{
+
+                    String jsonStr = this.mockMvc.perform(MockMvcRequestBuilders.get("/test03"))
+                            .andExpect(MockMvcResultMatchers.status().isOk())
+                            .andExpect(MockMvcResultMatchers.content().string("test03"))
+                            .andDo(MockMvcResultHandlers.print())
+                            .andReturn().getResponse().getContentAsString();
+
+                    System.out.println(jsonStr);
+                }
+
+                @Test
+                public void select() throws Exception{
+
+                    String json = this.mockMvc.perform(MockMvcRequestBuilders.get("/select"))
+                            .andReturn().getResponse().getContentAsString();
+                    System.out.println(json);
+                }
+
+                // 引入spring-jdbc， 然后配置事务管理器
+                @Transactional
+                @Rollback(value = true) //默认回滚事务
+                @Test
+                public void insert() throws Exception{
+
+                    String json = this.mockMvc.perform(MockMvcRequestBuilders.get("/insert")
+                            .param("name", "张三").param("age", "20"))
+                            .andDo(MockMvcResultHandlers.print())
+                            .andReturn().getResponse().getContentAsString();
+                    System.out.println(json);
+                }
+
+                @Transactional
+                @Rollback
+                @Test
+                public void delete() throws Exception{
+
+                    String json = this.mockMvc.perform(MockMvcRequestBuilders.get("/delete")
+                            .param("id", "28"))
+                            .andReturn().getResponse().getContentAsString();
+                    System.out.println(json);
+                }
+
+                //mockmvc ModelAndView
+                @Test
+                public void modelAndView() throws Exception{
+
+                    String html = this.mockMvc.perform(MockMvcRequestBuilders.get("/hello"))
+                            .andDo(MockMvcResultHandlers.print())
+                            .andReturn().getResponse().getContentAsString();
+                    System.out.println(html);
+                }
+
+                //mockmvc 静态资源
+                @Test
+                public void staticResource() throws Exception{
+
+                    this.mockMvc.perform(MockMvcRequestBuilders.get("/1.png"))
+                            .andDo(MockMvcResultHandlers.print());
+                }
+            }
+
+    </pre>
+    
+    <br>
+</div>
+
+</body>
+</html>
