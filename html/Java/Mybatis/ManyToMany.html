@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mybatis association 和 collection 的使用</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Mybatis association 和 collection 的使用</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Mybatis association 和 collection 的使用</p>
+    <hr>
+
+    <p class="smallTitle">1. 使用association解决返回类型一对多的情况</p>
+    <pre>
+        
+        entity:
+        public class User {
+
+            private Integer id;
+            private String username;
+            private String password;
+
+            //one to one
+            private Student student;
+            
+            ...
+        }
+        
+        public class Student {
+
+            private Integer id;
+            private String name;
+            private String age;
+            private Integer uid;
+        
+            ...
+        }
+        
+        dao:
+        List&lt;User&gt; assositionUserInfo();
+        
+        mapper.xml:
+        1. 写法1：
+        &lt;!--
+            mybatis association 返回对象参数一对一用法
+        --&gt;
+        &lt;resultMap id="userInfo1" type="com.mybatis.entity.User" &gt;
+        
+            &lt;result property="id" column="id" /&gt;
+            &lt;result property="username" column="username" /&gt;
+            &lt;result property="password" column="password" /&gt;
+        
+            &lt;!--
+                  这里注意javaType和jdbcType的区别:
+        
+                  写法1： 直接写在里面
+            --&gt;
+            &lt;association property="student" javaType="com.mybatis.entity.Student"&gt;
+                &lt;result property="id" column="id" /&gt;
+                &lt;result property="name" column="name" /&gt;
+                &lt;result property="age" column="age" /&gt;
+                &lt;result property="uid" column="uid" /&gt;
+            &lt;/association&gt;
+        
+        &lt;/resultMap&gt;
+        
+        
+        2. 写法2：
+        &lt;resultMap id="studentInfo" type="com.mybatis.entity.Student"&gt;
+            &lt;result property="id" column="id" /&gt;
+            &lt;result property="name" column="name" /&gt;
+            &lt;result property="age" column="age" /&gt;
+            &lt;result property="uid" column="uid" /&gt;
+        &lt;/resultMap&gt;
+
+        &lt;!--
+        mybatis association 返回对象参数一对一用法
+        --&gt;
+        &lt;resultMap id="userInfo1" type="com.mybatis.entity.User" &gt;
+    
+            &lt;result property="id" column="id" /&gt;
+            &lt;result property="username" column="username" /&gt;
+            &lt;result property="password" column="password" /&gt;
+            
+            &lt;!--
+                写法2： 用resultmap引入
+            --&gt;
+            &lt;association property="student" resultMap="studentInfo" /&gt;
+    
+    
+        &lt;/resultMap&gt;
+        
+    </pre>
+    
+    <p class="smallTitle">2. 使用collection解决返回类型一对多的情况</p>
+    <pre>
+        
+        entity:
+        public class User2 {
+
+            private Integer id;
+            private String username;
+            private String password;
+
+            //one to many
+            private List&lt;Student&gt; students;
+            ...
+        }
+        public class Student {
+
+            private Integer id;
+            private String name;
+            private String age;
+            private Integer uid;
+            ...
+        }
+        
+        dao:
+        List&lt;User&gt; collectionUserInfo();
+            
+        mapper.xml:
+        &lt;resultMap id="collectionUserMap" type="com.mybatis.entity.User2"&gt;
+            &lt;result property="id" column="id" /&gt;
+            &lt;result property="username" column="username" /&gt;
+            &lt;result property="password" column="password" /&gt;
+    
+            &lt;!--
+                      学生集合
+             --&gt;
+            &lt;collection property="students" resultMap="studentInfo" /&gt;
+
+        &lt;/resultMap&gt;
+    
+    
+        &lt;select id="collectionUserInfo"  resultMap="collectionUserMap"&gt;
+            select u.id, u.username, u.password,
+             stu.id, stu.name, stu.age, stu. uid
+             from `t_user` u,  `t_student` stu
+             where u.id = stu.uid;
+        &lt;/select&gt;    
+            
+        
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

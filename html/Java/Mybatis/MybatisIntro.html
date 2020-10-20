@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <head>
         <meta charset="UTF-8">
-        <title>Mybatis介绍与工作原理</title>
+        <title>Mybatis介绍与工作流程</title>
         <link rel="icon" href="../../../Source/icon-img.jpeg">
         <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
         <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
@@ -19,10 +19,22 @@
 
 <div class="contentBgDiv">
 
-    <p class="title">Mybatis介绍与工作原理</p>
+    <p class="title">Mybatis介绍与工作流程</p>
     <hr>
 
-    <p class="smallTitle">1. Mybatis介绍与工作原理</p>
+    <ul>
+        <li><a href="#intro">1. Mybatis介绍与工作流程</a> </li>
+        <li><a href="#import">2. 引入包</a> </li>
+        <li><a href="#config">3. mybatis-config配置</a> </li>
+        <li><a href="#log">4. 日志配置log4j.properties</a> </li>
+        <li><a href="#mapper">5. Mybatis通过Mapper操作</a> </li>
+        <li><a href="#sqlSession">6. 通过SqlSession操作</a> </li>
+        <li><a href="#customSaveSqlSession">7. 自定义线程安全的SqlSession</a> </li>
+        <li><a href="#proxy">8. 使用jdk动态代理解决SqlSession需要手动提交事务的问题</a> </li>
+        <li><a href="#load">9. 外部调用</a> </li>
+    </ul>
+
+    <p class="smallTitle" id="intro">1. Mybatis介绍与工作原理</p>
     <pre>
 
         /**
@@ -41,7 +53,7 @@
          */
     </pre>
 
-    <p class="smallTitle">2. 引入包</p>
+    <p class="smallTitle" id="import">2. 引入包</p>
     <pre>
         
         &lt;dependency&gt;
@@ -70,7 +82,7 @@
 
     </pre>
     
-    <p class="smallTitle">3. mybatis-config配置</p>
+    <p class="smallTitle" id="config">3. mybatis-config配置</p>
     <pre>
         &lt;?xml version="1.0" encoding="UTF-8" ?&gt;
                 &lt;!DOCTYPE configuration
@@ -89,7 +101,13 @@
                 &lt;!-- 在mybatis中添加log4j日志, 添加完这个后才会有sql语句打印 --&gt;
                 &lt;setting name="logImpl" value="Log4J" /&gt;
             &lt;/settings&gt;
-        
+
+            &lt;!-- 为实体对象起别名，这个标签需要放在上边 --&gt;
+            &lt;typeAliases&gt;
+                &lt;typeAlias type="com.spring.entity.Student" alias="Student"/&gt;
+                &lt;!-- 使用package标签批量为name包下所有类起别名， 别名为类名 --&gt;
+                &lt;!--&lt;package name="com.spring.entity" /&gt;--&gt;
+            &lt;/typeAliases&gt;
         
             &lt;!-- default指定数据源环境 --&gt;
             &lt;environments default="development"&gt;
@@ -133,7 +151,7 @@
         &lt;/configuration&gt;
     </pre>
 
-    <p class="smallTitle">4. 日志配置log4j.properties</p>
+    <p class="smallTitle" id="log">4. 日志配置log4j.properties</p>
     <pre>
 
         # 通过修改log4j.rootCategory来进行Log4J的日志级别的输出以及选择输出的位置。
@@ -167,7 +185,7 @@
 
     </pre>
 
-    <p class="smallTitle">5. Mybatis通过Mapper操作</p>
+    <p class="smallTitle" id="mapper">5. Mybatis通过Mapper操作</p>
     <pre>
 
             //通过Mapper操作数据已经解决了需要手动提交事务的问题，底层是用代理处理的事务提交
@@ -192,7 +210,7 @@
             }
     </pre>
 
-    <p class="smallTitle">6. 通过SqlSession操作</p>
+    <p class="smallTitle" id="sqlSession">6. 通过SqlSession操作</p>
     <pre>
 
         public static void getDataWithSession(){
@@ -240,7 +258,7 @@
         }
     </pre>
 
-    <p class="smallTitle">7. 自定义线程安全的SqlSession</p>
+    <p class="smallTitle" id="customSaveSqlSession">7. 自定义线程安全的SqlSession</p>
     <pre>
 
         //sqlSession操作对象
@@ -297,7 +315,7 @@
         }
     </pre>
 
-    <p class="smallTitle">8. 使用jdk动态代理解决SqlSession需要手动提交事务的问题</p>
+    <p class="smallTitle" id="proxy">8. 使用jdk动态代理解决SqlSession需要手动提交事务的问题</p>
     <pre>
 
         //使用动态代理， 处理事务
@@ -353,7 +371,7 @@
 
     </pre>
 
-    <p class="smallTitle">9. 外部调用</p>
+    <p class="smallTitle" id="load">9. 外部调用</p>
     <pre>
 
         public static Object getProxyObject(Object service){

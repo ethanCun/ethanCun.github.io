@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mybatis传参、返回值、以及防止sql注入</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Mybatis传参、返回值、以及防止sql注入</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Mybatis传参、返回值、以及防止sql注入</p>
+    <hr>
+
+    <ul>
+        <li><a href="#import">1. Mybatis mapper头文件</a> </li>
+        <li><a href="#parameter">2. mapper传参方式</a> </li>
+        <li><a href="#return">3. mapper返回值方式</a> </li>
+        <li><a href="#sql">4. mapper防止sql注入</a> </li>
+    </ul>
+
+    <p class="smallTitle" id="import">1. Mybatis mapper头文件</p>
+    <pre>
+        
+        &lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+        &lt;!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd"&gt;
+
+        &lt;mapper namespace="com.spring.mapper.StudentMapper" &gt;
+
+           &lt;select id="studentWithName" parameterType="string" resultType="Student"&gt;
+                select  * from t_student where name=#{name}
+            &lt;/select&gt;
+        &lt;/mapper&gt;
+
+        mybatis的mapper文件是根据namespace和sql语句的id来确定调用对应的dao层方法的；
+
+    </pre>
+
+    <p class="smallTitle" id="parameter">2. mapper传参方式</p>
+    <pre>
+
+        parameterType：
+        1. 8大基本类型+string，
+        2. Object引用类型
+        3. map
+        4. string/String/java.lang.string都可以；
+        5. 取别名typealias后，student/Student/com.spring.entity.Student都可以
+        6. map
+        7. mybatis传多个参数, 使用@param指定字段
+        8. 对象传参走的是getter方法， map走的是get, 对象/map字段和属性名称一致
+
+
+        1. String类型：
+        dao:
+        List&lt;Student&gt; studentWithName(String name);
+        mapper.xml:
+        &lt;select id="studentWithName" parameterType="string" resultType="Student"&gt;
+            select  * from t_student where name=#{name}
+        &lt;/select&gt;
+
+        2. 简单类型:
+        dao:
+        List&lt;Student&gt; studentWithId(int id);
+        mapper.xml:
+        &lt;select id="studentWithId" parameterType="int" resultType="Student"&gt;
+            select * from t_student where id=#{id}
+        &lt;/select&gt;
+
+        3. 对象类型:
+        dao:
+        List&lt;Student&gt; studentWithNameAgeObject(Student student);
+        mapper.xml:
+        &lt;!-- 参数不匹配直接报错 --&gt;
+        &lt;select id="studentWithNameAgeObject" parameterType="student" resultType="student"&gt;
+            select * from t_student where name=#{name} and age=#{age}
+        &lt;/select&gt;
+
+        4. map类型:
+        dao:
+        List&lt;Student&gt; studentWithNameAgeMap(Map&lt;String, Object&gt; student);
+        mapper.xml:
+        &lt;!-- 参数不对查不出数据，但是不会报错 --&gt;
+        &lt;select id="studentWithNameAgeMap" parameterType="map" resultType="com.spring.entity.Student"&gt;
+            select * from t_student where name=#{name} and age=#{age}
+        &lt;/select&gt;
+
+        5. 传递多个参数，用@Param指定参数名称
+        dao:
+        List&lt;Student&gt; studentWithNameAge(@Param("name") String name,
+                                     @Param("age") Integer age);
+        mapper.xml:
+        &lt;select id="studentWithNameAge" resultType="student"&gt;
+            select * from t_student where name=#{name} and age=#{age}
+        &lt;/select&gt;      
+                        
+    </pre>
+
+    <p class="smallTitle" id="return">3. mapper返回值方式</p>
+    <pre>
+        
+         1. string
+         2. pojo domain student
+         3. hashmap
+         4. 当字段名与查询字段名不一致的时候： 1. 使用别名as， 2. 使用resultmap
+        
+        //Integer:
+        &lt;select id="select4" resultType="Integer"&gt;
+            select count(1) from t_student
+        &lt;/select&gt; 
+        
+        //String:
+        &lt;select id="select2" resultType="string"&gt;
+            select name from t_student where id=#{id}
+        &lt;/select&gt;
+        
+        //Object:
+        &lt;select id="select1" resultType="student"&gt;
+            select * from t_student
+        &lt;/select&gt;
+
+        &lt;!-- List&lt;String&gt; --&gt;
+        &lt;select id="select3" resultType="string"&gt;
+            select name from t_student
+        &lt;/select&gt;
+
+        &lt;!--
+          返回hashmap, 返回map相比pojo简介， 但是map的优势在于可以返回pojo中不存在
+          的字段
+          --&gt;
+        &lt;select id="select5" resultType="map"&gt;
+            select count(*) as scount, name as sname
+            from t_student
+            group by name
+        &lt;/select&gt;
+
+
+        &lt;!--
+         返回pojo, 表中字段名和pojo中字段名称不一致的处理方式：
+    
+         1. 使用as， 将表中的fullname字段as成pojo中的name字段
+         2. 使用resultmap
+        --&gt;
+        &lt;!-- 使用as --&gt;
+        &lt;select id="select6" resultType="student"&gt;
+            select id as id, fullname as name, age as age from t_student
+        &lt;/select&gt;
+
+
+        &lt;!-- 使用resultmap --&gt;
+        &lt;select id="select7" resultMap="select7map"&gt;
+            select id, fullname, age from t_student
+        &lt;/select&gt;
+    
+        &lt;!--
+               type: 指定一个类型，需要与表建立一一对应关系
+         --&gt;
+        &lt;resultMap id="select7map" type="student"&gt;
+    
+            &lt;!-- 主键对应关系 property: pojo字段名 column:表字段名--&gt;
+            &lt;id property="id" column="id" /&gt;
+            &lt;!-- 普通字段对应关系 --&gt;
+            &lt;result property="name" column="fullname" /&gt;
+            &lt;result property="age" column="age" /&gt;
+    
+        &lt;/resultMap&gt;
+        
+    </pre>
+
+    <p class="smallTitle" id="sql">4. mapper防止sql注入</p>
+    <pre>
+
+        #{}: 表示占位符，可以有效防止sql注入，使用#{}无需考虑参数的类型，PrepearedStatement
+        ${}: 表示拼接符，无法防止sql注入，使用${}必须考虑参数的类型，Statement
+        简单类型参数传值:
+            1. 如果获取简单类型参数，#{}可以使用value或者其他名称
+            2. 如果获取简单类型参数，${}可以用引号包裹，#{}不能用引号包裹
+
+            传递参数一般用占位符， 拼接符一般用来拼sql关键字或者表名, 动态字段排序等;
+
+        实例， 模糊查询：
+        1. 使用${}拼接:
+        &lt;!-- like查询 %匹配0个1个或者多个 _表示职匹配一个字符 --&gt;
+        &lt;select id="select6" resultType="student"&gt;
+            select * from t_student where name like '%${name}%'
+        &lt;/select&gt;
+        
+        2. 使用#{}占位符+空格方式,注意： mysql里面拼接值， 空格相当于加号， 而不是加号, 所以这里的空格不能省略
+        &lt;select id="select8" resultType="student"&gt;
+            select * from t_student where name like '%' #{name} '%'
+        &lt;/select&gt;
+        
+    </pre>
+
+
+    <br>
+</div>
+
+
+</body>
+</html>

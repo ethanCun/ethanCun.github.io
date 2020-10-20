@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mybatis逆向工程生成entity、dao、mapper</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">Mybatis逆向工程生成entity、dao、mapper</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Mybatis逆向工程生成entity、dao、mapper</p>
+    <hr>
+    
+    <p class="smallTitle">1. 导入包</p>
+    <pre>
+        
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+            &lt;version&gt;5.2.8.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;log4j&lt;/groupId&gt;
+            &lt;artifactId&gt;log4j&lt;/artifactId&gt;
+            &lt;version&gt;1.2.17&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+            &lt;version&gt;8.0.19&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+            &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+            &lt;version&gt;3.5.3&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+            &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
+            &lt;version&gt;2.0.3&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+            &lt;artifactId&gt;druid&lt;/artifactId&gt;
+            &lt;version&gt;1.1.21&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
+            &lt;version&gt;5.2.5.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!--
+            mybatis逆向工程
+        --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.mybatis.generator&lt;/groupId&gt;
+            &lt;artifactId&gt;mybatis-generator-core&lt;/artifactId&gt;
+            &lt;version&gt;1.3.7&lt;/version&gt;
+        &lt;/dependency&gt;
+    </pre>
+    
+    <p class="smallTitle">2. Mybatis逆向工程配置文件</p>
+    <pre>
+        
+        &lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+        &lt;!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd"&gt;
+
+        &lt;!--
+            mybatis逆向工程配置文件
+        --&gt;
+        &lt;generatorConfiguration&gt;
+        
+        
+            &lt;context id="mysqlTables" targetRuntime="MyBatis3"&gt;
+                
+                &lt;!--
+
+                --&gt;
+                &lt;!--&lt;plugin type="org.mybatis.generator.plugins.SerializablePlugin" /&gt;--&gt;
+        
+                &lt;!--
+                    注释
+                --&gt;
+                &lt;commentGenerator&gt;
+        
+                    &lt;!-- 是否去除自动生成的注释 --&gt;
+                    &lt;property name="suppressAllComments" value="true" /&gt;
+                &lt;/commentGenerator&gt;
+        
+                &lt;!--
+                    数据库
+                --&gt;
+                &lt;jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                                connectionURL="jdbc:mysql://localhost:3306/test"
+                                userId="root" password="xxx" /&gt;
+        
+        
+                &lt;!--
+                    默认为false，把JDBC DECIMAL 和NUMERIC类型解析为Integer，
+                    为true时把JDBC DECIMAL 和NUMERIC类型解析为java.math.BigDecimal
+                --&gt;
+                &lt;javaTypeResolver&gt;
+                    
+                    &lt;property name="forceBigDecimals" value="false" /&gt;
+                &lt;/javaTypeResolver&gt;
+        
+                &lt;!--
+                    entity  注意这里的targetProject需要指定java文件夹路径
+                --&gt;
+                &lt;javaModelGenerator targetPackage="com.mybatis.entity" targetProject="/Users/macofethan/Desktop/mybatis/mybatis08/src/main/java"&gt;
+                    &lt;property name="enableSubPackages" value="true" /&gt;
+                    &lt;!-- 从数据库返回的值被清理前后的空格  --&gt;
+                    &lt;property name="trimStrings" value="true"/&gt;
+                &lt;/javaModelGenerator&gt;
+        
+                &lt;!--
+                    mapper映射文件 注意这里的targetProject需要指定resources文件夹路径
+                --&gt;
+                &lt;sqlMapGenerator targetPackage="mappers" targetProject="/Users/macofethan/Desktop/mybatis/mybatis08/src/main/resources"&gt;
+        
+                    &lt;property name="enableSubPackages" value="true" /&gt;
+                &lt;/sqlMapGenerator&gt;
+        
+        
+                &lt;!--
+                    dao层  注意这里的targetProject需要指定java文件夹路径
+                --&gt;
+                &lt;javaClientGenerator type="XMLMAPPER" targetPackage="com.mybatis.mapper" targetProject="/Users/macofethan/Desktop/mybatis/mybatis08/src/main/java"&gt;
+                    &lt;property name="enableSubPackages" value="true" /&gt;
+                &lt;/javaClientGenerator&gt;
+        
+                &lt;!--
+                    表， 可以指定多个&lt;table&gt;&lt;/table&gt;
+                --&gt;
+                &lt;!--&lt;table tableName="t_user" domainObjectName="User" enableCountByExample="true"--&gt;
+                &lt;!--enableDeleteByExample="true" enableDeleteByPrimaryKey="true"&gt;--&gt;
+        
+                &lt;!--&lt;!&ndash;&lt;property name="useActualColumnNames" value="false" /&gt;&ndash;&gt;--&gt;
+                &lt;!--&lt;!&ndash;&lt;generatedKey column="ID" sqlStatement="DB2" identity="true" /&gt;&ndash;&gt;--&gt;
+                &lt;!--&lt;!&ndash;&lt;columnOverride column="DATE_FIELD" property="startDate" /&gt;&ndash;&gt;--&gt;
+                &lt;!--&lt;!&ndash;&lt;ignoreColumn column="FRED" /&gt;&ndash;&gt;--&gt;
+                &lt;!--&lt;!&ndash;&lt;columnOverride column="LONG_VARCHAR_FIELD" jdbcType="VARCHAR" /&gt;&ndash;&gt;--&gt;
+        
+                &lt;!--&lt;/table&gt;--&gt;
+        
+                &lt;!--
+                    catalog: 指定entity都在文件包的子包名
+                --&gt;
+                &lt;table catalog="test" tableName="t_user" domainObjectName="User"
+                       enableDeleteByPrimaryKey="false"
+                       enableDeleteByExample="false"
+                       enableCountByExample="false"
+                       enableInsert="true"
+                       enableSelectByExample="false"
+                       enableSelectByPrimaryKey="false"
+                       enableUpdateByExample="false"
+                       enableUpdateByPrimaryKey="false"
+                       delimitIdentifiers="false"/&gt;
+                &lt;!--&lt;table schema="test"  tableName="t_student" domainObjectName="Student"--&gt;
+                &lt;!--enableDeleteByPrimaryKey="false"--&gt;
+                &lt;!--enableDeleteByExample="false"--&gt;
+                &lt;!--enableCountByExample="false"--&gt;
+                &lt;!--enableInsert="true"--&gt;
+                &lt;!--enableSelectByExample="false"--&gt;
+                &lt;!--enableSelectByPrimaryKey="false"--&gt;
+                &lt;!--enableUpdateByExample="false"--&gt;
+                &lt;!--enableUpdateByPrimaryKey="false"--&gt;
+                &lt;!--delimitIdentifiers="false"/&gt;--&gt;
+        
+        
+            &lt;/context&gt;
+        &lt;/generatorConfiguration&gt;
+    </pre>
+
+    <p class="smallTitle">3. 运行Mybatis逆向工程的生成工具代码</p>
+    <pre>
+
+        public class MybatisGenerator {
+
+            public void testGenerator() throws Exception {
+                List&lt;String&gt; warnings = new ArrayList&lt;String&gt;();
+                boolean overwrite = true;
+                //指定逆向工程配置文件
+                File configFile = new File(MybatisGenerator.class.getResource("/mybatis/mybatis-generator.xml").getFile());
+                ConfigurationParser cp = new ConfigurationParser(warnings);
+                Configuration config = cp.parseConfiguration(configFile);
+                DefaultShellCallback callback = new DefaultShellCallback(overwrite);
+                MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, callback, warnings);
+                myBatisGenerator.generate(null);
+            }
+        
+            public static void main(String[] args) throws Exception {
+                MybatisGenerator generator = new MybatisGenerator();
+                generator.testGenerator();
+        
+                System.out.println("success");
+            }
+        
+        }
+
+    </pre>
+
+    <p class="smallTitle">4. 注意生成文件的路径</p>
+    <pre>
+
+        注意mybatis-generator-config配置文件中：
+        entity、dao、mapper的targetProject路径使用绝对路径：
+            并且不要写错了，不然不会生成对应点而文件;
+    </pre>
+
+    <br>
+
+    <br>
+</div>
+
+</body>
+</html>
