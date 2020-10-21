@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>springmvc整合poi/poi-ooxml实现excel的导入和导出</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">springmvc整合poi/poi-ooxml实现excel的导入和导出</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">springmvc整合poi/poi-ooxml实现excel的导入和导出</p>
+    <hr>
+
+    <p class="smallTitle">1. poi简介</p>
+    <pre>
+
+        /**
+         *
+         1.官网：<a target="_blank" href="https://poi.apache.org/">https://poi.apache.org/</a>
+         2.特点：
+         结构：
+
+         HSSF － excel2003版提供读写Microsoft Excel格式档案的功能。
+         XSSF － excel2007和2007版之后提供读写Microsoft Excel OOXML格式档案的功能, xlsx
+         HWPF － 提供读写Microsoft Word格式档案的功能。
+         HSLF － 提供读写Microsoft PowerPoint格式档案的功能。
+         HDGF － 提供读写Microsoft Visio格式档案的功能。
+         */
+    </pre>
+
+    <p class="smallTitle">2. 导入相关的包</p>
+    <pre>
+        
+        &lt;dependency&gt;
+          &lt;groupId&gt;junit&lt;/groupId&gt;
+          &lt;artifactId&gt;junit&lt;/artifactId&gt;
+          &lt;version&gt;4.13&lt;/version&gt;
+          &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-test&lt;/artifactId&gt;
+          &lt;version&gt;5.2.8.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+          &lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+          &lt;version&gt;4.0.1&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+          &lt;version&gt;5.2.8.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!--
+            事务
+        --&gt;
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
+          &lt;version&gt;5.2.6.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;log4j&lt;/groupId&gt;
+          &lt;artifactId&gt;log4j&lt;/artifactId&gt;
+          &lt;version&gt;1.2.17&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+          &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+          &lt;version&gt;1.18.12&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+          &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+          &lt;version&gt;3.5.4&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+          &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
+          &lt;version&gt;2.0.4&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;tk.mybatis&lt;/groupId&gt;
+          &lt;artifactId&gt;mapper&lt;/artifactId&gt;
+          &lt;version&gt;4.1.4&lt;/version&gt;
+          &lt;exclusions&gt;
+            &lt;exclusion&gt;
+              &lt;groupId&gt;javax.persistence&lt;/groupId&gt;
+              &lt;artifactId&gt;persistence-api&lt;/artifactId&gt;
+            &lt;/exclusion&gt;
+          &lt;/exclusions&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;javax.persistence&lt;/groupId&gt;
+          &lt;artifactId&gt;persistence-api&lt;/artifactId&gt;
+          &lt;version&gt;1.0&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;mysql&lt;/groupId&gt;
+          &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+          &lt;version&gt;8.0.20&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+          &lt;artifactId&gt;druid&lt;/artifactId&gt;
+          &lt;version&gt;1.1.21&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+          &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+          &lt;artifactId&gt;jackson-core&lt;/artifactId&gt;
+          &lt;version&gt;2.11.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+          &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;
+          &lt;version&gt;2.11.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+    
+        &lt;!--
+            poi: 处理普通excel文件
+        --&gt;
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
+          &lt;artifactId&gt;poi&lt;/artifactId&gt;
+          &lt;version&gt;4.1.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;!--
+            poi: 处理xlsx文件
+        --&gt;
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
+          &lt;artifactId&gt;poi-ooxml&lt;/artifactId&gt;
+          &lt;version&gt;4.1.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;!--
+            文件上传
+        --&gt;
+        &lt;dependency&gt;
+          &lt;groupId&gt;commons-fileupload&lt;/groupId&gt;
+          &lt;artifactId&gt;commons-fileupload&lt;/artifactId&gt;
+          &lt;version&gt;1.3.2&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+          &lt;groupId&gt;commons-io&lt;/groupId&gt;
+          &lt;artifactId&gt;commons-io&lt;/artifactId&gt;
+          &lt;version&gt;2.6&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
+          &lt;artifactId&gt;poi-ooxml&lt;/artifactId&gt;
+          &lt;version&gt;4.1.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+
+    </pre>
+    
+    <p class="smallTitle">3. common-fileupload需要注入的bean: CommonsMultipartResolver</p>
+    <pre>
+        
+        &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+        &lt;beans xmlns="http://www.springframework.org/schema/beans"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:context="http://www.springframework.org/schema/context"
+               xmlns:mvc="http://www.springframework.org/schema/mvc"
+               xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd"&gt;
+
+            &lt;context:component-scan base-package="com.ethan.springmvc.easyexcel" /&gt;
+        
+            &lt;bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"&gt;
+        
+                &lt;property name="prefix" value="/WEB-INF/views/" /&gt;
+                &lt;property name="suffix" value=".jsp" /&gt;
+            &lt;/bean&gt;
+        
+            &lt;mvc:annotation-driven /&gt;
+        
+            &lt;mvc:default-servlet-handler /&gt;
+        
+            &lt;import resource="classpath:spring-dao.xml" /&gt;
+        
+            &lt;!--
+                文件上传
+            --&gt;
+            &lt;bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/&gt;
+        
+        
+        &lt;/beans&gt;
+    </pre>
+    
+    <p class="smallTitle">4. excel上传jsp</p>
+    <pre>
+        
+        &lt;%@ page contentType="text/html;charset=UTF-8" language="java" %&gt;
+        &lt;%@ page isELIgnored="false" %&gt;
+        &lt;html&gt;
+        &lt;head&gt;
+            &lt;title&gt;上传excel&lt;/title&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+        
+            &lt;form action="/upload" method="post" enctype="multipart/form-data"&gt;
+        
+                &lt;input type="file" name="excel"&gt;
+                &lt;input type="submit" value="上传"&gt;
+            &lt;/form&gt;
+        
+        &lt;/body&gt;
+        &lt;/html&gt;
+    </pre>
+    
+    <p class="smallTitle">5. excel的导入导出</p>
+    <p class="introduceText">service层：</p>
+    <pre>
+        
+        /**
+         *
+         * 关于Excel格式： 2003年版本的是xls格式(HSSFWorkbook)，2007和2007年之后的版本是xlsx格式(XSSFWorkbook)
+         * 选择的格式不会会报错：
+         * You are calling the part of POI that deals with OLE2 Office Documents. Y
+         * ou need to call a different part of POI to process this data (eg XSSF instead of HSSF)
+         */
+        public interface UserService {
+        
+            List&lt;User&gt; selectAll();
+        
+            //2003版
+        
+            //2003版 ---- HSSFWorkbook  ----- xls
+            //xlsx格式的excel导入
+            int importExcel2003(MultipartRequest request, String excelName) throws IOException;
+            //excel导出数据
+            int exportExcel2003(HttpServletResponse response) throws IOException;
+        
+            //2007和2007版之后 XSSFWorkbook ---- xlsx
+            //xlsx格式的excel导入
+            int importExcel2007(MultipartRequest request, String excelName) throws IOException;
+            //excel导出数据
+            int exportExcel2007(HttpServletResponse response) throws IOException;
+        }
+
+    </pre>
+    <p class="introduceText">service.imp:</p>
+    <pre>
+        
+        package com.ethan.springmvc.easyexcel.service.imp;
+
+        import com.ethan.springmvc.easyexcel.entity.User;
+        import com.ethan.springmvc.easyexcel.mapper.UserMapper;
+        import org.apache.poi.hssf.usermodel.HSSFRow;
+        import org.apache.poi.hssf.usermodel.HSSFSheet;
+        import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+        import org.apache.poi.ss.usermodel.Cell;
+        import org.apache.poi.ss.usermodel.CellType;
+        import org.apache.poi.ss.usermodel.Row;
+        import org.apache.poi.xssf.usermodel.XSSFRow;
+        import org.apache.poi.xssf.usermodel.XSSFSheet;
+        import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.stereotype.Service;
+        import org.springframework.transaction.annotation.Isolation;
+        import org.springframework.transaction.annotation.Propagation;
+        import org.springframework.transaction.annotation.Transactional;
+        import org.springframework.web.multipart.MultipartFile;
+        import org.springframework.web.multipart.MultipartRequest;
+        
+        import javax.servlet.ServletOutputStream;
+        import javax.servlet.http.HttpServletResponse;
+        import java.io.IOException;
+        import java.io.UnsupportedEncodingException;
+        import java.util.List;
+        
+        @Service("userService")
+        public class UserServiceImpl implements UserService {
+        
+            @Autowired
+            @SuppressWarnings("all")
+            private UserMapper userMapper;
+        
+            @Override
+            public List&lt;User&gt; selectAll() {
+                return this.userMapper.selectAll();
+            }
+
+            @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ)
+            @Override
+            public int importExcel2003(MultipartRequest request, String excelName) throws IOException {
+        
+                MultipartFile multipartFile = request.getFile(excelName);
+        
+                HSSFWorkbook hssfWorkbook = new HSSFWorkbook(multipartFile.getInputStream());
+        
+                HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(0);
+        
+                for(Row row : hssfSheet){
+        
+                    //第一行是字段说明
+                    if (row.getRowNum() &gt; 0){
+        
+                        for (Cell cell : row){
+        
+                            cell.setCellType(CellType.STRING);
+                        }
+        
+                        //id
+                        Cell cell0 = row.getCell(0);
+                        //name
+                        Cell cell1 = row.getCell(1);
+                        //age
+                        Cell cell2 = row.getCell(2);
+        
+                        Integer id = Integer.valueOf(cell0.getStringCellValue());
+                        String name = cell1.getStringCellValue();
+                        Integer age = Integer.valueOf(cell2.getStringCellValue());
+        
+                        if (this.userMapper.insert(new User(id, name, age)) &lt;= 0){
+        
+                            throw new RuntimeException("插入失败");
+                        }
+                    }
+                }
+        
+                return 1;
+            }
+
+            @Override
+            public int exportExcel2003(HttpServletResponse response) throws IOException {
+        
+                //创建一个excel文件
+                HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
+                //创建一个表单
+                HSSFSheet hssfSheet = hssfWorkbook.createSheet("用户信息数据");
+        
+                //创建标题行
+                HSSFRow headerRow = hssfSheet.createRow(0);
+                headerRow.createCell(0, CellType.STRING).setCellValue("用户id");
+                headerRow.createCell(1, CellType.STRING).setCellValue("用户名称");
+                headerRow.createCell(2, CellType.STRING).setCellValue("用户年龄");
+        
+                List&lt;User&gt; users = this.userMapper.selectAll();
+        
+                for (User user : users){
+        
+                    HSSFRow row = hssfSheet.createRow(hssfSheet.getLastRowNum()+1);
+                    row.createCell(0, CellType.STRING).setCellValue(user.getId());
+                    row.createCell(1, CellType.STRING).setCellValue(user.getName());
+                    row.createCell(2, CellType.STRING).setCellValue(user.getAge());
+                }
+        
+                //文件名
+                StringBuffer fileName = new StringBuffer("user_info");
+                fileName.append(System.currentTimeMillis()/1000);
+                fileName.append(".xls");
+        
+                response.setHeader("content-disposition", "attachment; filename=\""
+                        + new String(fileName.toString().getBytes("utf-8"),
+                        "ISO8859_1") + "\"");
+        
+                ServletOutputStream servletOutputStream = response.getOutputStream();
+        
+                //写出
+                hssfWorkbook.write(servletOutputStream);
+        
+                servletOutputStream.flush();
+                servletOutputStream.close();
+        
+                return 1;
+            }
+        
+            //excel上传数据
+            @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ)
+            @Override
+            public int importExcel2007(MultipartRequest request, String excelName) throws IOException {
+        
+                MultipartFile multipartFile = request.getFile(excelName);
+        
+                XSSFWorkbook xssfWorkbook = new XSSFWorkbook(multipartFile.getInputStream());
+        
+                XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+        
+                for(Row row : xssfSheet){
+        
+                    //第一行是字段说明
+                    if (row.getRowNum() &gt; 0){
+        
+                        for (Cell cell : row){
+        
+                            cell.setCellType(CellType.STRING);
+                        }
+        
+                        //id
+                        Cell cell0 = row.getCell(0);
+                        //name
+                        Cell cell1 = row.getCell(1);
+                        //age
+                        Cell cell2 = row.getCell(2);
+        
+                        Integer id = Integer.valueOf(cell0.getStringCellValue());
+                        String name = cell1.getStringCellValue();
+                        Integer age = Integer.valueOf(cell2.getStringCellValue());
+        
+                        if (this.userMapper.insert(new User(id, name, age)) &lt;= 0){
+        
+                            throw new RuntimeException("插入失败");
+                        }
+                    }
+                }
+        
+                return 1;
+            }
+
+            @Override
+            public int exportExcel2007(HttpServletResponse response) throws IOException {
+        
+                //创建一个excel文件
+                XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
+                //创建一个表单
+                XSSFSheet xssfSheet = xssfWorkbook.createSheet("用户信息数据");
+        
+                //创建标题行
+                XSSFRow headerRow = xssfSheet.createRow(0);
+                headerRow.createCell(0, CellType.STRING).setCellValue("用户id");
+                headerRow.createCell(1, CellType.STRING).setCellValue("用户名称");
+                headerRow.createCell(2, CellType.STRING).setCellValue("用户年龄");
+        
+                List&lt;User&gt; users = this.userMapper.selectAll();
+        
+                for (User user : users){
+        
+                    XSSFRow row = xssfSheet.createRow(xssfSheet.getLastRowNum()+1);
+                    row.createCell(0, CellType.STRING).setCellValue(user.getId());
+                    row.createCell(1, CellType.STRING).setCellValue(user.getName());
+                    row.createCell(2, CellType.STRING).setCellValue(user.getAge());
+                }
+        
+                //文件名
+                StringBuffer fileName = new StringBuffer("user_info");
+                fileName.append(System.currentTimeMillis()/1000);
+                fileName.append(".xlsx");
+        
+                response.setHeader("content-disposition", "attachment; filename=\""
+                        + new String(fileName.toString().getBytes("utf-8"),
+                        "ISO8859_1") + "\"");
+        
+                ServletOutputStream servletOutputStream = response.getOutputStream();
+        
+                //写出
+                xssfWorkbook.write(servletOutputStream);
+        
+                servletOutputStream.flush();
+                servletOutputStream.close();
+        
+                return 1;
+            }
+        }
+
+    </pre>
+    
+    
+    <br>
+</div>
+</div>
+
+
+</body>
+</html>
