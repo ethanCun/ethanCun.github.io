@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>ssm-tkmapper整合</title>
+        <link rel="icon" href="../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">ssm-tkmapper整合</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">ssm-tkmapper整合</p>
+    <hr>
+
+    <p class="smallTitle">1. 引入必须的包</p>
+    <pre>
+
+        &lt;!--
+            测试需要依赖这个三个包
+        --&gt;
+        &lt;dependency&gt;
+          &lt;groupId&gt;junit&lt;/groupId&gt;
+          &lt;artifactId&gt;junit&lt;/artifactId&gt;
+          &lt;version&gt;4.13&lt;/version&gt;
+          &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-test&lt;/artifactId&gt;
+          &lt;version&gt;5.2.8.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+          &lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+          &lt;version&gt;4.0.1&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!--
+          log4j日志
+        --&gt;
+        &lt;dependency&gt;
+          &lt;groupId&gt;log4j&lt;/groupId&gt;
+          &lt;artifactId&gt;log4j&lt;/artifactId&gt;
+          &lt;version&gt;1.2.17&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+          &lt;version&gt;5.2.8.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;mysql&lt;/groupId&gt;
+          &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+          &lt;version&gt;8.0.20&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
+          &lt;version&gt;5.2.6.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+          &lt;artifactId&gt;druid&lt;/artifactId&gt;
+          &lt;version&gt;1.1.21&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!--
+          tkmapper
+        --&gt;
+        &lt;dependency&gt;
+          &lt;groupId&gt;tk.mybatis&lt;/groupId&gt;
+          &lt;artifactId&gt;mapper&lt;/artifactId&gt;
+          &lt;version&gt;4.1.4&lt;/version&gt;
+            &lt;!--            
+                    移除内嵌的，防止冲突
+            --&gt;
+          &lt;exclusions&gt;
+            &lt;exclusion&gt;
+              &lt;groupId&gt;javax.persistence&lt;/groupId&gt;
+              &lt;artifactId&gt;persistence-api&lt;/artifactId&gt;
+            &lt;/exclusion&gt;
+          &lt;/exclusions&gt;
+        &lt;/dependency&gt;
+
+        &lt;!--
+            必须引入persistence-api, @Table(name="")用来指定表名、@Column(name="")字段名
+        --&gt;
+        &lt;dependency&gt;
+          &lt;groupId&gt;javax.persistence&lt;/groupId&gt;
+          &lt;artifactId&gt;persistence-api&lt;/artifactId&gt;
+          &lt;version&gt;1.0&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+          &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+          &lt;version&gt;3.5.4&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+          &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
+          &lt;version&gt;2.0.4&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!--
+          pagehelper分页, 注意pagehelper的配置根版本有关系， 5.0.0以上一下不一样
+        --&gt;
+        &lt;dependency&gt;
+          &lt;groupId&gt;com.github.pagehelper&lt;/groupId&gt;
+          &lt;artifactId&gt;pagehelper&lt;/artifactId&gt;
+          &lt;version&gt;5.1.8&lt;/version&gt;
+        &lt;/dependency&gt;
+
+
+        &lt;!--
+          lombok
+        --&gt;
+        &lt;dependency&gt;
+          &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+          &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+          &lt;version&gt;1.18.12&lt;/version&gt;
+        &lt;/dependency&gt;
+
+
+        &lt;!--
+          jackson
+        --&gt;
+        &lt;dependency&gt;
+          &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+          &lt;artifactId&gt;jackson-core&lt;/artifactId&gt;
+          &lt;version&gt;2.11.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    
+        &lt;dependency&gt;
+          &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+          &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;
+          &lt;version&gt;2.11.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    </pre>
+    
+    <p class="smallTitle">2. 定义基础接口，集成mapper, mysqlmapper</p>
+    <pre>
+        
+        # 这个接口所在的包不要和自定义的dao在同一个包下
+        public interface MyBaseMapper&lt;T&gt; extends Mapper&lt;T&gt;, MySqlMappervT&gt; {
+        
+        }
+
+        # 其他自定义的dao继承与MyBaseMapper即可
+        public interface UserMapper extends MyBaseMapper&lt;User&gt; {
+
+        }
+
+    </pre>
+
+    <p class="smallTitle">3. 在mybatis-config中编写pagehelper的配置</p>
+    <pre>
+
+        #关于Mybatis-PageHelper更多的配置可以查看官方文档: <a target="_blank" href="https://github.com/pagehelper/Mybatis-PageHelper/blob/master/wikis/zh/HowToUse.md">https://github.com/pagehelper/Mybatis-PageHelper/blob/master/wikis/zh/HowToUse.md</a>
+
+        &lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+        &lt;!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd"&gt;
+        &lt;configuration&gt;
+
+            &lt;!--mybatis全局属性--&gt;
+            &lt;settings&gt;
+                &lt;!--自增主键--&gt;
+                &lt;setting name="useGeneratedKeys" value="true"/&gt;
+                &lt;!-- 使用列别名替换列名 默认:true --&gt;
+                &lt;setting name="useColumnLabel" value="true"/&gt;
+                &lt;!-- 开启驼峰命名转换:Table{create_time} -&gt; Entity{createTime} --&gt;
+                &lt;setting name="mapUnderscoreToCamelCase" value="true"/&gt;
+
+                &lt;!-- 在mybatis中添加log4j日志, 添加完这个后才会有sql语句打印,
+                log4f.properties必须直接放在resources下，不然找不到 --&gt;
+                &lt;setting name="logImpl" value="Log4J" /&gt;
+            &lt;/settings&gt;
+
+            &lt;!-- 为实体对象起别名，这个标签需要放在上边 --&gt;
+            &lt;typeAliases&gt;
+                &lt;typeAlias type="com.ethan.springmvc.app.entity.User" alias="User"/&gt;
+                &lt;!-- 使用package标签批量为name包下所有类起别名， 别名为类名 --&gt;
+                &lt;!--&lt;package name="com.spring.entity" /&gt;--&gt;
+            &lt;/typeAliases&gt;
+
+            &lt;!--
+                配置tkmapper分页拦截器:
+                注意！！！！这个插件只能在一个地方配置一次，如果再这里配置了，在mybatis-config.xml文件里面就不要配置了，
+                否则会出现空指针问题！！！！
+
+                plugins在配置文件中的位置必须符合要求，否则会报错，顺序如下:
+                properties?, settings?,
+                typeAliases?, typeHandlers?,
+                objectFactory?,objectWrapperFactory?,
+                plugins?,
+                environments?, databaseIdProvider?, mappers?
+            --&gt;
+            &lt;plugins&gt;
+                &lt;plugin interceptor="com.github.pagehelper.PageInterceptor"&gt;
+
+                    &lt;!--
+                    禁用合理化时，如果pageNum&lt;1或pageNum&gt;pages会返回空数据
+                    --&gt;
+                    &lt;property name="reasonable" value="false"/&gt;
+
+                    &lt;!--
+                        配置数据库方言
+                    --&gt;
+                    &lt;property name="helperDialect" value="mysql"/&gt;
+
+                    &lt;!-- 该参数默认为false --&gt;
+                    &lt;!-- 设置为true时，会将RowBounds第一个参数offset当成pageNum页码使用 --&gt;
+                    &lt;!-- 和startPage中的pageNum效果一样--&gt;
+                    &lt;property name="offsetAsPageNum" value="true"/&gt;
+
+                    &lt;!-- 该参数默认为false --&gt;
+                    &lt;!-- 设置为true时，使用RowBounds分页会进行count查询 --&gt;
+                    &lt;property name="rowBoundsWithCount" value="true"/&gt;
+
+                    &lt;!-- 设置为true时，如果pageSize=0或者RowBounds.limit = 0就会查询出全部的结果 --&gt;
+                    &lt;!-- （相当于没有执行分页查询，但是返回结果仍然是Page类型）--&gt;
+                    &lt;property name="pageSizeZero" value="true"/&gt;
+
+                &lt;/plugin&gt;
+            &lt;/plugins&gt;
+
+        &lt;/configuration&gt;
+    </pre>
+    
+    <p class="smallTitle">4. 配置tkmapper对应的spring-dao层</p>
+    <pre>
+        
+        &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+        &lt;beans xmlns="http://www.springframework.org/schema/beans"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+               xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd"&gt;
+
+            &lt;context:property-placeholder location="classpath:properties/jdbc.properties" /&gt;
+        
+            &lt;bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"&gt;
+                &lt;property name="driverClassName" value="${jdbc.driver}" /&gt;
+                &lt;property name="url" value="${jdbc.url}" /&gt;
+                &lt;property name="username" value="${jdbc.user}" /&gt;
+                &lt;property name="password" value="${jdbc.pass}" /&gt;
+            &lt;/bean&gt;
+        
+            &lt;bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean"&gt;
+                &lt;property name="dataSource" ref="dataSource" /&gt;
+                &lt;property name="configLocation" value="classpath:mybatis/mybatis-config.xml" /&gt;
+                &lt;property name="mapperLocations" value="classpath:mappers/*" /&gt;
+            &lt;/bean&gt;
+
+            &lt;!--
+                     注意是：tkmapper:tk.mybatis.spring.mapper.MapperScannerConfigurer
+                            mybatis:org.mybatis.spring.mapper.MapperScannerConfigurer
+            --&gt;
+            &lt;bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer"&gt;
+                &lt;property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBean" /&gt;
+                &lt;property name="basePackage" value="com.ethan.springmvc.app.mapper" /&gt;
+            &lt;/bean&gt;
+        
+            &lt;bean id="userService" class="com.ethan.springmvc.app.service.imp.UserServiceImpl"&gt;
+        
+                &lt;!--
+                     tk.mybatis.spring.mapper.MapperScannerConfigurer扫描会显示ref红色，但是运行正常
+                --&gt;
+                &lt;property name="userMapper" ref="userMapper" /&gt;
+            &lt;/bean&gt;
+        
+            &lt;bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"&gt;
+                &lt;property name="dataSource" ref="dataSource" /&gt;
+            &lt;/bean&gt;
+        
+            &lt;tx:annotation-driven transaction-manager="transactionManager" /&gt;
+        
+        &lt;/beans&gt;
+
+    </pre>
+
+    <p class="smallTitle">5. 关于pagehelper</p>
+    <pre>
+
+        1. 配置分页合理化： &lt;property name="reasonable" value="false"/&gt;
+        2. PageHelper setPage放在一个ThreadLocal中已page为key，所以当前page是线程安全的；
+        3. 开启分页之后，必须是紧跟着查询语句:
+
+        @Override
+        public UserPageModel selectByPage(Page page) {
+
+            PageHelper.startPage(page.getPageNum(), page.getPageSize(), true);
+            //查询语句紧跟着startPage
+            List&lt;User&gt; userList = this.userMapper.selectAll();
+
+            PageInfo pageInfo = new PageInfo(userList);
+
+            UserPageModel userPageModel = new UserPageModel(pageInfo.getTotal(), pageInfo.getList());
+
+            return userPageModel;
+        }
+    </pre>
+    
+    <br>
+</div>
+</body>
+</html>
