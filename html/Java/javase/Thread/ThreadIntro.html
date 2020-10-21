@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>线程的创建与生命周期</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">线程的创建与生命周期</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">线程的创建与生命周期</p>
+    <hr>
+
+    <ul>
+        <li><a href="#intro">1. 线程与进程</a> </li>
+        <li><a href="#create1">2. 线程的创建方式一</a> </li>
+        <li><a href="#create2">3. 线程的创建方式二</a> </li>
+        <li><a href="#create3">4. 线程的创建方式三</a> </li>
+        <li><a href="#subthread">5. 启动分支栈线程</a> </li>
+        <li><a href="#life">6. 线程的生命周期</a> </li>
+        <li><a href="#notify" >7. 需要注意的点</a></li>
+        <li><a href="#property">8. Thread属性方法</a> </li>
+    </ul>
+
+    <p class="smallTitle" id="intro">1. 线程与进程</p>
+    <pre>
+
+         * 进程是一个应用程序， 包含多个线程；
+         * 线程是进程中的一个单元；
+         *
+         *
+         * 一个简单的Java程序中至少有两个线程：
+         *  一个是垃圾回收线程， 一个负责main方法的执行， 所有main方法结束只是
+         *  主线程结束，其他的线程还在工作（一个线程一个栈，支栈）；
+         *
+         * 在Java中， 堆内存和方法区内存是线程之间可以共享的，
+         *  但是栈内存是线程独有的，也就是说在多线程下，实际上有多个栈
+         *  空间，它们在并发执行；
+         *
+         *  进程是独立的，不分享资源；线程可以分享资源；
+         *
+         *  单核cpu没有真正的并发，只是线程之间(线程调度)切换较快，给人感觉就是多线程运行效果；
+
+    </pre>
+
+    <p class="smallTitle" id="create1">2. 线程的创建方式一</p>
+    <pre>
+
+        //1. 类直接继承Thread
+        //缺点在于不能再继承与自定义的类
+        A a = new A();
+
+        class A extends Thread{
+
+            //重写run
+            @Override
+            public void run() {
+
+                for (int i = 0; i < 1000; i++) {
+                    System.out.println("A run");
+                }
+            }
+        }
+
+    </pre>
+
+    <p class="smallTitle" id="create2">3. 线程的创建方式二</p>
+    <pre>
+
+        //实现Runnable接口，这种方式的优点在于可以继承与自定义的类
+        class B implements Runnable{
+
+            @Override
+            public void run() {
+
+                for (int i = 0; i < 1000; i++) {
+                    System.out.println("B run");
+                }
+            }
+        }
+    </pre>
+
+    <p class="smallTitle" id="create3">4. 线程的创建方式三</p>
+    <pre>
+
+        //实现Callable接口，表明是可调用的；
+        //优点：callable的好处在于可以获取到返回值FutureTask, 通过调用get()方法，来获取任务的返回值,
+        //同时也解决了单继承的问题。
+        public class MyCallable implements Callable {
+
+            @Override
+            public Object call() throws Exception {
+
+                Thread.sleep(3000);
+
+                return "线程3";
+            }
+        }
+
+        //实现Callable
+        FutureTask&lt&lt;String&gt&gt; futureTask = new FutureTask<>(new MyCallable());
+        Thread thread33 = new Thread(futureTask);
+        thread33.start();
+        try {
+            String result = futureTask.get();
+            System.out.println("callable形式返回数据: " + result + " isDone: " + futureTask.isDone());
+        }catch (InterruptedException | ExecutionException e){
+            e.printStackTrace();
+        }
+    </pre>
+
+    <p class="smallTitle" id="subthread">5. 启动分支栈线程</p>
+    <pre>
+
+        1. 创建出来的线程处于新建状态，并不能开始运行该线程；
+        2. 调用start方法和run方法都可以使线程处于可运行状态，但是两者存在区别：
+
+        //启动一个分支线程，在jvm中开辟一个新的栈空间，
+        //只要栈开出来start()就结束了，哪怕线程里面发生错误，程序也会继续执行；
+        //start()方法会自动调用run方法,
+        //并且run方法在栈的最底部，run和main是平级的；
+        a.start();
+
+        //调用run方法不会分配新的栈，不会启动新的线程；
+        //相当于普通方法调用
+        //a.run();
+
+    </pre>
+
+    <p class="smallTitle" id="life">6. 线程的生命周期</p>
+    <pre>
+
+         *
+         * 线程的生命周期：
+         *
+         * 1、新建状态new： 刚new出来的的线程
+         * 2、就绪状态start：低啊用start方法，又称可运行状态，具有抢夺CPU时间片
+         *  的权利，也就是具有抢夺时间片的权利；
+         * 3、运行状态run：run方法的开始执行标志着线程进入运行状态；
+         *  当之前占有的CPU时间片用完之后，会重新回到就绪状态重新抢夺CPU时间片
+         *  当再次抢到CPU执行片时，会重新进入run方法接着上次的代码继续执行；
+         *  就绪状态和运行状态之间的频繁切换过程称为jvm的调度，这就是并发的过程；
+         * 4. 阻塞状态：遇到阻塞事件（比如键盘输入、sleep、join等），线程会进入阻塞状态
+         *     阻塞状态的线程会放弃之前占有的CPU时间片；
+         *    阻塞解除之后会进入就绪状态重新抢夺CPU时间片，因为之前的时间片放弃了；
+         * 5. 死亡状态： run方法运行结束(stop)；
+         *
+    </pre>
+
+    <p class="smallTitle" id="notify">7. 需要注意的点</p>
+    <pre>
+
+        1. run方法中的异常只能手动处理，不能往上抛，因为java中子类不能比父类抛出范围更大的异常；
+
+    </pre>
+
+    <p class="smallTitle" id="property">8. Thread属性方法</p>
+    <pre>
+
+            //设置线程的名字
+            thread.setName("t1");
+            //获取线程名字 默认名字：Thread-0， thread-1，一次类推
+            System.out.println(thread.getName());
+
+            //获取当前线程对象
+            Thread currentThread = Thread.currentThread();
+            //主线程名称：main
+            System.out.println(currentThread.getName());
+
+            //sleep使当前线程进入休眠状态，阻塞状态，放弃占有的cpu时间片，让其他线程使用
+            try {
+                //Thread.sleep(5000);
+                //注意： 线程实例调用sleep方法底层还是调用的静态方法：
+                // 相当于Thread.sleep()；
+                //所以用线程实例调用sleep还是阻塞的当前线程：主线程
+                //而不是thread这个线程
+                thread.sleep(5000);
+
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

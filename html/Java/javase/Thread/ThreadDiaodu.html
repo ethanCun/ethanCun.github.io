@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>线程的调度</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">线程的调度</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">线程的调度</p>
+    <hr>
+
+    <p class="smallTitle">1. 线程的调度介绍</p>
+    <pre>
+
+        线程的调度是指线程在可运行态(就绪状态)和运行态之间的切换， 当线程实例调用start()方法之后，
+        线程就进入了可运行状态， 可以去争夺CPU时间片(线程执行权)，争夺到时间片之后，就变成了运行
+        状态(表现为run方法开始执行)； 现在的时间片执行完成之后，就又会回到就绪状态继续去争夺时间片，
+        争夺到了就又变成了运行状态，线程在就绪状态和运行状态之间的频繁切换称为线程的调度；
+
+    </pre>
+
+    <p class="smallTitle">2. 线程调度的方式</p>
+    <pre>
+
+        1. 抢占式调度模式：那个的线程优先级高，抢到的CPU时间片就多一些，Java是抢占式调度模式；
+        2. 均分式调度模式：平均分配时间片，一切平等；
+
+    </pre>
+
+    <p class="smallTitle">3. 线程调度的相关方法</p>
+    <pre>
+
+        1. 线程优先级：
+            线程的默认优先级是5，最小优先级是1，最大优先级是10；
+            优先级越高的线程抢夺更多CPU时间片的概率越大；
+
+            //设置线程优先级, 优先级高的获取cpu时间片较多
+             thread.setPriority(10);
+
+            //获取线程的优先级
+             thread.getPriority()
+
+        2. 线程让位：
+            当前线程让位，运行状态回到就绪状态，后续可能抢到时间片，让其他线程先执行：
+            Thread.yield();
+
+        3. 线程合并：
+            如果一个线程中有另一个线程，调用t.join()之后就将子线程合并到当前线程了，只有执行完子线程，
+            才会继续执行当前线程中接下来的代码：
+
+            //join合并线程：将子线程视作当前线程的一部分，子线程执行完了在执行当前线程下面的代码
+            q qq = new q();
+            qq.start();
+
+            class q extends Thread{
+
+                @Override
+                public void run() {
+
+                    w ww = new w();
+                    ww.start();
+
+                    //阻塞当前线程， 只有ww执行完了才能执行qq
+                    //相当于是把ww合并到了qq线程了
+                    try {
+                        ww.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println("w run ...");
+                }
+            }
+
+            class w extends Thread{
+
+                @Override
+                public void run() {
+
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println("w 线程执行完毕...");
+                }
+            }
+
+    </pre>
+
+    <p class="smallTitle">4. 线程在阻塞状态、就绪状态、运行状态中切换的其他方法</p>
+    <pre>
+
+        1. sleep()：
+            1. 线程实例调用sleep方法底层还是调用的静态方法：
+                Thread.sleep(); 和 t.sleep();底层都是调的静态方法: Thread.sleep();
+            2. 阻塞的是当前线程， 使线程有运行状态进入堵塞状态；
+
+        2. interrupt():
+            终止当前休眠的进程，唤醒thread：这种终端线程睡眠的方式使用了try catch抛出异常的机制，
+                会抛出InterruptedException异常；
+
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        try {
+                            Thread.sleep(15000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        //子线程进入运行状态
+                        System.out.println("thread run ..." + Thread.currentThread().getName());
+                    }
+                });
+                thread.start(); //开启分支栈 子线程进入就绪状态
+
+                thread.interrupt(); //会中断睡眠， 然后执行下面的输出语句，并且会抛出InterruptedException异常
+
+
+        3. stop():
+            强行终止线程的执行,直接杀死线程, 已过时，缺点：容易丢失数据；
+            终止线程执行，并保存数据的解决方案，通过标记控制线程时候终止：
+
+             //2s后线程threadCC终止，可以保存数据
+             CC c = new Thread(new CC());
+             c.run = false;
+
+             class CC implements Runnable{
+
+                //标记
+                public boolean run = true;
+
+                @Override
+                public void run() {
+
+                    for (int i = 0; i < 1000; i++) {
+
+                        if (run){
+
+                            System.out.println(i);
+
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                        }else {
+
+                            //在这个地方保存线程终止前的数据
+
+                            return;
+                        }
+                    }
+                }
+            }
+
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

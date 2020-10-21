@@ -267,8 +267,8 @@
             //当线程空闲的时候，按照FIFO的方式进行处理。
             executorService = Executors.newSingleThreadExecutor();
 
-            //创建带缓存的线程池
-            //核心线程池的长度为0，线程池最大长度为Integer.MAX_VALUE。
+            // 创建带缓存的线程池
+            // 核心线程池的长度为0，线程池最大长度为Integer.MAX_VALUE。
             // 由于本身使用SynchronousQueue作为等待队列的缘故，导致往队列里面每插入一个元素，
             // 必须等待另一个线程从这个队列删除一个元素。
             executorService = Executors.newCachedThreadPool();

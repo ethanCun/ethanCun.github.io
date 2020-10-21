@@ -463,6 +463,10 @@
             idea工具生成序列化版本号： settings -> editor -> inspections -> 选择Serializable class
                 without 'serialVersionUID'
 
+        4.     //如何实现对某一个字段不序列化
+                //使用transient关键字使这个字段不参与序列化;
+                //transient: 游离的
+                private transient String age;
 
     </pre>
 
