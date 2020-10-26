@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>synchronized关键字的使用</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">synchronized关键字的使用</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">synchronized关键字的使用</p>
+    <hr>
+
+    <ul>
+        <li><a href="#one">1. 线程不安全与synchronized作用</a> </li>
+        <li><a href="#two">2.  synchronized的底层原理</a> </li>
+        <li><a href="#three">3. 关于synchronized共享资源的设置</a> </li>
+        <li><a href="#four">4. 如何合理使用synchrozied</a> </li>
+        <li><a href="#five">5. synchronized用在实例方法上</a> </li>
+        <li><a href="#six">6. synchronized作用在静态方法上</a> </li>
+        <li><a href="#seven">7. 3大变量的线程安全问题</a> </li>
+    </ul>
+
+    <p class="smallTitle" id="one">1. 线程不安全与synchronized作用</p>
+    <pre>
+
+        线程不安全的原因需要满足三个条件：
+            1. 多线程并发；
+            2. 多线程共享数据；
+            3. 共享数据有修改的行为；
+
+        解决线程安全问题： 线程排队执行，不能并发， 成为线程同步机制；
+
+        synchronzied关键字可以放在代码块和方法上，保证只有一个线程获取到当前的对象锁或者类锁，
+        获得锁的线程才能够访问共享资源；
+
+    </pre>
+
+    <p class="smallTitle" id="two">2. synchronized的底层原理</p>
+    <pre>
+
+        1. 对于代码块的同步：
+        Synchronized的语义底层是通过一个monitor的对象来完成，其实wait/notify等方法也依赖于monitor对象，
+        这就是为什么只有在同步的块或者方法中才能调用wait/notify等方法，
+        否则会抛出java.lang.IllegalMonitorStateException的异常的原因。
+
+        来自jvm对synchronied的解释：
+
+        # 线程进入
+        monitorenter ：
+        Each object is associated with a monitor. A monitor is locked if and only if it has an owner. The thread that executes monitorenter attempts to gain ownership of the monitor associated with objectref, as follows:
+        • If the entry count of the monitor associated with objectref is zero, the thread enters the monitor and sets its entry count to one. The thread is then the owner of the monitor.
+        • If the thread already owns the monitor associated with objectref, it reenters the monitor, incrementing its entry count.
+        • If another thread already owns the monitor associated with objectref, the thread blocks until the monitor's entry count is zero, then tries again to gain ownership.
+
+        每个对象有一个监视器锁（monitor）。当monitor被占用时就会处于锁定状态，线程执行monitorenter指令时尝试获取monitor的所有权，过程如下：
+        1、如果monitor的进入数为0，则该线程进入monitor，然后将进入数设置为1，该线程即为monitor的所有者。
+        2、如果线程已经占有该monitor，只是重新进入，则进入monitor的进入数加1.
+        3.如果其他线程已经占用了monitor，则该线程进入阻塞状态，直到monitor的进入数为0，再重新尝试获取monitor的所有权。
+
+        # 线程离开
+        monitorexit:
+        The thread that executes monitorexit must be the owner of the monitor associated with the instance referenced by objectref.
+        The thread decrements the entry count of the monitor associated with objectref. If as a result the value of the entry count is zero, the thread exits the monitor and is no longer its owner. Other threads that are blocking to enter the monitor are allowed to attempt to do so.
+
+        执行monitorexit的线程必须是objectref所对应的monitor的所有者。
+        指令执行时，monitor的进入数减1，如果减1后进入数为0，那线程退出monitor，不再是这个monitor的所有者。其他被这个monitor阻塞的线程可以尝试去获取这个 monitor 的所有权。
+
+        2. 对于方法的同步：
+            jvm是通过新增标识符：ACC_SYNCHRONIZED， 来实现方法同步；
+            当方法调用时，调用指令将会检查方法的 ACC_SYNCHRONIZED 访问标志是否被设置，如果设置了，执行线程将先获取monitor，获取成功之后才能执行方法体，方法执行完后再释放monitor。在方法执行期间，其他任何线程都无法再获得同一个monitor对象。
+
+    </pre>
+
+    <p class="smallTitle" id="three">3. 关于synchronized共享资源的设置</p>
+    <pre>
+
+        1. synchronized(共享资源), 括号里面的一定是多个线程的共享资源，不然synchronized不会生效，
+            假设有5个线程， 前三个线程需要排队，其他两个不排队，括号里面填的，一定是前三个对象共享的数据，
+            而这个数据对于后两个线程来说不是共享的；
+
+        2. 关于对象锁：
+            Java中的每一个对象都有对象锁， 线程过来之后，遇到synchrozied后,会占有共享对象的对象锁(一个标记)，
+            其他线程再过来时，因为对象锁已被占用，只能在lockpool等待，之前的线程执行完成之后，会归还对象锁；
+            synchronized关键字会使线程进入锁池状态lockpool，会释放之前抢夺的CPU时间片，当找到了对象的对象锁之后，
+            会重新抢夺时间片；
+
+        3. 关于类锁：
+            在静态方法上使用synchrozied，表示线程进来找的是类锁， 一个类只有一把锁，和创建出来的对象多少没关系；
+            对象锁： 1个对象1把锁，类锁： 1个对象1把锁，也可能100个对象一把锁
+
+        4. 关于共享资源:
+            1. 可以使用this的局部变量作为加锁对象，因为局部变量也是唯一的一份；
+            2. 可以使用"abc"字符串作为加锁对象，因为字符串常量在方法区常量池中，他也是唯一的一份, 不过这个时候所有进来的线程都会同步；
+            3. 可以使用静态变量可以作为synchrozied加锁的对象，因为它在方法区中，也是唯一的一份；
+            3. 不能使用线程的布局变量作为加锁对象, 因为它是当前线程栈独有的，不是共享对象；
+            4. 不能使用空null作为加锁对象, 直接报错；
+
+    </pre>
+
+    <p class="smallTitle" id="four">4. 如何合理使用synchrozied</p>
+    <pre>
+
+        1. synchrozied会降低代码执行效率， 不到不得以不要使用synchrozied；
+        2. 尽可能使用局部变量，因为局部变量不存在线程安全问题；
+        3. 如果使用实例变量，因为实例变量在堆上，可以考虑新建多个实例变量，一个实例变量对应一个地址，一个线程对应一个实例变量，不共享就不存在
+            线程安全问题；
+        4. 不能使用局部变量，也不能创建多个实例变量，就使用synchrozied；
+        5. 尽可能使用synchrozied修饰尽可能少的方法体；
+    </pre>
+
+    <p class="smallTitle" id="five">5. synchronized用在实例方法上</p>
+    <pre>
+
+        # 结果： 先输入log1 3s后输出log2
+
+        public static void main(String[] args) {
+
+            H hh = new H();
+
+            //多个线程共享一个独享
+            Thread t1 = new ThreadDemo(hh);
+            Thread t2 = new ThreadDemo(hh);
+
+            t1.setName("t1");
+            t2.setName("t2");
+
+            t1.start();
+            t2.start();
+        }
+
+        class H {
+
+            //synchrozied放在实例方法上会抢夺当前对象this的对象锁
+            public synchronized void log1(){
+
+                System.out.println("log1");
+
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            public synchronized void  log2(){
+
+                System.out.println("log2");
+            }
+        }
+
+    </pre>
+
+    <p class="smallTitle" id="six">6. synchronized作用在静态方法上</p>
+    <pre>
+
+        # 结果： 先输入log1 3s后输出log2
+
+        public static void main(String[] args) {
+
+            /**
+             * 排它锁：
+             * 互斥锁：
+             *
+             * 对象锁和类锁都是排它锁；
+             */
+            F f1 = new F();
+            F f2 = new F();
+
+            //多个线程不共享实例对象, synchrozied放在静态方法上，
+            //锁是类锁，一个类只有一把类锁，和实例对象没有关系
+            Thread1 t1 = new Thread1(f1);
+            Thread1 t2 = new Thread1(f2);
+
+            t1.setName("t1");
+            t2.setName("t2");
+
+            t1.start();
+            t2.start();
+
+        }
+
+        class F{
+
+            public synchronized static void log1(){
+
+                System.out.println("log1");
+
+                //log1休眠1s synchrozied放在静态方法上是类锁
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            public synchronized static void log2(){
+
+                System.out.println("log2");
+            }
+        }
+    </pre>
+
+    <p class="smallTitle" id="seven">7. 3大变量的线程安全问题</p>
+    <pre>
+
+        1. 局部变量： 栈中， 线程栈独有，不能多线程共享， 不存在线程安全问题；
+        2. 静态变量： 方法区中， 可以多线程共享， 存在线程安全问题;
+        3. 实例变量： 堆中，可以多线程共享，存在线程安全问题;
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

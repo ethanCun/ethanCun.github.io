@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Object的wait和notify</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">Object的wait和notify</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Object的wait和notify</p>
+    <hr>
+
+    <ul>
+        <li><a href="#one">1. 关于wait和notify</a> </li>
+        <li><a href="#two">2. 使用wait和notify实现消息队列的上产和消费效果</a> </li>
+        <li><a href="#three">3. 虚假唤醒以及解决办法</a> </li>
+    </ul>
+
+    <p class="smallTitle" id="one">1. 关于wait和notify</p>
+    <pre>
+
+        1. wait和notify是Object的方法，任何一个对象都有这写方法,所以不是通过线程对象.wait()这样去调用；
+        2. obj.wait(); 表示让所有正在o对象上活动的线程进入等待状态,知道被唤醒
+        3. notify:让正在obj对象上等待的某一个线程被唤醒；
+        4. notifyAll:让所有正在obj对象上等待的线程被唤醒；
+
+        #注意： wait方法会让正在o对象上活动的线程进入等待状态，并且释放之前占有的o对象的锁；
+                notify方法只会通知，不会释放之前占有的o对象的锁；
+    </pre>
+
+    <p class="smallTitle" id="two">2. 使用wait和notify实现消息队列的上产和消费效果</p>
+    <p class="introduceText">仓库对象:</p>
+    <pre>
+
+        class Repository{
+
+            //所有消息库存
+            private ArrayList stock = new ArrayList();
+
+            public void setStock(ArrayList stock) {
+                this.stock = stock;
+            }
+
+            public ArrayList getStock() {
+                return stock;
+            }
+
+            public Repository(){}
+
+            public Repository(ArrayList stock){
+                this.stock = stock;
+            }
+
+            //新增消息
+            public void incr(int ele){
+
+                this.stock.add(ele);
+            }
+
+            //移除消息
+            public void decr(){
+
+               if (this.stock.size() > 0){
+                   this.stock.remove(0);
+               }
+            }
+
+            @Override
+            public String toString() {
+                return "Repository{" +
+                        "stock=" + stock +
+                        '}';
+            }
+        }
+    </pre>
+    <p class="introduceText">消息生成线程与消息消费线程：</p>
+    <pre>
+
+        # 消息生产者:
+        class ThreadProduce extends Thread{
+
+            private Repository repository;
+
+            public ThreadProduce(Repository repository){
+                this.repository = repository;
+            }
+
+            @Override
+            public void run() {
+
+                //生产者一直生产
+                while (true){
+
+                   //保证安全防止锁多次
+                   synchronized (repository){
+
+                       //有东西没消费完就进入等待
+                       while (repository.getStock().size() > 0){
+
+                           //生产线程进入等待状态
+                           try {
+                               //进入等待状态， 并释放repository之前占有的对象锁
+                               repository.wait();
+                           } catch (InterruptedException e) {
+                               e.printStackTrace();
+                           }
+                       }
+
+                       //生产
+                       repository.incr(new Random().nextInt(101));
+
+                       //通知消费者消费
+                       repository.notify();
+
+                       System.out.println("生产情况： " + repository);
+                   }
+                }
+            }
+        }
+
+
+        # 消息消费者:
+        class ThreadConsume extends Thread{
+
+            private Repository repository;
+
+            public ThreadConsume(Repository repository){
+                this.repository = repository;
+            }
+
+            @Override
+            public void run() {
+
+                //一直消费
+                while (true){
+
+                    synchronized (repository){
+
+                        if (repository.getStock().size() <= 0){
+
+                            try {
+                                repository.wait();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        //消费
+                        repository.decr();
+
+                        //通知生产者生产
+                        repository.notify();
+
+                        System.out.println("消费情况： " + repository);
+                    }
+                }
+            }
+        }
+
+
+    </pre>
+    <p class="introduceText">启动测试:</p>
+    <pre>
+
+
+        Object object;
+
+        //生产消费者模式， 一个线程负责生产， 一个线程负责消费；
+        //wait和notify方法建立在synchrozied线程同步的基础之上；
+
+        Repository repository = new Repository();
+
+        //生产者
+        ThreadProduce threadProduce = new ThreadProduce(repository);
+        //消费者
+        ThreadConsume threadConsume = new ThreadConsume(repository);
+
+        threadProduce.setName("生产者线程");
+        threadConsume.setName("消费者线程");
+
+        threadProduce.start();
+        threadConsume.start();
+
+    </pre>
+
+    <p class="smallTitle" id="three">3. 虚假唤醒以及解决办法</p>
+    <pre>
+
+        虚假唤醒：
+        当多个线程消费一个共享资源，没有可以消费的情况stock<0，第一个线程进入对象锁，调用repository.wait()，释放
+        对象锁， 这时候另外的线程又可以获取到对象锁，一次进来执行repository.wait(), 当生产者生产完成之后调用notifyAll()
+        通知这些线程去消费， 这时候如果消费线程用if判断， 就会有多个消费线程同时去消费， 造成重复消费（数组越界）异常，
+        不满足1次生产1次消费这个前提了， 这个就是过早唤醒，也成虚假唤醒；
+
+        解决：
+            使用while代替if，多个消费线程进来的时候，死循环等待stock>0, 而不是if每个线程都是判断造成多次消费；
+            第一个线程消费完了， 就还在循环里等待，不然就是多个消费线程并发去消费；
+
+
+        //一直消费
+        while (true){
+
+            synchronized (repository){
+
+                #if 存在多个线程并发消费的情况 不满足1生产1消费
+                while (repository.getStock().size() <= 0){
+
+                    try {
+                        repository.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                //消费
+                repository.decr();
+
+                //通知生产者生产
+                repository.notify();
+
+                System.out.println("消费情况： " + repository);
+                }
+        }
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

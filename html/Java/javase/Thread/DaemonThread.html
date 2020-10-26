@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>守护线程与用户线程</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">守护线程与用户线程</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">守护线程与用户线程</p>
+    <hr>
+
+    <p class="smallTitle">1. 守护线程与用户线程的理解</p>
+    <pre>
+
+        /**
+         *
+         * Java中的两大线程：
+         *
+         * 守护线程：
+         *      后台线程， 例如垃圾回收线程，每天定时备份等；
+         *      守护线程一般是死循环
+         *
+         * 用户线程：
+         *      用户线程方法执行完成就结束了，
+         *      所有的用户线程结束， 守护线程就退出；
+         *
+         *
+         * 守护线程： 用户线程在，就有必要一直运行， 用户线程不在，立马就终止；
+         */
+    </pre>
+
+    <p class="smallTitle">2. 守护线程实现</p>
+    <pre>
+
+
+        //演示： 尽管thread里面的run方法
+        MyThread3 thread = new MyThread3();
+        thread.setName("t1");
+
+        //注意： 设置为守护线程， 尽管子线程是死循环，但是主线程for循环结束后，子线程也会强行终止；
+        thread.setDaemon(true);
+
+        thread.start();
+
+
+        for (int i = 0; i < 10; i++) {
+
+            System.out.println("main : " + i);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        # 一直死循环的线程
+        class MyThread3 extends Thread{
+
+            @Override
+            public void run() {
+
+                int i=0;
+
+                while (true){
+
+                    System.out.println(Thread.currentThread().getName() + "-" + ++i);
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

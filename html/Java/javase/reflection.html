@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>java反射的使用</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">java反射的使用</span>
+</div>
+
+<div class="contentBgDiv">
+
+
+    <p class="title">java反射的使用</p>
+    <hr>
+
+    <ul>
+        <li><a href="#one">1. 反射简介</a> </li>
+        <li><a href="#two">2. 反射机制操作属性</a> </li>
+        <li><a href="#three">3. 反射机制操作方法</a> </li>
+        <li><a href="#four">4. 反射机制操作构造方法创建对象</a> </li>
+        <li><a href="#five">5. 反射机制获取类的父类以及类实现的接口</a> </li>
+        <li><a href="#six">6. 反射机制反编译写java文件</a> </li>
+        <li><a href="#seven">7. 通过反射机制调用对象方法:</a> </li>
+    </ul>
+
+    <p class="smallTitle" id="one">1. 反射简介</p>
+    <pre>
+
+        1. 通过反射机制可以操作字节码文件, 使程序更加灵活；
+        2. 所属包：java.lang.reflect.*
+        3. 比较重要的类：
+            java.lang.Class: 代表整个字节码;
+            java.lang.reflect.Method;
+            java.lang.reflect.Constructor;
+            java.lang.reflect.Field;
+        4. 字节码文件存在方法区，所以字节码文件在jvm中只有一份；
+                Class c1 = Class.forName("java.lang.String");
+                Class c3 = "".getClass();
+                System.out.println(c1 == c3); //true
+        5. 获取Class方式：
+            1. Class c1 = Class.forName("java.lang.String");
+                    Class.forName();会导致类加载，如果只想运行类中的静态代码块，可以使用反射Class.forName();
+            2. "".getClass();
+            3. String.class;
+        6. 反射符合ocp开放原则： 对扩展开放， 对修改关闭；
+
+    </pre>
+
+
+    <p class="smallTitle" id="two">2. 反射机制操作属性</p>
+    <pre>
+
+        Class studentClass = Class.forName("com.ethan.反射.Student");
+
+        //完整类名 全限定名
+        System.out.println(studentClass.getName());
+        //简单类型
+        System.out.println(studentClass.getSimpleName());
+
+        //getFields只能获取public修饰的变量
+        Field[] fields = studentClass.getFields();
+
+        System.out.println(fields.length);
+
+        for(Field field : fields){
+
+            //java.lang.reflect.Field
+            System.out.println(field.getClass().getName());
+            //height
+            System.out.println(field.getName());
+            //float
+            System.out.println(field.getType().getName());
+            //float
+            System.out.println(field.getType().getSimpleName());
+            //修饰符, 返回的是数字， 数字是修饰符的代号
+            System.out.println(field.getModifiers());
+            //将代码数字转换为字符串, 调用Modifier的静态方法toString(int)
+            System.out.println(Modifier.toString(field.getModifiers()));
+        }
+
+
+        //getDeclaredField可以获取到所有修饰符修饰的属性
+        Field[] declaredFields = studentClass.getDeclaredFields();
+        System.out.println(declaredFields.length);
+
+        for(Field field : declaredFields){
+
+            System.out.println(field.getName());
+        }
+
+
+
+        //通过Java的反射机制访问属性的值，修改属性的值；
+        Object stu = studentClass.newInstance();
+        //注意默认不能给私有的属性赋值
+        //height属性
+        Field field = studentClass.getDeclaredField("name");
+
+        //要访问私有的熟悉需要打破封装
+        //反射机制的缺点：打破封装， 这样设置完后在外部也可以访问私有属性
+        field.setAccessible(true);
+
+        //赋值: 可以理解为属性调对象 1. 对象 2. 值
+        field.set(stu, "zzz");
+        //获取值 参数：new出来的对象
+        System.out.println(field.getName()+ ":"+field.get(stu));
+
+    </pre>
+    <p class="introduceText">Student类：</p>
+    <pre>
+
+        class Student{
+
+
+            //不同访问修饰符修饰的Field
+            private String name = "czy";
+            protected String age;
+            float weight;
+            public float height;
+            public static final float PI = 3.14f;
+
+        }
+    </pre>
+
+
+    <p class="smallTitle" id="three">3. 反射机制操作方法</p>
+    <pre>
+
+        Class classg = Class.forName("com.ethan.反射.GGG");
+
+        //只能获取到public方法
+        Method[] methods = classg.getMethods();
+        //classg.getDeclaredMethods(); 获取所有方法
+        Method[] allMethods = classg.getDeclaredMethods();
+
+        for(Method method : methods){
+
+            //返回值类型
+            System.out.println(method.getReturnType().getName());
+            //方法名称
+            System.out.println(method.getName());
+            //方法修饰符
+            //method.getModifiers返回int，需要用Modifier.toString转换
+            System.out.println(Modifier.toString(method.getModifiers()));
+            //方法参数
+            Parameter[] parameters = method.getParameters();
+            for(Parameter param : parameters){
+                System.out.println(param.getType().getName());
+            }
+        }
+    </pre>
+
+    <p class="smallTitle" id="four">4. 反射机制操作构造方法创建对象</p>
+    <pre>
+
+        Class c = Class.forName("java.lang.String");
+
+        //通过有参数的构造方法创建对象
+        Constructor con = c.getDeclaredConstructor("".getClass());
+
+        //设置有参数构造方法的参数值
+        Object obj = con.newInstance("sss");
+
+        System.out.println(obj);
+
+    </pre>
+
+    <p class="smallTitle" id="five">5. 反射机制获取类的父类以及类实现的接口</p>
+    <pre>
+
+        Class c = Class.forName("java.lang.String");
+
+        //获取类的父类
+        System.out.println(c.getSuperclass().getName());
+
+        //获取类实现的接口
+        Class[] interfaces = c.getInterfaces();
+
+        for (Class interfaceC : interfaces){
+
+            System.out.println(interfaceC.getName());
+        }
+    </pre>
+
+    <p class="smallTitle" id="six">6. 反射机制反编译写java文件</p>
+    <p class="introduceText">反编译写所有字段:</p>
+    <pre>
+
+
+        StringBuilder s = new StringBuilder();
+
+        Class studentClass = Class.forName("java.lang.Thread");
+
+        s.append("class " + studentClass.getSimpleName() + "{");
+
+        s.append("\n");
+
+        Field[] fields = studentClass.getDeclaredFields();
+
+        for(Field field : fields){
+
+            s.append("\t");
+            s.append(Modifier.toString(field.getModifiers()));
+            s.append("\t");
+            s.append(field.getType().getSimpleName());
+            s.append("\t");
+            s.append(field.getName());
+            s.append(";\n");
+        }
+
+        s.append("\n");
+
+        s.append("}");
+
+        System.out.println(s);
+    </pre>
+    <p class="introduceText">反编译写所有方法:</p>
+    <pre>
+
+
+        StringBuilder s = new StringBuilder();
+
+        Class studentClass = Class.forName("java.lang.Thread");
+
+        s.append("class " + studentClass.getSimpleName() + "{");
+
+        s.append("\n");
+
+        Field[] fields = studentClass.getDeclaredFields();
+
+        for(Field field : fields){
+
+            s.append("\t");
+            s.append(Modifier.toString(field.getModifiers()));
+            s.append("\t");
+            s.append(field.getType().getSimpleName());
+            s.append("\t");
+            s.append(field.getName());
+            s.append(";\n");
+        }
+
+        s.append("\n");
+
+        s.append("}");
+
+        System.out.println(s);
+    </pre>
+    <p class="introduceText">反编译写构造方法:</p>
+    <pre>
+
+        Class c = Class.forName("java.lang.String");
+
+        StringBuilder s = new StringBuilder();
+
+        s.append("class " + c.getSimpleName() + " {\n");
+
+
+        Constructor[] constructors = c.getConstructors();
+
+        for(Constructor constructor : constructors){
+
+            s.append("\t");
+            s.append(Modifier.toString(constructor.getModifiers()) + " ");
+            s.append(c.getSimpleName() + "(");
+
+            Parameter[] parameters = constructor.getParameters();
+
+            for (Parameter parameter : parameters){
+
+                s.append(parameter.getType().getSimpleName() + " " + parameter.getName() + ",");
+            }
+
+            if (parameters.length > 0){
+                s.deleteCharAt(s.length()-1);
+            }
+
+            s.append("){}\n");
+
+
+        }
+
+        s.append("\n}");
+
+    </pre>
+
+
+    <p class="smallTitle" id="seven">7. 通过反射机制调用对象方法:</p>
+    <pre>
+
+        //通过反射调用对象的方法
+        Class classStr = Class.forName("com.ethan.反射.GGG");
+        Object obj = classStr.newInstance();
+
+        //对象调用方法,
+        //可变长参数, 一个方法中只有有一个可变长参数，并且可变长参数一定是最后一个参数
+        Method method = classStr.getMethod("say", String.class, String.class, float.class);
+        method.invoke(obj, "aaa", "bbb", 100);
+
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

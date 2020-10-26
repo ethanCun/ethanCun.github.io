@@ -65,6 +65,7 @@
     </pre>
 
     <p class="smallTitle" id="callable">3. 实现Callable接口的方式创建线程</p>
+<<<<<<< HEAD
     <p class="smallTitle">
         相比前两中方式，callable的好处在于可以获取到返回值FutureTask, 通过调用get()方法，来获取任务的返回值,
         同时也解决了单继承的问题。
@@ -80,6 +81,46 @@
                 return "线程3";
             }
         }
+=======
+    <p class="introduceText">
+        相比前两中方式，callable的好处在于可以获取到返回值FutureTask, 通过调用get()方法，来获取任务的返回值,
+        同时也解决了单继承的问题。 需要注意的是： FutureTask会有线程缓存,因此多条线程调度这个任务的时候可能只会执行
+        一次任务， 另外get方法会阻塞等待；
+    </p>
+    <pre>
+
+        //未来任务类对象 java.util.concurrent包下
+        AAA aaa = new AAA();
+        FutureTask futureTask = new FutureTask(aaa);
+
+        //创建线程对象
+        Thread thread = new Thread(futureTask);
+        thread.start();
+
+        //在主线程中获取子线程的返回结果, 会阻塞主线程, 等待子线程结果
+        //因此这种方式性能较低
+        Object result = futureTask.get();
+        System.out.println(result);
+
+        System.out.println("main方法继续执行...");
+
+        //表明类是可供调用的
+        class AAA implements Callable{
+
+            @Override
+            public Object call() {
+
+                try {
+                    Thread.sleep(1000*5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                return "czy";
+            }
+        }
+
+>>>>>>> #
     </pre>
 
     <p class="smallTitle">测试这三种创建线程的方式</p>

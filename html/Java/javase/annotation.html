@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>java注解的使用</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">java注解的使用</span>
+</div>
+
+<div class="contentBgDiv">
+
+
+    <p class="title">java注解的使用</p>
+    <hr>
+
+    <ul>
+        <li><a href="#one">1. 注解简介</a> </li>
+        <li><a href="#two">2. 注解的定义与使用</a> </li>
+        <li><a href="#three">3. 通过反射机制获取注解信息</a> </li>
+    </ul>
+
+
+    <p class="smallTitle" id="one">1. 注解简介</p>
+    <pre>
+
+        1. 注解： Annotation， 是一种引用类型， 生成的也是字节码文件；
+        2. 定义： @interface定义注解
+        3. 使用： @注解名称
+        4. 出现位置： 类， 方法， 属性，参数， 注解上等也可出现
+        5. jdk常见注解：
+            1. @Deprecated: 表示过时的，jdk1.5引入, 在非本类上会出现删除横线，运行的时候会显示debug栏会出现已过时提示；
+            2. @Override:  只能出现在方法上， 是用来jvm进行编译检查的，如果不是重写的父类方法就会报错， jdk1.5引入；
+            3. @SuppressWarnings(): 表示抑制警告， jdk1.5引入；
+        6. jdk5个元注解：
+            1. @Target: 用于指定注解使用的位置， 类、方法、字段等；
+            2. @Retention: 用于指定注解保存在哪，source、class、runtime
+            3. @Documented: 用于将注解信息生成到javadoc文档中，默认是不将注解信息生成到文档中的；
+            4. @Inherited: 用于指定父类的注解会被子类继承到；
+            5. @Repeatable: 用于声明标记的注解为可重复类型注解，可以在同一个地方多次使用;
+    </pre>
+
+    <p class="smallTitle" id="two">2. 注解的定义与使用</p>
+    <p class="introduceText">自定义注解:</p>
+    <pre>
+
+        //自定义注解 注解的注解成为元注解 常见的元注解：@Target, @Retention
+        //@Target指定注解能使用的范围
+        @Target(value = {ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE, ElementType.TYPE, ElementType.CONSTRUCTOR})
+        //@Retention指定注解最终保存在哪里 source:java源文件 class:字节码文件 runtime：保存在字节码，运行时可以被反射机制读取
+        @Retention(value = RetentionPolicy.RUNTIME)
+        @interface MyAnnotation01{
+
+            //属性名字如果为value，并且只有一个属性,使用的时候就可以不用写value
+            String value() default "";
+
+            //注解中使用属性:
+            //看着像方法，但通常叫属性
+            //没有指定默认值，外面调用就必须实现
+            String name();
+
+            //不能为Integer, 指定了默认值外边调用就不用指定属性值；
+            int age() default 10;
+
+            //属性是一个数组
+            String[] friends() default {};
+
+            //属性是一个枚举数组
+            Privince[] province() default {};
+
+            //属性是一个类数组
+            Class[] classes() default {};
+        }
+
+    </pre>
+    <p class="introduceText">使用注解:</p>
+    <pre>
+
+        //使用注解, 放在接口上, 如果数组中只有一个元素，大括号{}可以省略
+        @MyAnnotation01(name = "xx", friends = {"zs", "ls"})
+        interface MyInterface01{
+
+
+        }
+
+        //放在枚举上
+        @MyAnnotation01(name = "cc")
+        enum MyEnum01{
+
+            Spring,Autumn,Winter;
+
+        }
+
+
+        //放在注解上
+        @MyAnnotation01(name = "cc")
+        @interface MyAnnotation02{
+
+
+        }
+
+        //@Override: 不是重写父类方法加上就报错,只是编译器检查，和运行期无关；
+        @MyAnnotation01(name = "这是方法上的注解")
+        public void log(@MyAnnotation01(name = "z") String a){
+
+        }
+
+        @MyAnnotation01(name = "这是构造方法上的注解")
+        public 注解介绍(){
+
+
+        }
+
+        @MyAnnotation01(name = "这是属性字段上的注解")
+        private Object obj;
+
+    </pre>
+
+    <p class="smallTitle" id="three">3. 通过反射机制获取注解信息</p>
+    <p class="introduceText">获取类上的注解信息:</p>
+    <pre>
+
+        /**
+         * 获取类上面的注解信息
+         */
+        Class c = Class.forName("com.ethan.注解.注解介绍");
+
+        Annotation[] annotations = c.getAnnotations();
+
+        //类型上是否有注解
+        //注意： 只有RetentionType为RUNTIME才能被反射机制获取到
+        System.out.println(c.isAnnotationPresent(MyAnnotation01.class));
+
+        for(Annotation annotation : annotations){
+
+            System.out.println(annotation);
+            System.out.println(annotation.getClass().getName());
+
+            //获取注解属性
+            if (annotation instanceof MyAnnotation01){
+
+                MyAnnotation01 myAnnotation01 = (MyAnnotation01)annotation;
+                System.out.println(myAnnotation01.value());
+                System.out.println(myAnnotation01.name());
+
+                for(String student : myAnnotation01.friends()){
+                    System.out.println(student);
+                }
+            }
+        }
+    </pre>
+    <p class="introduceText">获取方法上面的注解信息:</p>
+    <pre>
+
+        Method method = c.getMethod("log", String.class);
+        if (method.isAnnotationPresent(MyAnnotation01.class)){
+
+            MyAnnotation01 myAnnotation011 = method.getAnnotation(MyAnnotation01.class);
+            System.out.println(myAnnotation011.name());
+        }
+    </pre>
+    <p class="introduceText">获取构造方法上面的注解信息:</p>
+    <pre>
+        Constructor constructor = c.getConstructor();
+        if (constructor.isAnnotationPresent(MyAnnotation01.class)) {
+
+            MyAnnotation01 myAnnotation01 = (MyAnnotation01)constructor.getAnnotation(MyAnnotation01.class);
+            System.out.println(myAnnotation01.name());
+        }
+    </pre>
+    <p class="introduceText">获取构造字段上面的注解信息:</p>
+    <pre>
+        Field field = c.getDeclaredField("obj");
+        if(field.isAnnotationPresent(MyAnnotation01.class)){
+
+            MyAnnotation01 myAnnotation01 = (MyAnnotation01)field.getAnnotation(MyAnnotation01.class);
+            System.out.println(myAnnotation01.name());
+        }
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>
