@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Object的wait和notify</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">Object的wait和notify</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">Object的wait和notify</p>
+    <hr>
+
+    <p class="smallTitle">1. juc简介</p>
+    <pre>
+
+        1. 位于包： java.util.concurrent下;
+        2. juc主要包括3部分：
+            1.java.util.concurrent; 并发
+            2. java.util.concurrent.locks; 锁
+            3. java.util.concurrent.atomic; 原子性
+        3. java不能自己开线程， 只能通过本地方法去调用start0(): private native void start0();
+
+
+    </pre>
+
+    <p class="smallTitle">2. 关于并发和并行</p>
+    <pre>
+
+        并发： 多线程操作同一个资源, 并发的目的就是充分利用cpu的资源；
+        并行： 多个线程一起运行, 多核cpu可以同时执行；
+
+        //查看cpu核数
+        System.out.println(Runtime.getRuntime().availableProcessors());
+
+        //NEW新生 RUNNABLE运行 BLOCKED阻塞 WAITING等待 TIMED_WAITING超时等待 TERMINATED终止
+        System.out.println(thread.getState());
+
+    </pre>
+
+    <p class="smallTitle">3. CopyOnWriteArrayList/CopyOnWriteArraySet: 线程安全的ArrayList/HashSet</p>
+    <p class="introduceText">CopyOnWriteArrayList:</p>
+    <pre>
+
+        # 如何解决多线程并发下ArrayList线程安全问题：
+            1. 用Vector；
+            2. 使用Collections工具：
+                colection工具底层还是走的jvm的synchronized, 查看源码最终是调用的SynchronizedCollection这个
+                顶级接口的synchronized代码块
+                List&lt;String&gt; arrayList = Collections.synchronizedList(new ArrayList<>());
+            3. CopyOnWriteArrayList: 写入时赋值, 简称cow:
+                底层是使用了可重入锁+volatile修饰的数组，在写入的时候赋值一个数组出来操作
+                final transient ReentrantLock lock = new ReentrantLock();
+                private transient volatile Object[] array;
+
+                List&lt;String&gt; arrayList = new CopyOnWriteArrayList<>();
+
+                //并发修改集合异常：java.util.ConcurrentModificationException
+                //在ArrayList在并发是不安全的
+                for (int i=0; i<10; i++){
+
+                    new Thread(()->{
+
+                        arrayList.add(UUID.randomUUID().toString().substring(0, 5));
+
+                        System.out.println(arrayList);
+
+                    }, String.valueOf(i)).start();
+                }
+    </pre>
+    <p class="introduceText">CopyOnWriteArraySet:</p>
+    <pre>
+
+        CopyOnWriteArraySet是线程安全的set， 底层是ReentrantLock+数组拷贝操作:
+
+        private boolean addIfAbsent(E e, Object[] snapshot) {
+
+            final ReentrantLock lock = this.lock;
+            lock.lock();
+            try {
+                Object[] current = getArray();
+                int len = current.length;
+                if (snapshot != current) {
+                    // Optimize for lost race to another addXXX operation
+                    int common = Math.min(snapshot.length, len);
+                    for (int i = 0; i < common; i++)
+                        if (current[i] != snapshot[i] && eq(e, current[i]))
+                            return false;
+                    if (indexOf(e, current, common, len) >= 0)
+                            return false;
+                }
+                Object[] newElements = Arrays.copyOf(current, len + 1);
+                newElements[len] = e;
+                setArray(newElements);
+                return true;
+            } finally {
+                lock.unlock();
+            }
+        }
+
+
+    </pre>
+
+
+    <br>
+</div>
+</body>
+</html>
