@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>设计模式之适配器模式</title>
+        <link rel="icon" href="../../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">设计模式之适配器模式</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">设计模式之适配器模式</p>
+    <hr>
+
+    <p class="smallTitle">1. 适配器模式简介</p>
+    <pre>
+
+        适配器模式：
+            将一个类的接口转换成客户端希望的另一个接口, Adapter模式使得原本由于接口不兼容而不能一起工作的那些类可以一起工作。
+            可以实现接口， 将不同的功能放到不同的适配器中去实现。
+            包括类适配器模式和对象适配器模式。
+
+        //常见的适配器模式
+        Arrays.asList();
+        GenericApplicationListenerAdapter genericApplicationListenerAdapter;
+        InputStreamReader inputStreamReader;
+    </pre>
+
+    <p class="smallTitle">2. 对象适配器模式</p>
+    <p class="introduceText">给没有实现say功能的Animal类添加适配器,直接作为成员变量关联：</p>
+    <p class="introduceText">Animal:</p>
+    <pre>
+
+        public class Animal {
+
+            //对象适配器， 直接将适配对象作为一个成员变量
+            private Human human;
+
+            public Animal(Human human){
+                this.human = human;
+            }
+
+            public void say(){
+                human.say();
+            }
+        }
+
+    </pre>
+    <p class="introduceText">适配器:</p>
+    <pre>
+
+        public interface Say {
+
+            void say();
+        }
+
+        public class Human implements Say{
+
+            @Override
+            public void say() {
+
+                System.out.println("say.... 对象适配器");
+            }
+        }
+    </pre>
+    <p class="introduceText">调用:</p>
+    <pre>
+
+        //对象适配器模式
+        Animal animal = new Animal(new Human());
+        animal.say();
+    </pre>
+
+    <p class="smallTitle">3. 类适配器模式</p>
+    <p class="introduceText">类适配器实现接口：</p>
+    <p class="introduceText">Animal:</p>
+    <pre>
+
+        //animal想调用say，但是调用不了,就创建一个子类来实现调用
+        public class Animal {
+
+        }
+
+    </pre>
+    <p class="introduceText">适配器:</p>
+    <pre>
+
+        public interface Say {
+
+            void say();
+        }
+
+        //animal想调用say，但是调用不了,就创建一个子类来实现调用
+        public class Human extends Animal implements Say{
+
+            @Override
+            public void say() {
+
+                System.out.println("say ... 类适配器");
+            }
+        }
+    </pre>
+    <p class="introduceText">调用:</p>
+    <pre>
+
+        //类适配器模式
+        Animal human = new Human();
+        human.say();
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

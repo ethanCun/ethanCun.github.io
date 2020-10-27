@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>设计模式之策略模式</title>
+        <link rel="icon" href="../../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">设计模式之策略模式</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">设计模式之策略模式</p>
+    <hr>
+
+    <p class="smallTitle">1. 策略模式简介</p>
+    <pre>
+
+        策略模式：
+            策略模式是对算法的包装，把使用算法的责任和算法本身分隔开，委派给不同的对象管理;
+            策略模式通常把一系列的算法包装到一系列的策略类里面，作为一个抽象策略类的子类。
+
+         简单地说就是有一个管理类管理一个策略抽象类的所有实现类，可以在管理类中灵活操作策略实现;
+    </pre>
+
+    <p class="smallTitle">2. 实例</p>
+    <p class="introduceText">策略抽象类:</p>
+    <pre>
+
+        public interface IAction {
+
+            void action();
+        }
+    </pre>
+    <p class="introduceText">策略实现类:</p>
+    <pre>
+
+        public class Say implements IAction{
+
+            @Override
+            public void action() {
+                System.out.println("说话...");
+            }
+        }
+
+        public class Sleep implements IAction{
+
+            @Override
+            public void action() {
+
+                System.out.println("睡觉...");
+            }
+        }
+
+
+        public class Eat implements IAction{
+
+            @Override
+            public void action() {
+
+                System.out.println("吃饭...");
+            }
+        }
+
+
+
+    </pre>
+    <p class="smallTitle">实体类:</p>
+    <pre>
+
+        public class Human {
+
+            //内部维护抽象动作类
+            private IAction iAction;
+
+            public Human(IAction iAction){
+                this.iAction = iAction;
+            }
+
+            public void action(){
+                this.iAction.action();
+            }
+        }
+    </pre>
+    <p class="smallTitle">调用:</p>
+    <pre>
+
+        IAction say = new Say();
+        Human human = new Human(say);
+        human.action();;
+
+        IAction eat = new Eat();
+        Human human1 = new Human(eat);
+        human1.action();
+
+        IAction sleep = new Sleep();
+        Human human2 = new Human(sleep);
+        human2.action();
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

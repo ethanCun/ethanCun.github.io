@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>设计模式之建造者模式</title>
+        <link rel="icon" href="../../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">设计模式之建造者模式</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">设计模式之建造者模式</p>
+    <hr>
+
+    <p class="smallTitle">1. 建造者模式简介</p>
+    <pre>
+
+        建造者模式：
+            1. 将一个复杂对象的创建与他的表示分离，使得同样的构建过程可以创建不同的表示;
+            2. 对外部屏蔽了对象的创建细节 更容易扩展;
+    </pre>
+
+    <p class="smallTitle">2. 实例</p>
+    <p class="introduceText">创建实体对象所有需要完成的动作:</p>
+    <pre>
+
+        public class Itworker {
+
+            public void wakeup(){
+                System.out.println("起床");
+            }
+            public void wash(){
+                System.out.println("洗脸");
+            }
+            public void breakfast(){
+                System.out.println("吃早餐");
+            }
+        }
+    </pre>
+    <p class="introduceText">抽象建造者对应相关的动作:</p>
+    <pre>
+
+        public abstract class IBuilder {
+
+            public abstract void wakeup();
+            public abstract void wash();
+            public abstract void breakfast();
+        }
+    </pre>
+    <p class="introduceText">建造者实现类，对外屏蔽实体对象的操作:</p>
+    <pre>
+
+        public class DailyBuilder extends IBuilder{
+
+            private Itworker itworker = new Itworker();
+
+            @Override
+            public void wakeup() {
+                itworker.wakeup();
+            }
+
+            @Override
+            public void wash() {
+                itworker.wash();
+            }
+
+            @Override
+            public void breakfast() {
+                itworker.breakfast();
+            }
+
+            public Itworker getItworker() {
+                return itworker;
+            }
+
+        }
+
+    </pre>
+    <p class="introduceText">封装操作建造者的构造类:</p>
+    <pre>
+
+        public class DailyBuilderConstructor {
+
+            private DailyBuilder dailyBuilder;
+
+            public DailyBuilder getDailyBuilder() {
+                return dailyBuilder;
+            }
+
+            public DailyBuilderConstructor(DailyBuilder dailyBuilder){
+                this.dailyBuilder = dailyBuilder;
+            }
+
+            public void constructor(){
+
+                this.dailyBuilder.wakeup();
+                this.dailyBuilder.wash();
+                this.dailyBuilder.breakfast();
+            }
+        }
+    </pre>
+    <p class="introduceText">调用:</p>
+    <pre>
+        //对外部屏蔽了itworker的创建细节 更容易扩展
+        DailyBuilder dailyBuilder = new DailyBuilder();
+        //外部构造器
+        new DailyBuilderConstructor(dailyBuilder).constructor();
+    </pre>
+
+    <br>
+</div>
+</body>
+</html>

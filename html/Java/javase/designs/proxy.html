@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>设计模式之代理模式</title>
+        <link rel="icon" href="../../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">设计模式之代理模式</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">设计模式之代理模式</p>
+    <hr>
+
+    <ul>
+        <li><a href="#one">1. 代理模式简介</a> </li>
+        <li><a href="#two">2. 自定义代理对象</a> </li>
+        <li><a href="#three">3. jdk动态代理</a> </li>
+        <li><a href="#four">4. cglib动态代理</a> </li>
+        <li><a href="#five">5. 关于jdk动态代理与cglib的区别</a> </li>
+
+    </ul>
+
+    <p class="smallTitle" id="one">1. 代理模式简介</p>
+    <pre>
+
+        代理模式：
+        代理模式给某一个对象提供一个代理对象，并由代理对象控制对原对象的引用;
+
+        通常为：
+            1. 自定义代理对象
+            2. jdk动态代理
+            3. cglib动态代理
+    </pre>
+
+    <p class="smallTitle" id="two">2. 自定义代理对象</p>
+    <p class="introduceText">老王找中介买房:</p>
+    <pre>
+
+        public interface BuyHouse {
+
+            void buyHouse();
+        }
+
+    </pre>
+    <p class="introduceText">被代理对象:</p>
+    <pre>
+
+        public class Laowang implements BuyHouse{
+
+            @Override
+            public void buyHouse() {
+                System.out.println("老王买房");
+            }
+        }
+    </pre>
+    <p class="introduceText">代理类：</p>
+    <pre>
+
+        public class HouseProxy implements BuyHouse{
+
+            private BuyHouse buyHouse;
+
+            //创建有买房能力的中介
+            public HouseProxy(BuyHouse buyHouse){
+                this.buyHouse = buyHouse;
+            }
+
+            @Override
+            public void buyHouse() {
+
+                System.out.println("买房前...");
+                this.buyHouse.buyHouse();
+                System.out.println("买房后...");
+            }
+        }
+
+    </pre>
+    <p class="introduceText">调用:</p>
+    <pre>
+
+        //自定义代理类
+        Laowang laowang = new Laowang();
+        //根据老王的需求创建一个代理对象 laowang引用交给代理对象
+        HouseProxy houseProxy = new HouseProxy(laowang);
+        //代理对象去买房
+        houseProxy.buyHouse();
+    </pre>
+
+    <p class="smallTitle" id="three">3. jdk动态代理</p>
+    <pre>
+
+        public interface BuyHouse {
+
+            String buyHouse();
+        }
+    </pre>
+    <p class="introduceText">被代理类要求实现接口:</p>
+    <pre>
+
+        public class Laowang implements BuyHouse {
+
+            @Override
+            public String buyHouse() {
+                System.out.println("老王买房");
+                return "买房成功";
+            }
+        }
+    </pre>
+    <p class="introduceText">代理类：</p>
+    <pre>
+
+        //jdk动态代理
+        public class JdkProxy implements InvocationHandler {
+
+            //需要代理的对象
+            public Laowang laowang;
+
+            public JdkProxy(Laowang laowang){
+                this.laowang = laowang;
+            }
+
+            /**
+             * @param proxy 生成的代理对象
+             * @param method 被代理对象的方法
+             * @param args 被代理对象方法的参数列表
+             * @return
+             * @throws Throwable
+             */
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+
+                System.out.println("老王买房之前...");
+
+                Object result = method.invoke(laowang, args);
+
+                System.out.println("老王买房之后....");
+                return result;
+            }
+
+            //获取代理对象
+            public Object getProxy(){
+
+                return Proxy.newProxyInstance(laowang.getClass().getClassLoader(),
+                        laowang.getClass().getInterfaces(), this);
+            }
+        }
+
+    </pre>
+    <p class="introduceText">调用:</p>
+    <pre>
+
+        //jdk动态代理：JDK实现动态代理需要实现类通过接口定义业务方法
+        Laowang laowang1 = new Laowang();
+        JdkProxy jdkProxy = new JdkProxy(laowang1);
+        //jdk代理类
+        BuyHouse buyHouseProxy = (BuyHouse)jdkProxy.getProxy();
+        //com.sun.proxy.$Proxy0
+        System.out.println(buyHouseProxy.getClass().getName());
+        buyHouseProxy.buyHouse();
+
+    </pre>
+
+    <p class="smallTitle" id="four">4. cglib动态代理</p>
+    <pre>
+
+        public interface BuyHouse {
+
+            String buyHouse();
+        }
+    </pre>
+    <p class="introduceText">被代理类不要求实现接口:</p>
+    <pre>
+
+        //cglib: 没有实现接口
+        public class Laowang {
+
+            public String buyHouse() {
+                System.out.println("老王买房");
+                return "买房成功";
+            }
+        }
+    </pre>
+    <p class="introduceText">代理类：</p>
+    <pre>
+
+        import org.springframework.cglib.proxy.Enhancer;
+        import org.springframework.cglib.proxy.MethodInterceptor;
+        import org.springframework.cglib.proxy.MethodProxy;
+
+        import java.lang.reflect.Method;
+
+        //cglib： 不要求业务类有接口， 通过字节码技术创建子类，并在子类中采用方法拦截的技术拦截所有父类方法的调用
+        public class CglibProxy implements MethodInterceptor {
+
+            private Laowang laowang;
+
+            public Object getInstance(Laowang laowang){
+
+                this.laowang = laowang;
+
+                Enhancer enhancer = new Enhancer();
+                //设置代理目标
+                enhancer.setSuperclass(this.laowang.getClass());
+                //设置回调对象
+                enhancer.setCallback(this);
+                //设置类加载器
+                enhancer.setClassLoader(this.laowang.getClass().getClassLoader());
+
+                return enhancer.create();
+            }
+
+            /**
+             * @param proxyObject 生成的代理对象
+             * @param method 被代理类的方法
+             * @param args 被代理类的方法参数列表
+             * @param methodProxy 代理对象的代理方法
+             * @return
+             * @throws Throwable
+             */
+            @Override
+            public Object intercept(Object proxyObject, Method method, Object[] args, MethodProxy methodProxy)
+                    throws Throwable {
+
+                System.out.println("老王买房之前...");
+                Object result = methodProxy.invoke(laowang, args);
+                System.out.println("老王买房之后...");
+
+                return result;
+            }
+        }
+
+
+    </pre>
+    <p class="introduceText">调用:</p>
+    <pre>
+
+        //cglib代理： 不要求有接口
+        //cglib原理是通过字节码技术为一个类创建子类，并在子类中采用方法拦截的技术拦截所有父类方法的调用
+        Laowang laowang2 = new Laowang();
+        CglibProxy cglibProxy = new CglibProxy();
+        Laowang cglibProxyInstance = (Laowang)cglibProxy.getInstance(laowang2);
+        //com.ethan.设计模式.代理模式.cglib代理.Laowang$$EnhancerByCGLIB$$f1f5c7ed
+        System.out.println(cglibProxyInstance.getClass().getName());
+        cglibProxyInstance.buyHouse();
+
+    </pre>
+
+    <p class="smallTitle" id="five">5. 关于jdk动态代理与cglib的区别</p>
+    <pre>
+
+        1. jdk动态代理要求被代理对象实现接口， cglib不要求实现接口；
+        2. cglib是在运行时，通过enhancer根据被代理的Class创建子类拦截响应的方法来实现，因此创建过程消耗时间比jdk动态代理
+            长， 所以对于单例的对象，因为无需频繁创建对象，用CGLIB合适，反之使用JDK方式要更为合适一些；
+        3. 由于CGLib由于是采用动态创建子类的方法，对于final修饰的方法无法进行代理；
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

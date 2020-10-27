@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>设计模式之原型模式</title>
+        <link rel="icon" href="../../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">设计模式之原型模式</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">设计模式之原型模式</p>
+    <hr>
+    
+    <p class="smallTitle">1. 原型模式简介</p>
+    <pre>
+        
+        原型模式：
+            1. 用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象;
+            2. 原型模式其实就是一个对象在创建另一个可定制的对象，而且不需要指定任何创建的细节;
+            3. Java提供了Coneable接口，其中有一个唯一方法Clone()，实现这个接口就可以完成原型模式了;
+            4. 注意应用属性的clone需要保证是深拷贝，不然操作拷贝对象的引用属性会改变原对象引用属性的值；
+    </pre>
+    
+    <p class="smallTitle">2. 实例</p>
+    <p class="introduceText">User:</p>
+    <pre>
+        
+        @Setter
+        @Getter
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @ToString
+        public class User implements Cloneable{
+        
+            private String name;
+            private Integer age;
+            private Student student;
+        
+            @Override
+            protected Object clone() throws CloneNotSupportedException {
+        
+                //重写user的clone方法， 防止修改克隆对象的引用对象值， 也将原来对象的引用对象值改变了
+                User user = (User) super.clone();
+                //student对象也克隆出来一个新对象, 保证应用对象也是深拷贝
+                user.student = (Student)student.clone();
+        
+                //此外也可以使用序列化机制来从写clone()方法，但是序列化机制进行每次clone都需要读写IO操作， 性能差
+        
+                return user;
+            }
+        }
+        
+    </pre>
+    
+    <p class="introduceText">Student:</p>
+    <pre>
+        
+        @Setter
+        @Getter
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @ToString
+        public class Student implements Cloneable{
+        
+            private float score;
+        
+            @Override
+            protected Object clone() throws CloneNotSupportedException {
+                return super.clone();
+            }
+        }
+
+    </pre>
+    
+    <p class="introduceText">调用clone():</p>
+    <pre>
+        
+        User user1 = new User("zz", 10, new Student(100));
+        User user2 = (User) user1.clone();
+
+        //改变克隆数来的对象的值
+        user2.setName("yy");
+        user2.setAge(40);
+
+        user2.getStudent().setScore(90);
+
+        //改变克隆出来user2的实例变量值， 发现user1的实例变量值也发生了改变， 这是因为clone默认对引用对象是浅拷贝
+        System.out.println(user1);
+        System.out.println(user2);
+
+    </pre>
+    
+    <p class="smallTitle">3. ArrayList的clone:</p>
+    <p class="introduceText">使用：</p>
+    <pre>
+        
+        ArrayList list = new ArrayList();
+        list.add("zz");
+        list.add("yy");
+
+        ArrayList listcopy = (ArrayList)list.clone();
+        listcopy.remove("zz");
+
+        System.out.println(list);
+        System.out.println(listcopy); //两者一直
+    </pre>
+    <p class="introduceText">源码:</p>
+    <pre>
+        
+        public Object clone() {
+            try {
+                ArrayList&lt;?&gt; v = (ArrayList&lt;?&gt;) super.clone();
+                v.elementData = Arrays.copyOf(elementData, size);
+                v.modCount = 0;
+                return v;
+            } catch (CloneNotSupportedException e) {
+                // this shouldn't happen, since we are Cloneable
+                throw new InternalError(e);
+            }
+        }
+    </pre>
+    
+    <br>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>设计模式之装饰模式</title>
+        <link rel="icon" href="../../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">设计模式之装饰模式</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">设计模式之装饰模式</p>
+    <hr>
+
+    <p class="smallTitle">1. 装饰模式简介</p>
+    <pre>
+
+        装饰模式（Decorator）:
+            动态地给一个对象添加一些额外的职责，就增加功能来说，装饰模式比生成子类更灵活。
+            优点： 扩展性强， 解耦合
+            缺点： 维护工作量大
+    </pre>
+
+    <p class="smallTitle">2. 实例</p>
+    <p class="introduceText">演示老王起床了，接下来要穿衣服，鞋子等</p>
+    <p class="introduceText">抽象实体类:</p>
+    <pre>
+
+        //人穿衣服 鞋子 裤子等
+        public abstract class Human {
+
+            public abstract void display();
+        }
+
+    </pre>
+    <p class="introduceText">具体实体类:</p>
+    <pre>
+
+        //需要装饰的类 老王要穿衣服 鞋子等
+        public class Laowang extends Human{
+
+            @Override
+            public void display() {
+                System.out.println("老王起床了...");
+            }
+        }
+
+    </pre>
+    <p class="introduceText">抽象的装饰类:</p>
+    <pre>
+
+        //抽象的装饰类
+        public abstract class AbstractDecorator extends Human{
+
+            private Human human;
+
+            public AbstractDecorator(Human human){
+                this.human = human;
+            }
+
+            @Override
+            public void display() {
+
+                if (human != null){
+                    human.display();
+                }
+            }
+        }
+    </pre>
+    <p class="introduceText">动作类：</p>
+    <pre>
+
+        public class ChuanXiezi extends AbstractDecorator{
+
+            public ChuanXiezi(Human human) {
+                super(human);
+            }
+
+            @Override
+            public void display() {
+                super.display();
+                System.out.println("穿鞋子");
+            }
+        }
+
+        public class ChuanYifu extends AbstractDecorator{
+
+            public ChuanYifu(Human human) {
+                super(human);
+            }
+
+            @Override
+            public void display() {
+                super.display();
+                System.out.println("穿衣服");
+            }
+        }
+
+    </pre>
+    <p class="introduceText">调用:</p>
+    <pre>
+
+        Human laowang = new Laowang();
+        //穿鞋子的动作
+        laowang = new ChuanXiezi(laowang);
+        //穿衣服的动作
+        laowang = new ChuanYifu(laowang);
+
+        laowang.display();
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

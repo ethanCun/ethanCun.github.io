@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>设计模式之工厂模式与抽象工厂模式</title>
+        <link rel="icon" href="../../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">设计模式之工厂模式与抽象工厂模式</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">设计模式之工厂模式与抽象工厂模式</p>
+    <hr>
+
+    <p class="smallTitle">1. 工厂模式简介</p>
+    <pre>
+
+        1. 简单工厂模式又叫静态方法模式（因为工厂类定义了一个静态方法）;
+        2. 将“类实例化的操作”与“使用对象的操作”分开，让使用者不用知道具体参数就可以实例化出所需要的“产品”类，
+            从而避免了在客户端代码中显式指定，实现了解耦。
+    </pre>
+
+    <p class="smallTitle">2. 实例:</p>
+    <p class="introduceText">产品信息抽象类：</p>
+    <pre>
+
+        public abstract class IProduct {
+
+            //产品信息
+            public abstract void productInfo();
+        }
+
+    </pre>
+    <p class="introduceText">具体产品实现类:</p>
+    <pre>
+
+        public class Apple extends IProduct {
+
+            @Override
+            public void productInfo() {
+
+                System.out.println("apple");
+            }
+        }
+
+
+        public class Orange extends IProduct {
+
+            @Override
+            public void productInfo() {
+                System.out.println("orange");
+            }
+        }
+
+    </pre>
+    <p class="introduceText">Product枚举:</p>
+    <pre>
+
+        public enum Product {
+
+            APPLE("apple"), ORANGE("orange"),BALALA("balala");
+
+            private String name;
+
+            Product(String name){
+                this.name = name;
+            }
+        }
+
+    </pre>
+    <p class="smallTitle">工厂类:</p>
+    <pre>
+
+        public class Factory {
+
+            //工厂模式的静态方法
+            public static IProduct ProductFactory(Product product){
+
+                switch (product){
+                    case APPLE:
+                       return new Apple();
+                    case ORANGE:
+                        return new Orange();
+                }
+
+                return null;
+            }
+        }
+    </pre>
+    <p class="smallTitle">调用:</p>
+    <pre>
+
+        //根据外部枚举通过工厂的静态方法直接生成对应的产品， 直接调用产品的方法, 解耦合
+        Factory.ProductFactory(Product.ORANGE).productInfo();
+    </pre>
+
+    <p class="smallTitle">3. 常见工厂类与抽象工厂类</p>
+    <pre>
+
+        ResourceBundle.getBundle();
+        Calendar.getInstance();
+        ClassLoader.getSystemClassLoader()
+
+        上面的工厂类还可以作为一个抽象的工厂类， 衍生出很多子工厂类， 这样就成了抽象工厂类模式
+    </pre>
+
+    <br>
+</div>
+
+</body>
+</html>

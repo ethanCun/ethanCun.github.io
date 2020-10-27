@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>设计模式之单例模式</title>
+        <link rel="icon" href="../../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">设计模式之单例模式</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">设计模式之单例模式</p>
+    <hr>
+
+    <ul>
+        <li><a href="#one">1. 常见单例的写法</a> </li>
+        <li><a href="#two">2. 饿汉式(静态常量和静态代码块)</a> </li>
+        <li><a href="#three">3. 懒汉式(线程不安全\线程不安全\同步方法\同步代码块)</a> </li>
+        <li><a href="#four">4. DCL双重检查锁+volatile</a> </li>
+        <li><a href="#five">5. 静态内部类创建单例</a> </li>
+        <li><a href="#six">6. 枚举创建单例</a> </li>
+        <li><a href="#seven">7. 存在的问题</a> </li>
+    </ul>
+
+    <p class="smallTitle" id="one">1. 常见单例的写法</p>
+    <pre>
+
+        1. 饿汉式(静态代码块\静态常量): 类加载的时候初始化，适合创建后来一定会用的对象；
+        2. 懒汉式(线程不安全\线程不安全\同步方法\同步代码块)；
+        3. DCL:双重检查锁机制；
+        4. 利用静态内部类： 类似静态常量版的饿汉式创建方式；
+        5. 利用枚举创建
+    </pre>
+
+    <p class="smallTitle" id="two">2. 饿汉式(静态常量和静态代码块)</p>
+    <p class="introduceText">静态常量</p>
+    <pre>
+        private final static Singleton instance = new Singleton();
+
+        // 构造器私有化（防止外部new）
+        private Singleton(){}
+
+        提供一个公有的静态方法，返回实例对象，提供给外部使用
+        public static Singleton getInstance(){
+            return instance;
+        }
+    </pre>
+    <p class="introduceText">静态代码块</p>
+    <pre>
+
+        // 在static代码块中创建对象
+        private static Singleton instance;
+
+        // 构造器私有化（防止外部new）
+        private Singleton(){}
+
+        //或者将创建操作放在静态代码块中
+        static {
+            instance = new Singleton();
+        }
+
+        //提供一个公有的静态方法，返回实例对象，提供给外部使用
+        public static Singleton getInstance(){
+            return instance;
+        }
+    </pre>
+
+    <p class="smallTitle" id="three">3. 懒汉式(线程不安全\线程不安全\同步方法\同步代码块)</p>
+    <p class="introduceText">线程不安全的懒汉式单例:</p>
+    <pre>
+        private static Singleton instance;
+
+        //构造器私有化
+        private Singleton(){}
+
+        //缺点：线程不安全
+        // 提供一个静态的公共方法，当使用到该方法时，才创建 instance，即懒汉式
+        public static Singleton getInstance01(){
+
+            if (instance == null){
+                instance = new Singleton();
+            }
+
+            return instance;
+        }
+
+    </pre>
+    <p class="introduceText">方法级别synchronized同步的单例:</p>
+    <pre>
+
+        private static Singleton instance;
+
+        //构造器私有化
+        private Singleton(){}
+
+        //缺点： 同步方法， 性能较差,
+        //同步方法性能差的原因是synchronized会先在方法区创建一个标识，先判断标识，然后再用
+        //entermonitor和exitmonitor加锁， 同步代码块就没有标识这一步
+        //线程安全的懒汉式单例对象 方法级别synchronized类锁
+        //另外：指定重排序可能导致线程不安全
+        public synchronized static Singleton getInstance02(){
+
+            if (instance == null){
+                instance = new Singleton();
+            }
+            return instance;
+        }
+    </pre>
+    <p class="introduceText">优化方法级别synchronized同步的单例:</p>
+    <pre>
+
+        private static Singleton instance;
+
+        //构造器私有化
+        private Singleton(){}
+
+        //较上边多了一个null判断, 能够部分过滤掉已经创建单例的线程
+        public synchronized static Singleton getInstance02(){
+
+            if(instance == null){
+                synchronized (Singleton02.class){
+                    instance = new Singleton02();
+                }
+            }
+            return instance;
+        }
+    </pre>
+
+    <p class="smallTitle" id="four">4. DCL双重检查锁+volatile</p>
+    <pre>
+
+        //volatile防止重排序
+        private static volatile Singleton instance;
+
+        //双重null检查
+        public static Singleton getInstance(){
+
+            //第一层判断过滤不为空 提高效率
+            if (instance == null){
+
+                //类锁
+                synchronized (Singleton.class){
+
+                    //第二层判断 防止多个实例对象同时执行到这里为空导致创建多个实例对象， 因为这里是类锁，可以多个对象进来
+                    if (instance == null){
+                        instance = new Singleton();
+                    }
+                }
+            }
+
+            return instance;
+        }
+    </pre>
+
+    <p class="smallTitle" id="five">5. 静态内部类创建单例</p>
+    <p class="introduceText">利用静态内部内部类初始化单例，还是利用的类加载时只初始化一次的特性:</p>
+    <pre>
+
+        //利用静态内部类， jvm类加载的时候初始化单例
+        public class Singleton {
+
+            private Singleton(){}
+
+            //静态内部类
+            //在第一次加载类的时候初始化，所以在这里，JVM 帮助我们保证了线程的安全性，在类进行初始化的时，别的线程是无法进入的。
+            private static class SingletonInnerSingleton{
+                public static final Singleton SINGLETON = new Singleton();
+            }
+
+            //对外部公开的单例
+            public static Singleton getInstance(){
+                return SingletonInnerSingleton.SINGLETON;
+            }
+        }
+
+    </pre>
+
+    <p class="smallTitle" id="six">6. 枚举创建单例</p>
+    <p class="introduceText">利用枚举成员变量特性创建单例:</p>
+    <pre>
+
+        //利用枚举
+        public enum  Singleton04 {
+
+            INSTANCE;
+
+            private Singleton04(){
+
+            }
+        }
+    </pre>
+
+    <p class="smallTitle" id="seven">7. 存在的问题</p>
+    <p class="introduceText">
+        注意： 虽然可以将单例创建类的构造方法私有化,但是运行时还是可以通过反射机制调用构造方法创建新对象,
+        可以考虑在私有化的构造方法中抛异常这个解决思路：
+    </p>
+
+    <pre>
+
+        //演示反射 调用私有的内部构造器创建对象
+        Class c = Class.forName("com.ethan.设计模式.单例模式.Singleton");
+        Constructor constructor = c.getDeclaredConstructor();
+
+        constructor.setAccessible(true);
+
+        Singleton s1 = (Singleton) constructor.newInstance();
+        Singleton s2 = (Singleton) constructor.newInstance();
+
+        //利用反射创建出来两个不相同的对象, 输出false
+        System.out.println(s1 == s2);
+
+    </pre>
+
+    <br>
+</div>
+</body>
+</html>

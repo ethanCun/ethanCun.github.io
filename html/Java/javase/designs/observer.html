@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+        <title>设计模式之观察者模式</title>
+        <link rel="icon" href="../../../../Source/icon-img.jpeg">
+        <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+        <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+    </head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-info">设计模式之观察者模式</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">设计模式之观察者模式</p>
+    <hr>
+
+    <p class="smallTitle">1. 观察者模式简介</p>
+    <pre>
+
+        观察者模式：
+            定义了对象之间的一对多依赖，让多个观察者对象同时监听某一个主题对象，
+            当主题对象发生变化时， 它的所有依赖者都会收到通知并更新。这种模式有时又称作发布-订阅模式、模型-视图模式，它是对象行为型模式。
+
+            jdk自带的观察者模式 observer与Observable
+    </pre>
+
+    <p class="smallTitle">实例</p>
+    <p class="introduceText">被观察的抽象对象:</p>
+    <pre>
+
+        //定义抽象产品
+        public abstract class Product {
+
+            //通知观察者发生了变化
+            public abstract void notify(String s);
+
+            //添加观察者
+            public abstract void addObserver(IObserver observer);
+
+            //移除观察者
+            public abstract void removeObserver(IObserver observer);
+        }
+
+    </pre>
+    <p class="introduceText">被观察的实例化对象:</p>
+    <pre>
+
+        //被观察的具体对象
+        public class Apple extends Product{
+
+            //所有观察者
+            private CopyOnWriteArraySet&lt;IObserver&gt; observers = new CopyOnWriteArraySet<>();
+
+            public CopyOnWriteArraySet&lt;IObserver&gt; getObservers() {
+                return observers;
+            }
+
+
+            @Override
+            public void notify(String s) {
+
+                this.observers.forEach((observer) ->{
+
+                    //通知观察者
+                    observer.log(s);
+                });
+            }
+
+            @Override
+            public void addObserver(IObserver observer) {
+
+                this.observers.add(observer);
+            }
+
+            @Override
+            public void removeObserver(IObserver observer) {
+
+                this.observers.forEach((obs) ->{
+
+                    if (obs == observer){
+                        this.observers.remove(observer);
+                    }
+                });
+            }
+        }
+
+    </pre>
+    <p class="introduceText">观察者抽象类:</p>
+    <pre>
+
+        //观察者抽象父类
+        public abstract class IObserver {
+
+            public abstract void log(String s);
+        }
+
+    </pre>
+    <p class="introduceText">观察者：</p>
+    <pre>
+
+        public class ObserverA extends IObserver{
+
+            @Override
+            public void log(String s) {
+                System.out.println("A: " + s);
+            }
+        }
+
+        public class ObserverB extends IObserver{
+
+            @Override
+            public void log(String s) {
+                System.out.println("B: " + s);
+            }
+        }
+
+    </pre>
+    <p class="introduceText">调用:</p>
+    <pre>
+
+        //创建被观察的对象
+        Apple apple = new Apple();
+
+        //创建观察者
+        ObserverA observerA = new ObserverA();
+        ObserverB observerB = new ObserverB();
+
+        apple.addObserver(observerA);
+        apple.addObserver(observerB);
+
+        //被观察者改变， 通知观察者做出相应的动作
+        apple.notify("apple发生了变化");
+    </pre>
+
+
+
+    <br>
+</div>
+
+</body>
+</html>
