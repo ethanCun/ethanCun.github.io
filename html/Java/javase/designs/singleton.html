@@ -153,7 +153,19 @@
 
                     //第二层判断 防止多个实例对象同时执行到这里为空导致创建多个实例对象， 因为这里是类锁，可以多个对象进来
                     if (instance == null){
+
+                        //这个new的过程包含了3个步骤
+                        //1. 创建内存空间
+                        //2. 执行构造方法，创建对象
+                        //3. 将对象指向内存空间
                         instance = new Singleton();
+
+                        //如果按照123不会存在问题， 但是这个地方可能发生指令重排编程132
+                        //如果此时再进来一个线程instance不为null， 直接返回instance
+                        //这样对象还没有创建，就返回了一个还没有创建好的对象
+
+                        //所以创建这个单例对象必须要禁止指令重排，添加volatile关键字
+
                     }
                 }
             }
@@ -203,7 +215,6 @@
     <p class="smallTitle" id="seven">7. 存在的问题</p>
     <p class="introduceText">
         注意： 虽然可以将单例创建类的构造方法私有化,但是运行时还是可以通过反射机制调用构造方法创建新对象,
-        可以考虑在私有化的构造方法中抛异常这个解决思路：
     </p>
 
     <pre>
@@ -220,6 +231,20 @@
         //利用反射创建出来两个不相同的对象, 输出false
         System.out.println(s1 == s2);
 
+    </pre>
+    <p class="introduceText">可以考虑在私有化的构造方法中抛异常这个解决思路:</p>
+    <pre>
+
+        public Singleton(){
+
+            synchronized(Singleton.class){
+
+                if(instance != null){
+
+                    throw new RuntimeException("单例已存在");
+                }
+            }
+        }
     </pre>
 
     <br>
