@@ -20,7 +20,17 @@
     <p class="title">nginx负载均衡与动静分离配置</p>
     <hr>
 
-    <p class="smallTitle">1. linux安装nginx</p>
+    <ul>
+        <li><a href="#one">1.linux安装nginx</a></li>
+        <li><a  href="#two">2. linux相关命令</a></li>
+        <li><a  href="#three">3. nginx负载均衡策略</a></li>
+        <li><a  href="#four">4. location匹配规则</a></li>
+        <li><a href="#five">5. nginx配置动静分离</a></li>
+        <li><a href="#six">6. nginx配置限流</a></li>
+        <li><a href="#seven">7. Jmeter测试工具的使用</a></li>
+    </ul>
+
+    <p class="smallTitle" id="one">1. linux安装nginx</p>
 
     <p class="contents">1.1, nginx下载地址：<a target="_blank" href="https://nginx.org/download/">https://nginx.org/download/</a> </p>
 
@@ -73,7 +83,7 @@
     <p class="contents">1.7, 启动： cd /usr/local/nginx-1.17.7/sbin,  ./nginx启动</p>
 
 
-    <p class="smallTitle">2. linux相关命令</p>
+    <p class="smallTitle" id="two">2. linux相关命令</p>
     <pre>
 
         nginx -v 查看nginx版本
@@ -95,7 +105,7 @@
 
     </pre>
 
-    <p class="smallTitle">3. nginx负载均衡策略</p>
+    <p class="smallTitle" id="three">3. nginx负载均衡策略</p>
     <pre>
 
         1.轮询方式是Nginx负载默认的方式，顾名思义，所有请求都按照时间顺序分配到不同的服务上，如果服务Down掉，可以自动剔除
@@ -135,11 +145,11 @@
 
     </pre>
 
-    <p class="smallTitle">4. location匹配规则</p>
+    <p class="smallTitle" id="four">4. location匹配规则</p>
     <p class="contents">4.1, 参考链接1： <a target="_blank" href="https://www.cnblogs.com/fyy-hhzzj/p/7844961.html">https://www.cnblogs.com/fyy-hhzzj/p/7844961.html</a> </p>
 
 
-    <p class="smallTitle">5. nginx配置动静分离</p>
+    <p class="smallTitle" id="five">5. nginx配置动静分离</p>
     <p class="contents">在使用nginx进行分流时，一般会配置多台nginx服务器，用专门的服务器
     访问静态资源，当然也可以在一台机器上使用nginx动静分流</p>
     <pre>
@@ -221,6 +231,77 @@
                    proxy_pass http://static;
                 }
         }
+
+    </pre>
+
+    <p class="smallTitle" id="six">6. nginx配置限流</p>
+    <p class="contents">6.1. 配置单个ip的请求频率</p>
+    <pre>
+        1. 速率限流(相当于限制指定ip的限速流量)：
+        漏桶算法： 流量进入桶类， 以一定的速率去消耗流量
+
+        #在nginx.conf下的http模块下新建限流规则：
+
+        # 限流设置 binary_remote_addr: 根据请求ip进行限流 zone:桶缓存大小 rate：每秒2个请求
+        limit_req_zone $binary_remote_addr zone=contentRateLimit:10m rate=2r/s;
+
+
+        #在location映射规则下使用限流规则：
+
+           location ~*^.+$ {
+
+        	    #使用限流设置 指定限流缓存空间 也就是漏桶算法的桶
+        	    #burst=4: 表示使用缓存队列缓存一部分请求
+        	    #nodelay: 表示并行处理多个请求
+        	    limit_req zone=contentRateLimit burst=4 nodelay;
+
+        	    #静态资源 指定资源位置
+                root html;
+        	    #定义首页索引文件的名称
+                index  index.html index.htm;
+
+        		# 转发到nostatic这个服务器
+                    proxy_pass http://nostatic;
+
+        		#保证分流后在tomcat中可以拿到客户端信息
+        	    proxy_set_header Host $host;
+        	    proxy_set_header X-Real-IP $remote_addr;
+        	    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+           }
+
+    </pre>
+
+    <p class="contents">6.2. 配置某个location并发量总量</p>
+    <pre>
+
+        #控制最大并发量(1秒之内可以请求多少个请求, 相当于限制整个location最大的并发容量)：
+
+        #在http模块下定义限流规则
+        #根据ip限流，最大连接数
+        limit_conn_zone $binary_remote_addr zone=addr:1m;
+
+        在location下使用限流规则
+        limit_conn addr 2;
+
+    </pre>
+
+
+    <p class="smallTitle" id="seven">7. Jmeter测试工具的使用</p>
+    <pre>
+
+
+         Jmeter下载：（需要先安装Java环境1.8）
+         <a target="_blank" href="https://jmeter.apache.org/download_jmeter.cgi">
+             https://jmeter.apache.org/download_jmeter.cgi
+         </a>
+
+
+         启动：
+         cd 到Jemeter bin目录， 然后jmeter命令启动
+
+
+         汉化：
+         cd 到Jemeterbin目录， 在jmeter.properties中添加language=zh_CN， 并重新启动
 
     </pre>
 
