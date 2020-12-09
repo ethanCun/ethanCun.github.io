@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>html多余的子div靠左显示</title>
+		<link rel="icon" href="../../../Source/icon-img.jpeg">
+		<link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+		<link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+		<link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+	</head>
+	<body>
+
+
+		<div class="labels">
+
+			<span class="label label-success">html多余的子div靠左显示</span>
+		</div>
+
+		<div class="contentBgDiv">
+
+			<p class="title">html多余的子div靠左显示</p>
+			<hr>
+			
+			<p class="smallTitle">1. 父div中多余的子div靠左显示, 并且左右margin刚好平分父div</p>
+			<pre>
+				
+				&lt;style&gt;
+					
+					html, body{
+						
+						width: 100%;
+						height: 100%;
+					}
+					
+					.par{
+						
+						width: 100%;
+						height: 100%;
+						
+						display: flex;
+						flex-wrap: wrap;
+					}
+					
+					.chd{
+						
+						/* 
+						  关键在于： 计算单个div的宽度和高度， 这样成了响应式的宽高
+						  width=100%/n - 2*margin
+						 */
+						width: calc(25% - 40px);
+						height: calc(25% - 40px);
+						background: red;
+						margin: 20px;
+					}
+					
+				&lt;/style&gt;
+				&lt;div class="par"&gt;
+					
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+				&lt;/div&gt;
+				
+				
+			</pre>
+			
+			<p class="introduceText">效果：</p>
+			<img src="../../../Source/html/经典布局之居中多余的靠左.png" />
+			
+			
+			<p class="smallTitle">2. 父div中多余的子div靠中显示</p>
+			<pre>
+				
+				&lt;style&gt;
+					
+					html, body{
+						
+						width: 100%;
+						height: 100%;
+					}
+					
+					.par{
+						
+						width: 100%;
+						height: 100%;
+						
+						text-align: center;
+					}
+					
+					.chd{
+						
+						/*
+							单个的宽度
+							width=100%/n - 2*margin
+						 */
+						width: calc(25% - 40px);
+						height: calc(25% - 40px);
+						background: red;
+						margin: 20px;
+					
+						display: inline-block;	
+					}
+					
+				&lt;/style&gt;
+				&lt;div class="par"&gt;
+					
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+					&lt;div class="chd"&gt;&lt;/div&gt;
+				&lt;/div&gt;	
+				
+				
+			</pre>
+			
+			<p class="introduceText">效果:</p>
+			<img src="../../../Source/html/经典布局之居中多余的也居中.png"/>
+			
+		</div>
+		
+		<br />	
+	</body>
+</html>
