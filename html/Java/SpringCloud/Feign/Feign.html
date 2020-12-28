@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SpringCloud之Feign</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+	<div class="labels">
+
+		<span class="label label-primary">服务调用</span>
+		<span class="label label-danger">负载均衡</span>
+		<span class="label label-info">Feign</span>
+	</div>
+
+	<div class="contentBgDiv">
+
+		<p class="title">SpringCloud之Feign服务调用、负载均衡、服务熔断和服务降级</p>
+		<hr>
+		
+		<ul>
+			<li><a href="#first">1. 关于Feign</a></li>
+			<li><a href="#two">2. pom引入Feign依赖包</a></li>
+			<li><a href="#three">3. application.yml配置</a></li>
+			<li><a href="#four">4. 开启Feign</a></li>
+			<li><a href="#five">5. Feign Service层</a></li>
+			<li><a href="#six">6. feign通过service调用服务</a></li>
+			<li><a href="#seven">7. feign配置ribbon负载均衡</a></li>
+		</ul>
+		
+		<p class="smallTitle" id="first">1. 关于Feign</p>
+		<p class="introduceText">
+			Feign集成了Ribbon，因此有默认的负载均衡，Feign也集成了hystrix，因此也可以做服务降级与服务熔断；
+			 Ribbon需要通过微服务名称，配合restTemplate来调用服务提供者; Feign使用接口的方式来调用，更加简洁;
+		</p>
+		
+		<p class="smallTitle" id="two">2. pom引入Feign依赖包</p>
+		<pre>
+			
+			 &lt;dependencies&gt;
+			
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;com.ethan&lt;/groupId&gt;
+			            &lt;artifactId&gt;springcloud-api&lt;/artifactId&gt;
+			            &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            Ribbon
+			        --&gt;
+			        &lt;!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-ribbon --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-cloud-starter-ribbon&lt;/artifactId&gt;
+			            &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			
+			        &lt;!--
+			            加入eureka客户端依赖, 服务消费者
+			        --&gt;
+			        &lt;!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-eureka --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-cloud-starter-eureka&lt;/artifactId&gt;
+			            &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			
+			        &lt;!--
+			            导入feign
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-cloud-starter-feign&lt;/artifactId&gt;
+			            &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			    &lt;/dependencies&gt;
+		</pre>
+		
+		<p class="smallTitle" id="three">3. application.yml配置</p>
+		<pre>
+			
+			server:
+			  port: 8080
+			
+			
+			#eureka
+			eureka:
+			  instance:
+			    hostname: springcloud-consume-user
+			  client:
+			    #消费者不用注册自己
+			    register-with-eureka: false
+			    service-url:
+			      defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
+			
+			
+			# 开启服务熔断和服务降级
+			feign:
+			  hystrix:
+			    enabled: true
+			
+			
+			spring:
+			  application:
+			    name: springcloud-consumer-feign-8080
+				
+		</pre>
+		
+		<p class="smallTitle" id="four">4. 开启Feign</p>
+		<pre>
+			
+			package com.ethan.springcloud;
+			
+			import org.springframework.boot.SpringApplication;
+			import org.springframework.boot.autoconfigure.SpringBootApplication;
+			import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+			import org.springframework.cloud.openfeign.EnableFeignClients;
+			import org.springframework.context.annotation.ComponentScan;
+			
+			@SpringBootApplication
+			@EnableEurekaClient //开启eureka客户端
+			@EnableFeignClients(basePackages = {"com.ethan.springcloud"}) //开启Feign扫描包, 扫描Service层
+			@ComponentScan(basePackages = {"com.ethan.springcloud"}) //扫描自己的包
+			public class UserConsume_Feign {
+			
+			    public static void main(String[] args) {
+			
+			        SpringApplication.run(UserConsume_Feign.class, args);
+			    }
+			}
+			
+		</pre>
+		
+		<p class="smallTitle" id="five">5. Feign Service层</p>
+		<pre>
+			
+			package com.ethan.springcloud.service;
+			
+			import com.ethan.springcloud.pojo.User;
+			import org.springframework.cloud.openfeign.FeignClient;
+			import org.springframework.stereotype.Component;
+			import org.springframework.web.bind.annotation.GetMapping;
+			import org.springframework.web.bind.annotation.PathVariable;
+			import org.springframework.web.bind.annotation.PostMapping;
+			import org.springframework.web.bind.annotation.RequestBody;
+			
+			import java.util.List;
+			
+			//feign: 可以被服务直接调用, 面向接口，和Ribbon不一样不需要通过写微服务名称调用
+			//value: 微服务名字
+			@Component
+			//开启服务降级fallbackFactory: 指明服务降级处理工厂类
+			@FeignClient(value = "SPRINGCLOUD-PROVIDER-USER",
+			        fallbackFactory = UserClientFallbackFactory.class)
+			public interface UserService {
+			
+			    //value是服务提供者的方法
+			    @GetMapping(value = "/user/list")
+			    List&lt;User&gt; userList();
+			
+			    @GetMapping(value = "/user/selectById/{id}")
+			    User userWithId(@PathVariable("id") int id);
+			
+			    @PostMapping(value = "/user/add")
+			    boolean addUser(@RequestBody User user);
+			}
+
+		</pre>
+		<p class="contents">服务降级处理类:</p>
+		<pre>
+			
+			package com.ethan.springcloud.service;
+			
+			import com.ethan.springcloud.pojo.User;
+			import feign.hystrix.FallbackFactory;
+			import org.springframework.stereotype.Component;
+			
+			import java.util.List;
+			
+			//服务降级工厂处理类
+			@Component
+			public class UserClientFallbackFactory implements FallbackFactory {
+			
+			    public UserService create(Throwable throwable) {
+			
+			        return new UserService() {
+			
+			            public List&lt;User&gt; userList() {
+			                return null;
+			            }
+			
+			            public User userWithId(int id) {
+			                return new User().setName("不存在")
+			                        .setDbSource("服务降级，服务已关闭");
+			            }
+			
+			            public boolean addUser(User user) {
+			                return false;
+			            }
+			        };
+			
+			    }
+			}
+			
+		</pre>
+		
+		<p class="smallTitle" id="six">6. feign通过service调用服务</p>
+		<pre>
+			
+			package com.ethan.springcloud.controller;
+			
+			import com.ethan.springcloud.pojo.User;
+			import org.springframework.beans.factory.annotation.Autowired;
+			import org.springframework.web.bind.annotation.PathVariable;
+			import org.springframework.web.bind.annotation.RequestMapping;
+			import org.springframework.web.bind.annotation.RestController;
+			import org.springframework.web.client.RestTemplate;
+			
+			import java.util.List;
+			
+			@RestController
+			@RequestMapping(value = "/consume")
+			public class UserConsumeController {
+			
+			    //消费者不应该有service层 restTemplate: 简单的restful模板
+			    @Autowired
+			    private RestTemplate restTemplate;
+			
+			    //Ribbon： 通过服务名称去访问 注意是大写 应用名称必须大写
+			    public static final String REST_URL_PREFIX="http://SPRINGCLOUD-PROVIDER-USER";
+			
+			
+			    @RequestMapping(value = "/userList")
+			    public List&lt;User&gt; userList(){
+			
+			        return this.restTemplate.getForObject(REST_URL_PREFIX+"/user/list", List.class);
+			    }
+			
+			    @RequestMapping(value = "/userWithId/{id}")
+			    public User userList(@PathVariable("id") Integer id){
+			
+			        //参数： url, 返回类型, 请求参数
+			        return this.restTemplate.getForObject(REST_URL_PREFIX+"/user/selectById?id="+id, User.class);
+			    }
+			
+			    @RequestMapping(value = "/add")
+			    public boolean addUser(User user) throws Exception{
+			
+			        return this.restTemplate.postForObject(REST_URL_PREFIX+"/user/add", user, Boolean.class);
+			    }
+			}
+
+
+		</pre>
+		
+		
+		<p class="smallTitle" id="seven">7. feign配置ribbon负载均衡</p>
+		<pre>
+			
+			package com.ethan.springcloud.config;
+			
+			import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+			import org.springframework.context.annotation.Bean;
+			import org.springframework.context.annotation.Configuration;
+			import org.springframework.http.converter.StringHttpMessageConverter;
+			import org.springframework.web.client.RestTemplate;
+			
+			import java.nio.charset.Charset;
+			
+			@Configuration
+			public class ConfigBean {
+			
+			    //配置Ribbon负载均衡实现, Ribbon基于客户端
+			
+			    /**
+			     * IRule: 负载均衡算法：
+			     *      1. AvailabilityFilteringRule： 过滤掉崩溃的服务，优先选择正常
+			     *          运行的服务；
+			     *      2. RoundRobinRule： 轮询
+			     *      3. RandomRule：随机
+			     *      4. WeightedResponseTimeRule： 权重
+			     *      5. RetryRule：重试, 先按照轮询获取服务，如果失败，则会在指定高德时间内重试
+			     */
+			    @LoadBalanced
+			    @Bean
+			    public RestTemplate restTemplate(){
+			
+			        RestTemplate restTemplate = new RestTemplate();
+			        restTemplate.getMessageConverters()
+			                .add(new StringHttpMessageConverter(
+			                        Charset.forName("utf-8")));
+			
+			        return restTemplate;
+			    }
+			
+			    //将负载均衡算法改为随机，只需要注册一个Bean就行了
+			//    @Bean
+			//    public IRule myRule(){
+			//
+			//        return new RandomRule();
+			//    }
+			
+			}
+
+		</pre>
+		
+		<br /><br />
+		
+	</div>	
+</body>
+
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SpringCloud服务熔断与降级hystrix, hystrix-dashboard</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+	<div class="labels">
+
+		<span class="label label-primary">Hystrix</span>
+		<span class="label label-info">服务熔断与降级</span>
+	</div>
+
+	<div class="contentBgDiv">
+
+		<p class="title">SpringCloud服务熔断与降级Hystrix</p>
+		<hr>
+		
+		<ul>
+			<li><a href="#first">1. 关于服务熔断与服务降级</a></li>
+			<li><a href="#two">2. pom.xml配置</a></li>
+			<li><a href="#three">3. application.yml配置</a></li>
+			<li><a href="#four">4. 开启熔断支持</a></li>
+			<li><a href="#five">5. 配置服务熔断</a></li>
+			<li><a href="#six">6. 配置服务降级</a></li>
+		</ul>
+		
+		<p class="smallTitle" id="first">1. 关于服务熔断与服务降级</p>
+		<p class="introduceText">
+			服务熔断：
+				   某个服务超时或者异常，采用另外的方法来处理，如使用另外一个方法处理；
+		</p>
+		<p class="introduceText">
+			服务降级：
+			      某个服务请求量大，资源不够用，将其他服务资源调整到当前请求数量大的服务，
+			      请求量正常后，在将其他服务恢复到它自己的状态；
+			      当被降级的服务器关闭之后，请求过来后返回我们自定义的信息，
+			      这些信息在一个实现了FallbackFactory的类中自定义
+		</p>
+		
+		<p class="smallTitle" id="two">2. pom.xml配置</p>
+		<pre>
+			
+			&lt;dependencies&gt;
+			
+			        &lt;!--
+			        拿到api下面的实体类
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;com.ethan&lt;/groupId&gt;
+			            &lt;artifactId&gt;springcloud-api&lt;/artifactId&gt;
+			            &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            junit
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;junit&lt;/groupId&gt;
+			            &lt;artifactId&gt;junit&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            数据库
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;mysql&lt;/groupId&gt;
+			            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+			            &lt;artifactId&gt;druid-spring-boot-starter&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            日志
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;
+			            &lt;artifactId&gt;logback-core&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            test
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-boot-test&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            jetty
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-boot-starter-jetty&lt;/artifactId&gt;
+			            &lt;version&gt;2.1.7.RELEASE&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            热部署
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			
+			        &lt;!--
+			            加入eureka依赖, 服务提供者
+			        --&gt;
+			        &lt;!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-eureka --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-cloud-starter-eureka&lt;/artifactId&gt;
+			            &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            服务监控信息 actuator
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            Hystrix服务熔断与降级
+			        --&gt;
+			        &lt;!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-hystrix --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-cloud-starter-hystrix&lt;/artifactId&gt;
+			            &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			       &lt;!--
+			            Hystrix服务监控 dashboard
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-cloud-starter-hystrix-dashboard&lt;/artifactId&gt;
+			            &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			&lt;/dependencies&gt;
+				
+		</pre>
+		
+		<p class="smallTitle" id="three">3. application.yml配置</p>
+		<pre>
+			
+			server:
+			  port: 8001
+			
+			mybatis:
+			  type-aliases-package: com.ethan.springcloud.pojo
+			  mapper-locations: classpath:mybatis/mapper/*.xml
+			  config-location: classpath:mybatis/config/mybatis-config.xml
+			
+			spring:
+			  #应用名称
+			  application:
+			    #应用名称大写 小写后也变成了大写，所以消费客户端的REST_URI_PREFIX也必须要大写
+			    name: SPRINGCLOUD-PROVIDER-USER
+			  datasource:
+			    type: com.alibaba.druid.pool.DruidDataSource
+			    driver-class-name: com.mysql.cj.jdbc.Driver
+			    username: root
+			    password: xxx
+			    url: jdbc:mysql://localhost:3306/db01?characterEncoding=utf8&useUnicode=true&serverTimezone=Asia/Shanghai
+			
+			
+			
+			# eureka配置
+			eureka:
+			  client:
+			    service-url:
+			      # 发布到单机版注册中心
+			      #defaultZone: http://localhost:7001/eureka/
+			      # 发布到集群版注册中心
+			      defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
+			  instance:
+			    # 改变应用status描述
+			    instance-id: user-provider-hystrix-8001
+			    # 展示ip地址
+			    prefer-ip-address: true
+			
+			# actuator监控配置信息 点击微服务的status信息会跳转到这个页面
+			info:
+			  app.name: com.ethan
+			  company.name: myyj
+			
+
+		</pre>
+		
+		<p class="smallTitle" id="four">4. 开启熔断支持</p>
+		<pre>
+			
+			package com.ethan.springcloud;
+			
+			import org.springframework.boot.SpringApplication;
+			import org.springframework.boot.autoconfigure.SpringBootApplication;
+			import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
+			import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+			import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+			
+			/**
+			 *
+			 * 服务熔断：
+			 *      某个服务挂了，采用另外的方法来处理，如使用另外一个方法处理；
+			 *
+			 * 服务降级：
+			 *      某个服务请求量大，资源不够用，将其他服务资源调整到当前请求数量大的服务，
+			 *      请求量正常后，在将其他服务恢复到它自己的状态；
+			 *
+			 */
+			@SpringBootApplication
+			@EnableEurekaClient //开启注册中心客户端
+			@EnableDiscoveryClient //支持服务发现
+			//添加对熔断(断路器)的支持
+			@EnableCircuitBreaker
+			//开启dashboard监控 默认页面localhost:9001/hystirx/
+			@EnableHystrixDashboard
+			public class UserHystrixProvider_8001 {
+			
+			    public static void main(String[] args) {
+			
+			        SpringApplication.run(UserHystrixProvider_8001.class);
+			    }
+			
+			}
+
+		</pre>
+	
+	
+		<p class="smallTitle" id="five">5. 配置服务熔断</p>
+		<pre>
+			
+			package com.ethan.springcloud.controller;
+			
+			import com.ethan.springcloud.pojo.User;
+			import com.ethan.springcloud.service.UserService;
+			import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+			import org.springframework.beans.factory.annotation.Autowired;
+			import org.springframework.web.bind.annotation.PathVariable;
+			import org.springframework.web.bind.annotation.RequestMapping;
+			import org.springframework.web.bind.annotation.RestController;
+			
+			@RestController
+			@RequestMapping(value = "/hystrix")
+			public class UserController {
+			
+			    @Autowired
+			    private UserService userService;
+			
+			    @HystrixCommand(fallbackMethod = "hystrixUserWithId")
+			    @RequestMapping(value = "/user/{id}")
+			    public User userWithId(@PathVariable("id") Integer id){
+			
+			        User user = this.userService.userWithId(id);
+			
+			        if(user == null){
+			
+			            throw new RuntimeException("不存在该客户");
+			        }
+			
+			        return user;
+			    }
+			
+			
+			    public User hystrixUserWithId(@PathVariable("id") Integer id){
+			
+			        return new User().setId(id).setName("没有对应的用户信息");
+			    }
+			}
+
+		</pre>
+	
+	
+		<p class="smallTitle" id="six">6. 配置服务降级</p>
+		<p class="contents">Feign配置服务降级处理类</p>
+		<pre>
+			
+			//feign: 可以被服务直接调用, 面向接口，和Ribbon不一样不需要通过写微服务名称调用
+			//value: 微服务名字
+			@Component
+			//开启服务降级fallbackFactory: 指明服务降级处理工厂类
+			@FeignClient(value = "SPRINGCLOUD-PROVIDER-USER",
+			        fallbackFactory = UserClientFallbackFactory.class)
+			public interface UserService {
+			
+			    //value是服务提供者的方法
+			    @GetMapping(value = "/user/list")
+			    List&lt;User&gt; userList();
+			
+			    @GetMapping(value = "/user/selectById/{id}")
+			    User userWithId(@PathVariable("id") int id);
+			
+			    @PostMapping(value = "/user/add")
+			    boolean addUser(@RequestBody User user);
+			}
+
+		</pre>
+		<p class="contents">服务降级工厂类：</p>
+		<pre>
+			
+			package com.ethan.springcloud.service;
+			
+			import com.ethan.springcloud.pojo.User;
+			import feign.hystrix.FallbackFactory;
+			import org.springframework.stereotype.Component;
+			
+			import java.util.List;
+			
+			//服务降级处理类
+			@Component
+			public class UserClientFallbackFactory implements FallbackFactory {
+			
+			    public UserService create(Throwable throwable) {
+			
+			        return new UserService() {
+			
+			            public List&lt;User&gt; userList() {
+			                return null;
+			            }
+			
+			            public User userWithId(int id) {
+			                return new User().setName("不存在")
+			                        .setDbSource("服务降级，服务已关闭");
+			            }
+			
+			            public boolean addUser(User user) {
+			                return false;
+			            }
+			        };
+			
+			    }
+			}
+
+		</pre>
+	
+	<br /><br />
+	</div>
+</body>
+</html>
