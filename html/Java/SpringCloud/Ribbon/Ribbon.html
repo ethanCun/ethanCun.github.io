@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SpringCloud之Ribbon服务调用和负载均衡</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+	<div class="labels">
+
+		<span class="label label-primary">Ribbon</span>
+		<span class="label label-danger">服务调用</span>
+		<span class="label label-info">负载均衡</span>
+	</div>
+
+	<div class="contentBgDiv">
+
+		<p class="title">SpringCloud之Ribbon服务调用和负载均衡</p>
+		<hr>
+		
+		<ul>
+			<li><a href="#first">1. SpringCloud之Ribbon服务调用和负载均衡</a></li>
+			<li><a href="#second">2. pom引入依赖</a></li>
+			<li><a href="#three">3. Application开启Ribbon</a></li>
+			<li><a href="#four">4. Ribbon+RestTemplate通过微服务名称调用微服务</a></li>
+			<li><a href="#five">5. 配置开启负载均衡</a></li>
+			<li><a href="#six">6. Ribbon负载均衡策略</a></li>
+		</ul>
+		
+		<p class="smallTitle" id="first">1. SpringCloud之Ribbon服务调用和负载均衡</p>
+		<p class="introduceText">
+			Ribbon通常用来做微服务负载均衡， 也通常搭配TestTemplate来做服务调用;
+		</p>
+		
+		
+		
+		<p class="smallTitle" id="second">2. pom引入依赖</p>
+		<pre>
+			
+			    &lt;dependencies&gt;
+			
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;com.ethan&lt;/groupId&gt;
+			            &lt;artifactId&gt;springcloud-api&lt;/artifactId&gt;
+			            &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            Ribbon
+			        --&gt;
+			        &lt;!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-ribbon --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-cloud-starter-ribbon&lt;/artifactId&gt;
+			            &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			
+			        &lt;!--
+			            加入eureka客户端依赖, 服务消费者
+			        --&gt;
+			        &lt;!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-eureka --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-cloud-starter-eureka&lt;/artifactId&gt;
+			            &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			    &lt;/dependencies&gt;
+				
+		</pre>
+		
+		<p class="smallTitle" id="three">3. Application开启Ribbon</p>
+		<pre>
+			
+			package com.ethan.springcloud;
+			
+			import com.ethan.rule.MyRule;
+			import org.springframework.boot.SpringApplication;
+			import org.springframework.boot.autoconfigure.SpringBootApplication;
+			import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+			import org.springframework.cloud.netflix.ribbon.RibbonClient;
+			
+			@SpringBootApplication
+			@EnableEurekaClient //开启eureka客户端
+			//开启Ribbon客户端负载均衡，定义负载均衡算法
+			@RibbonClient(name = "SPRINGCLOUD-PROVIDER-USER", configuration = MyRule.class)
+			public class UserConsume_80 {
+			
+			    public static void main(String[] args) {
+			
+			        SpringApplication.run(UserConsume_80.class, args);
+			    }
+			}
+
+		</pre>
+		
+		<p class="smallTitle" id="four">4. Ribbon+RestTemplate通过微服务名称调用微服务</p>
+		<pre>
+			
+			package com.ethan.springcloud.controller;
+			
+			import com.ethan.springcloud.pojo.User;
+			import org.springframework.beans.factory.annotation.Autowired;
+			import org.springframework.web.bind.annotation.PathVariable;
+			import org.springframework.web.bind.annotation.RequestMapping;
+			import org.springframework.web.bind.annotation.RestController;
+			import org.springframework.web.client.RestTemplate;
+			
+			import java.util.List;
+			
+			@RestController
+			@RequestMapping(value = "/consume")
+			public class UserConsumeController {
+			
+			    //消费者不应该有service层 restTemplate: 简单的restful模板
+			    @Autowired
+			    private RestTemplate restTemplate;
+			
+			    //Ribbon： 通过服务名称去访问 注意是大写 应用名称必须大写
+			    public static final String REST_URL_PREFIX="http://SPRINGCLOUD-PROVIDER-USER";
+			
+			
+			    @RequestMapping(value = "/userList")
+			    public List&lt;User&gt; userList(){
+			
+			        return this.restTemplate.getForObject(REST_URL_PREFIX+"/user/list", List.class);
+			    }
+			
+			    @RequestMapping(value = "/userWithId/{id}")
+			    public User userList(@PathVariable("id") Integer id){
+			
+			        //参数： url, 返回类型, 请求参数
+			        return this.restTemplate.getForObject(REST_URL_PREFIX+"/user/selectById?id="+id, User.class);
+			    }
+			
+			    @RequestMapping(value = "/add")
+			    public boolean addUser(User user) throws Exception{
+			
+			        return this.restTemplate.postForObject(REST_URL_PREFIX+"/user/add", user, Boolean.class);
+			    }
+			}
+
+		</pre>
+		
+		<p class="smallTitle" id="five">5. 配置开启负载均衡</p>
+		<pre>
+			
+			package com.ethan.springcloud.config;
+			
+			import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+			import org.springframework.context.annotation.Bean;
+			import org.springframework.context.annotation.Configuration;
+			import org.springframework.http.converter.StringHttpMessageConverter;
+			import org.springframework.web.client.RestTemplate;
+			
+			import java.nio.charset.Charset;
+			
+			@Configuration
+			public class ConfigBean {
+			
+			    //配置Ribbon负载均衡实现, Ribbon基于客户端
+			
+			    /**
+			     * IRule: 负载均衡算法：
+			     *      1. AvailabilityFilteringRule： 过滤掉崩溃的服务，优先选择正常
+			     *          运行的服务；
+			     *      2. RoundRobinRule： 轮询
+			     *      3. RandomRule：随机
+			     *      4. WeightedResponseTimeRule： 权重
+			     *      5. RetryRule：重试, 先按照轮询获取服务，如果失败，则会在指定高德时间内重试
+			     */
+			    @LoadBalanced
+			    @Bean
+			    public RestTemplate restTemplate(){
+			
+			        RestTemplate restTemplate = new RestTemplate();
+			        restTemplate.getMessageConverters()
+			                .add(new StringHttpMessageConverter(
+			                        Charset.forName("utf-8")));
+			
+			        return restTemplate;
+			    }
+			
+			    //将负载均衡算法改为随机，只需要注册一个Bean就行了
+			//    @Bean
+			//    public IRule myRule(){
+			//
+			//        return new RandomRule();
+			//    }
+			
+			}
+
+		</pre>
+		
+		<p class="smallTitle" id="six">6. Ribbon负载均衡策略</p>
+		<p class="contents">自定义负载均衡策略:</p>
+		<pre>
+			
+			package com.ethan.rule;
+			
+			import com.netflix.loadbalancer.IRule;
+			import com.netflix.loadbalancer.RetryRule;
+			import com.netflix.loadbalancer.RoundRobinRule;
+			import org.springframework.context.annotation.Bean;
+			import org.springframework.context.annotation.Configuration;
+			
+			//自定义Ribbon的负载均衡算法
+			//自定义的Rule不能和启动类在同一个包下
+			@Configuration
+			public class MyRule{
+			
+			    //默认的轮询算法
+			    //@Bean
+			    public IRule roundRobinRule(){
+			
+			        return new RoundRobinRule();
+			    }
+			
+			    //@Bean
+			    public IRule retryRule(){
+			
+			        return new RetryRule();
+			    }
+			
+			    //自定义的负载均衡算法
+			    @Bean
+			    public IRule myRandomRule(){
+			
+			        return new MyRandomRule();
+			    }
+			}
+
+		</pre>
+		<p class="contents">自定义的随机负载均衡算法:</p>
+		<pre>
+			
+			package com.ethan.rule;
+			
+			import com.netflix.client.config.IClientConfig;
+			import com.netflix.loadbalancer.AbstractLoadBalancerRule;
+			import com.netflix.loadbalancer.ILoadBalancer;
+			import com.netflix.loadbalancer.Server;
+			
+			import java.util.List;
+			
+			//自定义Ribbon负载均衡算法，继承于AbstractLoadBalancerRule, 参考RandomRule的写法
+			public class MyRandomRule extends AbstractLoadBalancerRule {
+			
+			    private int total = 0; //总共被调用的此时
+			    private int currentIndex = 0; //当前被调用的服务下标
+			
+			    //自定义的Ribbon轮询算法，每台服务器请求5次，然后换下一台服务器请求
+			    public Server choose(ILoadBalancer lb, Object key) {
+			
+			        if (lb == null) {
+			            return null;
+			        }
+			        Server server = null;
+			
+			        while (server == null) {
+			            if (Thread.interrupted()) {
+			                return null;
+			            }
+			
+			            //所有活着可用的服务
+			            List&lt;Server&gt; upList = lb.getReachableServers();
+			            //所有服务
+			            List&lt;Server&gt; allList = lb.getAllServers();
+			
+			            int serverCount = allList.size();
+			            if (serverCount == 0) {
+			                return null;
+			            }
+			
+			            if (total < 4){
+			
+			                server = upList.get(currentIndex);
+			                total++;
+			
+			            }else {
+			
+			                total = 0;
+			                currentIndex++;
+			
+			                if (currentIndex >= upList.size()){
+			                    currentIndex = 0;
+			                }
+			
+			                //获取该服务
+			                server = upList.get(currentIndex);
+			            }
+			
+			            if (server == null) {
+			                Thread.yield();
+			                continue;
+			            }
+			
+			            if (server.isAlive()) {
+			                return (server);
+			            }
+			
+			            // Shouldn't actually happen.. but must be transient or a bug.
+			            server = null;
+			            Thread.yield();
+			        }
+			
+			        return server;
+			
+			    }
+			
+			    public Server choose(Object key) {
+			        return choose(getLoadBalancer(), key);
+			    }
+			
+			    public void initWithNiwsConfig(IClientConfig clientConfig) {
+			        // TODO Auto-generated method stub
+			
+			    }
+			}
+
+		</pre>
+		
+		<br /><br />
+	</div>		
+	
+	<br /><br />
+	</body>
+</html>

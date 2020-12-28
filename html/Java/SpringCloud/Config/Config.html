@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SpringCloud Config 从git服务器动态加载微服务配置</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+	<div class="labels">
+
+		<span class="label label-primary">Config</span>
+	</div>
+
+	<div class="contentBgDiv">
+
+		<p class="title">SpringCloud Config 从git服务器动态加载微服务配置</p>
+		<hr>
+		
+		<ul>
+			<li><a href="#first">1. SpringCloud Config</a></li>
+			<li><a href="#second">2. SpringCloud Config配置</a></li>
+			<li><a href="#three">3. SpringCloud Config之Config配置Eureka注册中心</a></li>
+			<li><a href="#four">4. SpringCloud Config之客户端微服务调用</a></li>
+		</ul>
+		
+		<p class="smallTitle" id="first">1. SpringCloud Config</p>
+		<p class="introduceText">
+			
+			Springcloud config:
+			    CS架构，需要先写服务端，开启服务端, 然后动态从git加载微服务配置；
+		</p>
+		
+		<p class="smallTitle" id="second">2. SpringCloud Config配置</p>
+		<p class="contents">pom引入依赖包:</p>
+		<pre>
+			
+			&lt;dependencies&gt;
+			
+			        &lt;!--
+			            web
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            eureka
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-cloud-starter-eureka&lt;/artifactId&gt;
+			            &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            监控信息
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            springcloud config
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-cloud-config-server&lt;/artifactId&gt;
+			            &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
+			        &lt;/dependency&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;mysql&lt;/groupId&gt;
+			            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			
+			    &lt;/dependencies&gt;
+		</pre>
+		<p class="contents">application.yml配置:</p>
+		<pre>
+			
+			
+			server:
+			  port: 3344
+			
+			spring:
+			  application:
+			    name: springcloud-config-server-3344
+			  cloud:
+			    config:
+			      server:
+			        git:
+			          # 连接远程配置仓库 https
+			          uri: https://github.com/ethanCun/springcloud-config.git
+			
+		</pre>
+		<p class="contents">开启SpringCloud Config服务：</p>
+		<pre>
+			
+			@SpringBootApplication
+			@EnableConfigServer //开启springcloud config
+			public class ConfigServerApplication_3344 {
+			
+			    public static void main(String[] args) {
+			
+			        SpringApplication.run(ConfigServerApplication_3344.class, args);
+			    }
+			}
+		</pre>
+		
+		<p class="smallTitle" id="three">3. SpringCloud Config之Config配置Eureka注册中心</p>
+		<pre>
+			
+			    &lt;dependencies&gt;
+			
+			        &lt;!--
+			           eureka
+			       --&gt;
+			        &lt;!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-eureka-server --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-cloud-starter-eureka-server&lt;/artifactId&gt;
+			            &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            springcloud config
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-cloud-starter-config&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			    &lt;/dependencies&gt;
+				
+		</pre>
+		<p class="contents">bootstrap.yml配置(bootstrap.yml配置会覆盖application配置)：</p>
+		<pre>
+			
+			spring:
+			  cloud:
+			    config:
+			      name: config-eureka  #git服务器上配置文件的名称： config-eureka.yml
+			      uri: http://localhost:3344  #本地SpringCloud Config的host和port
+			      label: master  #git分支
+			      profile: dev #git服务器上配置文件环境
+				  
+		</pre>
+		<p class="contents">开启Eureka微服务:</p>
+		<pre>
+			
+			package com.ethan.springcloud;
+			
+			import org.springframework.boot.SpringApplication;
+			import org.springframework.boot.autoconfigure.SpringBootApplication;
+			import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+			
+			@SpringBootApplication
+			@EnableEurekaServer// 开启eureka服务器, 启动之后访问localhost:7001
+			public class EurekaServer_7001 {
+			
+			    public static void main(String[] args) {
+			
+			        SpringApplication.run(EurekaServer_7001.class, args);
+			    }
+			}
+
+		</pre>
+		
+		
+		<p class="smallTitle" id="four">4. SpringCloud Config之客户端微服务调用</p>
+		<p class="contents">pom.xml引入依赖：</p>
+		<pre>
+			
+			&lt;dependencies&gt;
+			
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			            springcloud starter config
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-cloud-starter-config&lt;/artifactId&gt;
+			            &lt;version&gt;2.1.1.RELEASE&lt;/version&gt;
+			        &lt;/dependency&gt;
+			
+			        &lt;!--
+			          监控信息
+			        --&gt;
+			        &lt;dependency&gt;
+			            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			            &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+			        &lt;/dependency&gt;
+			
+			    &lt;/dependencies&gt;
+				
+		</pre>
+		<p class="contents">application.yml引入git服务器上的配置:</p>
+		<pre>
+			
+			
+			# bootstrap.yml: 系统级别的加载器
+			# application.yml: 用户级别的加载器
+			
+			# 客户端连接服务器， 服务器链接github
+			spring:
+			  cloud:
+			    config:
+			      uri: http://localhost:3344
+			      # 需要从git读取的资源名称, 不需要后缀
+			      name: config-client
+			      # 需要从git上读取的环境
+			      profile: dev
+			      # 需要从git那个分支上读取配置文件
+			      label: master
+			
+
+		</pre>
+		
+		<br /><br />
+    </div>		
+	</body>
+</html>
