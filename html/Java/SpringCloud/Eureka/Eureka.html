@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SpringCloud之注册中心Eureka</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">Eureka</span>
+    <span class="label label-info">SpringCloud注册中心</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">SpringCloud之注册中心Eureka</p>
+    <hr>
+
+	<ul>
+		<li><a href="#register">1. Eureka注册中心</a></li>
+		<li><a href="#provider">2. 配置服务提供者</a></li>
+		<li><a href="#consumer">3. 配置服务消费者</a></li>
+	</ul>
+
+	<p class="smallTitle" id="register">1. Eureka注册</p>
+	<p class="contents">1.1 引入依赖包</p>
+	<pre>
+		
+		&lt;dependencies&gt;
+				
+		       &lt;!--
+		           eureka
+		       --&gt;
+		       &lt;!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-eureka-server --&gt;
+		       &lt;dependency&gt;
+		           &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+		           &lt;artifactId&gt;spring-cloud-starter-eureka-server&lt;/artifactId&gt;
+		           &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+		       &lt;/dependency&gt;
+				
+		   &lt;/dependencies&gt;
+		   
+	</pre>
+	<p class="contents">1.2 application.yml配置</p>
+	<pre>
+		
+		
+		server:
+		  port: 7001
+		
+		
+		#eureka配置
+		# 配置注册中心集群 7001需要关联7002 7003， 7002关联7001,7003, 7003关联7001，7002
+		# 其中一个崩了可以告诉其他注册中心继续玩
+		eureka:
+		  instance:
+		    hostname: eureka7001.com
+		  client:
+		    # 是否想eureka注册中心注册自己  服务器自己不需要注册
+		    register-with-eureka: false
+		    # false：表示自己为注册中心
+		    fetch-registry: false
+		    # 监控页面
+		    service-url:
+		      # 单机版注册中心直接关联自己的hostname和port
+		      #defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+		      # 集群版注册中心：7001关联7002和7003, ongoing逗号连接
+		      # 自定义本机域名映射： vim /etc/hosts, 127.0.0.1  eureka7002.com
+		      defaultZone: http://eureka7002.com:7002/eureka,http://eureka7003.com:7003/eureka/
+		  server:
+		    # 是否开启自我保护机制， 在微服务挂掉之后， eureka不会立即删除微服务数据，
+		    # 只是微服务的状态由up转变为down
+		    enable-self-preservation: true
+			
+	</pre>
+	<p class="contents">1.3 开启Eureka服务器配置</p>
+	<pre>
+		
+		@SpringBootApplication
+		@EnableEurekaServer// 开启eureka服务器, 启动之后访问localhost:7001
+		public class EurekaServer_7001 {
+		
+		    public static void main(String[] args) {
+		
+		        SpringApplication.run(EurekaServer_7001.class, args);
+		    }
+		}
+	</pre>
+	
+	<p class="smallTitle" id="provider">2. 服务提供方</p>
+	<p class="contents">2.1 引入依赖包</p>
+	<pre>
+		
+		    &lt;dependencies&gt;
+		
+		        &lt;!--
+		            拿到api下面的实体类
+		        --&gt;
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;com.ethan&lt;/groupId&gt;
+		            &lt;artifactId&gt;springcloud-api&lt;/artifactId&gt;
+		            &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+		        &lt;/dependency&gt;
+		
+		        &lt;!--
+		            junit
+		        --&gt;
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;junit&lt;/groupId&gt;
+		            &lt;artifactId&gt;junit&lt;/artifactId&gt;
+		        &lt;/dependency&gt;
+		
+		        &lt;!--
+		            数据库
+		        --&gt;
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
+		            &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
+		        &lt;/dependency&gt;
+		
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;mysql&lt;/groupId&gt;
+		            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+		        &lt;/dependency&gt;
+		
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+		            &lt;artifactId&gt;druid-spring-boot-starter&lt;/artifactId&gt;
+		        &lt;/dependency&gt;
+		
+		        &lt;!--
+		            日志
+		        --&gt;
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;
+		            &lt;artifactId&gt;logback-core&lt;/artifactId&gt;
+		        &lt;/dependency&gt;
+		
+		        &lt;!--
+		            test
+		        --&gt;
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+		            &lt;artifactId&gt;spring-boot-test&lt;/artifactId&gt;
+		        &lt;/dependency&gt;
+		
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+		            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+		        &lt;/dependency&gt;
+		
+		        &lt;!--
+		            jetty
+		        --&gt;
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+		            &lt;artifactId&gt;spring-boot-starter-jetty&lt;/artifactId&gt;
+		            &lt;version&gt;2.1.7.RELEASE&lt;/version&gt;
+		        &lt;/dependency&gt;
+		
+		        &lt;!--
+		            热部署
+		        --&gt;
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+		            &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+		        &lt;/dependency&gt;
+		
+		
+		        &lt;!--
+		            加入eureka依赖, 服务提供者
+		        --&gt;
+		        &lt;!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-eureka --&gt;
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+		            &lt;artifactId&gt;spring-cloud-starter-eureka&lt;/artifactId&gt;
+		            &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+		        &lt;/dependency&gt;
+		
+		        &lt;!--
+		            服务监控信息 actuator
+		        --&gt;
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+		            &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+		        &lt;/dependency&gt;
+		
+		
+		        &lt;!--
+		            Hystrix服务监控 服务降级和服务熔断
+		        --&gt;
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+		            &lt;artifactId&gt;spring-cloud-starter-hystrix&lt;/artifactId&gt;
+		            &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+		        &lt;/dependency&gt;
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;xalan&lt;/groupId&gt;
+		            &lt;artifactId&gt;xalan&lt;/artifactId&gt;
+		            &lt;version&gt;2.7.0&lt;/version&gt;
+		        &lt;/dependency&gt;
+		
+		
+		    &lt;/dependencies&gt;
+	</pre>
+	<p class="contents">2.2 application.yml配置</p>
+	<pre>
+		
+		server:
+		  port: 8001
+		
+		mybatis:
+		  type-aliases-package: com.ethan.springcloud.pojo
+		  mapper-locations: classpath:mybatis/mapper/*.xml
+		  config-location: classpath:mybatis/config/mybatis-config.xml
+		
+		spring:
+		  #应用名称
+		  application:
+		    #应用名称大写 小写后也变成了大写，所以消费客户端的REST_URI_PREFIX也必须要大写
+		    name: SPRINGCLOUD-PROVIDER-USER
+		  datasource:
+		    type: com.alibaba.druid.pool.DruidDataSource
+		    driver-class-name: com.mysql.cj.jdbc.Driver
+		    username: root
+		    password: xxxx
+		    url: jdbc:mysql://localhost:3306/db01?characterEncoding=utf8&useUnicode=true&serverTimezone=Asia/Shanghai
+		
+		
+		
+		
+		# eureka配置
+		eureka:
+		  client:
+		    service-url:
+		      # 发布到单机版注册中心
+		      #defaultZone: http://localhost:7001/eureka/
+		      # 发布到集群版注册中心
+		      defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
+		  instance:
+		    # 改变应用status描述
+		    instance-id: user-provider-8001
+		
+		# actuator监控配置信息 点击微服务的status信息会跳转到这个页面
+		info:
+		  app.name: com.ethan
+		  company.name: myyj
+		
+
+	</pre>
+	<p class="contents">2.3 开启Eureka客户端之服务方</p>
+	<pre>
+		
+		package com.ethan.springcloud;
+		
+		import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
+		import org.springframework.boot.SpringApplication;
+		import org.springframework.boot.autoconfigure.SpringBootApplication;
+		import org.springframework.boot.web.servlet.ServletRegistrationBean;
+		import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+		import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+		import org.springframework.context.annotation.Bean;
+		
+		@SpringBootApplication
+		@EnableEurekaClient //开启eureka注册提供者，在服务启动后自动注册到eureka中
+		@EnableDiscoveryClient //服务发现,可以通过DiscoveryClient获取微服务信息
+		public class UserProvider_8001 {
+		
+		    public static void main(String[] args) {
+		
+		        SpringApplication.run(UserProvider_8001.class, args);
+		    }
+		
+		    //增加一个dashboard监控servlet
+		    @Bean
+		    public ServletRegistrationBean servletRegistrationBean(){
+		
+		        ServletRegistrationBean&lt;HystrixMetricsStreamServlet&gt; registrationBean
+		                = new ServletRegistrationBean(new HystrixMetricsStreamServlet());
+		        registrationBean.addUrlMappings("/actuator/hystrix.stream");
+		        return registrationBean;
+		    }
+		}
+
+	</pre>
+	
+	
+	<p class="smallTitle" id="consumer">3. 服务消费方</p>
+	<p class="contents">3.1 引入依赖包</p>
+	<pre>
+		
+		 &lt;dependencies&gt;
+		
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;com.ethan&lt;/groupId&gt;
+		            &lt;artifactId&gt;springcloud-api&lt;/artifactId&gt;
+		            &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+		        &lt;/dependency&gt;
+		
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+		            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+		        &lt;/dependency&gt;
+		
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+		            &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+		        &lt;/dependency&gt;
+		
+		        &lt;!--
+		            Ribbon
+		        --&gt;
+		        &lt;!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-ribbon --&gt;
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+		            &lt;artifactId&gt;spring-cloud-starter-ribbon&lt;/artifactId&gt;
+		            &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+		        &lt;/dependency&gt;
+		
+		
+		        &lt;!--
+		            加入eureka客户端依赖, 服务消费者
+		        --&gt;
+		        &lt;!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-eureka --&gt;
+		        &lt;dependency&gt;
+		            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+		            &lt;artifactId&gt;spring-cloud-starter-eureka&lt;/artifactId&gt;
+		            &lt;version&gt;1.4.6.RELEASE&lt;/version&gt;
+		        &lt;/dependency&gt;
+		
+		    &lt;/dependencies&gt;
+
+	</pre>
+    <p class="contents">3.2 application.yml配置</p>
+	<pre>
+		
+		server:
+		  port: 80
+		
+		
+		#eureka
+		eureka:
+		  instance:
+		    hostname: springcloud-consume-user
+		  client:
+		    #消费者不用注册自己
+		    register-with-eureka: false
+		    service-url:
+		      defaultZone: http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/,http://eureka7003.com:7003/eureka/
+		spring:
+		  application:
+		    name: springcloud-consumer-80
+	</pre>
+    <p class="contents">3.3 开启Eureka客户端之消费方</p>
+	<pre>
+		
+		@SpringBootApplication
+		@EnableEurekaClient //开启eureka客户端
+		public class UserConsume_80 {
+		
+		    public static void main(String[] args) {
+		
+		        SpringApplication.run(UserConsume_80.class, args);
+		    }
+		}
+	</pre>
+	<p class="contents">3.4 通过RestTemplate调用服务</p>
+	<pre>
+		
+		package com.ethan.springcloud.controller;
+		
+		import com.ethan.springcloud.pojo.User;
+		import org.springframework.beans.factory.annotation.Autowired;
+		import org.springframework.web.bind.annotation.PathVariable;
+		import org.springframework.web.bind.annotation.RequestMapping;
+		import org.springframework.web.bind.annotation.RestController;
+		import org.springframework.web.client.RestTemplate;
+		
+		import java.util.List;
+		
+		@RestController
+		@RequestMapping(value = "/consume")
+		public class UserConsumeController {
+		
+		    //消费者不应该有service层 restTemplate: 简单的restful模板
+		    @Autowired
+		    private RestTemplate restTemplate;
+		
+		    //Ribbon： 通过服务名称去访问 注意是大写 应用名称必须大写
+		    public static final String REST_URL_PREFIX="http://SPRINGCLOUD-PROVIDER-USER";
+		
+		
+		    @RequestMapping(value = "/userList")
+		    public List&lt;User&gt; userList(){
+		
+		        return this.restTemplate.getForObject(REST_URL_PREFIX+"/user/list", List.class);
+		    }
+		
+		    @RequestMapping(value = "/userWithId/{id}")
+		    public User userList(@PathVariable("id") Integer id){
+		
+		        //参数： url, 返回类型, 请求参数
+		        return this.restTemplate.getForObject(REST_URL_PREFIX+"/user/selectById?id="+id, User.class);
+		    }
+		
+		    @RequestMapping(value = "/add")
+		    public boolean addUser(User user) throws Exception{
+		
+		        return this.restTemplate.postForObject(REST_URL_PREFIX+"/user/add", user, Boolean.class);
+		    }
+		}
+
+	</pre>
+   
+   <br />   <br />
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
