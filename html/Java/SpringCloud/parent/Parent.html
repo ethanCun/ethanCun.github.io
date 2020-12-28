@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SpringCloud之父工程搭建</title>
+    <link rel="icon" href="../../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">Maven</span>
+    <span class="label label-info">SpringCloud父工程</span>
+</div>
+
+<div class="contentBgDiv">
+
+    <p class="title">SpringCloud之父工程搭建</p>
+    <hr>
+	
+	<div class="contentBgDiv">
+		
+		<p class="smallTitle">1. 用Maven项目管理众多的服务子项目</p>
+		<p class="introduceText">
+			
+			新建Maven项目，删除src和不必要的目录，作为父工程，然后再次新建多个子项目作为子微服务项目， 手动添加版本对应的SpringCloud和SpringBoot依赖包，
+			手动添加@SpringBootApplication, SpringApplication.run(...)
+		</p>
+		
+		<p class="smallTitle">2. 引入依赖包</p>
+		<pre>
+			
+			&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+			&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+			         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+			    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+			
+			    &lt;groupId&gt;com.ethan&lt;/groupId&gt;
+			    &lt;artifactId&gt;springcloud&lt;/artifactId&gt;
+			    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+			
+			    &lt;!--
+			        所有子模块，新建子模块的时候会自动显示到这里
+			    --&gt;
+			    &lt;modules&gt;
+			        &lt;module&gt;springcloud-api&lt;/module&gt;
+			        &lt;module&gt;springcloud-consume-user-80&lt;/module&gt;
+			        &lt;module&gt;springcloud-consumer-user-feign&lt;/module&gt;
+			        &lt;module&gt;springcloud-eureka-7001&lt;/module&gt;
+			        &lt;module&gt;springcloud-eureka-7002&lt;/module&gt;
+			        &lt;module&gt;springcloud-eureka-7003&lt;/module&gt;
+			        &lt;module&gt;springcloud-provider-user-8001&lt;/module&gt;
+			        &lt;module&gt;springcloud-provider-user-8002&lt;/module&gt;
+			        &lt;module&gt;springcloud-provider-user-8003&lt;/module&gt;
+			        &lt;module&gt;springcloud-zuul-9527&lt;/module&gt;
+			        &lt;module&gt;springcloud-config-server-3344&lt;/module&gt;
+			        &lt;module&gt;springcloud-config-client-3355&lt;/module&gt;
+			        &lt;module&gt;springcloud-config-eureka-7001&lt;/module&gt;
+			    &lt;/modules&gt;
+			
+			    &lt;!--
+			        父工程 打包方式pom
+			    --&gt;
+			    &lt;packaging&gt;pom&lt;/packaging&gt;
+			
+			    &lt;properties&gt;
+			        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+			        &lt;maven.compile.source&gt;1.2.3&lt;/maven.compile.source&gt;
+			        &lt;maven.compile.target&gt;1.8&lt;/maven.compile.target&gt;
+			        &lt;juit.version&gt;4.12&lt;/juit.version&gt;
+			        &lt;lombok.version&gt;1.18.12&lt;/lombok.version&gt;
+			        &lt;log4j.version&gt;1.2.17&lt;/log4j.version&gt;
+			        &lt;logback.version&gt;1.2.3&lt;/logback.version&gt;
+			        &lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+			        &lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+			    &lt;/properties&gt;
+			
+			    &lt;dependencyManagement&gt;
+			
+			        &lt;dependencies&gt;
+			
+			            &lt;!--
+			           springcloud依赖
+			            --&gt;
+			            &lt;!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies --&gt;
+			            &lt;dependency&gt;
+			                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+			                &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;
+			                &lt;version&gt;Greenwich.SR1&lt;/version&gt;
+			                &lt;type&gt;pom&lt;/type&gt;
+			                &lt;scope&gt;import&lt;/scope&gt;
+			            &lt;/dependency&gt;
+			
+			
+			            &lt;!--
+			                springboot依赖
+			            --&gt;
+			            &lt;dependency&gt;
+			                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			                &lt;artifactId&gt;spring-boot-dependencies&lt;/artifactId&gt;
+			                &lt;version&gt;2.1.4.RELEASE&lt;/version&gt;
+			                &lt;type&gt;pom&lt;/type&gt;
+			                &lt;!--
+			                    注意: scope不要写成runtime，不然启动都报错
+			                --&gt;
+			                &lt;scope&gt;import&lt;/scope&gt;
+			            &lt;/dependency&gt;
+			
+			
+			
+			            &lt;!--
+			                数据库
+			            --&gt;
+			            &lt;dependency&gt;
+			                &lt;groupId&gt;mysql&lt;/groupId&gt;
+			                &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+			                &lt;version&gt;8.0.19&lt;/version&gt;
+			            &lt;/dependency&gt;
+			
+			            &lt;dependency&gt;
+			                &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+			                &lt;artifactId&gt;druid-spring-boot-starter&lt;/artifactId&gt;
+			                &lt;version&gt;1.1.10&lt;/version&gt;
+			            &lt;/dependency&gt;
+			
+			            &lt;!--
+			
+			                springboot启动器
+			            --&gt;
+			            &lt;dependency&gt;
+			                &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
+			                &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
+			                &lt;version&gt;2.1.1&lt;/version&gt;
+			            &lt;/dependency&gt;
+			
+			            &lt;!--
+			                junit
+			            --&gt;
+			            &lt;dependency&gt;
+			                &lt;groupId&gt;junit&lt;/groupId&gt;
+			                &lt;artifactId&gt;junit&lt;/artifactId&gt;
+			                &lt;version&gt;${juit.version}&lt;/version&gt;
+			            &lt;/dependency&gt;
+			
+			            &lt;!--
+			                lombok
+			            --&gt;
+			            &lt;dependency&gt;
+			                &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+			                &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+			                &lt;version&gt;${lombok.version}&lt;/version&gt;
+			            &lt;/dependency&gt;
+			
+			            &lt;!--
+			                log4j
+			            --&gt;
+			            &lt;dependency&gt;
+			                &lt;groupId&gt;log4j&lt;/groupId&gt;
+			                &lt;artifactId&gt;log4j&lt;/artifactId&gt;
+			                &lt;version&gt;${log4j.version}&lt;/version&gt;
+			            &lt;/dependency&gt;
+			
+			            &lt;!--
+			                logback
+			            --&gt;
+			            &lt;dependency&gt;
+			                &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;
+			                &lt;artifactId&gt;logback-core&lt;/artifactId&gt;
+			                &lt;version&gt;${logback.version}&lt;/version&gt;
+			            &lt;/dependency&gt;
+			
+			        &lt;/dependencies&gt;
+			    &lt;/dependencyManagement&gt;
+			
+			
+			
+			&lt;/project&gt;
+		</pre>
+		
+		
+		
+		<br /><br />
+	</div>
+	
+	
+</div>
+
+</body>
+</html>
