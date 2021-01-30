@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<head>
+			<meta charset="UTF-8">
+			<title>RabbitMQ介绍和安装</title>
+			<link rel="icon" href="../../../../Source/icon-img.jpeg">
+			<link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+			<link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+			<link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+		</head>
+	<body>
+
+		<div class="labels">
+
+			<span class="label label-info">RabbitMQ介绍和安装</span>
+		</div>
+
+		<div class="contentBgDiv">
+
+			<p class="title" id="intro">RabbitMQ介绍和安装</p>
+			<hr>
+			
+			<ul>
+				<li><a href="#intro">1. RabitMQ介绍</li>
+				<li><a href="#install">2. RabbitMQ安装</li>
+			</ul>
+
+			<p class="smallTitle" id="intro">1. RabitMQ介绍</p>
+			<a target="_blank" href="https://www.rabbitmq.com/getstarted.html">RabbitMQ官网</a>
+			<p class="introduceText">
+				RabbitMQ对数据一致性要求高,对消息丢失处理较好，优于RocketMQ；RabbitMQ基于AMQP协议，Advanced Message Queuing Protocol；
+				因为RabbitMQ基于erlang， 所以需要安装erlang环境；RabbitMQ对延时消息的支持优于RocketMQ;
+			</p>
+			<b>RabbitMQ角色组成：</b>
+			<pre>
+
+				    Publisher Application: 消息生产者
+				    Consumer Application:消息消费者
+				    Server: RabbitMQ服务节点
+				    Virtual Host: 虚拟主机, 相当于mysql中的库, 需要权限，将虚拟主机和用户绑定
+				    Exchange: 交换机
+				    Message Queue: 消息队列
+				
+			</pre>
+			<b>RabbitMQ消息发送:</b>
+			<pre>
+
+				RabbitMQ消息的发送和消费都是通过通道Channel来操作的，通道需要绑定对应的队列；
+				    生产者发送消息前需要先和服务器建立心跳包;
+			</pre>
+			<b>RabbitMQ消息模型:</b>
+			<pre>
+
+				1. Simple 一个生产者 一个队列 一个消费者 没有交换机（默认交换机）;
+				
+				2. work queues： 工作队列， 解决消息堆积的问题 一个生产者 一个队列 多个消费者 没有交换机
+				
+					多个消费者自动确认消费的情况下， 多个消费者消费的消息是循环模式， 相当于RocketMQ中的负载均衡模式;
+					
+					如何实现多个消费者的能者多劳模式：
+					            1. 设置消费者每次只能通过通道获取一个需要消费的消息：
+					            channel.basicQos(1);
+					            2. 关闭消费者的消息自动确认消费机制：
+					            3. 消费者完成消费后，手动确认消息被消费：
+					             channel.basicConsume("work", false, new DefaultConsumer(channel){
+					
+					                         @Override
+					                         public void handleDelivery(String consumerTag,
+					                                                    Envelope envelope,
+					                                                    AMQP.BasicProperties properties,
+					                                                    byte[] body) throws IOException {
+					
+					                             System.out.println("消费者2： " + new String(body));
+					
+					                             //模拟消费者2消费较慢
+					                             try {
+					                                 TimeUnit.SECONDS.sleep(1);
+					                             } catch (InterruptedException e) {
+					                                 e.printStackTrace();
+					                             }
+					
+					                             //手动确认
+					                             //参数1： 手动确认消息的标识
+					                             //参数2： false： 每次确认一个
+					                             channel.basicAck(envelope.getDeliveryTag(), false);
+					                         }
+					                     });
+					
+				3. fanout广播模式： 一个生产者 一个交换机 多个队列 多个队列  多个消费者
+				            生产者发送消息只需要将消息发送到交换机，
+				            每个消费者都有自己的临时队列，
+				            每个临时队列都需要绑定到交换机，
+				            交换机的类型为广播
+							
+							
+				4. routing路由模式 Direct交换机直连：
+				                相比广播模式，在广播的基础上通过Routing key来制定消费者消费制定队列
+				                中的消息， 消费者只会消费制定Routing key队列里面的消息
+				                交换机的类型为Direct直连
+								
+				5. Topic模式				
+							通过Routing key来制定消费者消费制定队列，routing key 以点.分隔
+							*: 匹配一个单词
+							#: 匹配0个或者多个单词
+							
+			</pre>
+			<b>RabbitMQ延时队列:</b>
+			<pre>
+
+				    1. TTL方式：Time To Live
+				        RabbitMQ可以针对队列设置x-expires，这样队列中所有的消息都有相同的过期时间，
+				        或者针对Message设置x-message-ttl(对消息进行单独设置，每条消息TTL可以不同)，
+				        如果超时(两者同时设置以最先到期的时间为准)，则消息变为dead letter(死信)；
+				
+				    2. DLX方式：Dead Letter Exchanges
+				       RabbitMQ的Queue可以配置x-dead-letter-exchange和x-dead-letter-routing-key（可选）两个参数，
+				       如果队列内出现了dead letter，则按照这两个参数重新路由转发到指定的队列。
+				       x-dead-letter-exchange：
+				        出现dead letter之后将dead letter重新发送到指定exchange。
+				       x-dead-letter-routing-key：
+				        出现dead letter之后将dead letter重新按照指定的routing-key发送。
+			</pre>
+
+
+			<p class="smallTitle" id="install">2. RabbitMQ安装</p>
+			<p class="introduceText">
+				因为RabbitMQ基于erlang， 所以需要安装erlang环境:
+			</p>
+			<pre>
+
+
+				erlang rabbitmq版本对应关系：
+					<a target="_blank" href="https://www.rabbitmq.com/which-erlang.html">https://www.rabbitmq.com/which-erlang.html</a>
+	
+				erlang下载地址： <a target="_blank" href="https://www.erlang.org/downloads">https://www.erlang.org/downloads</a>
+								<a target="_blank" href="https://www.erlang-solutions.com/resources/download.html">https://www.erlang-solutions.com/resources/download.html</a>
+				
+				RabbitMQ下载地址，无需翻墙： <a target="_blank" href="https://dl.bintray.com/rabbitmq/all/rabbitmq-server/3.8.9/">https://dl.bintray.com/rabbitmq/all/rabbitmq-server/3.8.9/</a>
+				    
+				
+				
+				RabbitMQ插件下载地址：
+				    <a target="_blank" href="https://www.rabbitmq.com/community-plugins.html">https://www.rabbitmq.com/community-plugins.html</a>
+				延时队列插件github下载地址：
+					<a target="_blank" href="https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases">https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases</a>
+					
+						
+				RabbitMQ安装插件参考链接：<a target="_blank" href="https://blog.csdn.net/kinweini/article/details/83150199">https://blog.csdn.net/kinweini/article/details/83150199</a>
+				
+			</pre>
+			<b>相关命令:</b>
+			<pre>
+				
+				mac下使用brew安装，mac安装后，默认位置： /usr/local/Cellar/rabbitmq/&lt;version&gt;/    erlang也在这个目录下
+				添加环境变量：
+				    vim ~/.bashrc
+				    export PATH=$PATH:/usr/local/sbin
+					
+				linux下启动RabbitMQ默认会读取 /etc/rabbitmq/rabbitmq.config文件，这个文件是不存在的，需要手动创建
+				但是rabbitmq提供了配置模板， 模板的位置在：
+				    /usr/share/doc/rabbitmq-server-版本号/rabbitmq.config.example
+				在/etc/rabbitmq/rabbitmq.config中打开来宾账号, 后面的逗号也要去掉{loopback_users, []}	
+				
+				# linux下rabbitmq插件目录位置:
+				    /usr/lib/rabbitmq/lib/rabbitmq_server-3.8.9/plugins
+				# 启动一些插件，
+				    # 使用管理界面:
+				    sudo rabbitmq-plugins enable rabbitmq_management
+				    # 延时队列
+				    sudo rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+				
+				# 注意，查看管理端，还需要防火墙添加端口：15672
+				firewall-cmd --zone=public --add-port=15672/tcp --permanent
+				firewall-cmd --reload
+				firewall-cmd --list-ports
+				
+				# 其他相关命令：
+				     sudo /sbin/service rabbitmq-server status  # 查看服务状态
+				     service rabbitmq-server stop #停止RabbitMQ 
+				     service rabbitmq-server start #启动
+				
+				    或者：
+				        systemctl status rabbitmq-server
+				        systemctl start rabbitmq-server
+				        systemctl stop rabbitmq-server
+				        systemctl restart rabbitmq-server
+				
+				        启动不了的情况下可以在rabbitmq下的bin目录启动：
+				        nohup sh  /usr/lib/rabbitmq/bin/rabbitmq-server &
+				
+				    rabbitmqctl help  更多命令
+				
+				    插件命令
+				    rabbitmq-plugins enable|list|disable
+				    启动延时交换机插件： rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+				
+						
+						
+				linux查看rabbitmq的版本：
+				    rpm -qa|grep rabbit
+					
+				linux查看rabbitmq位置：
+					find / -name erlang*
+				    rpm -ql rabbitmq-server-3.6.6-1.el7.noarch
+						
+				查看erlang安装位置：
+				     whereis erlang
+							 
+				查看erlang是否安装成功:
+				     erl				
+						
+						
+				启动rabbitmq： rabbitmq-server
+				RabbitMQ默认访问链接：http://127.0.0.1:15672/  账户和密码默认是guest guest
+				
+				
+				可以在admin下添加账户和密码；
+				使用命令行添加用户和权限：
+				
+				    ## 进入sbin目录
+				    cd /usr/local/Cellar/rabbitmq/3.7.12/sbin
+				    ## 添加账号
+				    ./rabbitmqctl add_user rabbit rabbit
+				    ## 添加访问权限
+				    ./rabbitmqctl set_permissions -p "/" rabbit ".*" ".*" ".*"
+				    ## 设置超管权限
+				    ./rabbitmqctl set_user_tags rabbit administrator
+				
+						
+			</pre>
+
+
+
+			<br /><br />
+		</div>
+
+
+
+
+	</body>
+</html>

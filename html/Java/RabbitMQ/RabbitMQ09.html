@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<head>
+			<meta charset="UTF-8">
+			<title>RabbitMQ消息队列之延时队列与死信队列</title>
+			<link rel="icon" href="../../../../Source/icon-img.jpeg">
+			<link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+			<link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+			<link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+		</head>
+	<body>
+
+		<div class="labels">
+
+			<span class="label label-info">RabbitMQ消息队列之延时队列与死信队列</span>
+		</div>
+
+		<div class="contentBgDiv">
+
+			<p class="title" id="intro">RabbitMQ消息队列之延时队列与死信队列</p>
+			<hr>
+
+
+			<p class="introduceText">
+				很多场合需要用到延时调用，比如2天之后自定取消订单，7天之后自动确认收货， 24小时之后没有抢的红包自动过期调用企业向商户转账退回资金等，
+				这些场合如果使用定时任务轮训肯定是不够优雅的，RabbitMQ对延时消息的支持好于RocketMQ，可以先将消息放入延时队列中， 然后过期了就让消费者从死信队列中去消费消息;
+			</p>
+			<b>pom.xml:</b>
+			<pre>
+				
+				        &lt;!--
+				            引入rabbitmq依赖
+				        --&gt;
+						&lt;dependency&gt;
+							&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+							&lt;artifactId&gt;spring-boot-starter-amqp&lt;/artifactId&gt;
+							&lt;version&gt;2.1.6.RELEASE&lt;/version&gt;
+						&lt;/dependency&gt;
+			</pre>
+			<b>application.yml配置:</b>
+			<pre>
+				
+				spring:
+				  application:
+				    name: rabbitmq-ack-message
+				  rabbitmq:
+				    host: 49.xx.xxx.xxx
+				    username: xxx
+				    password: xxx
+				    virtual-host: vh01
+				    port: 5672
+					
+			</pre>
+			<b>创建队列，绑定Header类型交换机：</b>
+			<pre>
+				
+				package com.ethan.rabbitmq;
+				
+				import org.springframework.amqp.core.*;
+				import org.springframework.beans.factory.annotation.Qualifier;
+				import org.springframework.context.annotation.Bean;
+				import org.springframework.context.annotation.Configuration;
+				
+				import java.util.HashMap;
+				
+				
+				@Configuration
+				public class RabbitMQConfig {
+					
+					//ttl dlx
+					//延时
+					public static final String QUEUE_NAME_TTL = "queue.name.ttl";
+					//死信
+					public static final String QUEUE_NAME_DLX = "queue.name.dlx";
+					public static final String EXCHANGE_NAME_DLX = "exchange.name.dlx";
+					public static final String ROUTING_KEY_NAME_DLX = "routingkey.name.dlx";
+				
+				
+					//ttl 延时队列
+					@Bean
+					public Queue ttlQueue(){
+
+						return QueueBuilder.durable(QUEUE_NAME_TTL)
+								//指定死信交换机 如果消息过期就投递到这个交换机
+								.withArgument("x-dead-letter-exchange", EXCHANGE_NAME_DLX)
+								//指定死信路由 如果消息过期就指定死信交换机根据这个路由来投递消息
+								.withArgument("x-dead-letter-routing-key", ROUTING_KEY_NAME_DLX)
+								//指定延时队列所有消息过期时间
+								.withArgument("x-message-ttl", 30000) //30s后消息过期
+								//设置队列长度
+								.withArgument("x-max-length", 10)
+								.build();
+					}
+
+					/**
+					 *
+					 * 死信队列： 需要特别注意的是：生产者将消息发布到的是ttl延时队列，
+					 *  消费者是在死信队列里面消费消息
+					 * @return
+					 */
+					//dlx 死信队列
+					@Bean
+					public Queue dlxQueue(){
+
+						return QueueBuilder.durable(QUEUE_NAME_DLX)
+								.build();
+					}
+
+					//延时队列交换机
+					@Bean
+					public Exchange ttlExchange(){
+
+						return ExchangeBuilder.topicExchange(EXCHANGE_NAME_DLX)
+								.build();
+					}
+
+					//死信队列绑定到延时交换机 再通过路由key绑定延时队列
+					@Bean
+					public Binding ttlBinding(@Qualifier("dlxQueue") Queue queue,
+											  @Qualifier("ttlExchange") Exchange exchange){
+
+						return BindingBuilder.bind(queue).to(exchange)
+								.with(ROUTING_KEY_NAME_DLX).noargs();
+					}
+						
+			</pre>
+			<b>消息生产者:</b>
+			<pre>
+				
+				package com.ethan.rabbitmq;
+				
+				import org.junit.Test;
+				import org.junit.runner.RunWith;
+				import org.springframework.amqp.core.Message;
+				import org.springframework.amqp.core.MessageProperties;
+				import org.springframework.amqp.rabbit.connection.CorrelationData;
+				import org.springframework.amqp.rabbit.core.RabbitTemplate;
+				import org.springframework.beans.factory.annotation.Autowired;
+				import org.springframework.boot.test.context.SpringBootTest;
+				import org.springframework.test.context.junit4.SpringRunner;
+				
+				import java.util.Date;
+				import java.util.HashMap;
+				
+				@SpringBootTest(classes = RabbitMQ_Applicaiton.class)
+				@RunWith(SpringRunner.class)
+				public class Provider {
+				
+				    @Autowired
+				    private RabbitTemplate rabbitTemplate;
+					
+					//ttl
+					@Test
+					public void ttl() throws Exception{
+
+						System.out.println("发送时间： " + new Date());
+
+						this.rabbitTemplate.convertAndSend("queue.name.ttl", "这是一条延时消息");
+					}
+						
+				}
+						
+			</pre>
+			<b>消息消费者:</b>
+			<pre>
+				
+				package com.ethan.rabbitmq;
+				
+				import com.rabbitmq.client.Channel;
+				import org.springframework.amqp.core.Message;
+				import org.springframework.amqp.rabbit.annotation.Queue;
+				import org.springframework.amqp.rabbit.annotation.RabbitListener;
+				import org.springframework.stereotype.Component;
+				
+				import java.io.IOException;
+				import java.util.Date;
+				
+				@Component
+				public class Consumer {
+					
+					//这两种方式都可以监听到消息
+					//消费是在死信队列里面消费， 生产是在延时队列里面生产
+					@RabbitListener(queuesToDeclare = @Queue("queue.name.dlx"))
+				//    @RabbitListener(bindings = {
+				//            @QueueBinding(
+				//                    value = @Queue("queue.name.dlx"),
+				//                    exchange = @Exchange(value = "exchange.name.dlx", type = "topic"),
+				//                    key = {"routingkey.name.dlx"}
+				//            )
+				//    })
+					public void ttlReceive(Message message, Channel channel) throws IOException {
+
+						System.out.println("ttl延时消息: " + message);
+						System.out.println("接受时间： " + new Date());
+
+						channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+					}
+				}	
+				
+			</pre>
+
+			<b>上面的是消息队列里面所有的消息都是同一时间后过期(30s), 下面通过生产者在发送消息的时候指定单条消息的过期时间， 两个时间同时存在时，
+			取小的时间点:</b>
+			<pre>
+				
+				package com.ethan.rabbitmq;
+				
+				import org.junit.Test;
+				import org.junit.runner.RunWith;
+				import org.springframework.amqp.AmqpException;
+				import org.springframework.amqp.core.Message;
+				import org.springframework.amqp.core.MessagePostProcessor;
+				import org.springframework.amqp.rabbit.core.RabbitTemplate;
+				import org.springframework.beans.factory.annotation.Autowired;
+				import org.springframework.boot.test.context.SpringBootTest;
+				import org.springframework.test.context.junit4.SpringRunner;
+				
+				import java.util.Date;
+				import java.util.HashMap;
+				import java.util.Map;
+				
+				@SpringBootTest(classes = RabbitMQ_delay_Application.class)
+				@RunWith(SpringRunner.class)
+				public class Provider {
+				
+				    @Autowired
+				    private RabbitTemplate rabbitTemplate;
+				
+				    @Test
+				    public void send(){
+				
+				        Map&lt;String, Object&gt; map = new HashMap&lt;String, Object&gt;();
+				        map.put("name", "czy");
+				        map.put("age", 20);
+				
+				        //注意生产是在延时队列里面生产， 消费是在死信队列里面消费
+				        this.rabbitTemplate.convertAndSend("delayQueue", map, new MessagePostProcessor() {
+				
+				            public Message postProcessMessage(Message message) throws AmqpException {
+				
+				                //设置消息延时 延时10s
+				                message.getMessageProperties().setExpiration("10000");
+				
+				                return message;
+				            }
+				        });
+				
+				        System.out.println("发送成功： " + new Date());
+				
+				
+				    }
+				}
+
+			</pre>
+			
+			<br />	<br />
+		</div>
+			
+	</body>
+		
+
+</html>

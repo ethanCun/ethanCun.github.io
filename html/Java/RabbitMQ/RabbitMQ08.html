@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<head>
+			<meta charset="UTF-8">
+			<title>SpringBoot集成RabbitMQ</title>
+			<link rel="icon" href="../../../../Source/icon-img.jpeg">
+			<link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+			<link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+			<link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+		</head>
+	<body>
+
+		<div class="labels">
+
+			<span class="label label-info">SpringBoot集成RabbitMQ</span>
+		</div>
+
+		<div class="contentBgDiv">
+
+			<p class="title" id="intro">SpringBoot集成RabbitMQ</p>
+			<hr>
+
+
+			<p class="smallTitle" id="one">1. SpringBoot集成RabbitMQ</p>
+			<b>pom.xml:</b>
+			<pre>
+				
+				        &lt;!--
+				            引入rabbitmq依赖
+				        --&gt;
+						&lt;dependency&gt;
+							&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+							&lt;artifactId&gt;spring-boot-starter-amqp&lt;/artifactId&gt;
+							&lt;version&gt;2.1.6.RELEASE&lt;/version&gt;
+						&lt;/dependency&gt;
+			</pre>
+			<b>application.yml配置:</b>
+			<pre>
+				
+				spring:
+				  application:
+				    name: rabbitmq-ack-message
+				  rabbitmq:
+				    host: 49.xx.xxx.xxx
+				    username: xxx
+				    password: xxx
+				    virtual-host: vh01
+				    port: 5672
+					# 生产方配置
+					publisher-confirms: true
+					publisher-returns: true
+					# listener 监听者 消费方配置
+					listener:
+					  simple:
+						# 手动确认消息被消费
+						acknowledge-mode: manual
+						# 并发消费者初始化值
+						retry:
+						  enabled: true
+						  max-attempts: 1
+						concurrency: 1 # 指定最小消费者数量
+						max-concurrency: 1 # 指定最大消费者数量
+					  direct:
+						acknowledge-mode: manual
+					
+			</pre>
+			<b>队列、交换机、路由配置类：</b>
+			<pre>
+				
+				package com.ethan.rabbitmq;
+				
+				import org.springframework.amqp.core.*;
+				import org.springframework.beans.factory.annotation.Qualifier;
+				import org.springframework.context.annotation.Bean;
+				import org.springframework.context.annotation.Configuration;
+				
+				import java.util.HashMap;
+				
+				
+				@Configuration
+				public class RabbitMQConfig {
+				
+				    //simple
+				    public static final String QUEUE_NAME_SIMPLE = "queue.name.simple";
+				
+				    //work queue
+				    public static final String QUEUE_NAME_WORKQUEUE1 = "queue.name.work";
+				
+				    //fanout
+				    public static final String QUEUE_NAME_FANOUT = "queue.name.fanout";
+				    public static final String EXCHANGE_NAME_FANOUT = "exchange.name.fanout";
+				
+				    //routing key direct 固定路由匹配
+				    public static final String QUEUE_NAME_DIRECT = "queue.name.direct";
+				    public static final String EXCHANGE_NAME_DIRECT = "exchange.name.direct";
+				    public static final String ROUTING_KEY_NAME_DIRECT = "routing_key.name.direct";
+				
+				    //topic 通用路由匹配
+				    public static final String QUEUE_NQME_TOPIC = "queue.name.topic";
+				    public static final String EXCHANGE_NAME_TOPIC = "exchange.name.topic";
+				    public static final String ROUTING_KEY_NAME_TOPIC = "topic.#";
+				
+				    //header
+				    public static final String QUEUE_NAME_HEADER = "queue.name.header";
+				    public static final String EXCHANGE_NAME_HEADER = "exchange.name.header";
+				
+				
+				    //ttl dlx
+				    //延时
+				    public static final String QUEUE_NAME_TTL = "queue.name.ttl";
+				    //死信
+				    public static final String QUEUE_NAME_DLX = "queue.name.dlx";
+				    public static final String EXCHANGE_NAME_DLX = "exchange.name.dlx";
+				    public static final String ROUTING_KEY_NAME_DLX = "routingkey.name.dlx";
+				
+				
+				    //simple
+				    @Bean
+				    public Queue simpleQueue(){
+				
+				        return QueueBuilder.durable(QUEUE_NAME_SIMPLE).build();
+				    }
+				
+				    //work queue
+				    @Bean
+				    public Queue workQueue(){
+				
+				        return QueueBuilder.durable(QUEUE_NAME_WORKQUEUE1).build();
+				    }
+				
+				
+				    //fanout
+				    @Bean
+				    public Queue fanoutQueue(){
+				
+				        return QueueBuilder.durable(QUEUE_NAME_FANOUT).build();
+				    }
+				
+				    @Bean
+				    public FanoutExchange fanoutExchange(){
+				
+				        return (FanoutExchange) ExchangeBuilder.fanoutExchange(EXCHANGE_NAME_FANOUT)
+				                .build();
+				    }
+				
+				
+				    @Bean
+				    public Binding fanoutBinding(@Qualifier("fanoutQueue") Queue queue,
+				                                 @Qualifier("fanoutExchange") FanoutExchange fanoutExchange){
+				
+				        return BindingBuilder.bind(queue).to(fanoutExchange);
+				    }
+				
+				
+				    //direct
+				    @Bean
+				    public Queue directQueue(){
+				
+				        return QueueBuilder.durable(QUEUE_NAME_DIRECT).build();
+				    }
+				
+				    @Bean
+				    public DirectExchange directExchange(){
+				
+				        return (DirectExchange) ExchangeBuilder.directExchange(EXCHANGE_NAME_DIRECT)
+				                .build();
+				    }
+				
+				    @Bean
+				    public Binding directBinding(@Qualifier("directQueue") Queue queue,
+				                                 @Qualifier("directExchange") DirectExchange directExchange){
+				
+				        return BindingBuilder.bind(queue)
+				                .to(directExchange)
+				                .with(ROUTING_KEY_NAME_DIRECT);
+				
+				    }
+				
+				    //topic
+				    @Bean
+				    public Queue topicQueue(){
+				
+				        return QueueBuilder.durable(QUEUE_NQME_TOPIC).build();
+				    }
+				
+				    @Bean
+				    public TopicExchange topicExchange(){
+				
+				        return (TopicExchange) ExchangeBuilder.topicExchange(EXCHANGE_NAME_TOPIC)
+				                .build();
+				    }
+				
+				    @Bean
+				    public Binding topicBinding(@Qualifier("topicQueue") Queue topicQueue,
+				                                @Qualifier("topicExchange") Exchange exchange){
+				
+				        return BindingBuilder.bind(topicQueue)
+				                .to(exchange)
+				                .with(ROUTING_KEY_NAME_TOPIC) //绑定路由key
+				                .noargs();
+				    }
+				
+				
+				
+				    //headers
+				    @Bean
+				    public Queue headerQueue(){
+				
+				        return QueueBuilder.durable(QUEUE_NAME_HEADER).build();
+				    }
+				
+				    @Bean
+				    public HeadersExchange headerExchange(){
+				
+				        return (HeadersExchange) ExchangeBuilder.headersExchange(EXCHANGE_NAME_HEADER)
+				                .build();
+				    }
+				
+				    @Bean
+				    public Binding headerBinding(@Qualifier("headerQueue") Queue queue,
+				                                 @Qualifier("headerExchange") HeadersExchange exchange){
+				
+				        HashMap&lt;String, Object&gt; headers = new HashMap&lt;String, Object&gt;();
+				        headers.put("name", "czy");
+				        headers.put("age", 20);
+				
+				        //绑定headersExchange
+				        return BindingBuilder
+				                .bind(queue)
+				                .to(headerExchange())
+				                //.whereAll(headers) //表示生产者的MessageProperties header中信息完全一致才能发送消息
+				                .whereAny(headers) //表示只要包含任何一个键值对就能发送消息
+				                .match();
+				    }
+				
+				
+				    //ttl 延时队列
+				    @Bean
+				    public Queue ttlQueue(){
+				
+				        return QueueBuilder.durable(QUEUE_NAME_TTL)
+				                //指定死信交换机 如果消息过期就投递到这个交换机
+				                .withArgument("x-dead-letter-exchange", EXCHANGE_NAME_DLX)
+				                //指定死信路由 如果消息过期就指定死信交换机根据这个路由来投递消息
+				                .withArgument("x-dead-letter-routing-key", ROUTING_KEY_NAME_DLX)
+				                //指定延时队列所有消息过期时间
+				                .withArgument("x-message-ttl", 30000) //30s后消息过期
+				                //设置队列长度
+				                .withArgument("x-max-length", 10)
+				                .build();
+				    }
+				
+				    /**
+				     *
+				     * 死信队列： 需要特别注意的是：生产者将消息发布到的是ttl延时队列，
+				     *  消费者是在死信队列里面消费消息
+				     * @return
+				     */
+				    //dlx 死信队列
+				    @Bean
+				    public Queue dlxQueue(){
+				
+				        return QueueBuilder.durable(QUEUE_NAME_DLX)
+				                .build();
+				    }
+				
+				    //延时队列交换机
+				    @Bean
+				    public Exchange ttlExchange(){
+				
+				        return ExchangeBuilder.topicExchange(EXCHANGE_NAME_DLX)
+				                .build();
+				    }
+				
+				    //死信队列绑定到延时交换机 再通过路由key绑定延时队列
+				    @Bean
+				    public Binding ttlBinding(@Qualifier("dlxQueue") Queue queue,
+				                              @Qualifier("ttlExchange") Exchange exchange){
+				
+				        return BindingBuilder.bind(queue).to(exchange)
+				                .with(ROUTING_KEY_NAME_DLX).noargs();
+				    }
+				
+				
+				}
+
+						
+			</pre>
+			<b>消息生产者:</b>
+			<pre>
+				
+				package com.ethan.rabbitmq;
+				
+				import org.junit.Test;
+				import org.junit.runner.RunWith;
+				import org.springframework.amqp.core.Message;
+				import org.springframework.amqp.core.MessageProperties;
+				import org.springframework.amqp.rabbit.connection.CorrelationData;
+				import org.springframework.amqp.rabbit.core.RabbitTemplate;
+				import org.springframework.beans.factory.annotation.Autowired;
+				import org.springframework.boot.test.context.SpringBootTest;
+				import org.springframework.test.context.junit4.SpringRunner;
+				
+				import java.util.Date;
+				import java.util.HashMap;
+				
+				@SpringBootTest(classes = RabbitMQ_Applicaiton.class)
+				@RunWith(SpringRunner.class)
+				public class Provider {
+				
+				    @Autowired
+				    private RabbitTemplate rabbitTemplate;
+				
+				    //simple
+				    @Test
+				    public void simple(){
+				
+				        for (int i = 0; i &lt; 5; i++) {
+				
+				            MessageProperties messageProperties = new MessageProperties();
+				            //设置消息过期时间为3s
+				//            messageProperties.setHeader("x-message-ttl", 3*1000);
+				
+				            Message message = new Message("简单消息".getBytes(),
+				                    messageProperties);
+				
+				            this.rabbitTemplate.convertAndSend("queue.name.simple", message);
+				        }
+				
+				
+				        //在交换器路由不到队列时触发回调,，该方法可以不使用，因为交换器和队列是在代码里绑定的，
+				        // 如果消息成功投递到Broker后几乎不存在绑定队列失败，
+				        //消息返回, yml需要配置 publisher-returns: true
+				        rabbitTemplate.setReturnCallback(new RabbitTemplate.ReturnCallback() {
+				
+				            public void returnedMessage(Message message,
+				                                        int replyCode,
+				                                        String replyText,
+				                                        String exchange,
+				                                        String routingKey) {
+				
+				                System.out.println("消息返回: ");
+				                System.out.println(message);
+				            }
+				        });
+				
+				        //消息发送成功回调， 只确认是否正确到达 Exchange 中。
+				        //生产者与broker之间的消息确认称为public confirms，
+				        // public confirms机制用于解决生产者与Rabbitmq服务器之间消息可靠传输，
+				        // 它在消息服务器持久化消息后通知消息生产者发送成功。
+				        //消息确认, yml需要配置 publisher-confirms: true
+				        rabbitTemplate.setConfirmCallback(new RabbitTemplate.ConfirmCallback() {
+				            public void confirm(CorrelationData correlationData,
+				                                boolean ack,
+				                                String cause) {
+				
+				                System.out.println("消息已经成功发送到rabbitmq并落实到broker");
+				            }
+				        });
+				
+				    }
+				
+				    //work queues
+				    @Test
+				    public void workqueues() throws Exception{
+				
+				        this.rabbitTemplate.convertAndSend("queue.name.work",
+				                "这是work queue消息");
+				    }
+				
+				    //fanout
+				    @Test
+				    public void fanout(){
+				
+				        //广播模式不需要routingKey
+				        this.rabbitTemplate.convertAndSend("exchange.name.fanout",
+				                null, "这是广播模式消息");
+				    }
+				
+				    //direct
+				    @Test
+				    public void direct(){
+				
+				        //固定路由匹配
+				        this.rabbitTemplate.convertAndSend("exchange.name.direct",
+				                "routing_key.name.direct", "这是direct模式固定路由匹配");
+				
+				        this.rabbitTemplate.setConfirmCallback(new RabbitTemplate.ConfirmCallback() {
+				
+				            public void confirm(CorrelationData correlationData, boolean ack, String cause) {
+				
+				                System.out.println("消息已经成功投递");
+				            }
+				        });
+				
+				        //找不到相关路由的回调
+				        this.rabbitTemplate.setReturnCallback(new RabbitTemplate.ReturnCallback() {
+				
+				            public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
+				
+				                System.out.println("找不到相关路由的回调...");
+				            }
+				        });
+				    }
+				
+				    //topic 手动确认direct模型队列消息
+				    @Test
+				    public void topic() throws Exception{
+				
+				        this.rabbitTemplate.convertAndSend("exchange.name.topic",
+				                "topic.me",
+				                "创建一个订单");
+				    }
+				
+				    //headers 手动确认header模型队列消息
+				    @Test
+				    public void headers() throws Exception{
+				
+				        MessageProperties messageProperties = new MessageProperties();
+				        messageProperties.setHeader("name", "czy");
+				        messageProperties.setHeader("age", 20);
+				
+				        Message message = new Message("这是一个header模型交换信息".getBytes(), messageProperties);
+				
+				        //headersExchange不需要路由key
+				        this.rabbitTemplate.convertAndSend("exchange.name.header",
+				                null, message);
+				    }
+				
+				    //ttl
+				    @Test
+				    public void ttl() throws Exception{
+				
+				        HashMap&lt;String, Object&gt; map = new HashMap&lt;String, Object&gt;();
+				        map.put("date", new Date());
+				        map.put("content", "这是延时队列消息");
+				
+				        System.out.println("发送时间： " + new Date());
+				
+				//        this.rabbitTemplate.convertSendAndReceive("queue.name.ttl",
+				//                map);
+				        this.rabbitTemplate.convertAndSend("queue.name.ttl", "这是一条延时消息");
+				    }
+				
+				}
+
+						
+			</pre>
+			<b>消息消费者:</b>
+			<pre>
+				
+				package com.ethan.rabbitmq;
+				
+				import com.rabbitmq.client.Channel;
+				import org.springframework.amqp.core.Message;
+				import org.springframework.amqp.rabbit.annotation.Queue;
+				import org.springframework.amqp.rabbit.annotation.RabbitListener;
+				import org.springframework.stereotype.Component;
+				
+				import java.io.IOException;
+				import java.util.Date;
+				
+				@Component
+				public class Consumer {
+				
+				    private int i = 0;
+				
+				    @RabbitListener(queuesToDeclare = @Queue("queue.name.simple"))
+				    public void receive(Message msg, Channel channel) throws IOException, InterruptedException {
+				
+				        i++;
+				        System.out.println("简单类型消息: " + msg);
+				
+				       // TimeUnit.SECONDS.sleep(10);
+				
+				//        if (i &lt; 10){
+				//
+				//            //true： 确认消息已经被消费
+				//            channel.basicAck(msg.getMessageProperties().getDeliveryTag(),
+				//                    false);
+				//        }
+				
+				        try {
+				            int i = 10/0;
+				
+				            //手动确认消息被正常消费 false： 一次确认1条消息被消息
+				            channel.basicAck(msg.getMessageProperties().getDeliveryTag(), false);
+				
+				        }catch (Exception e){
+				
+				            if (msg.getMessageProperties().getRedelivered()) {
+				
+				                //消息已经重复投递，拒接再次接受
+				                channel.basicReject(msg.getMessageProperties().getDeliveryTag(), false);
+				            }else {
+				
+				                //消息再次放入队列
+				                //第三个参数: 是否再次放入队列中
+				                channel.basicNack(msg.getMessageProperties().getDeliveryTag(), false, true);
+				            }
+				        }
+				
+				
+				    }
+				
+				    @RabbitListener(queuesToDeclare = @Queue("queue.name.work"))
+				    public void workQueueReceive1(Message message, Channel channel) throws IOException {
+				
+				        System.out.println("工作队列消息: " + message);
+				
+				        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+				    }
+				
+				    @RabbitListener(queuesToDeclare = @Queue("queue.name.work"))
+				    public void workQueueReceive2(Message message, Channel channel) throws IOException {
+				
+				        System.out.println("工作队列消息: " + message);
+				
+				        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+				    }
+				
+				    @RabbitListener(queuesToDeclare = @Queue("queue.name.fanout"))
+				    public void fanoutReceive(Message message, Channel channel) throws IOException {
+				
+				        System.out.println("广播模式消息： " + message);
+				
+				        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+				    }
+				
+				    @RabbitListener(queuesToDeclare = @Queue("queue.name.direct"))
+				    public void directReceive(Message message, Channel channel) throws IOException {
+				
+				        System.out.println("固定路由模式匹配: " + message);
+				
+				        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+				    }
+				
+				
+				    @RabbitListener(queuesToDeclare = @Queue("queue.name.topic"))
+				    public void topicReceive(Message message, Channel channel) throws IOException {
+				
+				        System.out.println("topic模糊路由模式： " + message);
+				
+				        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+				    }
+				
+				
+				    @RabbitListener(queuesToDeclare = @Queue("queue.name.header"))
+				    public void headerReceive(Message message, Channel channel) throws IOException {
+				
+				        System.out.println("header路由模式： " + message);
+				
+				        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+				    }
+				
+				
+				    //消费是在死信队列里面消费， 生产是在延时队列里面生产
+				    @RabbitListener(queuesToDeclare = @Queue("queue.name.dlx"))
+				//    @RabbitListener(bindings = {
+				//            @QueueBinding(
+				//                    value = @Queue("queue.name.dlx"),
+				//                    exchange = @Exchange(value = "exchange.name.dlx", type = "topic"),
+				//                    key = {"routingkey.name.dlx"}
+				//            )
+				//    })
+				    public void ttlReceive(Message message, Channel channel) throws IOException {
+				
+				        System.out.println("ttl延时消息: " + message);
+				        System.out.println("接受时间： " + new Date());
+				
+				        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+				    }
+				}
+
+				
+			</pre>
+			
+			
+			<br />	<br />
+		</div>
+			
+	</body>
+		
+
+</html>

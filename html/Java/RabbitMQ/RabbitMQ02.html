@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<head>
+			<meta charset="UTF-8">
+			<title>RabbitMQ消息模型之HelloWorld</title>
+			<link rel="icon" href="../../../../Source/icon-img.jpeg">
+			<link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+			<link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+			<link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+		</head>
+	<body>
+
+		<div class="labels">
+
+			<span class="label label-info">RabbitMQ消息模型之HelloWorld</span>
+		</div>
+
+		<div class="contentBgDiv">
+
+			<p class="title" id="intro">RabbitMQ消息模型之HelloWorld</p>
+			<hr>
+			
+
+			<p class="introduceText">
+				一个生产者 一个队列 一个消费者 没有交换机（默认交换机）
+			</p>
+			<img src="https://www.rabbitmq.com/img/tutorials/python-one.png" style="width: 400px; " /><br />
+			<b>pom.xml:</b>
+			<pre>
+				
+				        &lt;!--
+				            引入rabbitmq依赖
+				        --&gt;
+				        &lt;dependency&gt;
+				            &lt;groupId&gt;com.rabbitmq&lt;/groupId&gt;
+				            &lt;artifactId&gt;amqp-client&lt;/artifactId&gt;
+				            &lt;version&gt;5.7.2&lt;/version&gt;
+				        &lt;/dependency&gt;
+			</pre>
+			<b>RabbitMQ通道创建封装类:</b>
+			<pre>
+				
+				package com.ethan.rabbitmq.utils;
+				
+				import com.rabbitmq.client.Channel;
+				import com.rabbitmq.client.Connection;
+				import com.rabbitmq.client.ConnectionFactory;
+				import org.springframework.stereotype.Component;
+				
+				import java.io.IOException;
+				
+				@Component
+				public class RabbitMQUtils {
+				
+				    public static ConnectionFactory connectionFactory;
+				    public static Connection connection;
+				    public static Channel channel;
+				
+				    static {
+				
+				        //ConnectionFactory是一个重量级别的类，在类加载的时候执行
+				        connectionFactory = new ConnectionFactory();
+				
+				        connectionFactory.setHost("49.xx.xxx.xxx");
+				        connectionFactory.setPort(5672);
+				        connectionFactory.setVirtualHost("xxxx");
+				        connectionFactory.setUsername("xxx");
+				        connectionFactory.setPassword("123456");
+				    }
+				
+				    public static Connection getConnection(){
+				
+				        try {
+				            connection = connectionFactory.newConnection();
+				            return connection;
+				        } catch (Exception e) {
+				            e.printStackTrace();
+				        }
+				
+				        return null;
+				    }
+				
+				
+				
+				    public static Channel getChannel(String queue){
+				
+				        try {
+				            channel = getConnection().createChannel();
+				
+				            //通道绑定对应的消息队列
+				            //参数1： 队列名称， 不存在就自动创建
+				            //参数2： D, 队列是否需要持久化 mq关闭的时候时候将队列持久化到磁盘， 为false时
+				            //      队列会在rabbitmq服务重新启动的时候删除该队列, 但是队列的消息仍会删除
+				            //      解决：在发送消息的时候设置消息的持久化：MessageProperties.PERSISTENT_TEXT_PLAIN,
+				            //参数3： 是否独占队列，当前队列是否只当前连接可用, 为true时其他连接链接时会报错
+				            //参数4： AD, 是否在消费完成后并且消费者断开连接之后， 自动删除队列
+				            //参数5： 额外参数
+				            channel.queueDeclare(queue, true, false, false,
+				                    null);
+				
+				            return channel;
+				        } catch (IOException e) {
+				            e.printStackTrace();
+				        }
+				
+				        return null;
+				    }
+				
+				    public static void close(){
+				
+				        try {
+				            if (channel != null)channel.close();
+				            if (connection != null)connection.close();
+				        } catch (Exception e) {
+				            e.printStackTrace();
+				        }
+				    }
+				
+				}
+
+			</pre>
+			<b>消息生产者:</b>
+			<pre>
+				
+				package com.ethan.rabbitmq;
+				
+				import com.ethan.rabbitmq.utils.RabbitMQUtils;
+				import com.rabbitmq.client.*;
+				import org.junit.Test;
+				import org.springframework.boot.test.context.SpringBootTest;
+				
+				import java.io.IOException;
+				
+				@SpringBootTest
+				public class Provider {
+				
+				    //rabbitmq直连: 简单的消息投放， 无交换机， 生产者直接将消息放到队列中
+				    @Test
+				    public void testSendMessage() throws Exception{
+				
+				        //获取连接通道
+				        Channel channel = RabbitMQUtils.getChannel("cc");
+				
+				
+				        //消息发送成功回调， 只确认是否正确到达 Exchange 中
+				        channel.addConfirmListener(new ConfirmListener() {
+				
+				            public void handleAck(long deliveryTag, boolean multiple) throws IOException {
+				
+				                System.out.println("消息发送成功并且在broker落地，deliveryTag是唯一标志符，在channek上发布的消息的deliveryTag都会比之前加1");
+				            }
+				
+				            public void handleNack(long deliveryTag, boolean multiple) throws IOException {
+				
+				                System.out.println("消息发送失败或者落地失败");
+				            }
+				        });
+				
+						//在交换器路由不到队列时触发回调,，该方法可以不使用，因为交换器和队列是在代码里绑定的，
+						//如果消息成功投递到Broker后几乎不存在绑定队列失败，
+				        channel.addReturnListener(new ReturnCallback() {
+				
+				            public void handle(Return returnMessage) {
+				
+				                System.out.println("处理消息");
+				            }
+				        });
+				
+				
+				        //通过通道发布消息
+				        //参数1： 交换机名称， 直连没有交换机， 为空
+				        //参数2： 队列名称
+				        //参数3： 传递消息额外设置, MessageProperties.PERSISTENT_TEXT_PLAIN:
+				        //                    在队列重启之后， 消息不会丢失，就是设置消息持久化
+				        //参数4： 消息内容
+				        channel.basicPublish("",
+				                "cc",
+				                MessageProperties.PERSISTENT_TEXT_PLAIN,
+				                "hello rabbitmq".getBytes());
+				
+				        //关闭通道 关闭连接
+				        RabbitMQUtils.close();
+				    }
+				}
+
+			</pre>
+			<b>消息消费者:</b>
+			<pre>
+				
+				package com.ethan.rabbitmq;
+				
+				import com.ethan.rabbitmq.utils.RabbitMQUtils;
+				import com.rabbitmq.client.AMQP;
+				import com.rabbitmq.client.Channel;
+				import com.rabbitmq.client.DefaultConsumer;
+				import com.rabbitmq.client.Envelope;
+				import org.springframework.boot.test.context.SpringBootTest;
+				
+				import java.io.IOException;
+				
+				@SpringBootTest
+				public class Consumer {
+				
+				    //注意consume在test里面， 不能接收到队列中的消息
+				    public static void main(String[] args) throws Exception {
+				
+				        Channel channel = RabbitMQUtils.getChannel("cc");
+				
+				        //消费消息
+				        //参数1： 消费队列的名称
+				        //参数2： 开启消息自动确认机制
+				        channel.basicConsume("cc", true, new DefaultConsumer(channel){
+				
+				            @Override
+				            public void handleDelivery(String consumerTag,
+				                                       Envelope envelope,
+				                                       AMQP.BasicProperties properties,
+				                                       byte[] body) throws IOException {
+				
+				                System.out.println(new String(body));
+				
+				            }
+				        });
+				
+				
+				        //不关闭消费者会一直监听
+				        //RabbitMQUtils.close();
+				    }
+				}
+
+			</pre>
+			
+		<br />	<br />
+		</div>
+			
+	</body>
+</html>

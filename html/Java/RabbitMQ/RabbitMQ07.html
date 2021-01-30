@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<head>
+			<meta charset="UTF-8">
+			<title>RabbitMQ消息模型之Header模式</title>
+			<link rel="icon" href="../../../../Source/icon-img.jpeg">
+			<link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+			<link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+			<link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+		</head>
+	<body>
+
+		<div class="labels">
+
+			<span class="label label-info">RabbitMQ消息模型之Header模式</span>
+		</div>
+
+		<div class="contentBgDiv">
+
+			<p class="title" id="intro">RabbitMQ消息模型之Header模式</p>
+			<hr>
+
+
+			<p class="smallTitle" id="one">1. RabbitMQ消息模型之Header模式</p>
+			<p class="introduceText">
+				消费者通过消息MessageProperties的Header参数来进行消费，比如whereAll(headers) //表示生产者的MessageProperties header中信息完全一致才能发送消息，
+				whereAny(headers) //表示只要包含任何一个键值对就能发送消息
+			</p>
+			<b>pom.xml:</b>
+			<pre>
+				
+				        &lt;!--
+				            引入rabbitmq依赖
+				        --&gt;
+						&lt;dependency&gt;
+							&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+							&lt;artifactId&gt;spring-boot-starter-amqp&lt;/artifactId&gt;
+							&lt;version&gt;2.1.6.RELEASE&lt;/version&gt;
+						&lt;/dependency&gt;
+			</pre>
+			<b>application.yml配置:</b>
+			<pre>
+				
+				spring:
+				  application:
+				    name: rabbitmq-ack-message
+				  rabbitmq:
+				    host: 49.xx.xxx.xxx
+				    username: xxx
+				    password: xxx
+				    virtual-host: vh01
+				    port: 5672
+					
+			</pre>
+			<b>创建队列，绑定Header类型交换机：</b>
+			<pre>
+				
+				package com.ethan.rabbitmq;
+				
+				import org.springframework.amqp.core.*;
+				import org.springframework.beans.factory.annotation.Qualifier;
+				import org.springframework.context.annotation.Bean;
+				import org.springframework.context.annotation.Configuration;
+				
+				import java.util.HashMap;
+				
+				
+				@Configuration
+				public class RabbitMQConfig {
+					
+					//header
+					public static final String QUEUE_NAME_HEADER = "queue.name.header";
+					public static final String EXCHANGE_NAME_HEADER = "exchange.name.header";
+				
+					//headers
+					@Bean
+					public Queue headerQueue(){
+						
+						    return QueueBuilder.durable(QUEUE_NAME_HEADER).build();
+					}
+						
+					@Bean
+					public HeadersExchange headerExchange(){
+						
+						   return (HeadersExchange) ExchangeBuilder.headersExchange(EXCHANGE_NAME_HEADER)
+						                .build();
+					}
+						
+					@Bean
+					public Binding headerBinding(@Qualifier("headerQueue") Queue queue,
+						                                 @Qualifier("headerExchange") HeadersExchange exchange){
+						
+						   HashMap&lt;String, Object&gt; headers = new HashMap&lt;String, Object&gt;();
+						   headers.put("name", "czy");
+						   headers.put("age", 20);
+						
+						   //绑定headersExchange
+						   return BindingBuilder
+						                .bind(queue)
+						                .to(headerExchange())
+						                //.whereAll(headers) //表示生产者的MessageProperties header中信息完全一致才能发送消息
+						                .whereAny(headers) //表示只要包含任何一个键值对就能发送消息
+						                .match();
+						    }
+
+				}		
+						
+			</pre>
+			<b>消息生产者:</b>
+			<pre>
+				
+				package com.ethan.rabbitmq;
+				
+				import org.junit.Test;
+				import org.junit.runner.RunWith;
+				import org.springframework.amqp.core.Message;
+				import org.springframework.amqp.core.MessageProperties;
+				import org.springframework.amqp.rabbit.connection.CorrelationData;
+				import org.springframework.amqp.rabbit.core.RabbitTemplate;
+				import org.springframework.beans.factory.annotation.Autowired;
+				import org.springframework.boot.test.context.SpringBootTest;
+				import org.springframework.test.context.junit4.SpringRunner;
+				
+				import java.util.Date;
+				import java.util.HashMap;
+				
+				@SpringBootTest(classes = RabbitMQ_Applicaiton.class)
+				@RunWith(SpringRunner.class)
+				public class Provider {
+				
+				    @Autowired
+				    private RabbitTemplate rabbitTemplate;
+					
+					    //headers 手动确认header模型队列消息
+					    @Test
+					    public void headers() throws Exception{
+					
+					        MessageProperties messageProperties = new MessageProperties();
+					        messageProperties.setHeader("name", "czy");
+					        messageProperties.setHeader("age", 20);
+					
+					        Message message = new Message("这是一个header模型交换信息".getBytes(), messageProperties);
+					
+					        //headersExchange不需要路由key
+					        this.rabbitTemplate.convertAndSend("exchange.name.header",
+					                null, message);
+					    }
+						
+				}
+						
+			</pre>
+			<b>消息消费者:</b>
+			<pre>
+				
+				package com.ethan.rabbitmq;
+				
+				import com.rabbitmq.client.Channel;
+				import org.springframework.amqp.core.Message;
+				import org.springframework.amqp.rabbit.annotation.Queue;
+				import org.springframework.amqp.rabbit.annotation.RabbitListener;
+				import org.springframework.stereotype.Component;
+				
+				import java.io.IOException;
+				import java.util.Date;
+				
+				@Component
+				public class Consumer {
+					
+					    @RabbitListener(queuesToDeclare = @Queue("queue.name.header"))
+					    public void headerReceive(Message message, Channel channel) throws IOException {
+					
+					        System.out.println("header路由模式： " + message);
+					
+					        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+					    }
+				}	
+				
+			</pre>
+			
+			
+			<br />	<br />
+		</div>
+			
+	</body>
+		
+
+</html>
