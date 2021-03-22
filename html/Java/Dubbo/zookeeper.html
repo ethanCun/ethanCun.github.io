@@ -1,0 +1,66 @@
+<head>
+    <meta charset="UTF-8">
+    <title>Linux下安装Zookeeper以及Zookeeper常用命令</title>
+    <link rel="icon" href="../../../Source/icon-img.jpeg">
+    <link rel="stylesheet" href="../../../CSS/ArticleDetail.css">
+    <link rel="stylesheet" href="../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+    <span class="label label-primary">Linux下安装Zookeeper以及Zookeeper常用命令</span>
+</div>
+
+<div class="contentBgDiv">
+
+
+    <p class="title">Linux下安装Zookeeper以及Zookeeper常用命令</p>
+    <hr>
+	
+	<!-- <p class="smallTitle">1. Linux下安装Zookeeper</p> -->
+	<b>1. Zookeeper下载地址：<a target="_blank" href="https://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.5.9/">zookeeper下载</a></b>
+	<p>注意： 应将apache-zookeeper-{version}-bin.tar.gz 上传解压，不要使用apache-zookeeper-{version}.tar.gz， 否则会报错：
+	zookeeper | 启动失败 Error: Could not find or load main class org.apache.zookeeper.server.quorum.QuorumP</p>
+	<p>2. mac下使用ZenTermLite将安装包上传到Linux;</p>
+	<p>3. 解压到指定目录： tar -zxvf  文件目录 -C 目标目录</p>
+	<p>4. 配置信息： cd到zookeeper的conf下，将zoo_sample.cfg拷贝一份命令为zoo.cfg，cp zoo_sample.cfg zoo.cfg, 并配置相关参数:</p>
+	<pre>
+		
+		tickTime: 心跳配置，单位毫秒，两次心跳失败为down;
+		initLimit: 多少个心跳时间后，允许其他server初始化;
+		syncLimit: 多少个tickTime内，允许follower同步，如果follower落后太多，则会被丢弃;
+		dataDir: 用于存放内存数据库快照的文件夹，同时用于集群的myid文件也存在这个文件夹里（注意：一个配置文件只能包含一个dataDir字样，即使它被注释掉了;
+		dataLogDir: 用于存放日志的文件夹路径;
+		clientPort=2181: 服务监听端口;
+		通过server参数配置集群：
+			server.1=192.168.20.101:2888:3888
+			server.2=192.168.20.102:2888:3888
+			server.3=192.168.20.103:2888:3888
+			
+			注意：
+			1. server.1, server.2,  server.3分别对应的三台服务器上面dataDir下面文件中myid文件中的内容；
+			2. 2881端口：提供服务,供客户端连接的端口；
+			3. 2888：集群内机器通讯使用（Leader监听此端口）;
+			4. 3888端口：集群时leader选举的端口；
+			5. 分别启动机器1，机器2，机器3.集群会自动选举出一台服务器作为leader，其余服务器为follower，
+				这个可以通过./zkServer.sh status来查询；
+				
+			
+	</pre>
+	<p>5. Zookeeper相关命令(cd到bin目录下：)</p>
+	<pre>
+		
+		1. 启动Zookeeper: ./zkServer.sh start
+			在前台启动，查看启动信息： ./zkServer.sh start-foreground
+		2. 查看Zookeeper状态： ./zkServer.sh status
+		3. 关闭Zookeeper: ./zkServer.sh stop
+		
+	</pre>
+		
+		<br /><br />
+	</div>
+	
+</body>
+</html>

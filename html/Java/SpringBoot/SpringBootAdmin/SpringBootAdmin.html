@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>SpringbootAdmin动态监控系统与修改日志等级</title>
+
+		<link rel="icon" href="../../../../Source/icon-img.jpeg">
+		<link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+		<link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+		<link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+	</head>
+	<body>
+
+		<div class="contentBgDiv">
+
+			<p class="label label-warning"><a target="_blank" href="https://github.com/ethanCun/springboot/tree/master/springboot-security">demo</a>
+			</p>
+
+			<p class="title">SpringbootAdmin动态监控系统与修改日志等级</p>
+			<hr>
+			<p class="introduceText">
+				SpringbootAdmin类似于Eureka，服务端和客户端需要我们自己编写代码配置。
+			</p>
+			
+			
+			<p class="smallTitle">1. SpringBootAdmin服务端配置：</p>
+			<b>1. pom.xml：</b>
+			<pre>
+				
+				&lt;dependency&gt;
+					&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+					&lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+
+				&lt;/dependency&gt;
+
+				//父工程SpringBoot版本2.2.1.RELEASE
+				&lt;dependency&gt;
+					&lt;groupId&gt;de.codecentric&lt;/groupId&gt;
+					&lt;artifactId&gt;spring-boot-admin-starter-server&lt;/artifactId&gt;
+					&lt;version&gt;2.2.1&lt;/version&gt;
+				&lt;/dependency&gt;
+				
+			</pre>
+			<b>2. application.properties:</b>
+			<pre>
+				
+				server.port=8081
+				spring.application.name=model1
+			</pre>
+			<b>3. Application添加注解：@EnableAdminServer</b>
+			<pre>
+				
+				package com.ethan;
+
+				import de.codecentric.boot.admin.server.config.EnableAdminServer;
+				import org.springframework.boot.SpringApplication;
+				import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+				//服务端
+				@SpringBootApplication
+				@EnableAdminServer
+				public class springbootadminApplication {
+
+					public static void main(String[] args) {
+
+						SpringApplication.run(springbootadminApplication.class, args);
+					}
+				}
+		
+			</pre>
+			<b>4. 启动程序有直接访问localhost:8081就会来到SpringBootAdimn后台管理页面</b>
+			
+			
+			<p class="smallTitle">2. 客户端配置：</p>
+			<b>1. pom.xml:</b>
+			<pre>
+				
+				&lt;dependencies&gt;
+
+					&lt;dependency&gt;
+						&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+						&lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+					&lt;/dependency&gt;
+
+					&lt;dependency&gt;
+						&lt;groupId&gt;de.codecentric&lt;/groupId&gt;
+						&lt;artifactId&gt;spring-boot-admin-starter-client&lt;/artifactId&gt;
+						&lt;version&gt;2.1.1&lt;/version&gt;
+					&lt;/dependency&gt;
+
+					&lt;dependency&gt;
+						&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+						&lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+					&lt;/dependency&gt;
+
+					&lt;dependency&gt;
+						&lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+						&lt;artifactId&gt;lombok&lt;/artifactId&gt;
+						&lt;version&gt;1.18.12&lt;/version&gt;
+					&lt;/dependency&gt;
+
+				&lt;/dependencies&gt;
+			</pre>
+			<b>2. application.properties中注册到Server:</b>
+			<pre>
+				
+				server.port=8082
+
+				spring.application.name=model2
+
+
+				#客户端连接服务端
+				spring.boot.admin.client.url=http://localhost:8081
+				
+			</pre>
+			<b>3. 在Server端应用实例配置对应的日志等级：</b>
+			<img src="./SpringBootAdmin后台.png" />
+			
+			<br /><br />
+		</div>
+	</body>
+</html>
