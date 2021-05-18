@@ -21,6 +21,7 @@
   <p class="title">windows服务器常用命令</p>
   <hr>
 
+  <p class="smallTitle">1. windows服务器常用命令</p>
   <pre>
 
 
@@ -36,9 +37,72 @@
 
     6. windows进入文件返回上级文件： cd /d 文件夹   上级目录： cd ..
 
-
+    7. windows清屏：cls
 
   </pre>
+
+  <p class="smallTitle">2. windows服务器后台启动redis并且设置开机自动启动</p>
+
+  <pre>
+
+      1. 以管理员身份进入 DOS窗口
+
+      2. 在进入Redis的安装目录
+
+      3. 输入：redis-server --service-install redis.windows.conf --loglevel verbose ( 安装redis服务 )
+
+      4.  输入：redis-server --service-start ( 启动服务 )
+
+      5. 输入：redis-server --service-stop （停止服务）
+
+      启动指定的配置文件redis-server --service-start redis.windows-service.conf
+
+
+      6. 设置开机启动：
+          sc create redis binPath=D:\redis\redis-server
+
+  </pre>
+
+  <p class="smallTitle">3. windows下tomcat后台运行的方法</p>
+
+  <pre>
+
+        E:\tomcat8.5\apache-tomcat-8.5.66\bin\setclasspath: 找到set _RUNJAVA="%JRE_HOME%\bin\java.exe"  改为：set _RUNJAVA="%JRE_HOME%\bin\javaw.exe"
+
+        双击startup.bat后闪一下在后台开始运行了
+
+        接着同样在windows服务里面添加bat脚本：
+
+        sc create tomcat8 binPath=E:\tomcat8.5\apache-tomcat-8.5.66\bin\startup start=auto
+
+       注意这里是startup, 不是startup.bat
+  </pre>
+
+  <p class="smallTitle">4. window服务器设置开启自动启动jar包</p>
+  <pre>
+
+    1. 新建bat脚本运行对应的jar包或者其他命令：
+
+        run.bat:
+        @echo off
+
+        start javaw -jar F:\autostartprojs\common-fileupload.jar
+
+        exit
+
+
+    2. 注册成 service服务， 设置为开机自动启动:
+
+        1. 首先以管理员的方式启动cmd: windows下输入cmd， 找到cmd， 右键以管理员方式运行；
+        2. 创建服务并且设置为开机自动启动：sc create 服务名 binPath=C:\Users\admin\Desktop\run.bat start=auto
+        3. 查看服务是否支持成功：在cmd中输入services.msc ，查看是否有该服务
+        4. 启动、关闭、删除服务：
+            net start 服务名
+            net stop 服务名
+            sc delete 服务名
+  </pre>
+
+  <br><br>
 
   </div>
 </div>
