@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>springboot使用okhttp与第三方服务器通讯</title>
+  <link rel="icon" href="../../../../Source/icon-img.jpeg">
+  <link rel="stylesheet" href="../../../../CSS/ArticleDetail.css">
+  <link rel="stylesheet" href="../../../../Vendor/bootstrap-3.3.7-dist/css/bootstrap.css">
+  <link rel="stylesheet" href="../../../../font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+
+<div class="labels">
+
+  <span class="label label-info">redis</span>
+</div>
+
+<div class="contentBgDiv">
+
+
+  <p class="title">springboot使用okhttp与第三方服务器通讯</p>
+
+  <hr>
+  <div class="contentBgDiv">
+
+    <p class="smallTitle">1. pom.xml</p>
+    <pre>
+
+       &lt;!--  okhttp   --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.squareup.okhttp3&lt;/groupId&gt;
+            &lt;artifactId&gt;okhttp&lt;/artifactId&gt;
+            &lt;version&gt;3.11.0&lt;/version&gt;
+
+            &lt;exclusions&gt;
+                &lt;exclusion&gt;
+                    &lt;groupId&gt;com.google.android&lt;/groupId&gt;
+                    &lt;artifactId&gt;android&lt;/artifactId&gt;
+                &lt;/exclusion&gt;
+            &lt;/exclusions&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+            &lt;artifactId&gt;fastjson&lt;/artifactId&gt;
+            &lt;version&gt;1.2.76&lt;/version&gt;
+        &lt;/dependency&gt;
+
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
+            &lt;version&gt;2.4.5&lt;/version&gt;
+        &lt;/dependency&gt;
+
+    </pre>
+
+
+    <p class="smallTitle">2. okhttp的get请求</p>
+    <b>客户端：</b>
+    <pre>
+
+       public static String doGet(){
+
+          OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                  .connectTimeout(10, TimeUnit.SECONDS)
+                  .readTimeout(10, TimeUnit.SECONDS)
+                  .build();
+
+          Request request = new Request.Builder().url(url1)
+                  .build();
+
+          try {
+
+              Response response = okHttpClient.newCall(request).execute();
+
+              return response.body().string();
+
+          } catch (IOException e) {
+              e.printStackTrace();
+          }
+
+          return null;
+      }
+
+    </pre>
+    <b>服务端:</b>
+    <pre>
+      @GetMapping(value = "/get")
+      public User get1(User user){
+
+          return user;
+      }
+    </pre>
+
+
+    <p class="smallTitle">3. okhttp的post请求</p>
+    <b>客户端：</b>
+    <pre>
+
+          public static String doPost(){
+
+            OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+
+            User user = new User();
+            user.setUsername("zhangsan");
+            user.setPassword("123456");
+
+            String json = JSONObject.toJSONString(user);
+
+            Request request = new Request.Builder()
+                    .url(url2)
+                    .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json))
+                    .build();
+
+            try {
+                Response response = okHttpClient.newCall(request).execute();
+                return response.body().string();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+    </pre>
+    <b>服务端:</b>
+    <pre>
+       @PostMapping(value = "/post")
+       public User post1(@RequestBody User user){
+          return user;
+       }
+    </pre>
+
+
+    <p class="smallTitle">4. okhttp上传文件</p>
+    <b>客户端：</b>
+    <pre>
+
+        public static String upload(File file){
+
+            OkHttpClient okHttpClient = new OkHttpClient();
+
+            MultipartBody multipartBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("file", file.getName(), RequestBody.create(MediaType.parse("multipart/form-data"), file))
+                    .build();
+
+            Request request = new Request.Builder()
+                    .header("Authorization", "Client-ID " + UUID.randomUUID())
+                    .url(url3)
+                    .post(multipartBody)
+                    .build();
+
+            try {
+                Response respo = okHttpClient.newCall(request).execute();
+                return respo.body().string();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+    </pre>
+    <b>服务端:</b>
+    <pre>
+      @PostMapping(value = "/upload")
+      public String upload(@RequestParam("file") MultipartFile file){
+
+          return file.getOriginalFilename();
+      }
+    </pre>
+
+  </div>
+
+  <br><br>
+</div>
+
+</body>
+</html>
